@@ -164,18 +164,20 @@ public class PhoenixPlugin implements ProfileListener, ApplicationCoreListener {
 			}
 		});
 		
-		if(metaDataFichesConcours.getFiches().size() != concoursFiles.length) {
-			metaDataFichesConcours.removeAll();
-			for(File concoursFile : concoursFiles) {
-				if(concoursFile.isFile() && !metaDataFichesConcours.containsFileName(concoursFile.getName())) {
-					try {
-						FicheConcours ficheConcours = FicheConcoursBuilder.getFicheConcours(new MetaDataFicheConcours(null, null, concoursFile.getName()), profile);
-						MetaDataFicheConcours metaDataFicheConcours = ficheConcours.getMetaDataFicheConcours();
-						if(!metaDataFichesConcours.contains(metaDataFicheConcours)) {
-							metaDataFichesConcours.add(metaDataFicheConcours);
+		if(concoursFiles != null) {
+			if(metaDataFichesConcours.getFiches().size() != concoursFiles.length) {
+				metaDataFichesConcours.removeAll();
+				for(File concoursFile : concoursFiles) {
+					if(concoursFile.isFile() && !metaDataFichesConcours.containsFileName(concoursFile.getName())) {
+						try {
+							FicheConcours ficheConcours = FicheConcoursBuilder.getFicheConcours(new MetaDataFicheConcours(null, null, concoursFile.getName()), profile);
+							MetaDataFicheConcours metaDataFicheConcours = ficheConcours.getMetaDataFicheConcours();
+							if(!metaDataFichesConcours.contains(metaDataFicheConcours)) {
+								metaDataFichesConcours.add(metaDataFicheConcours);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
 				}
 			}
@@ -189,44 +191,47 @@ public class PhoenixPlugin implements ProfileListener, ApplicationCoreListener {
 				return pathname.getName().endsWith(".cta"); //$NON-NLS-1$
 			}
 		});
-		if(concoursFiles.length > 0)
-			metaDataFichesConcours.removeAll();
-		for(File concoursFile : concoursFiles) {
-			if(concoursFile.isFile()) {
-				try {
-					Object[] structure = XMLSerializer.loadXMLStructure(concoursFile, true);
-					if(structure != null && structure.length == 3) {
-						Parametre parametre = null;
-						if(structure[0] instanceof Parametre) {
-							parametre = (Parametre) structure[0];
-							metaDataFichesConcours.remove(
-									new MetaDataFicheConcours(
-											parametre.getDateDebutConcours(), parametre.getIntituleConcours(), parametre.getSaveName()));
-							parametre.setSaveName(parametre.getSaveName() + "x"); //$NON-NLS-1$
+		if(concoursFiles != null && metaDataFichesConcours != null) {
+			if(concoursFiles.length > 0)
+				metaDataFichesConcours.removeAll();
+			
+			for(File concoursFile : concoursFiles) {
+				if(concoursFile.isFile()) {
+					try {
+						Object[] structure = XMLSerializer.loadXMLStructure(concoursFile, true);
+						if(structure != null && structure.length == 3) {
+							Parametre parametre = null;
+							if(structure[0] instanceof Parametre) {
+								parametre = (Parametre) structure[0];
+								metaDataFichesConcours.remove(
+										new MetaDataFicheConcours(
+												parametre.getDateDebutConcours(), parametre.getIntituleConcours(), parametre.getSaveName()));
+								parametre.setSaveName(parametre.getSaveName() + "x"); //$NON-NLS-1$
+								
+							}
 							
+							if(parametre != null) {
+								checkFiche(structure, profile);
+								
+								FicheConcours ficheConcours = new FicheConcours(profile, parametre);
+								ficheConcours.setDbUUID(ApplicationCore.dbUUID);
+								for(Concurrent concurrent : ((ConcurrentList)structure[1]).list())
+									ficheConcours.addConcurrent(concurrent, concurrent.getDepart());
+								
+								ficheConcours.setEquipes((EquipeList)structure[2]);
+	
+								ficheConcours.save();
+								
+								metaDataFichesConcours.add(ficheConcours.getMetaDataFicheConcours());
+								
+								concoursFile.delete();
+							}
+						} else {
+							concoursFile.delete(); //Fichier verolé on supprime
 						}
-						
-						if(parametre != null) {
-							checkFiche(structure, profile);
-							
-							FicheConcours ficheConcours = new FicheConcours(profile, parametre);
-							ficheConcours.setDbUUID(ApplicationCore.dbUUID);
-							for(Concurrent concurrent : ((ConcurrentList)structure[1]).list())
-								ficheConcours.addConcurrent(concurrent, concurrent.getDepart());
-							
-							ficheConcours.setEquipes((EquipeList)structure[2]);
-
-							ficheConcours.save();
-							
-							metaDataFichesConcours.add(ficheConcours.getMetaDataFicheConcours());
-							
-							concoursFile.delete();
-						}
-					} else {
-						concoursFile.delete(); //Fichier verolé on supprime
+					} catch (Exception e) {
+						throw new RuntimeException(e);
 					}
-				} catch (Exception e) {
-					throw new RuntimeException(e);
 				}
 			}
 		}

@@ -171,6 +171,7 @@ public class Main {
 		initErrorManaging();
 		initNetworkManaging();
 		initCore();
+		checkWritingUserPath();
 		initSecureContext();
 		if(System.getProperty("noplugin") == null)//$NON-NLS-1$
 			loadStartupPlugin();
@@ -181,6 +182,16 @@ public class Main {
 		System.out.println("core loaded");  //$NON-NLS-1$
 		
 		showUserInterface();
+	}
+
+	private static void checkWritingUserPath() {
+		if(!new File(ApplicationCore.userRessources.getUserPath()).exists()) {
+			JOptionPane.showMessageDialog(null, "En raison d'un problème système, le répertoire utilisateur '"  //$NON-NLS-1$
+					+ ApplicationCore.userRessources.getUserPath() 
+					+ "' n'a pas été créé. L'application ne peut s'executer.\n\nConsulter votre administrateur système pour trouver une solution.", //$NON-NLS-1$
+					"Erreur", JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+			System.exit(1);
+		}
 	}
 
 	/**

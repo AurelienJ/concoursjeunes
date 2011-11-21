@@ -124,6 +124,12 @@ public class AppRessources extends org.ajdeveloppement.apps.AppRessources {
 	 */
 	@Override
 	public String getUserPath() {
+		String userPath = ApplicationCore.staticParameters.getResourceString("path.user", super.getUserPath()); //$NON-NLS-1$
+		
+		File userPathFile = new File(userPath);
+		if(!userPathFile.exists())
+			userPathFile.mkdirs();
+		
 		return ApplicationCore.staticParameters.getResourceString("path.user", super.getUserPath()); //$NON-NLS-1$
 	}
 	
@@ -137,6 +143,9 @@ public class AppRessources extends org.ajdeveloppement.apps.AppRessources {
 		File profilePath = new File(
 				ApplicationCore.staticParameters.getResourceString("path.profile", getUserPath()), //$NON-NLS-1$
 				profile.getConfiguration().getCurProfil());
+		
+		if(!profilePath.exists())
+			profilePath.mkdirs();
 
 		return profilePath;
 	}
