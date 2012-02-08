@@ -103,6 +103,7 @@ import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.concoursjeunes.AppConfiguration;
 import org.concoursjeunes.ApplicationCore;
 import org.concoursjeunes.Configuration;
+import org.concoursjeunes.Federation;
 import org.concoursjeunes.builders.ConfigurationBuilder;
 
 /**
@@ -167,12 +168,15 @@ public class ConfigurationManager {
 		
 		if(configuration == null) {
 			configuration = ConfigurationBuilder.getDefaultConfiguration();
-		} else if(configuration.getFederation().getNomFederation().isEmpty() && configuration.getFederation().getSigleFederation().isEmpty()) {
+		} else if(configuration.getFederation() == null || (configuration.getFederation().getNomFederation().isEmpty() && configuration.getFederation().getSigleFederation().isEmpty())) {
 			try {
 				org.ajdeveloppement.concours.legacy.Configuration configurationLegacy = XMLSerializer.loadMarshallStructure(confFile, org.ajdeveloppement.concours.legacy.Configuration.class);
-				if(!configurationLegacy.getFederation().getNomFederation().isEmpty()) {
+				if(configurationLegacy != null && configurationLegacy.getFederation() != null && !configurationLegacy.getFederation().getNomFederation().isEmpty()) {
 					configuration.setFederation(configurationLegacy.getFederation());
 					configuration.getClub().setFederation(configurationLegacy.getFederation());
+				} else if(configuration.getFederation() == null) {
+					configuration.setFederation(new Federation());
+					configuration.getClub().setFederation(configuration.getFederation());
 				}
 			} catch (JAXBException e) {
 				e.printStackTrace();
