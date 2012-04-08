@@ -173,7 +173,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 	private TitledBorder tbProfil = new TitledBorder(""); //$NON-NLS-1$
 	@Localizable("configuration.ecran.general.profil")
 	private JLabel jlNomProfil = new JLabel();
-	private JComboBox jcbProfil = new JComboBox();
+	private JComboBox<String> jcbProfil = new JComboBox<>();
 	@Localizable("configuration.ecran.general.renameprofile")
 	private JButton jbRenameProfile = new JButton();
 
@@ -194,7 +194,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 	private JLabel jlPathPdf = new JLabel();
 	@Localizable("configuration.ecran.general.logo")
 	private JLabel jlLogoPath = new JLabel();
-	private JComboBox jcbFederation = new JComboBox();
+	private JComboBox<Federation> jcbFederation = new JComboBox<>();
 	private JTextField jtfNomClub = new JTextField(20);
 	private JTextField jtfAgrClub = new JTextField(new NumberDocument(false, false), "", 7); //$NON-NLS-1$
 	@Localizable(value="configuration.ecran.general.choiceclub",tooltip="configuration.ecran.general.browseclub")
@@ -202,8 +202,8 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 	@Localizable("bouton.detail")
 	private JButton jbDetail = new JButton();
 	//private JTextField jtfIntConc = new JTextField(20);
-	private JComboBox jcbLangue = new JComboBox();
-	private JComboBox jcbPathPdf = new JComboBox();
+	private JComboBox<String> jcbLangue = new JComboBox<>();
+	private JComboBox<String> jcbPathPdf = new JComboBox<>();
 	private JButton jbParcourirPdf = new JButton("..."); //$NON-NLS-1$
 	private JButton jbLogoPath = new JButton();
 
@@ -220,7 +220,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 	@Localizable("configuration.ecran.concours.change_reglement")
 	private JButton jbSelectReglement = new JButton();
 	private JTextField jtfNbCible = new JTextField(new NumberDocument(false, false), "", 3); //$NON-NLS-1$
-	private JComboBox jcbNbTireur = new JComboBox();
+	private JComboBox<String> jcbNbTireur = new JComboBox<>();
 	private JTextField jtfNbDepart = new JTextField(new NumberDocument(false, false), "", 3); //$NON-NLS-1$
 
 	// Ecran etiquette
@@ -245,8 +245,8 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 	private JLabel jlEspacementsH = new JLabel();
 	@Localizable("configuration.ecran.etiquettes.vertical")
 	private JLabel jlEspacementsV = new JLabel();
-	private JComboBox jcbFormatPapier = new JComboBox();
-	private JComboBox jcbOrientation = new JComboBox();
+	private JComboBox<String> jcbFormatPapier = new JComboBox<>();
+	private JComboBox<String> jcbOrientation = new JComboBox<>();
 	private JTextField jtfLignes = new JTextField(new NumberDocument(false, false), "", 5); //$NON-NLS-1$
 	private JTextField jtfColonnes = new JTextField(new NumberDocument(false, false), "", 5); //$NON-NLS-1$
 	private JTextField jtfMargesH = new JTextField(new NumberDocument(true, false), "", 5); //$NON-NLS-1$

@@ -175,7 +175,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 	
 	@Localizable("entite.federation")
 	private JLabel jlFederation = new JLabel();
-	private JComboBox jcbFederation = new JComboBox();
+	private JComboBox<Federation> jcbFederation = new JComboBox<>();
 	@Localizable("entite.nom")
 	private JLabel jlNom = new JLabel();
 	private JTextField jtfNom = new JTextField("", 30); //$NON-NLS-1$
@@ -199,14 +199,14 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 	private CountryComboBox jcbCountry = new CountryComboBox();
 	@Localizable("entite.type")
 	private JLabel jlType = new JLabel();
-	private JComboBox jcbType;
+	private JComboBox<String> jcbType;
 	@Localizable("entite.note")
 	private JLabel jlNote = new JLabel();
 	private JTextArea jtaNote = new JTextArea(5, 30);
 
 	@Localizable("entite.searchcategory")
 	private JLabel jlSearchCategoryContact = new JLabel();
-	private JComboBox jcbSearchCategoryContact = new JComboBox();
+	private JComboBox<Object> jcbSearchCategoryContact = new JComboBox<>();
 	@Localizable("entite.search")
 	private JLabel jlSearch = new JLabel();
 	private JTextField jtfSearch = new JTextField();
@@ -289,7 +289,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 		}
 		jtfVille.setEditable(false);
 		jcbCountry.addItemListener(this);
-		jcbType = new JComboBox(new String[] { "Fédération", "Ligue", "Comité Départemental", "Compagnie" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		jcbType = new JComboBox<>(new String[] { "Fédération", "Ligue", "Comité Départemental", "Compagnie" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		
 		jbValider.addActionListener(this);
 		jbAnnuler.addActionListener(this);
@@ -299,7 +299,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 		jcbSearchCategoryContact.setRenderer(new DefaultListCellRenderer() {
 			
 			@Override
-			public Component getListCellRendererComponent(JList list, Object value,
+			public Component getListCellRendererComponent(JList<?> list, Object value,
 					int index, boolean isSelected, boolean cellHasFocus) {
 				if(value instanceof CategoryContact)
 					value = ((CategoryContact)value).getLibelle(profile.getConfiguration().getLangue());

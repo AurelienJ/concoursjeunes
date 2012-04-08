@@ -247,7 +247,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 			 * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
 			 */
 			@Override
-			public Component getListCellRendererComponent(JList list,
+			public Component getListCellRendererComponent(JList<?> list,
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				if(value instanceof Federation)
@@ -266,7 +266,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 			 * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
 			 */
 			@Override
-			public Component getListCellRendererComponent(JList list,
+			public Component getListCellRendererComponent(JList<?> list,
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				if(value instanceof Reglement) {

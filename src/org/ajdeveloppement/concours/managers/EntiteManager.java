@@ -122,11 +122,8 @@ public class EntiteManager {
 	@SuppressWarnings("nls")
 	public static List<Entite> getEntitesInDatabase(Entite eGeneric, String orderfield) throws ObjectPersistenceException {
 		List<Entite> entites = new ArrayList<Entite>();
-		Statement stmt = null;
 		
-		try {
-			stmt = ApplicationCore.dbConnection.createStatement();
-			
+		try (Statement stmt = ApplicationCore.dbConnection.createStatement()){
 			String sql = "select * from Entite";
 			if(eGeneric != null && (!eGeneric.getNom().isEmpty() || !eGeneric.getAgrement().isEmpty() || !eGeneric.getVille().isEmpty()) ) {
 				sql += " where ";
@@ -149,17 +146,15 @@ public class EntiteManager {
 			if(orderfield != null && !orderfield.isEmpty())
 				sql += " order by " + orderfield;
 			
-			ResultSet rs = stmt.executeQuery(sql);
-
-			while(rs.next()) {
-				Entite entite = EntiteBuilder.getEntite(rs);
-				
-				entites.add(entite);
+			try(ResultSet rs = stmt.executeQuery(sql)) {
+				while(rs.next()) {
+					Entite entite = EntiteBuilder.getEntite(rs);
+					
+					entites.add(entite);
+				}
 			}
 		} catch (SQLException e) {
 			throw new ObjectPersistenceException(e);
-		} finally {
-			try { if(stmt != null) stmt.close(); } catch(Exception e) { }
 		}
 		
 		return entites;

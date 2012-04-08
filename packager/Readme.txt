@@ -6,14 +6,12 @@ http://arccompetition.ajdeveloppement.org
 ArcCompetition est un logiciel de gestion des compétitions
 de tir à l'arc.
 
-ArcCompetition nécessite la machine virtuel java 6.0
-disponible sur le CD d'instalation ou telecharageable sur
-http://www.java.com.
+ArcCompetition nécessite la machine virtuel java 7.0
+telecharageable sur http://www.java.com.
 
 ArcCompetition fonctionne sous toutes les plateformes
-compatible jse 6.0 tel que MS Windows, GNU/Linux, Solaris, Mac OS X.
-Sous Mac OS X, seul les systèmes 10.5.2 et ultérieur dans leurs versions
-x86_64 sont supportés.
+compatible jse 7.0 tel que MS Windows, GNU/Linux, Solaris, Mac OS X.
+Sous Mac OS X, seul les systèmes 10.5.2 et ultérieur sont supportés.
 
 ArcCompetition est distribué sous licence Open Source CeCILL.
 Certaines ressources tel que les images (voir le fichier ressources/image-licence.txt pour

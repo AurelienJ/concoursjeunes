@@ -147,11 +147,11 @@ import org.ajdeveloppement.concours.Concurrent;
 import org.ajdeveloppement.concours.Criterion;
 import org.ajdeveloppement.concours.FicheConcours;
 import org.ajdeveloppement.concours.PhasesFinales;
+import org.ajdeveloppement.concours.state.Categories.Category;
 import org.ajdeveloppement.concours.state.State;
 import org.ajdeveloppement.concours.state.StateManager;
 import org.ajdeveloppement.concours.state.StateProcessor;
 import org.ajdeveloppement.concours.state.StateSelector;
-import org.ajdeveloppement.concours.state.Categories.Category;
 import org.ajdeveloppement.concours.ui.dialog.ConcurrentDialog;
 import org.ajdeveloppement.concours.ui.dialog.ParametreDialog;
 import org.ajdeveloppement.concours.ui.dialog.ResultatDialog;
@@ -231,8 +231,8 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 	private JLabel jlDepart = new JLabel();
 	@Localizable("state.serie")
 	private JLabel jlSerie = new JLabel();
-	private JComboBox jcbDeparts = new JComboBox();
-	private JComboBox jcbSeries = new JComboBox();
+	private JComboBox<Object> jcbDeparts = new JComboBox<>();
+	private JComboBox<String> jcbSeries = new JComboBox<>();
 	@Localizable("state.save")
 	private JCheckBox jcbSave = new JCheckBox();
 	@Localizable("state.print")
@@ -404,19 +404,19 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 		jtbClassement.setEnabledAt(3, ficheConcours.getParametre().isDuel());
 		
 		JPanel jpEdition = initEditions();
-		ajlDocuments.setCellRenderer(new ListCellRenderer() {
+		ajlDocuments.setCellRenderer(new ListCellRenderer<File>() {
 			protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
 			/* (non-Javadoc)
 			 * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
 			 */
 			@Override
-			public Component getListCellRendererComponent(JList list,
-					Object value, int index, boolean isSelected,
+			public Component getListCellRendererComponent(JList<? extends File> list,
+					File value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, value, index,
 				        isSelected, cellHasFocus);
-				Icon fileIcon = FileSystemView.getFileSystemView().getSystemIcon((File)value);
-				renderer.setText(((File)value).getName());
+				Icon fileIcon = FileSystemView.getFileSystemView().getSystemIcon(value);
+				renderer.setText(value.getName());
 				renderer.setIcon(fileIcon);
 
 				return renderer;
@@ -575,7 +575,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 	private JPanel getGestArchersTabComponent() {
 		JPanel panel = new JPanel();
 		
-		JComboBox comboBox = new JComboBox();
+		JComboBox<Object> comboBox = new JComboBox<>();
 		comboBox.addActionListener(this);
 
 		for(int i = 1; i <= ficheConcours.getParametre().getNbDepart(); i++) {
@@ -873,7 +873,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 		} else if(source == jbDeleteDocument) {
 			if (JOptionPane.showConfirmDialog(this, parentframe.profile.getLocalisation().getResourceString("state.confirmation.suppression"), //$NON-NLS-1$
 					parentframe.profile.getLocalisation().getResourceString("state.confirmation.suppression.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {//$NON-NLS-1$
-				Object[] files = ajlDocuments.getSelectedValues();
+				List<?> files = ajlDocuments.getSelectedValuesList();
 				for(Object f : files) {
 					((File)f).delete();
 					ajlDocuments.remove((File)f);

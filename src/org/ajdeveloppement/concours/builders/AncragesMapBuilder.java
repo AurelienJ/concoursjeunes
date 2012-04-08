@@ -130,14 +130,10 @@ public class AncragesMapBuilder {
 		
 		String sql = "select * from ANCRAGES_BLASONS where NUMBLASON=?"; //$NON-NLS-1$
 		
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = ApplicationCore.dbConnection.prepareStatement(sql);
-			
+		try (PreparedStatement pstmt =  ApplicationCore.dbConnection.prepareStatement(sql)) {
 			pstmt.setInt(1, blason.getNumblason());
 			
-			ResultSet rs = pstmt.executeQuery();
-			try {
+			try (ResultSet rs = pstmt.executeQuery()) {
 				while(rs.next()) {
 					Ancrage ancrage = new Ancrage();
 					ancrage.setBlason(blason);
@@ -146,15 +142,9 @@ public class AncragesMapBuilder {
 					
 					ancrages.put(ancrage.getEmplacement(), ancrage);
 				}
-			} finally {
-				if(rs != null)
-					rs.close();
 			}
 		} catch (SQLException e) {
 			throw new ObjectPersistenceException(e);
-		} finally {
-			if(pstmt != null)
-				try { pstmt.close(); } catch(SQLException e) { }
 		}
 		
 		if(ancrages.size() == 0)

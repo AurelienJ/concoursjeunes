@@ -1,26 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<java version="1.6.0_26" class="java.beans.XMLDecoder"> 
- <object class="java.util.ArrayList"> 
-  <void method="add"> 
-   <object class="org.ajdeveloppement.updater.Version"> 
-    <void property="appname"> 
-     <string>arccompetition</string> 
-    </void> 
-    <void property="author"> 
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string> 
-    </void> 
-    <void property="changeInfos"> 
-     <string>  * First Alpha release</string> 
-    </void> 
-    <void property="dateVersion"> 
-     <object class="java.util.Date"> 
-      <long>1318711116946</long> 
-     </object> 
-    </void> 
-    <void property="version"> 
-     <string>0.99.00-1</string> 
-    </void> 
-   </object> 
-  </void> 
- </object> 
-</java> 
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.7.0_147-icedtea" class="java.beans.XMLDecoder">
+ <object class="java.util.ArrayList">
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>arccompetition</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * First Alpha release</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1318711116946</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>0.99.00-1</string>
+    </void>
+   </object>
+  </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>arccompetition</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Passage en Java 7</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1333917869189</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>0.99.01-1</string>
+    </void>
+   </object>
+  </void>
+ </object>
+</java>

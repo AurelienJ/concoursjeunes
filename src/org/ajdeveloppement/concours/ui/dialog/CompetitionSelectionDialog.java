@@ -133,8 +133,8 @@ public class CompetitionSelectionDialog extends JDialog implements ActionListene
 	@Localizable("competitionselection.header")
 	private JXHeader jxhCompetitionSelection = new JXHeader();
 	
-	private JList jlCompetitions = new JList();
-	private DefaultListModel competitionListModel = new DefaultListModel();
+	private JList<MetaDataFicheConcours> jlCompetitions = new JList<MetaDataFicheConcours>();
+	private DefaultListModel<MetaDataFicheConcours> competitionListModel = new DefaultListModel<MetaDataFicheConcours>();
 	
 	@Localizable("bouton.valider")
 	private JButton jbValider = new JButton();
@@ -165,7 +165,7 @@ public class CompetitionSelectionDialog extends JDialog implements ActionListene
 		jlCompetitions.setCellRenderer(new DefaultListCellRenderer() {
 			private DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
 			@Override
-			public Component getListCellRendererComponent(JList list,
+			public Component getListCellRendererComponent(JList<?> list,
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				if(value instanceof MetaDataFicheConcours) {
@@ -236,7 +236,7 @@ public class CompetitionSelectionDialog extends JDialog implements ActionListene
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == jbValider) {
-			selectedCompetition = (MetaDataFicheConcours)jlCompetitions.getSelectedValue();
+			selectedCompetition = jlCompetitions.getSelectedValue();
 			
 			returnAction = DefaultDialogReturn.OK;
 			setVisible(false);

@@ -144,9 +144,9 @@ import org.ajdeveloppement.concours.CategoryContact;
 import org.ajdeveloppement.concours.Civility;
 import org.ajdeveloppement.concours.Contact;
 import org.ajdeveloppement.concours.Coordinate;
+import org.ajdeveloppement.concours.Coordinate.Type;
 import org.ajdeveloppement.concours.Entite;
 import org.ajdeveloppement.concours.Profile;
-import org.ajdeveloppement.concours.Coordinate.Type;
 import org.ajdeveloppement.concours.managers.CategoryContactManager;
 import org.ajdeveloppement.concours.managers.CivilityManager;
 import org.ajdeveloppement.concours.ui.components.CountryComboBox.Country;
@@ -193,7 +193,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 	
 	@Localizable("entite.civility")
 	private JLabel jlCivility = new JLabel();
-	private JComboBox jcbCivility = new JComboBox();
+	private JComboBox<Civility> jcbCivility = new JComboBox<>();
 	@Localizable("entite.newcivility")
 	private JXHyperlink jxhNewCivility = new JXHyperlink();
 	@Localizable("entite.namefirstname")
@@ -218,7 +218,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 	private CountryComboBox ccbPays = new CountryComboBox();
 	@Localizable("entite.coordinates")
 	private JLabel jlCoordinates = new JLabel();
-	private JList jlstCoordinates = new JList();
+	private JList<Coordinate> jlstCoordinates = new JList<>();
 	@Localizable(value="",tooltip="entite.addcoordinate")
 	private JButton jbAddCoordinate = new JButton();
 	@Localizable(value="",tooltip="entite.delcoordinate")
@@ -245,7 +245,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 	private JXHeader jxhCoordinate = new JXHeader();
 	@Localizable("entite.typecoordinate")
 	private JLabel jlTypeCoordinate = new JLabel();
-	private JComboBox jcbTypeCoordinate = new JComboBox();
+	private JComboBox<Coordinate.Type> jcbTypeCoordinate = new JComboBox<>();
 	@Localizable("entite.valuecoordinate")
 	private JLabel jlValueCoordinate = new JLabel();
 	private JTextField jtfValueCoordinate = new JTextField();
@@ -283,7 +283,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 		jcbCivility.setRenderer(new DefaultListCellRenderer() {
 			
 			@Override
-			public Component getListCellRendererComponent(JList list, Object value,
+			public Component getListCellRendererComponent(JList<?> list, Object value,
 					int index, boolean isSelected, boolean cellHasFocus) {
 				if(value == null)
 					value = "<html>&nbsp;</html>"; //$NON-NLS-1$
@@ -328,7 +328,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 		jlstCoordinates.setModel(coordinatesModel);
 		jlstCoordinates.setCellRenderer(new DefaultListCellRenderer() {
 			@Override
-			public Component getListCellRendererComponent(JList list, Object value,
+			public Component getListCellRendererComponent(JList<?> list, Object value,
 					int index, boolean isSelected, boolean cellHasFocus) {
 				
 				if(value instanceof Coordinate) {
@@ -507,7 +507,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 		
 		jcbTypeCoordinate.setRenderer(new DefaultListCellRenderer() {
 			@Override
-			public Component getListCellRendererComponent(JList list,
+			public Component getListCellRendererComponent(JList<?> list,
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				
@@ -836,7 +836,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 			if(e.getSource() == jbAddCoordinate)
 				editedCoordinate = new Coordinate();
 			else
-				editedCoordinate = (Coordinate)jlstCoordinates.getSelectedValue();
+				editedCoordinate = jlstCoordinates.getSelectedValue();
 			
 			if(editedCoordinate != null) {
 				jcbTypeCoordinate.setSelectedItem(editedCoordinate.getCoordinateType());
@@ -845,7 +845,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 				cardLayout.show(this, "coordinate"); //$NON-NLS-1$
 			}
 		} else if(e.getSource() == jbDelCoordinate) {
-			Coordinate deletedCoordinate = (Coordinate)jlstCoordinates.getSelectedValue();
+			Coordinate deletedCoordinate = jlstCoordinates.getSelectedValue();
 			if(deletedCoordinate != null && deletedCoordinate.getValue() != null)
 				coordinatesModel.remove(deletedCoordinate);
 		} else if(e.getSource() == jxhSaveCoordinate || e.getSource() == jxhCancelCoordinate) {
@@ -866,7 +866,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 					try {
 						uri = new URI(
 								String.format("mailto:%s?body=%s", //$NON-NLS-1$
-										((Coordinate)jlstCoordinates.getSelectedValue()).getValue(),
+										(jlstCoordinates.getSelectedValue()).getValue(),
 										("Bonjour " + contact.getFullNameWithCivility() + ",").replace(" ", "%20"))  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 								);
 						Desktop.getDesktop().mail(uri);
@@ -894,7 +894,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 			if(elemIndex > -1)
 				jlstCoordinates.setSelectedIndex(elemIndex);
 				
-			if(jlstCoordinates.getSelectedValue() != null && ((Coordinate)jlstCoordinates.getSelectedValue()).getCoordinateType() == Type.MAIL)
+			if(jlstCoordinates.getSelectedValue() != null && (jlstCoordinates.getSelectedValue()).getCoordinateType() == Type.MAIL)
 				popup.show(jlstCoordinates, e.getX(), e.getY());
 		}
 	}
@@ -914,7 +914,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		if(e.getSource() == jlstCoordinates) {
-			if(jlstCoordinates.getSelectedValue() != null && ((Coordinate)jlstCoordinates.getSelectedValue()).getValue() != null) {
+			if(jlstCoordinates.getSelectedValue() != null && (jlstCoordinates.getSelectedValue()).getValue() != null) {
 				jbEditCoordinate.setEnabled(true);
 				jbDelCoordinate.setEnabled(true);
 			} else {

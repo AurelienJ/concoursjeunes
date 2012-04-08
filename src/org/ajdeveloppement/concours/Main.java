@@ -137,10 +137,10 @@ import org.ajdeveloppement.commons.security.SecureSiteAuthenticationStore;
 import org.ajdeveloppement.commons.ui.SwingURLAuthenticator;
 import org.ajdeveloppement.concours.db.UpgradeDatabaseEventListener;
 import org.ajdeveloppement.concours.exceptions.ExceptionHandlingEventQueue;
+import org.ajdeveloppement.concours.plugins.Plugin.Type;
 import org.ajdeveloppement.concours.plugins.PluginEntry;
 import org.ajdeveloppement.concours.plugins.PluginLoader;
 import org.ajdeveloppement.concours.plugins.PluginMetadata;
-import org.ajdeveloppement.concours.plugins.Plugin.Type;
 import org.ajdeveloppement.concours.ui.ArcCompetitionFrame;
 import org.ajdeveloppement.swingxext.error.WebErrorReporter;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
@@ -503,6 +503,7 @@ public class Main {
 		} catch (InvocationTargetException e) {
 		}
 		SwingUtilities.invokeLater(new Runnable() {
+			@SuppressWarnings("unused")
 			@Override
 			public void run() {
 				Profile profile = new Profile();

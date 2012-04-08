@@ -169,7 +169,7 @@ public class GreffePane extends JPanel implements
 	private JTextField jtfNom = new JTextField(10);
 	private JTextField jtfClub = new JTextField(10);
 	private JTextField jtfLicence = new JTextField(7);
-	private JComboBox jcbPayee = new JComboBox();
+	private JComboBox<String> jcbPayee = new JComboBox<>();
 	@Localizable(value="",tooltip="greffepane.erasefilter")
 	private JButton jbResetFilter = new JButton();
 	@StateSelector(name="200-listgreffe")

@@ -177,15 +177,11 @@ public class ConcurrentBuilder {
 				CriteriaSet differentiationCriteria = null;
 				String sql = "select * from distinguer where ID_CONTACT=? and NUMREGLEMENT=?"; //$NON-NLS-1$
 				if(!ApplicationCore.dbConnection.isClosed()) {
-					PreparedStatement pstmt = ApplicationCore.dbConnection.prepareStatement(sql);
+					try (PreparedStatement pstmt = ApplicationCore.dbConnection.prepareStatement(sql)) {
+						pstmt.setString(1, concurrent.getIdContact().toString());
+						pstmt.setInt(2, reglement.getNumReglement());
 					
-					pstmt.setString(1, concurrent.getIdContact().toString());
-					pstmt.setInt(2, reglement.getNumReglement());
-					
-					try {
-						ResultSet rsCriteriaSet = pstmt.executeQuery();
-		
-						try {
+						try (ResultSet rsCriteriaSet = pstmt.executeQuery()) {
 							if(rsCriteriaSet.first()) {
 								differentiationCriteria = CriteriaSetBuilder
 										.getCriteriaSet(rsCriteriaSet.getInt("NUMCRITERIASET"), reglement); //$NON-NLS-1$
@@ -226,13 +222,7 @@ public class ConcurrentBuilder {
 									}
 								}
 							}
-						} finally {
-							rsCriteriaSet.close();
-							rsCriteriaSet = null;
 						}
-					} finally {
-						pstmt.close();
-						pstmt = null;
 					}
 				}
 				

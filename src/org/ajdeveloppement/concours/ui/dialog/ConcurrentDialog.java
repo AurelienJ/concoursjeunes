@@ -219,10 +219,10 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 	@Localizable("concurrent.surclassement")
 	private JCheckBox jcbSurclassement = new JCheckBox();
 	private Map<Criterion, JLabel> jlCategrieTable = new HashMap<Criterion, JLabel>();
-	private Map<Criterion, JComboBox> jcbCategorieTable = new HashMap<Criterion, JComboBox>();
+	private Map<Criterion, JComboBox<CriterionElement>> jcbCategorieTable = new HashMap<Criterion, JComboBox<CriterionElement>>();
 	@Localizable("concurrent.blason")
 	private JLabel jlBlason = new JLabel();
-	private JComboBox jcbBlason = new JComboBox();
+	private JComboBox<Blason> jcbBlason = new JComboBox<Blason>();
 
 	// Club du tireur
 	@Localizable(value="concurrent.panel.club",textMethod="setTitle")
@@ -283,7 +283,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 	@Localizable(value="concurrent.inscription.titre",textMethod="setTitle")
 	private TitledBorder tbInscription = new TitledBorder(""); //$NON-NLS-1$
 	private final JPanel jpInscription = new JPanel();
-	private final JComboBox jcbInscription = new JComboBox();
+	private final JComboBox<String> jcbInscription = new JComboBox<String>();
 
 	// place libre
 	@Localizable(value="concurrent.placelibre.titre",textMethod="setTitle")
@@ -355,7 +355,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 
 		for (Criterion key : ficheConcours.getParametre().getReglement().getListCriteria()) {
 			jlCategrieTable.put(key, new JLabel());
-			JComboBox jcbCriterion = new JComboBox();
+			JComboBox<CriterionElement> jcbCriterion = new JComboBox<CriterionElement>();
 			jcbCriterion.setEditable(false);
 			jcbCriterion.setActionCommand("criterion_change_" + key.getCode()); //$NON-NLS-1$
 			//jcbCriterion.addActionListener(this);
@@ -365,7 +365,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 				 * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
 				 */
 				@Override
-				public Component getListCellRendererComponent(JList list,
+				public Component getListCellRendererComponent(JList<?> list,
 						Object value, int index, boolean isSelected,
 						boolean cellHasFocus) {
 					if(value instanceof CriterionElement)

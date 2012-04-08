@@ -189,10 +189,8 @@ public class ConcurrentManager {
 	public static List<Concurrent> getArchersInDatabase(
 			Archer aGeneric, Reglement reglement, String orderfield, int nbmaxenreg, ConcurrentManagerProgress concurrentManagerProgress) {
 		List<Concurrent> concurrents = new ArrayList<Concurrent>();
-		Statement stmt = null;
-		try {
-			stmt = ApplicationCore.dbConnection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
+		try (Statement stmt = ApplicationCore.dbConnection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
 			String sql = "select %s from ARCHERS inner join CONTACT on ARCHERS.ID_CONTACT=CONTACT.ID_CONTACT";
 
 			if(aGeneric != null) {
@@ -218,14 +216,10 @@ public class ConcurrentManager {
 			}
 			sql = sql.replaceFirst(" and ", "");
 
-			ResultSet rs = null;
 			if(concurrentManagerProgress != null) {
-				rs = stmt.executeQuery(String.format(sql, "count(*)"));
-				try {
+				try (ResultSet rs = stmt.executeQuery(String.format(sql, "count(*)"))) {
 					if(rs.first() && concurrentManagerProgress !=null)
 						concurrentManagerProgress.setConcurrentCount(rs.getInt(1));
-				} finally {
-					rs.close();
 				}
 			}
 			
@@ -235,8 +229,7 @@ public class ConcurrentManager {
 			if(nbmaxenreg > 0)
 				sql += " limit " + nbmaxenreg;
 			
-			rs = stmt.executeQuery(String.format(sql, "ARCHERS.*,CONTACT.*"));
-			try {
+			try (ResultSet rs = stmt.executeQuery(String.format(sql, "ARCHERS.*,CONTACT.*"))) {
 				while(!ApplicationCore.dbConnection.isClosed() && rs.next()) {
 					Concurrent concurrent = ConcurrentBuilder.getConcurrent(rs, reglement);
 					if(concurrent != null) {
@@ -245,14 +238,9 @@ public class ConcurrentManager {
 							concurrentManagerProgress.setCurrentConcurrent(concurrent);
 					}
 				}
-			} finally {
-				rs.close();
-				rs = null;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			try { if(stmt != null) stmt.close(); } catch(Exception e) { }
 		}
 		return concurrents;
 	}

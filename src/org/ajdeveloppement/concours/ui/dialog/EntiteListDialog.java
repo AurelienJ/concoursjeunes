@@ -170,7 +170,7 @@ public class EntiteListDialog extends JDialog implements ActionListener, MouseLi
 	@Localizable("listeentite.ville")
 	private JLabel jlVille = new JLabel();
 	private JTable jTable			= null;
-	private JComboBox jcbFederation = new JComboBox();
+	private JComboBox<Federation> jcbFederation = new JComboBox<>();
 	private JTextField jtfNom = new JTextField(10);
 	private JTextField jtfAgrement = new JTextField(10);
 	private JTextField jtfVille = new JTextField(10);

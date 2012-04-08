@@ -602,6 +602,7 @@ public class ArcCompetitionFrame extends JFrame implements ActionListener, Hyper
 	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
+	@SuppressWarnings("unused")
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
@@ -806,6 +807,7 @@ public class ArcCompetitionFrame extends JFrame implements ActionListener, Hyper
 	 * 
 	 * @see javax.swing.event.HyperlinkListener#hyperlinkUpdate(javax.swing.event.HyperlinkEvent)
 	 */
+	@SuppressWarnings("unused")
 	@Override
 	public void hyperlinkUpdate(HyperlinkEvent e) {
 		if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {

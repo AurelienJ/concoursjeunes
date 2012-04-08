@@ -268,8 +268,6 @@
 				<include name="documentation/**"/>
 				<include name="ArcCompetition.jar"/>
 				<include name="*.txt"/>
-				
-				<exclude name="lib/js*"/>
 			</fileset>
 		</copy>
 		
