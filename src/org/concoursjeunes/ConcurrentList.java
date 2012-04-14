@@ -625,6 +625,23 @@ public class ConcurrentList {
 		}
 
 		if(sort) {
+//			Collections.sort(alDB, new Comparator<DistancesEtBlason>() {
+//				@Override
+//				public int compare(DistancesEtBlason db1, DistancesEtBlason db2) {
+//					if(db1.getDistance()[0] > db2.getDistance()[0])
+//						return 1;
+//					else if(db1.getDistance()[0] < db2.getDistance()[0])
+//						return -1;
+//					else {
+//						if(db1.getTargetFace().getNumordre() > db2.getTargetFace().getNumordre())
+//							return 1;
+//						else if(db1.getTargetFace().getNumordre() < db2.getTargetFace().getNumordre())
+//							return -1;
+//					}
+//					return 0;
+//				}
+//			});
+			
 			for(int i = 0; i < alDB.size() - 1; i++) {
 				for(int j = i + 1; j < alDB.size(); j++) {
 					if(alDB.get(i).getDistance()[0] < alDB.get(j).getDistance()[0]) {
@@ -634,7 +651,8 @@ public class ConcurrentList {
 			}
 			for(int i = 0; i < alDB.size() - 1; i++) {
 				for(int j = i + 1; j < alDB.size(); j++) {
-					if(alDB.get(i).getTargetFace().getNumordre() > alDB.get(j).getTargetFace().getNumordre() && alDB.get(i).getDistance()[0] == alDB.get(j).getDistance()[0]) {
+					if(alDB.get(i).getTargetFace().getNumordre() > alDB.get(j).getTargetFace().getNumordre()
+							&& alDB.get(i).getDistance()[0] == alDB.get(j).getDistance()[0]) {
 						Collections.swap(alDB, i, j);
 					}
 				}

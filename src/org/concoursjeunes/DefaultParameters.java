@@ -147,6 +147,8 @@ public class DefaultParameters {
 	 * @return le nombre de cible
 	 */
 	public int getNbCible() {
+		if(nbCible == 0)
+			nbCible = 1;
 		return nbCible;
 	}
 

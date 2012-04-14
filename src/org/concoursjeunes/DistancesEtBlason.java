@@ -216,6 +216,17 @@ public class DistancesEtBlason implements ObjectPersistence {
 	 * @return le blason
 	 */
 	public Blason getTargetFace() {
+		if(targetFace == null) {
+			targetFace = new Blason();
+			try {
+				List<Blason> availableTargetFace = Blason.listAvailableTargetFace();
+				if(availableTargetFace.size() > 0)
+					targetFace = availableTargetFace.get(0);
+			} catch (ObjectPersistenceException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		return targetFace;
 	}
 

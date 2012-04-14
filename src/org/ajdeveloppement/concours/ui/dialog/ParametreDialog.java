@@ -514,7 +514,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 						placelibre = placelibre_tmp;
 				}
 	
-				if (placelibre < 0 || parametre.getNbCible() - placelibre > Integer.parseInt(jtfNombreCible.getText())) {
+				if (placelibre < 0 || parametre.getNbCible() - placelibre > Integer.parseInt("0" + jtfNombreCible.getText())) { //$NON-NLS-1$
 					JOptionPane.showMessageDialog(this, localisation.getResourceString("parametre.toomany"), localisation.getResourceString("parametre.toomany.title"), //$NON-NLS-1$ //$NON-NLS-2$
 							JOptionPane.ERROR_MESSAGE);
 					return;
@@ -530,6 +530,14 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 						}
 					}
 				}
+			}
+			
+			//vérifie qu'il y a au moins une cible.
+			if(Integer.parseInt("0" + jtfNombreCible.getText()) <= 0) { //$NON-NLS-1$
+				
+				JOptionPane.showMessageDialog(this, localisation.getResourceString("parametre.notarget"), localisation //$NON-NLS-1$
+						.getResourceString("parametre.notarget.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+				return;
 			}
 			
 			//limite le nombre de départ possible
