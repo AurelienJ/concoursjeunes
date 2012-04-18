@@ -501,7 +501,9 @@ public class FicheConcoursDepartPane extends JPanel
 				ficheConcoursPane.getLocalisation().getResourceString("confirmation.replacement.titre"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) //$NON-NLS-1$
 			return;
 
-		ficheConcours.getPasDeTir(depart).placementConcurrents();
+		if(!ficheConcours.getPasDeTir(depart).placementConcurrents()) {
+			JOptionPane.showMessageDialog(this, ficheConcoursPane.getLocalisation().getResourceString("concurrent.placelibre.placementfail"), null, JOptionPane.ERROR_MESSAGE) ; //$NON-NLS-1$
+		}
 	}
 
 	/**

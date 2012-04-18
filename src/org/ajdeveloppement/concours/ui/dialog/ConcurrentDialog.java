@@ -939,6 +939,9 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 
 		// récupère la table d'occupation des cibles
 		Map<DistancesEtBlason, TargetsOccupation> occupationCibles = ficheConcours.getPasDeTir(concurrent.getDepart()).getTargetsOccupation(ficheConcours.getParametre().getNbTireur());
+		
+		if(occupationCibles == null)
+			return localisation.getResourceString("concurrent.placelibre.placementfail"); //$NON-NLS-1$
 
 		List<DistancesEtBlason> tableCorresp = ficheConcours.getParametre().getReglement().getListDistancesEtBlason();
 

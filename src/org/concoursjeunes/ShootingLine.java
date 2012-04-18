@@ -187,6 +187,7 @@ public class ShootingLine implements FicheConcoursListener {
 		return 0;
 	}
 	
+
 	/**
 	 * Retourne la table d'occupation en fonction du nombre de tireur par cible donné
 	 * 
@@ -194,11 +195,22 @@ public class ShootingLine implements FicheConcoursListener {
 	 * @return la table d'occupation des cibles
 	 */
 	public Map<DistancesEtBlason, TargetsOccupation> getTargetsOccupation(int nbtireurparcible) {
+		return getTargetsOccupation(nbtireurparcible,null);
+	}
+	
+	/**
+	 * Retourne la table d'occupation en fonction du nombre de tireur par cible donné
+	 * 
+	 * @param nbtireurparcible le nombre de tireur par cible servant de base au calcul de la table d'occupation
+	 * @param excludedConcurrent le concurrent à exclure de la table d'occupation
+	 * @return la table d'occupation des cibles
+	 */
+	private Map<DistancesEtBlason, TargetsOccupation> getTargetsOccupation(int nbtireurparcible, Concurrent excludedConcurrent) {
 		Map<DistancesEtBlason, TargetsOccupation> occupationCibles = new HashMap<DistancesEtBlason, TargetsOccupation>();
 		List<DistancesEtBlason> distancesEtBlasons = ficheConcours.getParametre().getReglement().getListDistancesEtBlason();
 		
 		//effectue une simulation de placement
-		boolean success = placementConcurrents(nbtireurparcible, true);
+		boolean success = placementConcurrents(nbtireurparcible, true, excludedConcurrent);
 		if(!success)
 			return null;
 		
@@ -257,33 +269,47 @@ public class ShootingLine implements FicheConcoursListener {
 
 			return place.getPlaceLibre() > (concurrent.isHandicape()?1:0) || getNbFreeTargets(ficheConcours.getParametre().getNbTireur()) > 0;
 		}
-
+		
 		int index = ficheConcours.getConcurrentList().getArchList().indexOf(concurrent);
 		Concurrent conc2 = ficheConcours.getConcurrentList().get(index);
+		
+		DistancesEtBlason distancesEtBlason = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), concurrent);
+		if(distancesEtBlason == null)
+			return false;
+		
+		place = getTargetsOccupation(ficheConcours.getParametre().getNbTireur(),conc2).get(distancesEtBlason);
 
-		DistancesEtBlason db1 = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), concurrent);
-		DistancesEtBlason db2 = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), conc2);
-
-		//si on ne change pas de db
-		//et que l'archer ne devient pas handicapé ;)
-		if(db1.haveSameDistancesAndTargetFace(db2) && concurrent.isHandicape() == conc2.isHandicape()) {
-			return true;
-		}
-
-		//si il reste de la place dans la nouvelle catégorie pas de pb
-		place = getTargetsOccupation(ficheConcours.getParametre().getNbTireur()).get(db1);
-		if(place.getPlaceLibre() > (concurrent.isHandicape()?1:0) || getNbFreeTargets(ficheConcours.getParametre().getNbTireur()) > 0) {
-			return true;
-		}
-
-		//si le retrait du concurrent libère une cible ok
-		place = getTargetsOccupation(ficheConcours.getParametre().getNbTireur()).get(db2);
-		if(place.getPlaceOccupe() % ficheConcours.getParametre().getNbTireur() == (concurrent.isHandicape()?2:1)) {
-			return true;
-		}
+		return place.getPlaceLibre() > (concurrent.isHandicape()?1:0) || getNbFreeTargets(ficheConcours.getParametre().getNbTireur()) > 0;
+		
+//		
+//
+//		DistancesEtBlason db1 = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), concurrent);
+//		DistancesEtBlason db2 = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), conc2);
+//
+//		//si on ne change pas de db
+//		//et que l'archer ne devient pas handicapé ;)
+//		if(db1.haveSameDistancesAndTargetFace(db2) && concurrent.isHandicape() == conc2.isHandicape()) {
+//			return true;
+//		}
+//		
+//		Map<DistancesEtBlason, TargetsOccupation> targetsOccupation = getTargetsOccupation(ficheConcours.getParametre().getNbTireur());
+//		if(targetsOccupation != null) {
+//			//si il reste de la place dans la nouvelle catégorie pas de pb
+//			place = targetsOccupation.get(db1);
+//			if(place.getPlaceLibre() > (concurrent.isHandicape()?1:0) || getNbFreeTargets(ficheConcours.getParametre().getNbTireur()) > 0) {
+//				return true;
+//			}
+//	
+//			//si le retrait du concurrent libère une cible ok
+//			place = targetsOccupation.get(db2);
+//			if(place.getPlaceOccupe() % ficheConcours.getParametre().getNbTireur() == (concurrent.isHandicape()?2:1)) {
+//				//Le blason est libéré, on verifie qu'il n'y a pas d'autre blason sur la cible
+//				return true;
+//			}
+//		}
 
 		//sinon changement impossible
-		return false;
+		//return false;
 	}
 	
 	/**
@@ -291,8 +317,8 @@ public class ShootingLine implements FicheConcoursListener {
 	 * La méthode de placement utilisé permet d'éviter, dans la mesure du possible,
 	 * de placer les archers d'un même club sur la même cible
 	 */
-	public void placementConcurrents() {
-		placementConcurrents(ficheConcours.getParametre().getNbTireur(), false);
+	public boolean placementConcurrents() {
+		return placementConcurrents(ficheConcours.getParametre().getNbTireur(), false);
 	}
 	
 	/**
@@ -311,6 +337,27 @@ public class ShootingLine implements FicheConcoursListener {
 	 * impossible
 	 */
 	private boolean placementConcurrents(int nbtireurparcible, boolean simulationMode) {
+		return placementConcurrents(nbtireurparcible, simulationMode, null);
+	}
+	
+	/**
+	 * Place les archers sur le pas de tir
+	 * La méthode de placement utilisé permet d'éviter, dans la mesure du possible,
+	 * de placer les archers d'un même club sur la même cible
+	 * 
+	 * @param nbtireurparcible le nombre de tireur par cible à considérer dans le cas
+	 * s'une simulation. Si on est pas en simulation, la valeur est ignoré
+	 * 
+	 * @param simulationMode si <i>true</i> se contente de simulé le placement sans
+	 * le réaliser concrètement en plaçant les archers dans simulationTargets en lieu
+	 * et place de targets. Le but est simplement de déterminer la place disponible restante
+	 * 
+	 * @param excludedConcurrent le concurrent à exclure du placement
+	 * 
+	 * @return true si le placement est effectué avec succès, false si le placement est
+	 * impossible
+	 */
+	private boolean placementConcurrents(int nbtireurparcible, boolean simulationMode, Concurrent excludedConcurrent) {
 		int curCible = 1;
 		List<DistancesEtBlason> lDB = ficheConcours.getConcurrentList().listDistancesEtBlason(ficheConcours.getParametre().getReglement(), true, depart);
 		
@@ -333,63 +380,80 @@ public class ShootingLine implements FicheConcoursListener {
 			cible.removeAll(simulationMode);
 		}
 		
+		DistancesEtBlason distancesEtBlasonEcludedConcurrent = null;
+		if(excludedConcurrent != null)
+			distancesEtBlasonEcludedConcurrent = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), excludedConcurrent);
+		
 		//pour chaque distance/blason 
 		for(DistancesEtBlason distancesEtBlason : lDB) {
 			//liste les archers pour le distance/blason
 			List<Concurrent> concurrents = ConcurrentList.sort(
 					ficheConcours.getConcurrentList().list(distancesEtBlason, depart, false),
 					ConcurrentList.SortCriteria.SORT_BY_CLUBS);
-
+			
 			//determine le nombre de concurrent pour la distance modéré avec les archers handicapé
 			// (un archer handicapé compte pour 2 personnes dans le placement sur pas de tir)
 			int nbConcurrent = ficheConcours.getConcurrentList().countArcher(distancesEtBlason, depart, true);
-			//calcul le nombre et la position des cibles qui vont être occupé pour la distance
-			int startCible = curCible;
-			int endCible = curCible + (int)Math.ceil((double)nbConcurrent / (double)nbTireurParCible) - 1;
+			int nbConcurrentReel = concurrents.size();
 			
-			//calcul le nombre de slot à occuper sur la dernière cible
-			int nbArcherOnFirstTarget = (currentTargetsTable.get(startCible - 1).getNbArcher() + currentTargetsTable.get(startCible - 1).getNbHandicap());
-			if(nbArcherOnFirstTarget > 0) {
-				int nbArcherOnLastTarget = nbConcurrent % nbTireurParCible;
-				int maxAvailableFreeTarget = nbTireurParCible - nbArcherOnFirstTarget;
-				int availableFreeTarget = currentTargetsTable.get(startCible - 1).getNbAvailableSlotsFor(distancesEtBlason);
-				if(availableFreeTarget > maxAvailableFreeTarget)
-					availableFreeTarget = maxAvailableFreeTarget;
-				nbArcherOnLastTarget = ((nbArcherOnLastTarget==0) ? nbTireurParCible : nbArcherOnLastTarget) - availableFreeTarget;
-				if(nbArcherOnLastTarget > 0)
-					endCible += 1;
+			if(distancesEtBlasonEcludedConcurrent != null && distancesEtBlason.haveSameDistancesAndTargetFace(distancesEtBlasonEcludedConcurrent)) {
+				if(concurrents.remove(excludedConcurrent)) {
+					nbConcurrent -= excludedConcurrent.isHandicape() ? 2 : 1;
+					nbConcurrentReel -= 1;
+				}
 			}
 			
-			if(endCible > ficheConcours.getParametre().getNbCible())
-				return false;
-			
-			if(nbConcurrent > concurrents.size()) { //si on a des archers handicapé dans le groupe
-				//extraire les archers handicapé pour les placer en premier
-				//afin d'éviter d'avoir des problèmes pour les placer
-				ArrayList<Concurrent> concurrentsHandicape = new ArrayList<Concurrent>();
-				for(Concurrent concurrent : concurrents) {
-					if(concurrent.isHandicape()) {
-						concurrentsHandicape.add(concurrent);
-					}
-				}
+			//if(nbConcurrent != 0) {
+				//calcul le nombre et la position des cibles qui vont être occupé pour la distance
+				int startCible = curCible;
+				int endCible = curCible + (int)Math.ceil((double)nbConcurrent / (double)nbTireurParCible) - 1;
 				
-				//place les archers handicapé
-				for(Concurrent concurrent : concurrentsHandicape) {
-					curCible = placementConcurrent(concurrent, startCible, curCible, endCible, nbTireurParCible, simulationMode);
-				}
-			}
-			
-			//place les archers valide
-			for(Concurrent concurrent : concurrents) {
-				if(!concurrent.isHandicape()) {
-					curCible = placementConcurrent(concurrent, startCible, curCible, endCible, nbTireurParCible, simulationMode);
-				}
-			}
-
-			//int occupation = targets.get(endCible - 1).getNbArcher() + targets.get(endCible - 1).getNbHandicap();
-			
-			//passe au bloc suivant
-			curCible = endCible;
+				//if(endCible >= startCible) {
+					//calcul le nombre de slot à occuper sur la dernière cible
+					int nbArcherOnFirstTarget = (currentTargetsTable.get(startCible - 1).getNbArcher() + currentTargetsTable.get(startCible - 1).getNbHandicap());
+					if(nbArcherOnFirstTarget > 0) {
+						int nbArcherOnLastTarget = nbConcurrent % nbTireurParCible;
+						int maxAvailableFreeTarget = nbTireurParCible - nbArcherOnFirstTarget;
+						int availableFreeTarget = currentTargetsTable.get(startCible - 1).getNbAvailableSlotsFor(distancesEtBlason);
+						if(availableFreeTarget > maxAvailableFreeTarget)
+							availableFreeTarget = maxAvailableFreeTarget;
+						nbArcherOnLastTarget = ((nbArcherOnLastTarget==0) ? nbTireurParCible : nbArcherOnLastTarget) - availableFreeTarget;
+						if(nbArcherOnLastTarget > 0)
+							endCible += 1;
+					}
+					
+					if(endCible > ficheConcours.getParametre().getNbCible())
+						return false;
+					
+					if(nbConcurrent > nbConcurrentReel) { //si on a des archers handicapé dans le groupe
+						//extraire les archers handicapé pour les placer en premier
+						//afin d'éviter d'avoir des problèmes pour les placer
+						ArrayList<Concurrent> concurrentsHandicape = new ArrayList<Concurrent>();
+						for(Concurrent concurrent : concurrents) {
+							if(concurrent.isHandicape()) {
+								concurrentsHandicape.add(concurrent);
+							}
+						}
+						
+						//place les archers handicapé
+						for(Concurrent concurrent : concurrentsHandicape) {
+							curCible = placementConcurrent(concurrent, startCible, curCible, endCible, nbTireurParCible, simulationMode);
+						}
+					}
+					
+					//place les archers valide
+					for(Concurrent concurrent : concurrents) {
+						if(!concurrent.isHandicape()) {
+							curCible = placementConcurrent(concurrent, startCible, curCible, endCible, nbTireurParCible, simulationMode);
+						}
+					}
+		
+					//int occupation = targets.get(endCible - 1).getNbArcher() + targets.get(endCible - 1).getNbHandicap();
+					
+					//passe au bloc suivant
+					curCible = endCible;
+			//	}
+			//}
 		}
 		
 		firePasDeTirChanged();
