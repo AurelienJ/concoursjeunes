@@ -102,6 +102,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,6 +120,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.PlainDocument;
 
@@ -149,6 +151,7 @@ import org.ajdeveloppement.concours.event.AutoCompleteDocumentEvent;
 import org.ajdeveloppement.concours.event.AutoCompleteDocumentListener;
 import org.ajdeveloppement.concours.localisable.CriteriaSetLibelle;
 import org.ajdeveloppement.concours.ui.ArcCompetitionFrame;
+import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
 import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXTitledSeparator;
 
@@ -631,110 +634,131 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 	 * remplit les champs de la boite de dialogue avec le modèle sous jacent
 	 */
 	private void completePanel() {
-		boolean isinit = concurrent.getInscription() != Concurrent.UNINIT && !unlock;
+		final boolean isinit = concurrent.getInscription() != Concurrent.UNINIT && !unlock;
 
-		jlDescription.setBackground(new Color(255, 255, 225));
-		
-		jbSelectionArcher.setEnabled(!isinit);
-		jbEditerArcher.setEnabled(isinit);
-		if (isinit)
-			jbEditerArcher.setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.lock", 16, 16)); //$NON-NLS-1$
-		else
-			jbEditerArcher.setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.open", 16, 16)); //$NON-NLS-1$
-
-		jtfNom.setEditable(!isinit);
-		jtfPrenom.setEditable(!isinit);
-		jtfLicence.setEditable(!isinit);
-		jcbHandicape.setEnabled(!isinit);
-		jcbSurclassement.setEnabled(!isinit);
-
-		for (Criterion key : ficheConcours.getParametre().getReglement().getListCriteria()) {
-			jcbCategorieTable.get(key).setEnabled(!isinit);
-		}
-
-		jtfClub.setEditable(!isinit);
-		jtfAgrement.setEditable(!isinit);
-
-		jbPrecedent.setEnabled(isinit);
-		jbSuivant.setEnabled(!isinit);
-
-		jlPlaceLibre.setText(showPlacesLibre());
-
-		if (jtfNom.getDocument() instanceof AutoCompleteDocument) {
-			((AutoCompleteDocument) jtfNom.getDocument()).setText(concurrent.getName());
-			((AutoCompleteDocument) jtfPrenom.getDocument()).setText(concurrent.getFirstName());
-			((AutoCompleteDocument) jtfLicence.getDocument()).setText(concurrent.getNumLicenceArcher());
-
-		} else {
-			jtfNom.setText(concurrent.getName());
-			jtfPrenom.setText(concurrent.getFirstName());
-			jtfLicence.setText(concurrent.getNumLicenceArcher());
-		}
-		jcbHandicape.setSelected(concurrent.isHandicape());
-		if (jtfClub.getDocument() instanceof AutoCompleteDocument) {
-			((AutoCompleteDocument) jtfClub.getDocument()).setText(entiteConcurrent.getVille());
-			((AutoCompleteDocument) jtfAgrement.getDocument()).setText(entiteConcurrent.getAgrement());
-		} else {
-			jtfClub.setText(entiteConcurrent.getVille());
-			jtfAgrement.setText(entiteConcurrent.getAgrement());
-		}
-		if (concurrent.getCriteriaSet() != null) {
-			for (Criterion key : ficheConcours.getParametre().getReglement().getListCriteria()) {
-				CriterionElement element = concurrent.getCriteriaSet().getCriterionElement(key);
-				if(element != null)
-					jcbCategorieTable.get(key).setSelectedItem(element);
+		Runnable fillPaneRunnable = new Runnable() {
+			
+			@Override
+			public void run() {
+				jlDescription.setBackground(new Color(255, 255, 225));
+				
+				jbSelectionArcher.setEnabled(!isinit);
+				jbEditerArcher.setEnabled(isinit);
+				if (isinit)
+					jbEditerArcher.setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.lock", 16, 16)); //$NON-NLS-1$
 				else
-					jcbCategorieTable.get(key).setSelectedIndex(0);
+					jbEditerArcher.setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.open", 16, 16)); //$NON-NLS-1$
+
+				jtfNom.setEditable(!isinit);
+				jtfPrenom.setEditable(!isinit);
+				jtfLicence.setEditable(!isinit);
+				jcbHandicape.setEnabled(!isinit);
+				jcbSurclassement.setEnabled(!isinit);
+
+				for (Criterion key : ficheConcours.getParametre().getReglement().getListCriteria()) {
+					jcbCategorieTable.get(key).setEnabled(!isinit);
+				}
+
+				jtfClub.setEditable(!isinit);
+				jtfAgrement.setEditable(!isinit);
+
+				jbPrecedent.setEnabled(isinit);
+				jbSuivant.setEnabled(!isinit);
+
+				jlPlaceLibre.setText(showPlacesLibre());
+
+				if (jtfNom.getDocument() instanceof AutoCompleteDocument) {
+					((AutoCompleteDocument) jtfNom.getDocument()).setText(concurrent.getName());
+					((AutoCompleteDocument) jtfPrenom.getDocument()).setText(concurrent.getFirstName());
+					((AutoCompleteDocument) jtfLicence.getDocument()).setText(concurrent.getNumLicenceArcher());
+
+				} else {
+					jtfNom.setText(concurrent.getName());
+					jtfPrenom.setText(concurrent.getFirstName());
+					jtfLicence.setText(concurrent.getNumLicenceArcher());
+				}
+				jcbHandicape.setSelected(concurrent.isHandicape());
+				if (jtfClub.getDocument() instanceof AutoCompleteDocument) {
+					((AutoCompleteDocument) jtfClub.getDocument()).setText(entiteConcurrent.getVille());
+					((AutoCompleteDocument) jtfAgrement.getDocument()).setText(entiteConcurrent.getAgrement());
+				} else {
+					jtfClub.setText(entiteConcurrent.getVille());
+					jtfAgrement.setText(entiteConcurrent.getAgrement());
+				}
+				if (concurrent.getCriteriaSet() != null) {
+					for (Criterion key : ficheConcours.getParametre().getReglement().getListCriteria()) {
+						CriterionElement element = concurrent.getCriteriaSet().getCriterionElement(key);
+						if(element != null)
+							jcbCategorieTable.get(key).setSelectedItem(element);
+						else
+							jcbCategorieTable.get(key).setSelectedIndex(0);
+					}
+				}
+				jcbSurclassement.setSelected(concurrent.isSurclassement());
+				
+				jcbBlason.removeAllItems();
+				CriteriaSet cs = readCriteriaSet();
+				List<DistancesEtBlason> tmpDB = ficheConcours.getParametre().getReglement().getDistancesEtBlasonFor(
+						cs.getFilteredCriteriaSet(
+								ficheConcours.getParametre().getReglement().getPlacementFilter()));
+				for(DistancesEtBlason db : tmpDB) {
+					jcbBlason.addItem(db.getTargetFace());
+				}
+				jcbBlason.setEnabled(!isinit && jcbBlason.getItemCount() > 1);
+				if(concurrent.getCriteriaSet() != null) {
+					DistancesEtBlason distancesEtBlason = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), concurrent);
+					if(distancesEtBlason != null)
+						jcbBlason.setSelectedItem(distancesEtBlason.getTargetFace());
+				}
+
+				jlValCible.setText("<html><span style=\"font-size: 14pt;\">"  //$NON-NLS-1$
+						+ TargetPosition.toString(concurrent.getCible(), concurrent.getPosition())
+						+ "</span></html>"); //$NON-NLS-1$
+				jlValDepart.setText("<html><span style=\"font-size: 14pt;\">"  //$NON-NLS-1$
+						+ (concurrent.getDepart()+1)
+						+ "</span></html>"); //$NON-NLS-1$
+
+				List<Integer> score = concurrent.getScore();
+				if (score.size() > 0) {
+					for (int i = 0; i < score.size(); i++) {
+						tfpd[i].setText(score.get(i) + ""); //$NON-NLS-1$
+					}
+				} else {
+					for (int i = 0; i < tfpd.length; i++) {
+						tfpd[i].setText("0"); //$NON-NLS-1$
+					}
+				}
+
+				for(int i = 0; i < tfDepartages.length; i++) {
+					if(i < concurrent.getDepartages().length)
+						tfDepartages[i].setText("" + concurrent.getDepartages()[i]); //$NON-NLS-1$
+					else
+						tfDepartages[i].setText("0"); //$NON-NLS-1$
+				}
+				
+				checkPhasesFinalPane(concurrent.getCriteriaSet());
+
+				if (concurrent.getInscription() == Concurrent.UNINIT)
+					jcbInscription.setSelectedIndex(0);
+				else
+					jcbInscription.setSelectedIndex(concurrent.getInscription());
 			}
-		}
-		jcbSurclassement.setSelected(concurrent.isSurclassement());
+		};
 		
-		jcbBlason.removeAllItems();
-		CriteriaSet cs = readCriteriaSet();
-		List<DistancesEtBlason> tmpDB = ficheConcours.getParametre().getReglement().getDistancesEtBlasonFor(
-				cs.getFilteredCriteriaSet(
-						ficheConcours.getParametre().getReglement().getPlacementFilter()));
-		for(DistancesEtBlason db : tmpDB) {
-			jcbBlason.addItem(db.getTargetFace());
-		}
-		jcbBlason.setEnabled(!isinit && jcbBlason.getItemCount() > 1);
-		if(concurrent.getCriteriaSet() != null) {
-			DistancesEtBlason distancesEtBlason = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), concurrent);
-			if(distancesEtBlason != null)
-				jcbBlason.setSelectedItem(distancesEtBlason.getTargetFace());
-		}
-
-		jlValCible.setText("<html><span style=\"font-size: 14pt;\">"  //$NON-NLS-1$
-				+ TargetPosition.toString(concurrent.getCible(), concurrent.getPosition())
-				+ "</span></html>"); //$NON-NLS-1$
-		jlValDepart.setText("<html><span style=\"font-size: 14pt;\">"  //$NON-NLS-1$
-				+ (concurrent.getDepart()+1)
-				+ "</span></html>"); //$NON-NLS-1$
-
-		List<Integer> score = concurrent.getScore();
-		if (score.size() > 0) {
-			for (int i = 0; i < score.size(); i++) {
-				tfpd[i].setText(score.get(i) + ""); //$NON-NLS-1$
-			}
-		} else {
-			for (int i = 0; i < tfpd.length; i++) {
-				tfpd[i].setText("0"); //$NON-NLS-1$
+		if(SwingUtilities.isEventDispatchThread())
+			fillPaneRunnable.run();
+		else {
+			try {
+				SwingUtilities.invokeAndWait(fillPaneRunnable);
+			} catch (InvocationTargetException | InterruptedException e) {
+				if(e instanceof InterruptedException)
+					Thread.currentThread().interrupt();
+				else {
+					DisplayableErrorHelper.displayException(e);
+					e.printStackTrace();
+				}
 			}
 		}
-
-		for(int i = 0; i < tfDepartages.length; i++) {
-			if(i < concurrent.getDepartages().length)
-				tfDepartages[i].setText("" + concurrent.getDepartages()[i]); //$NON-NLS-1$
-			else
-				tfDepartages[i].setText("0"); //$NON-NLS-1$
-		}
-		
-		checkPhasesFinalPane(concurrent.getCriteriaSet());
-
-		if (concurrent.getInscription() == Concurrent.UNINIT)
-			this.jcbInscription.setSelectedIndex(0);
-		else
-			this.jcbInscription.setSelectedIndex(concurrent.getInscription());
 	}
 	
 	private void initConcurrentListDialog() {
@@ -1032,16 +1056,21 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 			setConcurrent(findConcurrent);
 		}
 		
-		if (concurrent.haveHomonyme()) {
-			jlDescription.setText(localisation.getResourceString("concurrent.homonyme")); //$NON-NLS-1$
-			jlDescription.setBackground(Color.ORANGE);
-		} else if(concurrent.isSurclassement()) {
-			jlDescription.setText(localisation.getResourceString("concurrent.mustbeoverclassified")); //$NON-NLS-1$
-			jlDescription.setBackground(new Color(155, 155, 255));
-		} else {
-			jlDescription.setText(localisation.getResourceString("concurrent.description")); //$NON-NLS-1$
-			jlDescription.setBackground(new Color(255, 255, 225));
-		}
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (concurrent.haveHomonyme()) {
+					jlDescription.setText(localisation.getResourceString("concurrent.homonyme")); //$NON-NLS-1$
+					jlDescription.setBackground(Color.ORANGE);
+				} else if(concurrent.isSurclassement()) {
+					jlDescription.setText(localisation.getResourceString("concurrent.mustbeoverclassified")); //$NON-NLS-1$
+					jlDescription.setBackground(new Color(155, 155, 255));
+				} else {
+					jlDescription.setText(localisation.getResourceString("concurrent.description")); //$NON-NLS-1$
+					jlDescription.setBackground(new Color(255, 255, 225));
+				}
+			}
+		});
 
 		filter = e.getGenericArcher();
 	}
@@ -1069,8 +1098,14 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 
 		setConcurrent(newConcurrent);
 
-		jlDescription.setText(localisation.getResourceString("concurrent.noconcurrent")); //$NON-NLS-1$
-		jlDescription.setBackground(Color.ORANGE);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Raccord de méthode auto-généré
+				jlDescription.setText(localisation.getResourceString("concurrent.noconcurrent")); //$NON-NLS-1$
+				jlDescription.setBackground(Color.ORANGE);
+			}
+		});
 	}
 
 	@Override

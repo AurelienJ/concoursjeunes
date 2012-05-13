@@ -93,6 +93,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.Archer;
@@ -107,6 +108,8 @@ import org.ajdeveloppement.concours.builders.ConcurrentBuilder;
  *
  */
 public class ConcurrentManager {
+	
+	private static ReentrantLock sqlLock = new ReentrantLock();
 	/**
 	 * Retourne une liste d'archer en provenance de la base de données en fonction
 	 * des critères de recherche fournit en parametres
@@ -216,11 +219,16 @@ public class ConcurrentManager {
 			}
 			sql = sql.replaceFirst(" and ", "");
 
-			if(concurrentManagerProgress != null) {
-				try (ResultSet rs = stmt.executeQuery(String.format(sql, "count(*)"))) {
-					if(rs.first() && concurrentManagerProgress !=null)
-						concurrentManagerProgress.setConcurrentCount(rs.getInt(1));
+			sqlLock.lock();
+			try {
+				if(concurrentManagerProgress != null) {
+					try (ResultSet rs = stmt.executeQuery(String.format(sql, "count(*)"))) {
+						if(rs.first() && concurrentManagerProgress !=null)
+							concurrentManagerProgress.setConcurrentCount(rs.getInt(1));
+					}
 				}
+			} finally {
+				sqlLock.unlock();
 			}
 			
 			if(!orderfield.isEmpty())
@@ -229,15 +237,22 @@ public class ConcurrentManager {
 			if(nbmaxenreg > 0)
 				sql += " limit " + nbmaxenreg;
 			
-			try (ResultSet rs = stmt.executeQuery(String.format(sql, "ARCHERS.*,CONTACT.*"))) {
-				while(!ApplicationCore.dbConnection.isClosed() && rs.next()) {
-					Concurrent concurrent = ConcurrentBuilder.getConcurrent(rs, reglement);
-					if(concurrent != null) {
-						concurrents.add(concurrent);
-						if(concurrentManagerProgress != null)
-							concurrentManagerProgress.setCurrentConcurrent(concurrent);
+			sqlLock.lock();
+			try {
+				try (ResultSet rs = stmt.executeQuery(String.format(sql, "ARCHERS.*,CONTACT.*"))) {
+					while(!ApplicationCore.dbConnection.isClosed() && rs.next()) {
+						if(!Thread.currentThread().isInterrupted()) {
+							Concurrent concurrent = ConcurrentBuilder.getConcurrent(rs, reglement);
+							if(concurrent != null) {
+								concurrents.add(concurrent);
+								if(concurrentManagerProgress != null)
+									concurrentManagerProgress.setCurrentConcurrent(concurrent);
+							}
+						}
 					}
 				}
+			} finally {
+				sqlLock.unlock();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

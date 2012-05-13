@@ -11,7 +11,7 @@ telecharageable sur http://www.java.com.
 
 ArcCompetition fonctionne sous toutes les plateformes
 compatible jse 7.0 tel que MS Windows, GNU/Linux, Solaris, Mac OS X.
-Sous Mac OS X, seul les systèmes 10.5.2 et ultérieur sont supportés.
+Sous Mac OS X, seul les systèmes 10.7.3 et ultérieur sont supportés.
 
 ArcCompetition est distribué sous licence Open Source CeCILL.
 Certaines ressources tel que les images (voir le fichier ressources/image-licence.txt pour

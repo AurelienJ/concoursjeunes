@@ -89,6 +89,7 @@ package org.ajdeveloppement.concours;
 import java.util.List;
 
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -181,6 +182,8 @@ public class AutoCompleteDocument extends PlainDocument {
 		listeners.remove(AutoCompleteDocumentListener.class, autoCompleteDocumentListener);
 	}
 	
+	private Thread searchThread = null;
+	
 	/**
 	 * Invoqué a l'insertion du chaîne dans le champs de saisi
 	 * 
@@ -197,24 +200,43 @@ public class AutoCompleteDocument extends PlainDocument {
 		super.insertString(offs, str, a);
 		//this.
 
-		switch(typeSearch) {
-			case NAME_SEARCH:
-				insertConcurrentWithName(offs + str.length(), false);
-				break;
-			case NUMLICENCE_SEARCH:
-				insertConcurrentWithNumLicence(offs + str.length(), false);
-				break;
-			case FIRSTNAME_SEARCH:
-				insertConcurrentWithFirstName(offs + str.length(), false);
-				break;
-			case CLUB_SEARCH:
-				insertEntiteWithClubName(offs + str.length(), false);
-				break;
-			case AGREMENT_SEARCH:
-				insertEntiteWithAgrement(offs + str.length(), false);
-				break;
-		}
+		if(searchThread != null)
+			searchThread.interrupt();
 		
+		//searchThread.is
+		
+		final int insertOffset = offs;
+		final String insertValue = str;
+		
+		searchThread = new Thread() {
+			@Override
+			public void run() {
+				try {
+					switch(typeSearch) {
+						case NAME_SEARCH:
+							insertConcurrentWithName(insertOffset + insertValue.length(), false);
+							break;
+						case NUMLICENCE_SEARCH:
+							insertConcurrentWithNumLicence(insertOffset + insertValue.length(), false);
+							break;
+						case FIRSTNAME_SEARCH:
+							insertConcurrentWithFirstName(insertOffset + insertValue.length(), false);
+							break;
+						case CLUB_SEARCH:
+							insertEntiteWithClubName(insertOffset + insertValue.length(), false);
+							break;
+						case AGREMENT_SEARCH:
+							insertEntiteWithAgrement(insertOffset + insertValue.length(), false);
+							break;
+					}
+				} catch (BadLocationException e) {
+					// TODO Bloc catch auto-généré
+					e.printStackTrace();
+				}
+			}
+		};
+		
+		searchThread.start();
 	}
 	
 	/**
@@ -309,34 +331,51 @@ public class AutoCompleteDocument extends PlainDocument {
 		searchArcher.setName(searchString.toUpperCase() + "%"); //$NON-NLS-1$
 		
 		if(getLength() > 0) {
-			List<Concurrent> concurrents = ConcurrentManager.getArchersInDatabase(searchArcher, context.getReglement(), "NAME, FIRSTNAME", 10); //$NON-NLS-1$
-			if(concurrents.size() > 0) {
-				context.setConcurrent(concurrents.get(0));
-				context.setAutocompleteLicence(false);
-			} else {
-				context.setConcurrent(null);
-				context.setAutocompleteLicence(true);
+			List<Concurrent> concurrents = ConcurrentManager.getArchersInDatabase(searchArcher, context.getReglement(), "NAME, FIRSTNAME", 1); //$NON-NLS-1$
+			if(!Thread.currentThread().isInterrupted()) {
+				if(concurrents.size() > 0) {
+					context.setConcurrent(concurrents.get(0));
+					context.setAutocompleteLicence(false);
+				} else {
+					context.setConcurrent(null);
+					context.setAutocompleteLicence(true);
+				}
 			}
 			
 		} else {
 			context.setConcurrent(null);
 			context.setAutocompleteLicence(true);
 		}
-
-		//aucun concurrent trouvé ou concurrent trouvé ne correspondant pas à la recherche
-		if(context.getConcurrent() == null || (strict && !context.getConcurrent().getName().equals(searchString))) {
-			if(strict && context.getConcurrent() != null)
-				context.setConcurrent(null);
-
-			fireConcurrentNotFound();
-
-		} else {
-			super.remove(0, getLength());
-			super.insertString(0, context.getConcurrent().getName(), null);
-			textField.setCaretPosition(context.getConcurrent().getName().length());
-			textField.moveCaretPosition(caretpos);
+		
+		if(!Thread.currentThread().isInterrupted()) {
+			//aucun concurrent trouvé ou concurrent trouvé ne correspondant pas à la recherche
+			if(context.getConcurrent() == null || (strict && !context.getConcurrent().getName().equals(searchString))) {
+				if(strict && context.getConcurrent() != null)
+					context.setConcurrent(null);
+	
+				fireConcurrentNotFound();
+			} else {
+				
+				final int caretPosition = caretpos;
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Raccord de méthode auto-généré
+						try {
+							AutoCompleteDocument.super.remove(0, getLength());
+							AutoCompleteDocument.super.insertString(0, context.getConcurrent().getName(), null);
+							textField.setCaretPosition(context.getConcurrent().getName().length());
+							textField.moveCaretPosition(caretPosition);
+						} catch (BadLocationException e) {
+							// TODO Bloc catch auto-généré
+							e.printStackTrace();
+						}
+					}
+				});
 			
-			fireConcurrendFinded(context.getConcurrent(), searchArcher);
+				fireConcurrendFinded(context.getConcurrent(), searchArcher);
+			}
 		}
 	}
 	
@@ -384,10 +423,22 @@ public class AutoCompleteDocument extends PlainDocument {
 		} else {
 			context.setConcurrent(tempConcurrent);
 			
-			super.remove(0, getLength());
-			super.insertString(0, context.getConcurrent().getFirstName(), null);
-			textField.setCaretPosition(context.getConcurrent().getFirstName().length());
-			textField.moveCaretPosition(caretpos);
+			final int caretPosition = caretpos;
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Raccord de méthode auto-généré
+					try {
+						AutoCompleteDocument.super.remove(0, getLength());
+						AutoCompleteDocument.super.insertString(0, context.getConcurrent().getFirstName(), null);
+						textField.setCaretPosition(context.getConcurrent().getFirstName().length());
+						textField.moveCaretPosition(caretPosition);
+					} catch (BadLocationException e) {
+						e.printStackTrace();
+					}
+				}
+			});
 			
 			fireConcurrendFinded(context.getConcurrent(), searchArcher);
 		}
@@ -434,10 +485,21 @@ public class AutoCompleteDocument extends PlainDocument {
 			context.setAutocompleteNom(true);
 			context.setAutocompleteLicence(true);
 			
-			super.remove(0, getLength());
-			super.insertString(0, context.getConcurrent().getNumLicenceArcher(), null);
-			textField.setCaretPosition(context.getConcurrent().getNumLicenceArcher().length());
-			textField.moveCaretPosition(caretpos);
+			final int caretPosition = caretpos;
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					// TODO Raccord de méthode auto-généré
+					try {
+						AutoCompleteDocument.super.remove(0, getLength());
+						AutoCompleteDocument.super.insertString(0, context.getConcurrent().getNumLicenceArcher(), null);
+						textField.setCaretPosition(context.getConcurrent().getNumLicenceArcher().length());
+						textField.moveCaretPosition(caretPosition);
+					} catch (BadLocationException e) {
+						e.printStackTrace();
+					}
+				}
+			});
 			
 			fireConcurrendFinded(context.getConcurrent(), searchArcher);
 		}
@@ -486,10 +548,22 @@ public class AutoCompleteDocument extends PlainDocument {
 			fireEntiteNotFound();
 
 		} else {
-			super.remove(0, getLength());
-			super.insertString(0, context.getEntite().getVille(), null);
-			textField.setCaretPosition(context.getEntite().getVille().length());
-			textField.moveCaretPosition(caretpos);
+			final int caretPosition = caretpos;
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Raccord de méthode auto-généré
+					try {
+						AutoCompleteDocument.super.remove(0, getLength());
+						AutoCompleteDocument.super.insertString(0, context.getEntite().getVille(), null);
+						textField.setCaretPosition(context.getEntite().getVille().length());
+						textField.moveCaretPosition(caretPosition);
+					} catch (BadLocationException e) {
+						e.printStackTrace();
+					}
+				}
+			});
 			
 			fireEntiteFinded(context.getEntite(), searchEntite);
 		}
@@ -540,11 +614,22 @@ public class AutoCompleteDocument extends PlainDocument {
 			context.setAutocompleteClub(true);
 			context.setAutocompleteAgrement(true);
 			
-			super.remove(0, getLength());
-			super.insertString(0, context.getEntite().getAgrement(), null);
-			textField.setCaretPosition(context.getEntite().getAgrement().length());
-			textField.moveCaretPosition(caretpos);
-			
+			final int caretPosition = caretpos;
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					// TODO Raccord de méthode auto-généré
+					try {
+						AutoCompleteDocument.super.remove(0, getLength());
+						AutoCompleteDocument.super.insertString(0, context.getEntite().getAgrement(), null);
+						textField.setCaretPosition(context.getEntite().getAgrement().length());
+						textField.moveCaretPosition(caretPosition);
+					} catch (BadLocationException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+
 			fireEntiteFinded(context.getEntite(), searchEntite);
 		}
 	}
