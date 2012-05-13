@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.7.0_147-icedtea" class="java.beans.XMLDecoder">
+<java version="1.7.0_03" class="java.beans.XMLDecoder">
  <object class="java.util.ArrayList">
   <void method="add">
    <object class="org.ajdeveloppement.updater.Version">
@@ -40,6 +40,28 @@
     </void>
     <void property="version">
      <string>0.99.01-1</string>
+    </void>
+   </object>
+  </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>arccompetition</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Amelioration des performance d&apos;autocomplément à l&apos;ajout d&apos;un archer
+  * Mise à jour du moteur de base de données H2</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1336923112216</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>0.99.02-1</string>
     </void>
    </object>
   </void>

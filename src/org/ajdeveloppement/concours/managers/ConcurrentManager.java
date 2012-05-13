@@ -240,7 +240,7 @@ public class ConcurrentManager {
 			sqlLock.lock();
 			try {
 				try (ResultSet rs = stmt.executeQuery(String.format(sql, "ARCHERS.*,CONTACT.*"))) {
-					while(!ApplicationCore.dbConnection.isClosed() && rs.next()) {
+					while(!ApplicationCore.dbConnection.isClosed() && !rs.isClosed() && rs.next()) {
 						if(!Thread.currentThread().isInterrupted()) {
 							Concurrent concurrent = ConcurrentBuilder.getConcurrent(rs, reglement);
 							if(concurrent != null) {
