@@ -115,4 +115,8 @@ public class CivilityCache extends AbstractCache<UUID, Civility> {
 		put(civility.getIdCivility(), civility);
 	}
 
+	public void addOnce(Civility civility) {
+		addOnce(civility.getIdCivility(), civility);
+	}
+
 }

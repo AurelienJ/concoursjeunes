@@ -95,13 +95,12 @@ import java.util.UUID;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlTable;
 import org.ajdeveloppement.commons.persistence.sql.SqlUnmappedFields;
 import org.ajdeveloppement.commons.sql.SqlManager;
@@ -121,15 +120,7 @@ import org.ajdeveloppement.concours.managers.ConcurrentManager;
 @SqlUnmappedFields(fields={"ID_CONTACT","SEXE","CATEGORIE","NIVEAU","ARC"})
 public class Archer extends Contact {
 	private static CategoryContact archerCategoryContact = null;
-	private static StoreHelper<Archer> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<Archer>(new SqlStoreHandler<Archer>(
-					ApplicationCore.dbConnection, Archer.class));
-		} catch (SQLException e) {
-			throw new UncheckedException(e);
-		}
-	}
+	private static StoreHelper<Archer> helper = SqlStoreHelperFactory.getStoreHelper(Archer.class);
 
 	@SqlField(name="NUMLICENCEARCHER")
 	private String numLicenceArcher;

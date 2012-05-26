@@ -88,7 +88,6 @@
  */
 package org.ajdeveloppement.concours;
 
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,7 +97,6 @@ import java.util.UUID;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
@@ -107,7 +105,7 @@ import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlTable;
 import org.ajdeveloppement.concours.cache.CategoryContactCache;
 import org.ajdeveloppement.concours.helpers.LibelleHelper;
@@ -135,15 +133,7 @@ public class CategoryContact implements ObjectPersistence{
 		}
 	}
 	
-	private static StoreHelper<CategoryContact> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<CategoryContact>(new SqlStoreHandler<CategoryContact>(
-					ApplicationCore.dbConnection, CategoryContact.class));
-		} catch (SQLException e) {
-			throw new UncheckedException(e);
-		}
-	}
+	private static StoreHelper<CategoryContact> helper = SqlStoreHelperFactory.getStoreHelper(CategoryContact.class);;
 	
 	@SqlField(name="NUM_CATEGORIE_CONTACT")
 	private int numCategoryContact = 0;
@@ -213,12 +203,12 @@ public class CategoryContact implements ObjectPersistence{
 
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 	
 	/**

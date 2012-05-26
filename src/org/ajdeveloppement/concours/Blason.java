@@ -102,7 +102,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
@@ -111,7 +110,7 @@ import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlTable;
 import org.ajdeveloppement.concours.builders.AncragesMapBuilder;
 import org.ajdeveloppement.concours.builders.BlasonBuilder;
@@ -148,14 +147,7 @@ public class Blason implements ObjectPersistence {
 	//@XmlJavaTypeAdapter(JAXBMapAdapter.class)
 	private Map<Integer, Ancrage> ancrages;
 	
-	private static StoreHelper<Blason> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<Blason>(new SqlStoreHandler<Blason>(ApplicationCore.dbConnection, Blason.class));
-		} catch (SQLException e) {
-			throw new UncheckedException(e);
-		}
-	}
+	private static StoreHelper<Blason> helper = SqlStoreHelperFactory.getStoreHelper(Blason.class);
 	
 	public Blason() {
 	}
@@ -462,12 +454,12 @@ public class Blason implements ObjectPersistence {
 	
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 	
 	/**

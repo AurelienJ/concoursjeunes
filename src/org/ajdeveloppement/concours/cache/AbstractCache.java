@@ -29,6 +29,18 @@ public abstract class AbstractCache<UID, CT> {
 	public abstract void add(CT object);
 	
 	/**
+	 * Test par l'id si l'enregistrement n'a pas déjà été mis en cache et le met en cache
+	 * si ce n'est pas le cas
+	 * 
+	 * @param uniqueObjectId l'id de l'instance à controler
+	 * @param object l'instance à ajouter au cache
+	 */
+	public void addOnce(UID uniqueObjectId, CT object) {
+		if(!containsKey(uniqueObjectId))
+			add(object);
+	}
+	
+	/**
 	 * Ajoute une instance au cache
 	 * 
 	 * @param uniqueObjectId la clé unique identifiant l'instance

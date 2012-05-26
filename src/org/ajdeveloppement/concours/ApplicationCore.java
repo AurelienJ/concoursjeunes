@@ -113,6 +113,7 @@ import javax.swing.event.EventListenerList;
 
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.io.FileUtils;
+import org.ajdeveloppement.commons.persistence.sql.SqlPersistenceProperties;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
 import org.ajdeveloppement.commons.security.SecurityImporter;
 import org.ajdeveloppement.commons.sql.SqlManager;
@@ -274,6 +275,8 @@ public class ApplicationCore {
 		dbConnection = DriverManager.getConnection(staticParameters.getResourceString("database.url", userRessources.getBasePath()), //$NON-NLS-1$
 				staticParameters.getResourceString("database.user"),   //$NON-NLS-1$
 				staticParameters.getResourceString("database.password"));   //$NON-NLS-1$
+		
+		SqlPersistenceProperties.sqlConnection = dbConnection;
 	}
 	
 	private void checkUpdateDatabase() throws SQLException {

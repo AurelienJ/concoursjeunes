@@ -104,7 +104,6 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
@@ -113,7 +112,7 @@ import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlTable;
 import org.ajdeveloppement.commons.sql.SqlManager;
 import org.ajdeveloppement.concours.managers.CivilityManager;
@@ -131,15 +130,7 @@ import org.ajdeveloppement.concours.managers.EntiteManager;
 public class Contact implements ObjectPersistence, Cloneable {
 	
 	// [start] Helper persistence
-	private static StoreHelper<Contact> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<Contact>(new SqlStoreHandler<Contact>(
-					ApplicationCore.dbConnection, Contact.class));
-		} catch (SQLException e) {
-			throw new UncheckedException(e);
-		}
-	}
+	private static StoreHelper<Contact> helper = SqlStoreHelperFactory.getStoreHelper(Contact.class);
 	// [end]
 	
 	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
@@ -512,12 +503,12 @@ public class Contact implements ObjectPersistence, Cloneable {
 
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 	
 	/**

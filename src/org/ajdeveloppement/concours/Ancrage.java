@@ -88,14 +88,11 @@
  */
 package org.ajdeveloppement.concours;
 
-import java.sql.SQLException;
-
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
@@ -104,7 +101,7 @@ import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlTable;
 
 /**
@@ -117,14 +114,7 @@ import org.ajdeveloppement.commons.persistence.sql.SqlTable;
 @SqlTable(name="ANCRAGES_BLASONS")
 @SqlPrimaryKey(fields={"NUMBLASON","EMPLACEMENT"})
 public class Ancrage implements ObjectPersistence {
-	private static StoreHelper<Ancrage> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<Ancrage>(new SqlStoreHandler<Ancrage>(ApplicationCore.dbConnection, Ancrage.class));
-		} catch (SQLException e) {
-			throw new UncheckedException(e);
-		}
-	}
+	private static StoreHelper<Ancrage> helper = SqlStoreHelperFactory.getStoreHelper(Ancrage.class);
 	
 	public static final int POSITION_A = 0;
 	public static final int POSITION_B = 1;
@@ -260,12 +250,12 @@ public class Ancrage implements ObjectPersistence {
 	
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 	
 	@Override

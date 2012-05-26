@@ -88,7 +88,6 @@
  */
 package org.ajdeveloppement.concours;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 import javax.xml.bind.Marshaller;
@@ -99,7 +98,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
@@ -107,7 +105,7 @@ import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlTable;
 import org.ajdeveloppement.concours.cache.CivilityCache;
 
@@ -121,15 +119,7 @@ import org.ajdeveloppement.concours.cache.CivilityCache;
 @SqlTable(name="CIVILITY")
 @SqlPrimaryKey(fields="ID_CIVILITY")
 public class Civility implements ObjectPersistence {
-	private static StoreHelper<Civility> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<Civility>(new SqlStoreHandler<Civility>(
-					ApplicationCore.dbConnection, Civility.class));
-		} catch (SQLException e) {
-			throw new UncheckedException(e);
-		}
-	}
+	private static StoreHelper<Civility> helper = SqlStoreHelperFactory.getStoreHelper(Civility.class);;
 	
 	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
 	@XmlID
@@ -242,12 +232,12 @@ public class Civility implements ObjectPersistence {
 
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 	
 	/**
@@ -257,17 +247,14 @@ public class Civility implements ObjectPersistence {
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			if(idCivility == null)
 				idCivility = UUID.randomUUID();
 			
 			helper.save(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
-			
-			if(!CivilityCache.getInstance().containsKey(idCivility))
-				CivilityCache.getInstance().add(this);
+			Session.addThreatyObject(session, this);
+			CivilityCache.getInstance().addOnce(this);
 		}
 	}
 	
@@ -278,12 +265,10 @@ public class Civility implements ObjectPersistence {
 	 */
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(idCivility != null && (session == null || !session.contains(this))) {
+		if(idCivility != null && Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
-			
+			Session.addThreatyObject(session, this);
 			CivilityCache.getInstance().remove(idCivility);
 		}
 	}

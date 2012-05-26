@@ -494,7 +494,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 		jcbNombreTireurParCible.setSelectedItem(new RhytmeTir(null, parametre.getNbTireur()));
 		
 		jtfNombreDepart.setText("" + parametre.getNbDepart()); //$NON-NLS-1$
-		jlArbitres.setListData(parametre.getJudges().toArray());
+		jlArbitres.setListData(parametre.getJudges().toArray(new Judge[parametre.getJudges().size()]));
 	}
 
 	@Override
