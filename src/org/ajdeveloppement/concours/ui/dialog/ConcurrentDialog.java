@@ -942,7 +942,6 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 		
 		if(occupationCibles == null)
 			return localisation.getResourceString("concurrent.placelibre.placementfail"); //$NON-NLS-1$
-
 		List<DistancesEtBlason> tableCorresp = ficheConcours.getParametre().getReglement().getListDistancesEtBlason();
 
 		// en extrait les jeux de critères de placement

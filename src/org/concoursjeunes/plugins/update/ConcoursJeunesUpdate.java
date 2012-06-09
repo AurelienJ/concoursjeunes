@@ -149,7 +149,7 @@ public class ConcoursJeunesUpdate extends Thread implements AjUpdaterListener, M
 		DOWNLODED
 	}
 	private Status currentStatus = Status.NONE;
-
+	
 	public ConcoursJeunesUpdate() {
 
 	}
@@ -313,8 +313,8 @@ public class ConcoursJeunesUpdate extends Thread implements AjUpdaterListener, M
 					if(OS.isMacOSX()) {
 						//Sous Mac OS X, l'elevation de privilege est effectué en java
 						//à l'aide d'une librairie jni
+						command[0] = "./" + command[0];
 						process = PrivilegedRuntime.getRuntime().exec(command);
-						
 					} else {
 						//sur les systèmes Windows et Linux, invoque le programme "concoursjeunes-applyupdate"
 						//qui s'occupe d'élever les priviléges utilisateur si nécessaire.
