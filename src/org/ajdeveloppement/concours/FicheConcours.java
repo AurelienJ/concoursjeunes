@@ -86,7 +86,7 @@
  */
 package org.ajdeveloppement.concours;
 
-import static org.ajdeveloppement.concours.ApplicationCore.staticParameters;
+import static org.ajdeveloppement.concours.ApplicationCore.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -115,10 +115,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.ajdeveloppement.commons.AJTemplate;
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.XmlUtils;
 import org.ajdeveloppement.commons.io.XMLSerializer;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.builders.EquipeListBuilder;
 import org.ajdeveloppement.concours.event.FicheConcoursEvent;
 import org.ajdeveloppement.concours.event.FicheConcoursListener;
@@ -167,10 +165,18 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 	private transient AJTemplate templateClassementHTML;
 	private transient AJTemplate templateClassementEquipeHTML;
 
+	/**
+	 * Initialise une nouvelle fiche concours
+	 */
 	public FicheConcours() { }
 	
 	/**
-	 * Initialise une nouvelle fiche concours
+	 * Initialise une nouvelle fiche concours associé à un profile
+	 * 
+	 * @param profile le profile de configuration associé au concours
+	 * @throws UnsupportedEncodingException 
+	 * @throws FileNotFoundException 
+	 * @throws IOException 
 	 */
 	public FicheConcours(Profile profile) 
 			throws UnsupportedEncodingException, FileNotFoundException, IOException {
@@ -180,7 +186,11 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 	/**
 	 * Initialise une nouvelle fiche concours avec les paramètres fournit
 	 * 
+	 * @param profile le profile de configuration associé au concours
 	 * @param parametre les paramètres du concours ou null si laisser ceux par défaut
+	 * @throws UnsupportedEncodingException 
+	 * @throws FileNotFoundException 
+	 * @throws IOException 
 	 */
 	public FicheConcours(Profile profile, Parametre parametre)
 			throws UnsupportedEncodingException, FileNotFoundException, IOException {
@@ -301,11 +311,9 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 	/**
 	 * Ajoute un concurrent au concours
 	 * 
-	 * TODO ajouter une verification que le jeux de critère du concurrent est valide sur le concours
-	 * 
 	 * @param concurrent le concurrent à ajouter au concours
+	 * @param depart le départ sur lequel ajouter le concurrent
 	 * 
-	 * @throws IOException
 	 * @throws FicheConcoursException
 	 */
 	public void addConcurrent(Concurrent concurrent, int depart) throws FicheConcoursException {
@@ -381,7 +389,9 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 	/**
 	 * Retourne le pas de tir du départ donné en paramètre
 	 * 
-	 * @return pasDeTir le pas de tir du départ en paramètre
+	 * @param depart le départ pour lequel retourner le pas de tir
+	 * 
+	 * @return le pas de tir du départ en paramètre
 	 */
 	public ShootingLine getPasDeTir(int depart) {
 		if(pasDeTir != null)
@@ -407,6 +417,8 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 	/**
 	 * sauvegarde de la fiche concours
 	 * 
+	 * @throws IOException 
+	 * @throws JAXBException 
 	 */
 	public void save() throws IOException,JAXBException {
 		if(profile != null) {
@@ -506,18 +518,13 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 		if(cacheEntite.equals(entite))
 			contact.setEntite(cacheEntite.get(cacheEntite.indexOf(entite)));//substitution d'instance
 		else {
-			try {
-				List<Entite> entitesInDatabase = EntiteManager.getEntitesInDatabase(entite, "");//$NON-NLS-1$
-				if(entitesInDatabase != null && entitesInDatabase.size() > 0) {
-					entite = entitesInDatabase.get(0);
-					contact.setEntite(entite);
-					
-					cacheEntite.add(entite);
-				}
-			} catch (ObjectPersistenceException e) {
-				throw new UncheckedException(e);
-			} 
-			
+			List<Entite> entitesInDatabase = EntiteManager.getEntitesInDatabase(entite);
+			if(entitesInDatabase != null && entitesInDatabase.size() > 0) {
+				entite = entitesInDatabase.get(0);
+				contact.setEntite(entite);
+				
+				cacheEntite.add(entite);
+			}
 		}
 	}
 
@@ -536,19 +543,19 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 		}
 	}
 
-	/**
-	 * Classement des candidats
-	 * 
-	 * @deprecated utiliser de préférence {@link ConcurrentList#classement()}
-	 * 
-	 * @return map contenant une liste de concurrent trié par jeux de critère de classement
-	 */
-	@Deprecated
-	public Map<CriteriaSet, List<Concurrent>> classement() {
-		if(concurrentList != null)
-			return concurrentList.classement().getClassementPhaseQualificative();
-		return null;
-	}
+//	/**
+//	 * Classement des candidats
+//	 * 
+//	 * @deprecated utiliser de préférence {@link ConcurrentList#classement()}
+//	 * 
+//	 * @return map contenant une liste de concurrent trié par jeux de critère de classement
+//	 */
+//	@Deprecated
+//	public Map<CriteriaSet, List<Concurrent>> classement() {
+//		if(concurrentList != null)
+//			return concurrentList.classement().getClassementPhaseQualificative();
+//		return null;
+//	}
 
 	/**
 	 * Chargement des template de sortie XML

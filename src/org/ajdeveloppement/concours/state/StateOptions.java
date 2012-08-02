@@ -101,6 +101,9 @@ public class StateOptions {
 	private AjResourcesReader langReader;
 	private Profile profile;
 	
+	/**
+	 * 
+	 */
 	public StateOptions() {
 	}
 	

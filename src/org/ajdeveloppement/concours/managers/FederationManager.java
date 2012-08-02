@@ -88,16 +88,11 @@
  */
 package org.ajdeveloppement.concours.managers;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Federation;
-import org.ajdeveloppement.concours.builders.FederationBuilder;
+import org.ajdeveloppement.concours.sqltable.FederationTable;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -111,21 +106,6 @@ public class FederationManager {
 	 * @return la liste des fédérations disponible
 	 */
 	public static List<Federation> getAvailableFederations() {
-		List<Federation> federations = new ArrayList<Federation>();
-		String sql = "select NUMFEDERATION from FEDERATION order by SIGLEFEDERATION"; //$NON-NLS-1$
-		
-		try {
-			Statement stmt = ApplicationCore.dbConnection.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			while(rs.next()) {
-				federations.add(FederationBuilder.getFederation(rs.getInt("NUMFEDERATION"))); //$NON-NLS-1$
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ObjectPersistenceException e) {
-			e.printStackTrace();
-		}
-		
-		return federations;
+		return QResults.from(Federation.class).orderBy(FederationTable.SIGLEFEDERATION).asList();
 	}
 }

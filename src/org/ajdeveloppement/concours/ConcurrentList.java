@@ -110,6 +110,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConcurrentList {
 	
+	/**
+	 * Liste des tri possible
+	 * 
+	 * @author Aurélien JEOFFRAY
+	 *
+	 */
 	public enum SortCriteria {
 		/**
 		 * Trie les archers par nom
@@ -134,7 +140,9 @@ public class ConcurrentList {
 	@XmlTransient
 	private Parametre parametre;
 
-	//Constructeur Obligatoire pour la sérialisation XML
+	/**
+	 * Constructeur Obligatoire pour la sérialisation XML
+	 */
 	public ConcurrentList() { }
 
 	/**
@@ -429,8 +437,6 @@ public class ConcurrentList {
 		
 		classement.setClassementPhaseQualificative(concurrentsClasse);
 		
-		
-
 		return classement;
 	}
 	
@@ -564,6 +570,11 @@ public class ConcurrentList {
 		return alCie.toArray(new Entite[number_of_element]);
 	}
 	
+	/**
+	 * Liste des catégories de classement utilisé sur la compétition
+	 * 
+	 * @return la liste des catégories de classement utilisé sur la compétition
+	 */
 	public List<CriteriaSet> listCriteriaSet() {
 		List<CriteriaSet> criteriaSets = new ArrayList<CriteriaSet>();
 		CriteriaSet[] catList = CriteriaSet.listCriteriaSet(parametre.getReglement(), parametre.getReglement().getClassementFilter());

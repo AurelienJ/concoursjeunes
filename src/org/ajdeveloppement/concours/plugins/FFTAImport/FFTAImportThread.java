@@ -141,6 +141,7 @@ public class FFTAImportThread extends Thread {
 	private String fftalogpath = ""; //$NON-NLS-1$
 
 	/**
+	 * @param localisation 
 	 * 
 	 * 
 	 */

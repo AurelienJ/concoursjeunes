@@ -104,13 +104,14 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlForeignKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
-import org.ajdeveloppement.concours.cache.CriterionCache;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.builders.CriterionBuilder;
 
 /**
  * Caractéristique d'un critère de distinction
@@ -118,7 +119,7 @@ import org.ajdeveloppement.concours.cache.CriterionCache;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CRITERE")
+@SqlTable(name="CRITERE",loadBuilder=CriterionBuilder.class)
 @SqlPrimaryKey(fields={"CODECRITERE","NUMREGLEMENT"})
 public class Criterion implements ObjectPersistence, Cloneable {
 	/**
@@ -164,14 +165,7 @@ public class Criterion implements ObjectPersistence, Cloneable {
     @SqlForeignKey(mappedTo="NUMREGLEMENT")
     private Reglement reglement;
     
-    private static StoreHelper<Criterion> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<Criterion>(new SqlStoreHandler<Criterion>(ApplicationCore.dbConnection, Criterion.class));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+    private static StoreHelper<Criterion> helper = SqlStoreHelperFactory.getStoreHelper(Criterion.class);
     
     public Criterion() {
         
@@ -479,27 +473,26 @@ public class Criterion implements ObjectPersistence, Cloneable {
 	
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 
 	/**
 	 * Sauvegarde le critère en base.
 	 * 
-	 * @see org.ajdeveloppement.commons.sql.SqlPersistance#save()
+	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(Session)
 	 */
 	@SuppressWarnings("nls")
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.save(this); //$NON-NLS-1$
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 	
 			try {
 				Statement stmt = ApplicationCore.dbConnection.createStatement();
@@ -526,24 +519,23 @@ public class Criterion implements ObjectPersistence, Cloneable {
 				criterionElement.save(session);
 			}
 			
-			if(!CriterionCache.getInstance().containsKey(new CriterionCache.CriterionPK(code, reglement)))
-				CriterionCache.getInstance().add(this);
+			Cache.put(this);
 		}
 	}
 	
 	/** 
 	 * Supprime le critère de la base.
 	 * 
-	 * @see org.ajdeveloppement.commons.sql.SqlPersistance#delete()
+	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(Session)
 	 */
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.delete(this);
-			CriterionCache.getInstance().remove(new CriterionCache.CriterionPK(code, reglement));
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Cache.remove(this);
+
+			Session.addThreatyObject(session, this);
 		}
 	}
 	

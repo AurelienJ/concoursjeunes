@@ -203,7 +203,12 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 	private ReglementManager reglementManager;
 	private Reglement selectedReglement;
 	private boolean selection		= false;
+	
 	/**
+	 * Construit une nouvelle boite de dialogue de gestion des réglements
+	 * 
+	 * @param parentframe la fenetre parente de la boite de dialogue
+	 * @param profile le profile associé.
 	 * 
 	 */
 	public ReglementManagerDialog(JFrame parentframe, Profile profile) {
@@ -424,7 +429,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 	}
 	
 	private void showReglementDialog() {
-		ReglementDialog reglementDialog = new ReglementDialog(this, (Reglement)ajlReglements.getSelectedValue(), localisation);
+		ReglementDialog reglementDialog = new ReglementDialog(this, ajlReglements.getSelectedValue(), localisation);
 		if(reglementDialog.showReglementDialog() == DefaultDialogReturn.OK) {
 			Reglement modifiedReglement = reglementDialog.getReglement();
 			try {
@@ -458,23 +463,23 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 				}
 			} else if(ajlCategories.getSelectedIndex() == 0) {
 				jbEditFederation.setEnabled(true);
-				jbDeleteFederation.setEnabled(reglementManager.getReglementsForFederation((Federation)ajlFederations.getSelectedValue()).size() == 0);
+				jbDeleteFederation.setEnabled(reglementManager.getReglementsForFederation(ajlFederations.getSelectedValue()).size() == 0);
 				ajlReglements.clear();
-				for(Reglement reglement : reglementManager.getReglementsForFederation((Federation)ajlFederations.getSelectedValue())) {
+				for(Reglement reglement : reglementManager.getReglementsForFederation(ajlFederations.getSelectedValue())) {
 					ajlReglements.add(reglement);
 				}
 			} else {
 				jbEditFederation.setEnabled(true);
-				jbDeleteFederation.setEnabled(reglementManager.getReglementsForFederation((Federation)ajlFederations.getSelectedValue()).size() == 0);
+				jbDeleteFederation.setEnabled(reglementManager.getReglementsForFederation(ajlFederations.getSelectedValue()).size() == 0);
 				ajlReglements.clear();
 				for(Reglement reglement : reglementManager.getReglementsForFederationAndCategory(
-						(Federation)ajlFederations.getSelectedValue(), 
+						ajlFederations.getSelectedValue(), 
 						ajlCategories.getSelectedIndex())) {
 					ajlReglements.add(reglement);
 				}
 			}
 		} else if(e.getSource() == ajlReglements) {
-			Reglement reglement = (Reglement)ajlReglements.getSelectedValue();
+			Reglement reglement = ajlReglements.getSelectedValue();
 			if(reglement != null) {
 				jbEdit.setEnabled(true);
 				jbDelete.setEnabled(reglement.isRemovable());
@@ -531,7 +536,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == jbValider) {
-			selectedReglement = (Reglement)ajlReglements.getSelectedValue();
+			selectedReglement = ajlReglements.getSelectedValue();
 			setVisible(false);
 		} else if(e.getSource() == jbAnnuler || e.getSource() == jbFermer) {
 			setVisible(false);
@@ -552,7 +557,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 				showReglementDialog();
 		} else if(e.getSource() == jbDelete) {
 			if(JOptionPane.showConfirmDialog(this, localisation.getResourceString("reglementmanager.delete.confirm"), "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) { //$NON-NLS-1$ //$NON-NLS-2$
-				Reglement reglement = (Reglement)ajlReglements.getSelectedValue(); 
+				Reglement reglement = ajlReglements.getSelectedValue(); 
 				try {
 					reglementManager.removeReglement(reglement);
 					ajlReglements.remove(reglement);
@@ -566,7 +571,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 				}
 			}
 		} else if(e.getSource() == jbExport) {
-			Reglement reglement = (Reglement)ajlReglements.getSelectedValue();
+			Reglement reglement = ajlReglements.getSelectedValue();
 			
 			if(reglement != null) {
 				JFileChooser fileChooser = new JFileChooser();
@@ -602,7 +607,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 		} else if(e.getSource() == jbNewFederation || e.getSource() == jbEditFederation) {
 			Federation federation = null;
 			if(e.getSource() == jbEditFederation && ajlFederations.getSelectedIndex() > 0)
-				federation = (Federation)ajlFederations.getSelectedValue();
+				federation = ajlFederations.getSelectedValue();
 			
 			FederationDialog newFederationDialog = new FederationDialog(parentframe, profile);
 			federation = newFederationDialog.showFederationDialog(federation);
@@ -613,7 +618,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 			}
 		} else if(e.getSource() == jbDeleteFederation) {
 			if(JOptionPane.showConfirmDialog(parentframe, localisation.getResourceString("reglementmanager.deletefederation.confirm"), "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) { //$NON-NLS-1$ //$NON-NLS-2$
-				Federation federation = (Federation)ajlFederations.getSelectedValue();
+				Federation federation = ajlFederations.getSelectedValue();
 				
 				if(reglementManager.getReglementsForFederation(federation).size() == 0) {
 					try {

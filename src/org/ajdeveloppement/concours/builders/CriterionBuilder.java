@@ -94,13 +94,15 @@ import java.util.Map;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.Criterion;
-import org.ajdeveloppement.concours.CriterionElement;
 import org.ajdeveloppement.concours.Reglement;
-import org.ajdeveloppement.concours.cache.CriterionCache;
+import org.ajdeveloppement.concours.managers.CriterionElementManager;
+import org.ajdeveloppement.concours.sqltable.CriterionTable;
 
 /**
  * Permet l'instanciation d'un objet critère
@@ -108,18 +110,10 @@ import org.ajdeveloppement.concours.cache.CriterionCache;
  * @author Aurélien JEOFFRAY
  *
  */
-public class CriterionBuilder {
+public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, Reglement> {
 	
-	private static LoadHelper<Criterion,Map<String,Object>> loadHelper;
-	private static LoadHelper<Criterion,ResultSet> resultSetLoadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<Criterion,Map<String,Object>>(new SqlLoadHandler<Criterion>(ApplicationCore.dbConnection, Criterion.class));
-			resultSetLoadHelper = new LoadHelper<Criterion,ResultSet>(new ResultSetLoadHandler<Criterion>(Criterion.class));
-		} catch(ObjectPersistenceException e) {
-			e.printStackTrace();
-		}
-	}
+	private static LoadHelper<Criterion,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Criterion.class);
+	private static LoadHelper<Criterion,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Criterion.class);
 	
 	/**
 	 * Retourne un critère à partir des informations en base
@@ -175,37 +169,6 @@ public class CriterionBuilder {
 		return getCriterion(null, reglement, rs, doNotUseCache);
 	}
 	
-//	/**
-//	 * Construit un critère à partir des informations fournit en paramètre
-//	 * 
-//	 * @param codeCritere le code du critère
-//	 * @param libelle le libellé du critère
-//	 * @param codeFFTA le code FFTA  associé si nécessaire
-//	 * @param sortOrder
-//	 * @param classement
-//	 * @param classementEquipe
-//	 * @param placement
-//	 * @param numOrdre
-//	 * @param elements
-//	 * @return
-//	 */
-//	public static Criterion getCriterion(String codeCritere, String libelle, String codeFFTA, int sortOrder,
-//			boolean classement, boolean classementEquipe, boolean placement, int numOrdre, List<CriterionElement> elements) {
-//		Criterion criterion = new Criterion();
-//		criterion.setCode(codeCritere);
-//		criterion.setLibelle(libelle); 
-//		criterion.setChampsTableArchers(codeFFTA); 
-//		criterion.setSortOrder(sortOrder); 
-//		criterion.setClassement(classement); 
-//		criterion.setClassementEquipe(classementEquipe); 
-//		criterion.setPlacement(placement); 
-//		criterion.setNumordre(numOrdre); 
-//
-//		criterion.setCriterionElements(elements);
-//		
-//		return criterion;
-//	}
-	
 	/**
 	 * Retourne un critère à partir des informations en base
 	 * 
@@ -220,7 +183,7 @@ public class CriterionBuilder {
 	private static Criterion getCriterion(String codeCritere, Reglement reglement, ResultSet rs, boolean doNotUseCache) throws ObjectPersistenceException {
 		if(rs != null) {
 			try {
-				codeCritere = rs.getString("CRITERE.CODECRITERE"); //$NON-NLS-1$
+				codeCritere = CriterionTable.CODECRITERE.getValue(rs);
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}
@@ -229,7 +192,7 @@ public class CriterionBuilder {
 		Criterion criterion = null;
 		
 		if(!doNotUseCache)
-			criterion = CriterionCache.getInstance().get(new CriterionCache.CriterionPK(codeCritere, reglement));
+			criterion = Cache.get(Criterion.class, codeCritere, reglement.getNumReglement());
 		
 		if(criterion == null) {
 			criterion = new Criterion();
@@ -243,11 +206,17 @@ public class CriterionBuilder {
 			}
 			
 			if(!doNotUseCache)
-				CriterionCache.getInstance().add(criterion);
+				Cache.put(criterion);
 			
-			criterion.setCriterionElements(CriterionElement.getAllCriterionElementsFor(criterion));
+			criterion.setCriterionElements(CriterionElementManager.getAllCriterionElementsFor(criterion));
 		}
 
 		return criterion;
+	}
+
+	@Override
+	public Criterion get(ResultSet rs, SqlLoadingSessionCache sessionCache,
+			Reglement binderRessourcesMap) throws ObjectPersistenceException {
+		return getCriterion(binderRessourcesMap, rs);
 	}
 }

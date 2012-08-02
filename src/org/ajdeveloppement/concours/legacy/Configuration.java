@@ -142,6 +142,9 @@ public class Configuration extends DefaultParameters {
 	private MetaDataFichesConcours metaDataFichesConcours = new MetaDataFichesConcours();
 	private String curProfil        = "defaut";          //$NON-NLS-1$
 
+	/**
+	 * 
+	 */
 	public Configuration() {
 
 	}

@@ -86,7 +86,7 @@
  */
 package org.ajdeveloppement.concours.ui;
 
-import static org.ajdeveloppement.concours.ApplicationCore.staticParameters;
+import static org.ajdeveloppement.concours.ApplicationCore.*;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -98,9 +98,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -181,6 +179,8 @@ public class ArcCompetitionFrame extends JFrame implements ActionListener, Hyper
 	public Profile profile;
 
 	private final AJTemplate ajtHome = new AJTemplate();
+	
+	private String homeNotification = null;
 
 	/**
 	 * Construction de l'interface graphique
@@ -238,16 +238,10 @@ public class ArcCompetitionFrame extends JFrame implements ActionListener, Hyper
 			ajtHome.setLocalisationReader(profile.getLocalisation());
 			ajtHome.loadTemplate(staticParameters.getResourceString("path.ressources") //$NON-NLS-1$
 					+ File.separator + staticParameters.getResourceString("template.accueil.html")); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException e1) {
-			DisplayableErrorHelper.displayException(e1);
-			e1.printStackTrace();
-		} catch (FileNotFoundException e1) {
-			DisplayableErrorHelper.displayException(e1);
-			e1.printStackTrace();
 		} catch (IOException e1) {
 			DisplayableErrorHelper.displayException(e1);
 			e1.printStackTrace();
-		}
+		} 
 
 		if(System.getProperty("noplugin") == null) { //$NON-NLS-1$
 			fillOnDemandPlugin();
@@ -260,7 +254,6 @@ public class ArcCompetitionFrame extends JFrame implements ActionListener, Hyper
 		if (System.getProperty("debug.mode") != null) { //$NON-NLS-1$
 			((JMenu) frameCreator.getNamedComponent("mi.debug")).setVisible(true); //$NON-NLS-1$
 		}
-
 
 		jepHome = (JEditorPane)((JScrollPane)frameCreator.getNamedComponent("jepHome")).getViewport().getView(); //$NON-NLS-1$
 		jepHome.addHyperlinkListener(this);
@@ -278,16 +271,11 @@ public class ArcCompetitionFrame extends JFrame implements ActionListener, Hyper
 		PluginLoader pl = new PluginLoader();
 		List<PluginMetadata> plugins = pl.getPlugins(org.ajdeveloppement.concours.plugins.Plugin.Type.ON_DEMAND);
 
-		//if (plugins.size() > 0) {
-		//	importMenu.setVisible(true);
-		//}
-
 		for (PluginMetadata pm : plugins) {
 			JMenuItem mi = new JMenuItem(pm.getLocalizedOptionLabel());
 			MenuBarTools.addItem(mi, getJMenuBar(), pm.getMenuPath());
 
 			final Class<?> pluginClass = pm.getPluginClass();
-			//mi.setActionCommand(pm.getClassName());
 			mi.addActionListener(new ActionListener() {
 
 				/*
@@ -306,19 +294,8 @@ public class ArcCompetitionFrame extends JFrame implements ActionListener, Hyper
 								break;
 							}
 						}
-					} catch (InstantiationException e1) {
-						DisplayableErrorHelper.displayException(e1);
-						e1.printStackTrace();
-					} catch (IllegalAccessException e1) {
-						DisplayableErrorHelper.displayException(e1);
-						e1.printStackTrace();
-					}  catch (SecurityException e1) {
-						DisplayableErrorHelper.displayException(e1);
-						e1.printStackTrace();
-					} catch (NoSuchMethodException e1) {
-						DisplayableErrorHelper.displayException(e1);
-						e1.printStackTrace();
-					} catch (InvocationTargetException e1) {
+					} catch (InstantiationException | IllegalAccessException 
+							| SecurityException | NoSuchMethodException | InvocationTargetException e1) {
 						DisplayableErrorHelper.displayException(e1);
 						e1.printStackTrace();
 					}
@@ -420,7 +397,8 @@ public class ArcCompetitionFrame extends JFrame implements ActionListener, Hyper
 				ajtHome.parse("DATE", new DateFormatter(DateFormat.getDateInstance(DateFormat.LONG)).valueToString(new Date()));//$NON-NLS-1$
 			} catch (ParseException e) {
 				e.printStackTrace();
-			} 
+			}
+			ajtHome.parse("NOTIFICATION", homeNotification != null ? homeNotification : ""); //$NON-NLS-1$ //$NON-NLS-2$
 
 			MetaDataFichesConcours metaDataFichesConcours = profile.getConfiguration().getMetaDataFichesConcours();
 			List<MetaDataFicheConcours> fiches = metaDataFichesConcours.getFiches();
@@ -597,6 +575,16 @@ public class ArcCompetitionFrame extends JFrame implements ActionListener, Hyper
 	 */
 	public FicheConcoursPane getSelectedFicheConcoursPane() {
 		return selectedFicheConcoursPane;
+	}
+	
+	public String getHomeNotification() {
+		return homeNotification;
+	}
+
+	public void setHomeNotification(String homeNotification) {
+		this.homeNotification = homeNotification;
+		
+		displayHome();
 	}
 
 	/**

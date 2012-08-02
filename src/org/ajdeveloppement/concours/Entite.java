@@ -86,9 +86,7 @@
  */
 package org.ajdeveloppement.concours;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.UUID;
 
 import javax.xml.bind.Marshaller;
@@ -104,13 +102,14 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlForeignKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
-import org.ajdeveloppement.concours.cache.EntiteCache;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.builders.EntiteBuilder;
 import org.ajdeveloppement.concours.managers.ContactManager;
 
 /**
@@ -126,13 +125,28 @@ import org.ajdeveloppement.concours.managers.ContactManager;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name = "ENTITE")
+@SqlTable(name = "ENTITE",loadBuilder=EntiteBuilder.class)
 @SqlPrimaryKey(fields = { "ID_ENTITE" })
 public class Entite implements ObjectPersistence {
 
+	/**
+	 * Type d'entité: Fédération
+	 */
 	public static final int FEDERATION = 0;
+	
+	/**
+	 * Type d'entité: Ligue
+	 */
 	public static final int LIGUE = 1;
+	
+	/**
+	 * Type d'entité: Comité départementale
+	 */
 	public static final int CD = 2;
+	
+	/**
+	 * Type d'entité: Club
+	 */
 	public static final int CLUB = 3;
 
 	// utilisé pour donnée un identifiant unique à la sérialisation de l'objet
@@ -167,18 +181,11 @@ public class Entite implements ObjectPersistence {
 	@SqlField(name = "REMOVABLE")
 	private boolean removable = true;
 
-	// private transient List<Contact> contacts = null;
+	private static StoreHelper<Entite> helper = SqlStoreHelperFactory.getStoreHelper(Entite.class);
 
-	private static StoreHelper<Entite> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<Entite>(new SqlStoreHandler<Entite>(
-					ApplicationCore.dbConnection, Entite.class));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
+	/**
+	 * 
+	 */
 	public Entite() {
 
 	}
@@ -413,28 +420,21 @@ public class Entite implements ObjectPersistence {
 	/**
 	 * @return contacts
 	 */
-	public List<Contact> getContacts() {
-		//if (contacts == null && idEntite != null) { // la liste des contacts est
-													// chargé en lazy loading
-		try {
+	public Iterable<Contact> getContacts() {
+		if(idEntite != null)
 			return ContactManager.getContactsForEntity(this);
-		} catch (ObjectPersistenceException e) {
-			e.printStackTrace();
-		}
 		
-		return new ArrayList<Contact>();
-		//}
-		//return contacts;
+		return Collections.emptyList();
 	}
 
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 
 	/**
@@ -442,53 +442,31 @@ public class Entite implements ObjectPersistence {
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if (session == null || !session.contains(this)) {
+		if (Session.canExecute(session, this)) {
 			if (idEntite == null)
 				idEntite = UUID.randomUUID();
 
 			if (nom == null || nom.isEmpty())
 				return;
 
-			// SqlManager sqlManager = new
-			// SqlManager(ApplicationCore.dbConnection, null);
-			// //Avant d'enregistrer, on recherche dans la base si il n'y a pas
-			// déjà un enregistrement pour cette entite avec
-			// //un autre id
-			// try {
-			// ResultSet rs = sqlManager.executeQuery(
-			//						String.format("select ID_ENTITE from ENTITE where AGREMENTENTITE='%s' and NOMENTITE='%s'", //$NON-NLS-1$
-			//								(agrement != null) ? agrement.replace("'", "''") : "", nom.replace("'", "''"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			// if(rs.first()) {
-			//					UUID savedIdEntite = (UUID)rs.getObject("ID_ENTITE"); //$NON-NLS-1$
-			// if(!savedIdEntite.equals(idEntite))
-			// return;
-			// }
-			// } catch (SQLException e) {
-			// throw new ObjectPersistenceException(e);
-			// }
 			if(federation != null)
 				federation.save(session);
 
 			helper.save(this);
 
-			if (session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 
-			// ajoute l'entrée au cache si nécessaire
-			if (!EntiteCache.getInstance().containsKey(idEntite))
-				EntiteCache.getInstance().add(this);
+			Cache.put(this);
 		}
 	}
 
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if (session == null || !session.contains(this)) {
+		if (Session.canExecute(session, this)) {
 			helper.delete(this);
 
-			if (session != null)
-				session.addThreatyObject(this);
-			// retire l'objet du cache
-			EntiteCache.getInstance().remove(idEntite);
+			Session.addThreatyObject(session, this);
+			Cache.remove(this);
 		}
 	}
 

@@ -160,8 +160,7 @@ public class TextDialog extends JDialog implements ActionListener {
 	}
 	
 	private void completePane() {
-		try {
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(textPath), "UTF-8")); //$NON-NLS-1$
+		try(BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(textPath), "UTF-8"))) { //$NON-NLS-1$
 			StringBuilder stringBuilder = new StringBuilder();
 			String line;
 			while((line = bufferedReader.readLine()) != null) {

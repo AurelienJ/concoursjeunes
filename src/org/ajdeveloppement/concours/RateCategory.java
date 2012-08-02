@@ -1,7 +1,7 @@
 /*
- * Créé le 21 mars 2010 à 16:58:26 pour ArcCompetition
+ * Créé le 26 mai 2012 à 17:55:36 pour ArcCompetition
  *
- * Copyright 2002-2010 - Aurélien JEOFFRAY
+ * Copyright 2002-2012 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,29 +86,110 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.cache;
+package org.ajdeveloppement.concours;
 
-import java.util.UUID;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlIDREF;
 
-import org.ajdeveloppement.concours.Entite;
+import org.ajdeveloppement.commons.persistence.ObjectPersistence;
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.Session;
+import org.ajdeveloppement.commons.persistence.StoreHelper;
+import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.builders.RateCategoryBuilder;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class EntiteCache extends AbstractCache<UUID, Entite> {
+@XmlAccessorType(XmlAccessType.FIELD)
+@SqlTable(name="CATEGORIE_TARIF",loadBuilder=RateCategoryBuilder.class)
+@SqlPrimaryKey(fields={"ID_TARIF","NUMCRITERIASET"})
+public class RateCategory implements ObjectPersistence {
 	
-	private static EntiteCache instance = new EntiteCache();
+	private static StoreHelper<RateCategory> helper = SqlStoreHelperFactory.getStoreHelper(RateCategory.class);
 	
-	private EntiteCache() {
+	@SqlForeignKey(mappedTo="ID_TARIF")
+	@XmlIDREF
+	private Rate tarif = null;
+	
+	@SqlForeignKey(mappedTo="NUMCRITERIASET")
+	@XmlIDREF
+	private CriteriaSet category = null;
+	
+	public RateCategory() {
 	}
 	
-	public static EntiteCache getInstance() {
-		return instance;
+	public Rate getTarif() {
+		return tarif;
 	}
-	
+
+	public void setTarif(Rate tarif) {
+		this.tarif = tarif;
+	}
+
+	public CriteriaSet getCategory() {
+		return category;
+	}
+
+	public void setCategory(CriteriaSet category) {
+		this.category = category;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save()
+	 */
 	@Override
-	public void add(Entite entite) {
-		put(entite.getIdEntite(), entite);
+	public void save() throws ObjectPersistenceException {
+		SessionHelper.startSaveSession(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(org.ajdeveloppement.commons.persistence.Session)
+	 */
+	@Override
+	public void save(Session session) throws ObjectPersistenceException {
+		if(Session.canExecute(session, this)) {
+			helper.save(this);
+			
+			Session.addThreatyObject(session, this);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete()
+	 */
+	@Override
+	public void delete() throws ObjectPersistenceException {
+		SessionHelper.startDeleteSession(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(org.ajdeveloppement.commons.persistence.Session)
+	 */
+	@Override
+	public void delete(Session session) throws ObjectPersistenceException {
+		if(Session.canExecute(session, this)) {
+			helper.delete(this);
+			
+			Session.addThreatyObject(session, this);
+		}
+	}
+
+	/**
+	 * Use only by JAXB. Do not use.
+	 * 
+	 * @param unmarshaller
+	 * @param parent
+	 */
+	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
+		tarif.getCategoriesTarif().add(this);
+		category.getTarifsCategorie().add(this);
 	}
 }

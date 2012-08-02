@@ -88,49 +88,19 @@
  */
 package org.ajdeveloppement.concours.managers;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Contact;
 import org.ajdeveloppement.concours.Coordinate;
-import org.ajdeveloppement.concours.builders.CoordinateBuilder;
+import org.ajdeveloppement.concours.sqltable.CoordinateTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
 public class CoordinateManager {
-	private static PreparedStatement pstmtContactCoordinates = null;
-	
-	public static List<Coordinate> getContactCoordinates(Contact contact) throws ObjectPersistenceException {
-		List<Coordinate> coordinates = new ArrayList<Coordinate>();
-		
-		try {
-			if(pstmtContactCoordinates == null)
-				pstmtContactCoordinates = ApplicationCore.dbConnection.prepareStatement("select * from COORDINATE where ID_CONTACT = ?"); //$NON-NLS-1$
-			
-			pstmtContactCoordinates.setObject(1, contact.getIdContact());
-			
-			ResultSet rs = pstmtContactCoordinates.executeQuery();
-			try {
-				while(rs.next()) {
-					Coordinate coordinate = CoordinateBuilder.getCoordinate(rs);
-					coordinate.setContact(contact);
-					
-					coordinates.add(coordinate);
-				}
-			} finally {
-				rs.close();
-			}
-		} catch (SQLException e) {
-			throw new ObjectPersistenceException(e);
-		}
-		
-		return coordinates;
+	public static List<Coordinate> getContactCoordinates(Contact contact) {
+		return QResults.from(Coordinate.class).where(CoordinateTable.ID_CONTACT.equalTo(contact.getIdContact())).asList();
 	}
 }

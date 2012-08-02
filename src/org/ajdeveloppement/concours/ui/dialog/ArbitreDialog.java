@@ -106,6 +106,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.text.PlainDocument;
 
 import org.ajdeveloppement.apps.localisation.Localizable;
@@ -323,13 +324,19 @@ public class ArbitreDialog extends JDialog implements AutoCompleteDocumentListen
 			setJudge(new Judge(findArbitre));
 		}
 		
-		if (judge.haveHomonyme()) {
-			jlDescription.setText(localisation.getResourceString("arbitredialog.homonyme")); //$NON-NLS-1$
-			jlDescription.setBackground(Color.ORANGE);
-		} else {
-			jlDescription.setText(localisation.getResourceString("arbitredialog.description")); //$NON-NLS-1$
-			jlDescription.setBackground(new Color(255, 255, 225));
-		}
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				if (judge.haveHomonyme()) {
+					jlDescription.setText(localisation.getResourceString("arbitredialog.homonyme")); //$NON-NLS-1$
+					jlDescription.setBackground(Color.ORANGE);
+				} else {
+					jlDescription.setText(localisation.getResourceString("arbitredialog.description")); //$NON-NLS-1$
+					jlDescription.setBackground(new Color(255, 255, 225));
+				}
+			}
+		});
 		
 		filter = e.getGenericArcher();
 	}
@@ -352,8 +359,14 @@ public class ArbitreDialog extends JDialog implements AutoCompleteDocumentListen
 
 		setJudge(newArbitre);
 
-		jlDescription.setText(localisation.getResourceString("arbitredialog.noarbitre")); //$NON-NLS-1$
-		jlDescription.setBackground(Color.ORANGE);
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				jlDescription.setText(localisation.getResourceString("arbitredialog.noarbitre")); //$NON-NLS-1$
+				jlDescription.setBackground(Color.ORANGE);
+			}
+		});
 	}
 
 	@Override

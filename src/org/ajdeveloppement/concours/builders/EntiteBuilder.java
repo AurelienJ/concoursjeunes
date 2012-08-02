@@ -93,35 +93,30 @@ import java.util.UUID;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.Entite;
-import org.ajdeveloppement.concours.cache.EntiteCache;
+import org.ajdeveloppement.concours.sqltable.EntiteTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class EntiteBuilder {
+public class EntiteBuilder implements ResultSetRowToObjectBinder<Entite, Void>{
 	
-	private static LoadHelper<Entite,Map<String,Object>> loadHelper;
-	private static LoadHelper<Entite,ResultSet> resultSetLoadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<Entite,Map<String,Object>>(new SqlLoadHandler<Entite>(ApplicationCore.dbConnection, Entite.class));
-			resultSetLoadHelper = new LoadHelper<Entite, ResultSet>(new ResultSetLoadHandler<Entite>(Entite.class));
-		} catch(ObjectPersistenceException e) {
-			e.printStackTrace();
-		}
-	}
-	
+	private static LoadHelper<Entite,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Entite.class);
+	private static LoadHelper<Entite,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Entite.class);
+
 	/**
 	 * Construit une entite à partir des informations en base
 	 * 
 	 * @param idEntite l'identifiant de l'entite à construire
 	 * 
 	 * @return l'entite construite
+	 * @throws ObjectPersistenceException 
 	 */
 	public static Entite getEntite(UUID idEntite) throws ObjectPersistenceException {
 		return getEntite(idEntite, null);
@@ -134,25 +129,24 @@ public class EntiteBuilder {
 	 * table ENTITE
 	 * 
 	 * @return l'entite construite
+	 * @throws ObjectPersistenceException 
 	 */
 	public static Entite getEntite(ResultSet rs) throws ObjectPersistenceException {
 		return getEntite(null, rs);
 	}
 	
 	private static Entite getEntite(UUID idEntite, ResultSet rs) throws ObjectPersistenceException {
-		Entite entite = null;
-		if(idEntite != null)
-			entite = EntiteCache.getInstance().get(idEntite);
-		else {
+		if(idEntite == null) {
 			try {
-				idEntite = (UUID)rs.getObject("ENTITE.ID_ENTITE"); //$NON-NLS-1$
+				idEntite = EntiteTable.ID_ENTITE.getValue(rs);
 				if(idEntite == null)
 					throw new ObjectPersistenceException("Le resultset doit retourner un ID_ENTITE"); //$NON-NLS-1$
-				entite = EntiteCache.getInstance().get(idEntite);
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}
 		}
+		
+		Entite entite = Cache.get(Entite.class, idEntite);
 		
 		if(entite == null) {	
 			entite = new Entite();
@@ -168,11 +162,17 @@ public class EntiteBuilder {
 			
 			Map<String, Object> fkEntite = foreignKeyValue.get(Entite.class);
 			if(fkEntite != null)
-				entite.setFederation(FederationBuilder.getFederation((Integer)fkEntite.get("NUMFEDERATION"))); //$NON-NLS-1$
+				entite.setFederation(FederationBuilder.getFederation((Integer)fkEntite.get(EntiteTable.NUMFEDERATION.getFieldName())));
 			
-			EntiteCache.getInstance().add(entite);
+			Cache.put(entite);
 		}
 
 		return entite;
+	}
+
+	@Override
+	public Entite get(ResultSet rs, SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap) throws ObjectPersistenceException {
+		return getEntite(rs);
 	}
 }

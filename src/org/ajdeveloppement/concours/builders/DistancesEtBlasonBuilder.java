@@ -97,28 +97,22 @@ import java.util.Map;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.DistancesEtBlason;
-import org.ajdeveloppement.concours.Reglement;
+import org.ajdeveloppement.concours.sqltable.DistancesEtBlasonTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class DistancesEtBlasonBuilder {
+public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<DistancesEtBlason,Void> {
 	
-	private static LoadHelper<DistancesEtBlason,Map<String,Object>> loadHelper;
-	private static LoadHelper<DistancesEtBlason,ResultSet> resultSetLoadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<DistancesEtBlason,Map<String,Object>>(new SqlLoadHandler<DistancesEtBlason>(ApplicationCore.dbConnection, DistancesEtBlason.class));
-			resultSetLoadHelper = new LoadHelper<DistancesEtBlason,ResultSet>(new ResultSetLoadHandler<DistancesEtBlason>(DistancesEtBlason.class));
-		} catch(ObjectPersistenceException e) {
-			e.printStackTrace();
-		}
-	}
+	private static LoadHelper<DistancesEtBlason,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(DistancesEtBlason.class);
+	private static LoadHelper<DistancesEtBlason,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(DistancesEtBlason.class);
 	
 	private static PreparedStatement pstmtDistances = null;
 	
@@ -128,13 +122,13 @@ public class DistancesEtBlasonBuilder {
 	 * Associe à l'objet DistancesEtBlason l'objet Reglement lié
 	 * 
 	 * @param numdistancesblason Le numero de la ligne en base
-	 * @param reglement Le réglement à lié
+	 * @param numReglement numéro du réglement lié
 	 * 
 	 * @return l'objet DistancesEtBlason généré
 	 * @throws ObjectPersistenceException 
 	 */
-	public static DistancesEtBlason getDistancesEtBlason(int numdistancesblason, Reglement reglement) throws ObjectPersistenceException {
-		return getDistancesEtBlason(numdistancesblason, reglement, null, false);
+	public static DistancesEtBlason getDistancesEtBlason(int numdistancesblason, int numReglement) throws ObjectPersistenceException {
+		return getDistancesEtBlason(numdistancesblason, numReglement, null, false, null);
 	}
 	
 	/**
@@ -143,38 +137,58 @@ public class DistancesEtBlasonBuilder {
 	 * Associe à l'objet DistancesEtBlason l'objet Reglement lié
 	 * 
 	 * @param numdistancesblason Le numero de la ligne en base
-	 * @param reglement Le réglement à lié
+	 * @param numReglement numéro du réglement lié
 	 * @param doNotUseCache ne pas utiliser le cache
 	 * 
 	 * @return l'objet DistancesEtBlason généré
 	 * @throws ObjectPersistenceException 
 	 */
-	public static DistancesEtBlason getDistancesEtBlason(int numdistancesblason, Reglement reglement, boolean doNotUseCache) throws ObjectPersistenceException {
-		return getDistancesEtBlason(numdistancesblason, reglement, null, doNotUseCache);
+	public static DistancesEtBlason getDistancesEtBlason(int numdistancesblason, int numReglement, boolean doNotUseCache) throws ObjectPersistenceException {
+		return getDistancesEtBlason(numdistancesblason, numReglement, null, doNotUseCache, null);
 	}
 	
 	/**
+	 * Retourne le {@link DistancesEtBlason} associé à la ligne de résultat SQL fournit en paramètre. Un cache de session
+	 * peut être utilisé pour acceler l'opération de chargement, réduire le nombre d'instance, et accessoirement eviter
+	 * les opérations de chargement en boucle.
 	 * 
-	 * @param reglement
-	 * @param rs
-	 * @return
+	 * @param rs la ligne de résultat SQL contenant les informations de construction du {@link DistancesEtBlason}
+	 * @param sessionCache cache de session utilisé lors de la session de construction
+	 * @return le {@link DistancesEtBlason} généré à partir du jeux de résultat.
+	 * 
 	 * @throws ObjectPersistenceException
 	 */
-	public static DistancesEtBlason getDistancesEtBlason(Reglement reglement, ResultSet rs) throws ObjectPersistenceException {
-		return getDistancesEtBlason(-1, reglement, rs, false);
+	public static DistancesEtBlason getDistancesEtBlason(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		return getDistancesEtBlason(-1, -1, rs, false, sessionCache);
 	}
 	
 	/**
+	 * Retourne le {@link DistancesEtBlason} associé à la ligne de résultat SQL fournit en paramètre. Le cache
+	 * global peut être désactiver pour forcer le rechargement des données à partir de la base.
 	 * 
-	 * 
-	 * @param reglement
-	 * @param rs
-	 * @param doNotUseCache ne pas utiliser le cache
-	 * @return
+	 * @param rs la ligne de résultat SQL contenant les informations de construction du {@link DistancesEtBlason}
+	 * @param doNotUseCache indique de ne pas utiliser le cache global pour les opérations de chargement
+	 * @return le {@link DistancesEtBlason} généré à partir du jeux de résultat.
 	 * @throws ObjectPersistenceException
 	 */
-	public static DistancesEtBlason getDistancesEtBlason(Reglement reglement, ResultSet rs, boolean doNotUseCache) throws ObjectPersistenceException {
-		return getDistancesEtBlason(-1, reglement, rs, doNotUseCache);
+	public static DistancesEtBlason getDistancesEtBlason(ResultSet rs, boolean doNotUseCache) throws ObjectPersistenceException {
+		return getDistancesEtBlason(-1, -1, rs, doNotUseCache, null);
+	}
+	
+	/**
+	 * Retourne le {@link DistancesEtBlason} associé à la ligne de résultat SQL fournit en paramètre. Le cache
+	 * global peut être désactiver pour forcer le rechargement des données à partir de la base.
+	 * Un cache de session peut être utiliser pour acceler l'opération de chargement, réduire le nombre d'instance, et accessoirement eviter
+	 * les opérations de chargement en boucle. Ce cache de session ne sera utilisé que si <code>doNotUseCache</code> est à <code>true</code>
+	 * 
+	 * @param rs la ligne de résultat SQL contenant les informations de construction du {@link DistancesEtBlason}
+	 * @param doNotUseCache indique de ne pas utiliser le cache global pour les opérations de chargement
+	 * @param sessionCache cache de session utilisé lors de la session de construction si <code>doNotUseCache</code> est à <code>true</code>
+	 * @return le {@link DistancesEtBlason} généré à partir du jeux de résultat.
+	 * @throws ObjectPersistenceException
+	 */
+	public static DistancesEtBlason getDistancesEtBlason(ResultSet rs, boolean doNotUseCache, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		return getDistancesEtBlason(-1, -1, rs, doNotUseCache, sessionCache);
 	}
 	
 	/**
@@ -189,15 +203,18 @@ public class DistancesEtBlasonBuilder {
 	 * @return l'objet DistancesEtBlason généré
 	 * @throws ObjectPersistenceException 
 	 */
-	private static DistancesEtBlason getDistancesEtBlason(int numdistancesblason, Reglement reglement, ResultSet rs, boolean doNotUseCache) throws ObjectPersistenceException {
+	private static DistancesEtBlason getDistancesEtBlason(int numdistancesblason, int numReglement, ResultSet rs, 
+			boolean doNotUseCache, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		DistancesEtBlason distancesEtBlason = new DistancesEtBlason();
-		distancesEtBlason.setReglement(reglement);
 		
 		try {
-			if(rs == null)
+			if(rs == null) {
+				distancesEtBlason.setReglement(ReglementBuilder.getReglement(numReglement, doNotUseCache, sessionCache));
 				distancesEtBlason.setNumdistancesblason(numdistancesblason);
-			else
-				numdistancesblason = rs.getInt("DISTANCESBLASONS.NUMDISTANCESBLASONS"); //$NON-NLS-1$
+			} else {
+				numdistancesblason = DistancesEtBlasonTable.NUMDISTANCESBLASONS.getValue(rs);
+				numReglement = DistancesEtBlasonTable.NUMREGLEMENT.getValue(rs);
+			}
 			
 			if(pstmtDistances == null) {
 				String sql = "select DISTANCE from DISTANCES where " + //$NON-NLS-1$
@@ -206,10 +223,9 @@ public class DistancesEtBlasonBuilder {
 			}
 			
 			pstmtDistances.setInt(1, numdistancesblason);
-			pstmtDistances.setInt(2, reglement.getNumReglement());
+			pstmtDistances.setInt(2, numReglement);
 			
-			ResultSet rs2 = pstmtDistances.executeQuery();
-			try {
+			try(ResultSet rs2 = pstmtDistances.executeQuery()) {
 				List<Integer> distances = new ArrayList<Integer>();
 				while(rs2.next()) {
 					distances.add(rs2.getInt("DISTANCE")); //$NON-NLS-1$
@@ -218,8 +234,6 @@ public class DistancesEtBlasonBuilder {
 				for(int i = 0; i < iDist.length; i++)
 					iDist[i] = distances.get(i);
 				distancesEtBlason.setDistance(iDist);
-			} finally {
-				rs2.close();
 			}
 			
 			Map<Class<?>, Map<String,Object>> foreignKeys = null;
@@ -231,7 +245,9 @@ public class DistancesEtBlasonBuilder {
 			}
 			
 			if(foreignKeys != null) {
-				distancesEtBlason.setCriteriaSet(CriteriaSetBuilder.getCriteriaSet((Integer)foreignKeys.get(DistancesEtBlason.class).get("NUMCRITERIASET"), reglement, doNotUseCache)); //$NON-NLS-1$
+				if(rs != null)
+					distancesEtBlason.setReglement(ReglementBuilder.getReglement((Integer)foreignKeys.get(DistancesEtBlason.class).get("NUMREGLEMENT"), doNotUseCache, sessionCache)); //$NON-NLS-1$
+				distancesEtBlason.setCriteriaSet(CriteriaSetBuilder.getCriteriaSet((Integer)foreignKeys.get(DistancesEtBlason.class).get("NUMCRITERIASET"), doNotUseCache, sessionCache)); //$NON-NLS-1$
 				distancesEtBlason.setTargetFace(BlasonBuilder.getBlason((Integer)foreignKeys.get(DistancesEtBlason.class).get("NUMBLASON"))); //$NON-NLS-1$
 			}
 		} catch (SQLException e) {
@@ -239,5 +255,11 @@ public class DistancesEtBlasonBuilder {
 		}
 		
 		return distancesEtBlason;
+	}
+
+	@Override
+	public DistancesEtBlason get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap)
+			throws ObjectPersistenceException {
+		return getDistancesEtBlason(rs, sessionCache);
 	}
 }

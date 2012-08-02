@@ -168,9 +168,9 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 	@Localizable(value="parametre.typecompetition",textMethod="setTitle")
 	private TitledBorder typeCompetitionBorder = new TitledBorder(""); //$NON-NLS-1$
 	private JLabel jlSelectedReglement = new JLabel();
-	@Localizable("parametre.choice_reglement")
+	@Localizable(value="",tooltip="parametre.choice_reglement")
 	private JButton jbSelectReglement = new JButton();
-	@Localizable("parametre.detail_customize")
+	@Localizable(value="",tooltip="parametre.detail_customize")
 	private JButton jbDetail = new JButton();
 	private JComboBox<CompetitionLevel> jcbNiveauChampionnat = new JComboBox<>();
 	@Localizable("parametre.openclose")
@@ -220,6 +220,13 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 	
 	private ReglementDialog reglementDialog;
 
+	/**
+	 * Construit une nouvelle fenetre de parametre de compétition
+	 * 
+	 * @param parentframe la fenetre parente pour le modal
+	 * @param profile le profile lié
+	 * @param ficheConcours la fiche concours associé au parametrage
+	 */
 	public ParametreDialog(JFrame parentframe, Profile profile, FicheConcours ficheConcours) {
 		super(parentframe);
 
@@ -263,6 +270,10 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 		GridBagConstraints c = new GridBagConstraints();
 		GridbagComposer gridbagComposer = new GridbagComposer();
 
+		jbSelectReglement.setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.edit", 16, 16)); //$NON-NLS-1$
+		jbSelectReglement.setMargin(new Insets(0, 0, 0, 0));
+		jbDetail.setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.select", 16, 16)); //$NON-NLS-1$
+		jbDetail.setMargin(new Insets(0, 0, 0, 0));
 		jbDetail.addActionListener(this);
 		jtfDateDebutConcours.setFormats(new DateFormat[] { DateFormat.getDateInstance(DateFormat.SHORT) });
 		jtfDateFinConcours.setFormats(new DateFormat[] { DateFormat.getDateInstance(DateFormat.SHORT) });
@@ -343,46 +354,62 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 		c.weightx = 1.0;
 		c.gridheight = 1;
 		c.anchor = GridBagConstraints.WEST;
+		c.insets = new Insets(5, 5, 2, 2);
 		gridbagComposer.addComponentIntoGrid(jlIntituleConcours, c);
 		c.gridwidth = 3;
 		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(5, 0, 2, 5);
 		gridbagComposer.addComponentIntoGrid(jtfIntituleConcours, c);
 
 		c.gridy++;
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.NONE;
+		c.insets = new Insets(2, 5, 2, 2);
 		gridbagComposer.addComponentIntoGrid(jlLieuConcours, c);
 		c.gridwidth = 3;
 		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(2, 0, 2, 5);
 		gridbagComposer.addComponentIntoGrid(jtfLieuConcours, c);
 		
 		c.gridy++;
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.NONE;
+		c.insets = new Insets(2, 5, 10, 2);
 		gridbagComposer.addComponentIntoGrid(jlDateDebutConcours, c);
+		c.insets.left = 0;
 		gridbagComposer.addComponentIntoGrid(jtfDateDebutConcours, c);		
 		gridbagComposer.addComponentIntoGrid(jlDateFinConcours, c);
+		c.insets.right = 5;
 		gridbagComposer.addComponentIntoGrid(jtfDateFinConcours, c);
 		
 		gridbagComposer.setParentPanel(jpTypeCompetition);
 		c.gridy = 0;
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.NONE;
+		c.weightx = 0.0;
+		c.insets = new Insets(5, 5, 2, 2);
 		gridbagComposer.addComponentIntoGrid(jlReglement, c);
+		c.weightx = 1.0;
+		c.insets.left = 0;
 		gridbagComposer.addComponentIntoGrid(jlSelectedReglement, c);
-		
-		c.gridy++;
-		c.gridx = 1;
+		c.weightx = 0.0;
+		c.insets.right = 5;
 		gridbagComposer.addComponentIntoGrid(jpReglement, c);
 
 		c.gridy++;
 		c.gridwidth = 1;
+		c.weightx = 1.0;
 		c.gridx = GridBagConstraints.RELATIVE;
+		c.insets = new Insets(2, 5, 2, 2);
 		gridbagComposer.addComponentIntoGrid(jlNiveauChampionnat, c);
+		c.gridwidth = 2;
+		c.insets.left = 0;
+		c.insets.right = 5;
 		gridbagComposer.addComponentIntoGrid(jcbNiveauChampionnat, c);
 		
 		c.gridy++;
-		c.gridwidth = 2;
+		c.gridwidth = 3;
+		c.insets = new Insets(2, 5, 2, 5);
 		gridbagComposer.addComponentIntoGrid(jcbCloseCompetition, c);
 		c.gridy++;
 		gridbagComposer.addComponentIntoGrid(jcbEnablePhaseFinal, c);
@@ -391,32 +418,46 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 		c.gridy = 1;
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.NONE;
+		c.insets = new Insets(5, 5, 2, 2);
 		gridbagComposer.addComponentIntoGrid(jlNombreCible, c);
+		c.insets.left = 0;
 		gridbagComposer.addComponentIntoGrid(jtfNombreCible, c);
 		gridbagComposer.addComponentIntoGrid(jlNombreDepart, c);
+		c.insets.right = 5;
 		gridbagComposer.addComponentIntoGrid(jtfNombreDepart, c);
 
 		c.gridy++;
 		c.gridwidth = 1;
+		c.insets = new Insets(2, 5, 5, 2);
 		gridbagComposer.addComponentIntoGrid(jlNombreTireurParCible, c);
 		c.gridwidth = 3;
+		c.insets.right = 5;
 		gridbagComposer.addComponentIntoGrid(jcbNombreTireurParCible, c);
 		
 		gridbagComposer.setParentPanel(jpArbitres);
 		c.gridy = 0;
 		c.gridwidth = 1;
+		c.weightx = 0.0;
+		c.insets = new Insets(5, 5, 2, 2);
 		gridbagComposer.addComponentIntoGrid(jlbArbitres, c);
 		c.fill = GridBagConstraints.BOTH;
 		c.gridheight = 3;
+		c.weightx = 1.0;
+		c.insets.left = 0;
+		c.insets.bottom = 5;
 		gridbagComposer.addComponentIntoGrid(new JScrollPane(jlArbitres), c);
-		//c.fill = GridBagConstraints.HORIZONTAL;
+		c.fill = GridBagConstraints.NONE;
 		c.gridheight = 1;
+		c.weightx = 0.0;
+		c.insets.bottom = 0;
+		c.insets.right = 5;
 		gridbagComposer.addComponentIntoGrid(jbAjouterArbitre, c);
 
 		c.gridy++;
 		c.gridx = 2;
-		c.fill = GridBagConstraints.HORIZONTAL;
+		//c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridwidth = 1;
+		c.insets.top = 0;
 		gridbagComposer.addComponentIntoGrid(jbSupprimerArbitre, c);
 		
 		c.gridy++;
@@ -429,6 +470,8 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 		c.gridx = GridBagConstraints.RELATIVE;
 		c.gridwidth = 4;
 		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx= 1.0;
+		c.insets = new Insets(0, 0, 0, 0);
 		gridbagComposer.addComponentIntoGrid(jpInfos, c);
 		
 		c.gridy++;
@@ -446,6 +489,10 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 		getContentPane().add(jpValidation, BorderLayout.SOUTH);
 	}
 
+	/**
+	 * Affiche le boite de dialogue de parametrage
+	 * @param parametre
+	 */
 	public void showParametreDialog(Parametre parametre) {
 		this.parametre = parametre;
 		completePanel();
@@ -468,7 +515,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 		jtfLieuConcours.setText(parametre.getLieuConcours());
 		jtfDateDebutConcours.setDate(parametre.getDateDebutConcours());
 		jtfDateFinConcours.setDate(parametre.getDateFinConcours());
-		jlSelectedReglement.setText(tempReglement.getDisplayName());
+		jlSelectedReglement.setText("<html><b>" + tempReglement.getDisplayName() + "</b> - " + tempReglement.getFederation().getSigleFederation()+ "</html>");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		jbSelectReglement.setEnabled(!parametre.isReglementLock());
 		jcbNiveauChampionnat.removeAllItems();
 		for(CompetitionLevel cl : tempReglement.getFederation().getCompetitionLevels(profile.getConfiguration().getLangue()))
@@ -511,7 +558,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 						placelibre = placelibre_tmp;
 				}
 	
-				if (placelibre < 0 || parametre.getNbCible() - placelibre > Integer.parseInt(jtfNombreCible.getText())) {
+				if (placelibre < 0 || parametre.getNbCible() - placelibre > Integer.parseInt("0" + jtfNombreCible.getText())) { //$NON-NLS-1$
 					JOptionPane.showMessageDialog(this, localisation.getResourceString("parametre.toomany"), localisation.getResourceString("parametre.toomany.title"), //$NON-NLS-1$ //$NON-NLS-2$
 							JOptionPane.ERROR_MESSAGE);
 					return;
@@ -527,6 +574,14 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 						}
 					}
 				}
+			}
+			
+			//vérifie qu'il y a au moins une cible.
+			if(Integer.parseInt("0" + jtfNombreCible.getText()) <= 0) { //$NON-NLS-1$
+				
+				JOptionPane.showMessageDialog(this, localisation.getResourceString("parametre.notarget"), localisation //$NON-NLS-1$
+						.getResourceString("parametre.notarget.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+				return;
 			}
 			
 			//limite le nombre de départ possible
@@ -580,7 +635,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 			if(jlArbitres.getSelectedIndex() > -1)
 				jlArbitres.remove(jlArbitres.getSelectedIndex());
 		} else if(ae.getSource() == jbEditerArbitre) {
-			Judge selectedJudge = (Judge)jlArbitres.getSelectedValue();
+			Judge selectedJudge = jlArbitres.getSelectedValue();
 			ArbitreDialog ad = new ArbitreDialog(parentframe, profile);
 			boolean mustberesponsable = true; 
 			for(Object o : jlArbitres.getAllElements())
@@ -602,7 +657,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 				if(jtfIntituleConcours.getText().equals(tempReglement.getDisplayName()))
 					jtfIntituleConcours.setText(reglement.getDisplayName());
 				tempReglement = reglement;
-				jlSelectedReglement.setText(reglement.getDisplayName());
+				jlSelectedReglement.setText("<html><b>" + reglement.getDisplayName() + "</b> - " + reglement.getFederation().getSigleFederation()+ "</html>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				
 				jcbNiveauChampionnat.removeAllItems();
 				for(CompetitionLevel cl : tempReglement.getFederation().getCompetitionLevels(profile.getConfiguration().getLangue()))

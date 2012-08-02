@@ -88,17 +88,10 @@
  */
 package org.ajdeveloppement.concours.managers;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.sql.SqlManager;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Contact;
 import org.ajdeveloppement.concours.Entite;
-import org.ajdeveloppement.concours.builders.ContactBuilder;
+import org.ajdeveloppement.concours.sqltable.ContactTable;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -106,39 +99,18 @@ import org.ajdeveloppement.concours.builders.ContactBuilder;
  */
 public class ContactManager {
 	
-	public static List<Contact> getAllContacts() throws ObjectPersistenceException {
-		return getContactsForEntity(null);
-	}
-	
-	public static List<Contact> getContactsForEntity(Entite entity) throws ObjectPersistenceException {
-		List<Contact> contacts = new ArrayList<Contact>();
+	/**
+	 * Retourne la liste des contacts lié à l'entité fournit
+	 * 
+	 * @param entity l'entité associé aux contacts
+	 * @return la liste des contacts lié à l'entité
+	 */
+	public static Iterable<Contact> getContactsForEntity(Entite entity) {
+		QResults<Contact, Void> qContacts = QResults.from(Contact.class);
 		
-		SqlManager manager = new SqlManager(ApplicationCore.dbConnection, null);
-		try {
-			String sql = "select distinct CONTACT.*,CIVILITY.* from CONTACT left join CIVILITY on CONTACT.ID_CIVILITY=CIVILITY.ID_CIVILITY"; //$NON-NLS-1$
-			
-			if(entity == null || entity.getIdEntite() != null) {
-				if(entity != null && entity.getIdEntite() != null)
-					sql += " where ID_ENTITE = '" + entity.getIdEntite().toString() + "'";  //$NON-NLS-1$//$NON-NLS-2$
-				
-				sql += " order by CONTACT.NAME,CONTACT.FIRSTNAME"; //$NON-NLS-1$
-				
-				ResultSet rs = manager.executeQuery(sql); 
-				try {
-					while(rs.next()) {
-						Contact contact = ContactBuilder.getContact(rs);
-						contact.setEntite(entity);
-						
-						contacts.add(contact);
-					}
-				} finally {
-					rs.close();
-				}
-			}
-		} catch (SQLException e) {
-			throw new ObjectPersistenceException(e);
-		}
+		if(entity != null && entity.getIdEntite() != null)
+			qContacts = qContacts.where(ContactTable.ID_ENTITE.equalTo(entity.getIdEntite()));
 		
-		return contacts;
+		return qContacts.orderBy(ContactTable.NAME, ContactTable.FIRSTNAME);
 	}
 }

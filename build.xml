@@ -151,13 +151,23 @@
 	<target name="compile" depends="pack_stage1">
 
 		<mkdir dir="${projet.pack.dir}/bin" />
-
-		<javac srcdir="${projet.pack.dir}/src/" destdir="${projet.pack.dir}/bin"
+		
+		<!--<copy todir="${projet.pack.dir}/src/">
+			<fileset dir=".apt_generated" >
+				<include name="**" />
+			</fileset>
+		</copy>-->
+		
+		<javac srcdir="${projet.pack.dir}/src" destdir="${projet.pack.dir}/bin"
 			optimize="on"
 			encoding="UTF-8"
 			nowarn="on"
 			debug="true"
-			classpath="${compilclasspath}">
+			target="1.7"
+			classpath="${compilclasspath}"
+			>
+			<compilerarg value="-s" />
+			<compilerarg path="${projet.pack.dir}/src" />
 		</javac>
 
 		<copy todir="${projet.pack.dir}/bin">

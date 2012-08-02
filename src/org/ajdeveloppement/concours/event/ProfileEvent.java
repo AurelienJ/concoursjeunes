@@ -102,11 +102,34 @@ public class ProfileEvent {
 	 * @author Aurélien JEOFFRAY
 	 */
 	public enum Type {
+		/**
+		 * Evenement Vide
+		 */
 		NONE,
+		
+		/**
+		 * Création d'un concours
+		 */
 		CREATE_CONCOURS,
+		
+		/**
+		 * Suppression d'un concours
+		 */
 		DELETE_CONCOURS,
+		
+		/**
+		 * Fermeture d'un concours
+		 */
 		CLOSE_CONCOURS,
+		
+		/**
+		 * Ouverture d'un concours
+		 */
 		OPEN_CONCOURS,
+		
+		/**
+		 * Changement de la configuration
+		 */
 		CONFIGURATION_CHANGED
 	}
 	
@@ -119,6 +142,7 @@ public class ProfileEvent {
 	 * Construit un nouvel evenement
 	 * 
 	 * @param ficheConcours la ficheConcours crée/supprimé
+	 * @param profile le profile emetteur de l'évenement
 	 * @param action l'action réalisé
 	 */
 	public ProfileEvent(FicheConcours ficheConcours, Profile profile, Type action) {

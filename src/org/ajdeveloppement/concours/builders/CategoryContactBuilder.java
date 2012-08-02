@@ -92,14 +92,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.CategoryContact;
-import org.ajdeveloppement.concours.cache.CategoryContactCache;
+import org.ajdeveloppement.concours.sqltable.CategoryContactTable;
 
 /**
  * Utilities class to build CategoryContact with database data
@@ -107,17 +108,9 @@ import org.ajdeveloppement.concours.cache.CategoryContactCache;
  * @author Aurélien JEOFFRAY
  *
  */
-public class CategoryContactBuilder {
-	private static LoadHelper<CategoryContact,Map<String,Object>> loadHelper;
-	private static LoadHelper<CategoryContact,ResultSet> resultSetLoadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<CategoryContact,Map<String,Object>>(new SqlLoadHandler<CategoryContact>(ApplicationCore.dbConnection, CategoryContact.class));
-			resultSetLoadHelper = new LoadHelper<CategoryContact, ResultSet>(new ResultSetLoadHandler<CategoryContact>(CategoryContact.class));
-		} catch(ObjectPersistenceException e) {
-			throw new UncheckedException(e);
-		}
-	}
+public class CategoryContactBuilder implements ResultSetRowToObjectBinder<CategoryContact, Void>{
+	private static LoadHelper<CategoryContact,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(CategoryContact.class);
+	private static LoadHelper<CategoryContact,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(CategoryContact.class);
 	
 	/**
 	 * Build a CategoryContact with id of category in database
@@ -142,17 +135,15 @@ public class CategoryContactBuilder {
 	}
 	
 	private static CategoryContact getCategoryContact(int numCategory, ResultSet rs) throws ObjectPersistenceException {
-		CategoryContact categoryContact = null;
-		if(numCategory != 0)
-			categoryContact = CategoryContactCache.getInstance().get(numCategory);
-		else {
+		if(rs != null) {
 			try {
-				categoryContact = CategoryContactCache.getInstance().get(rs.getInt("CATEGORIE_CONTACT.NUM_CATEGORIE_CONTACT")); //$NON-NLS-1$
+				numCategory = CategoryContactTable.NUM_CATEGORIE_CONTACT.getValue(rs);
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}
 		}
-		
+			
+		CategoryContact categoryContact = Cache.get(CategoryContact.class, numCategory);
 		if(categoryContact == null) {
 			categoryContact = new CategoryContact();
 			if(numCategory != 0) {
@@ -161,9 +152,16 @@ public class CategoryContactBuilder {
 			} else
 				resultSetLoadHelper.load(categoryContact, rs);
 			
-			CategoryContactCache.getInstance().add(categoryContact);
+			Cache.put(categoryContact);
 		}
 		
 		return categoryContact;
+	}
+
+	@Override
+	public CategoryContact get(ResultSet rs,
+			SqlLoadingSessionCache sessionCache, Void binderRessourcesMap)
+			throws ObjectPersistenceException {
+		return getCategoryContact(rs);
 	}
 }

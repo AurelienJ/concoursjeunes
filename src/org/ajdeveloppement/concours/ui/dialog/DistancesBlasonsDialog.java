@@ -111,14 +111,13 @@ import javax.swing.border.TitledBorder;
 import org.ajdeveloppement.apps.localisation.Localizable;
 import org.ajdeveloppement.apps.localisation.Localizator;
 import org.ajdeveloppement.commons.AjResourcesReader;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.commons.ui.NumberDocument;
 import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.Blason;
 import org.ajdeveloppement.concours.DistancesEtBlason;
 import org.ajdeveloppement.concours.localisable.CriteriaSetLibelle;
-import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
+import org.ajdeveloppement.concours.managers.BlasonManager;
 import org.jdesktop.swingx.JXHeader;
 import org.jdesktop.swingx.painter.GlossPainter;
 
@@ -165,13 +164,8 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 		super(parentframe, ModalityType.TOOLKIT_MODAL);
 		
 		this.localisation = localisation;
-		
-		try {
-			availableBlason = Blason.listAvailableTargetFace();
-		} catch (ObjectPersistenceException e) {
-			DisplayableErrorHelper.displayException(e);
-			e.printStackTrace();
-		}
+	
+		availableBlason = BlasonManager.listAvailableTargetFace();
 		
 		init();
 		affectLabels();

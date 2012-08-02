@@ -711,7 +711,7 @@ public class ConcurrentListDialog extends JDialog implements ActionListener, Mou
 		 */
 		@Override
 		protected List<Concurrent> doInBackground() throws Exception {			
-			return ConcurrentManager.getArchersInDatabase(filter, reglement, "", new ConcurrentManagerProgress() { //$NON-NLS-1$
+			return ConcurrentManager.getArchersInDatabase(filter, reglement, null, new ConcurrentManagerProgress() {
 
 				@Override
 				public void setConcurrentCount(int concurrentCount) {

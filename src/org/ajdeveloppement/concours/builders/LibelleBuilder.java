@@ -92,39 +92,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.concours.Libelle;
-import org.ajdeveloppement.concours.cache.LibelleCache;
+import org.ajdeveloppement.concours.sqltable.LibelleTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
 public class LibelleBuilder {
-	private static LoadHelper<Libelle,Map<String,Object>> loadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<Libelle,Map<String,Object>>(new SqlLoadHandler<Libelle>(ApplicationCore.dbConnection, Libelle.class));
-		} catch(ObjectPersistenceException e) {
-			throw new UncheckedException(e);
-		}
-	}
+	private static LoadHelper<Libelle,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Libelle.class);
 	
 	public static Libelle getLibelle(UUID idLibelle, String lang) throws ObjectPersistenceException {
-		Libelle libelle = LibelleCache.getInstance().get(new LibelleCache.LibellePK(idLibelle, lang));
+		Libelle libelle = Cache.get(Libelle.class, idLibelle, lang);
 		if(libelle == null) {
 			Map<String, Object> persistenceInformations = new HashMap<String, Object>();
-			persistenceInformations.put("ID_LIBELLE", idLibelle); //$NON-NLS-1$
-			persistenceInformations.put("LANG", lang); //$NON-NLS-1$
+			persistenceInformations.put(LibelleTable.ID_LIBELLE.getFieldName(), idLibelle);
+			persistenceInformations.put(LibelleTable.LANG.getFieldName(), lang);
 			
 			libelle = new Libelle();
 			loadHelper.load(libelle, persistenceInformations);
 			
-			LibelleCache.getInstance().add(libelle);
+			Cache.put(libelle);
 		}
 		
 		return libelle;

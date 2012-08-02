@@ -97,18 +97,34 @@ package org.ajdeveloppement.concours.exceptions;
  */
 public class NullConfigurationException extends Exception {
 
+	/**
+	 * 
+	 */
 	public NullConfigurationException() {
 		super();
 	}
 
+	/**
+	 * 
+	 * @param message
+	 * @param cause
+	 */
 	public NullConfigurationException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
+	/**
+	 * 
+	 * @param message
+	 */
 	public NullConfigurationException(String message) {
 		super(message);
 	}
 
+	/**
+	 * 
+	 * @param cause
+	 */
 	public NullConfigurationException(Throwable cause) {
 		super(cause);
 	}

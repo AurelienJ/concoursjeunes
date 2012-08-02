@@ -86,16 +86,14 @@
  */
 package org.ajdeveloppement.concours.plugins.update;
 
-import static org.ajdeveloppement.concours.ApplicationCore.staticParameters;
-
-import java.awt.AWTException;
-import java.awt.Dimension;
-import java.awt.Image;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Insets;
 import java.awt.SystemTray;
-import java.awt.Toolkit;
 import java.awt.TrayIcon;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyStoreException;
@@ -110,7 +108,11 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 
 import org.ajdeveloppement.apps.AppUtilities;
@@ -133,25 +135,36 @@ import org.ajdeveloppement.updater.FileMetaData;
 import org.ajdeveloppement.updater.Repository;
 import org.ajdeveloppement.updater.UpdateException;
 import org.ajdeveloppement.updater.ui.AjUpdaterFrame;
+import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.util.OS;
 
-@Plugin(type = Plugin.Type.STARTUP)
-public class ArcCompetitionUpdate extends Thread implements AjUpdaterListener, MouseListener {
-	// private String baseURL;
+/**
+ * 
+ * @author Aurélien JEOFFRAY
+ *
+ */
+@Plugin(type = Plugin.Type.UI_STARTUP)
+public class ArcCompetitionUpdate extends Thread implements AjUpdaterListener {
+	private JFrame parentFrame;
 	private SystemTray tray;
 	private TrayIcon trayIcon;
 	private AjUpdater ajUpdater;
 	private Map<Repository, List<FileMetaData>> updateFiles = new Hashtable<Repository, List<FileMetaData>>();
 	private final AjResourcesReader pluginLocalisation = new AjResourcesReader("org.ajdeveloppement.concours.plugins.update.ArcCompetitionUpdate_libelle", ArcCompetitionUpdate.class.getClassLoader()); //$NON-NLS-1$
-	private enum Status {
-		NONE,
-		AVAILABLE,
-		DOWNLODED
-	}
-	private Status currentStatus = Status.NONE;
+//	private enum Status {
+//		NONE,
+//		AVAILABLE,
+//		DOWNLODED
+//	}
+	//private Status currentStatus = Status.NONE;
 
-	public ArcCompetitionUpdate() {
-
+	/**
+	 * 
+	 * @param parentFrame
+	 * @param profile
+	 */
+	public ArcCompetitionUpdate(JFrame parentFrame, Profile profile) {
+		this.parentFrame = parentFrame;
 	}
 
 	/*
@@ -241,42 +254,83 @@ public class ArcCompetitionUpdate extends Thread implements AjUpdaterListener, M
 		switch (event.getStatus()) {
 		case UPDATE_AVAILABLE:
 			
-			if (SystemTray.isSupported() && tray == null) {
-				tray = SystemTray.getSystemTray();
-				// load an image
-				Dimension dimension = tray.getTrayIconSize();
-				Image image = Toolkit.getDefaultToolkit().getImage(
-						staticParameters.getResourceString("path.ressources") + File.separator + staticParameters.getResourceString("file.icon.application")).getScaledInstance(dimension.width, //$NON-NLS-1$ //$NON-NLS-2$
-						dimension.height, Image.SCALE_SMOOTH);
+//			ajUpdater.downloadFiles(event.getUpdateFiles());
+//			if (SystemTray.isSupported() && tray == null) {
+//				tray = SystemTray.getSystemTray();
+//				// load an image
+//				Dimension dimension = tray.getTrayIconSize();
+//				Image image = Toolkit.getDefaultToolkit().getImage(
+//						staticParameters.getResourceString("path.ressources") + File.separator + staticParameters.getResourceString("file.icon.application")).getScaledInstance(dimension.width, //$NON-NLS-1$ //$NON-NLS-2$
+//						dimension.height, Image.SCALE_SMOOTH);
+//
+//				// create a popup menu
+//				trayIcon = new TrayIcon(image, pluginLocalisation.getResourceString("tray.name")); //$NON-NLS-1$
+//				trayIcon.addMouseListener(this);
+//
+//				try {
+//					tray.add(trayIcon);
+//				} catch (AWTException e) {
+//					System.err.println(e);
+//				}
+//			}
 
-				// create a popup menu
-				trayIcon = new TrayIcon(image, pluginLocalisation.getResourceString("tray.name")); //$NON-NLS-1$
-				trayIcon.addMouseListener(this);
-
-				try {
-					tray.add(trayIcon);
-				} catch (AWTException e) {
-					System.err.println(e);
-				}
-			}
-
-			String strSize = StringFormatters.formatFileSize(ajUpdater.getDownloadSize());
+			final String strSize = StringFormatters.formatFileSize(ajUpdater.getDownloadSize());
 
 			updateFiles = event.getUpdateFiles();
-
-			if (trayIcon != null) {
-				trayIcon.displayMessage(pluginLocalisation.getResourceString("update.available.title"), pluginLocalisation.getResourceString("update.available", strSize), TrayIcon.MessageType.INFO); //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				AjUpdaterFrame ajUpdaterFrame = new AjUpdaterFrame(ajUpdater);
-				
-				if(ajUpdaterFrame.showAjUpdaterFrame() == DefaultDialogReturn.OK) {
-					Map<Repository, List<FileMetaData>> filesMap = new HashMap<Repository, List<FileMetaData>>();
-					for(Repository r : ajUpdaterFrame.getValidateRepositories())
-						filesMap.put(r, updateFiles.get(r));
-					ajUpdater.downloadFiles(filesMap);
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+//					((ArcCompetitionFrame)parentFrame).setHomeNotification(
+//							"<a href=\"http://update_app\">" 
+//							+ "<img src=\"file:./ressources/" + ApplicationCore.staticParameters.getResourceString("file.icon.update") + "\" width=\"36\" height=\"36\" border=\"0\" />"
+//							+ pluginLocalisation.getResourceString("update.available", strSize) + "</a>");
+					//software-update-available.png
+					final JXHyperlink jxhUpdateAvailable = new JXHyperlink();
+					jxhUpdateAvailable.setText(pluginLocalisation.getResourceString("update.available", strSize)); //$NON-NLS-1$
+					jxhUpdateAvailable.setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.update",24,24)); //$NON-NLS-1$
+					jxhUpdateAvailable.setAlignmentX(JXHyperlink.RIGHT);
+					jxhUpdateAvailable.setMargin(new Insets(0, 0, 0, 0));
+					jxhUpdateAvailable.addActionListener(new ActionListener() {
+						
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							AjUpdaterFrame ajUpdaterFrame = new AjUpdaterFrame(ajUpdater);
+							
+							if(ajUpdaterFrame.showAjUpdaterFrame() == DefaultDialogReturn.OK) {
+								Map<Repository, List<FileMetaData>> filesMap = new HashMap<Repository, List<FileMetaData>>();
+								for(Repository r : ajUpdaterFrame.getValidateRepositories())
+									filesMap.put(r, updateFiles.get(r));
+								ajUpdater.downloadFiles(filesMap);
+							}
+						}
+					});
+					
+					JPanel statusBar = new JPanel();
+					statusBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
+					statusBar.add(jxhUpdateAvailable);
+					
+					Component contentPane = parentFrame.getContentPane().getComponent(0);
+					
+					parentFrame.getContentPane().setLayout(new BorderLayout());
+					parentFrame.getContentPane().add(BorderLayout.CENTER, contentPane);
+					parentFrame.getContentPane().add(BorderLayout.SOUTH, statusBar);
+					parentFrame.revalidate();
 				}
-			}
-			currentStatus = Status.AVAILABLE;
+			});
+
+//			if (trayIcon != null) {
+//				trayIcon.displayMessage(pluginLocalisation.getResourceString("update.available.title"), pluginLocalisation.getResourceString("update.available", strSize), TrayIcon.MessageType.INFO); //$NON-NLS-1$ //$NON-NLS-2$
+//			} else {
+//				AjUpdaterFrame ajUpdaterFrame = new AjUpdaterFrame(ajUpdater);
+//				
+//				if(ajUpdaterFrame.showAjUpdaterFrame() == DefaultDialogReturn.OK) {
+//					Map<Repository, List<FileMetaData>> filesMap = new HashMap<Repository, List<FileMetaData>>();
+//					for(Repository r : ajUpdaterFrame.getValidateRepositories())
+//						filesMap.put(r, updateFiles.get(r));
+//					ajUpdater.downloadFiles(filesMap);
+//				}
+//			}
+			//currentStatus = Status.AVAILABLE;
 			break;
 		case CONNECTION_INTERRUPTED:
 			if (trayIcon != null) {
@@ -284,10 +338,25 @@ public class ArcCompetitionUpdate extends Thread implements AjUpdaterListener, M
 			}
 			break;
 		case FILE_ERROR:
-			if (trayIcon != null) {
-				trayIcon.displayMessage(pluginLocalisation.getResourceString("update.downloaderror.title"), pluginLocalisation.getResourceString("update.downloaderror"), //$NON-NLS-1$ //$NON-NLS-2$
-						TrayIcon.MessageType.ERROR);
-			}
+//			if (trayIcon != null) {
+//				trayIcon.displayMessage(pluginLocalisation.getResourceString("update.downloaderror.title"), pluginLocalisation.getResourceString("update.downloaderror"), //$NON-NLS-1$ //$NON-NLS-2$
+//						TrayIcon.MessageType.ERROR);
+//			}
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JPanel statusBar = new JPanel();
+					statusBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
+					statusBar.add(new JLabel(pluginLocalisation.getResourceString("update.downloaderror"))); //$NON-NLS-1$
+					
+					Component contentPane = parentFrame.getContentPane().getComponent(0);
+					
+					parentFrame.getContentPane().setLayout(new BorderLayout());
+					parentFrame.getContentPane().add(BorderLayout.CENTER, contentPane);
+					parentFrame.getContentPane().add(BorderLayout.SOUTH, statusBar);
+					parentFrame.revalidate();
+				}
+			});
 			break;
 		case FILES_DOWNLOADED:
 			if (JOptionPane.showConfirmDialog(null, pluginLocalisation.getResourceString("update.confirminstall"), pluginLocalisation.getResourceString("update.confirminstall.title"), //$NON-NLS-1$ //$NON-NLS-2$
@@ -332,43 +401,9 @@ public class ArcCompetitionUpdate extends Thread implements AjUpdaterListener, M
 			}
 			break;
 		case NO_UPDATE_AVAILABLE:
-			if (trayIcon != null) {
-				tray.remove(trayIcon);
-			}
+//			if (trayIcon != null) {
+//				tray.remove(trayIcon);
+//			}
 		}
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		if (e.getSource() == trayIcon) {
-			if(e.getClickCount() == 1) {
-				if (currentStatus == Status.AVAILABLE) {
-					AjUpdaterFrame ajUpdaterFrame = new AjUpdaterFrame(ajUpdater);
-					
-					if(ajUpdaterFrame.showAjUpdaterFrame() == DefaultDialogReturn.OK) {
-						Map<Repository, List<FileMetaData>> filesMap = new HashMap<Repository, List<FileMetaData>>();
-						for(Repository r : ajUpdaterFrame.getValidateRepositories())
-							filesMap.put(r, updateFiles.get(r));
-						ajUpdater.downloadFiles(filesMap);
-					}
-				}
-			}
-		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
 	}
 }

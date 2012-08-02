@@ -86,11 +86,6 @@
  */
 package org.ajdeveloppement.concours;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import javax.xml.bind.Marshaller;
@@ -106,11 +101,11 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlForeignKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.concours.builders.CriterionElementBuilder;
 
 /**
@@ -119,14 +114,13 @@ import org.ajdeveloppement.concours.builders.CriterionElementBuilder;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CRITEREELEMENT")
+@SqlTable(name="CRITEREELEMENT",loadBuilder=CriterionElementBuilder.class)
 @SqlPrimaryKey(fields={"CODECRITEREELEMENT","CODECRITERE","NUMREGLEMENT"})
 public class CriterionElement implements ObjectPersistence {
 	
 	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
 	@XmlID
 	@XmlAttribute(name="id")
-	@SuppressWarnings("unused")
 	private String xmlId;
 	
 	@SqlField(name="CODECRITEREELEMENT")
@@ -142,14 +136,7 @@ public class CriterionElement implements ObjectPersistence {
 	@SqlForeignKey(mappedTo={"CODECRITERE","NUMREGLEMENT"})
 	private Criterion criterion;
 	
-	private static StoreHelper<CriterionElement> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<CriterionElement>(new SqlStoreHandler<CriterionElement>(ApplicationCore.dbConnection, CriterionElement.class));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+	private static StoreHelper<CriterionElement> helper = SqlStoreHelperFactory.getStoreHelper(CriterionElement.class);
     
     public CriterionElement() {
         
@@ -268,40 +255,38 @@ public class CriterionElement implements ObjectPersistence {
 	
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 	/**
 	 * Sauvegarde l'élement de critère dans la base.  Les arguments sont ignoré
 	 * 
-	 * @see org.ajdeveloppement.commons.sql.SqlPersistance#save()
+	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(Session)
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.save(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 		}
 	}
 	
 	/**
 	 * Supprime de la base le présent élément. Les arguments sont ignoré
 	 * 
-	 * @see org.ajdeveloppement.commons.sql.SqlPersistance#delete()
+	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(Session)
 	 */
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 		}
 	}
 	
@@ -381,39 +366,4 @@ public class CriterionElement implements ObjectPersistence {
 			return false;
 		return true;
 	}
-
-    /**
-     * Retourne l'ensemble des éléments de critère associé à un critère donné
-     * 
-     * @param criterion Le critère pour lequel retourner l'ensemble des éléments
-     * 
-     * @return La liste des éléments du critère
-     * @throws ObjectPersistenceException 
-     */
-    public static List<CriterionElement> getAllCriterionElementsFor(Criterion criterion) throws ObjectPersistenceException {
-    	List<CriterionElement> elements = new ArrayList<CriterionElement>();
-    	
-    	try {
-			String sql = "select * from critereelement where " + //$NON-NLS-1$
-					"codecritere=? and numreglement=? order by NUMORDRE"; //$NON-NLS-1$
-			
-			PreparedStatement pstmt = ApplicationCore.dbConnection.prepareStatement(sql);
-			pstmt.setString(1, criterion.getCode());
-			pstmt.setInt(2, criterion.getReglement().getNumReglement());
-			
-			ResultSet rs = pstmt.executeQuery();
-			try {
-				while(rs.next()) {
-					elements.add(CriterionElementBuilder.getCriterionElement(criterion, rs));
-				}
-			} finally {
-				rs.close();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-    	return elements;
-    }
-
-	
 }

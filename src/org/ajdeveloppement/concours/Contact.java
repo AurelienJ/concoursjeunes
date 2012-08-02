@@ -109,12 +109,14 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlForeignKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
 import org.ajdeveloppement.commons.sql.SqlManager;
+import org.ajdeveloppement.concours.builders.ContactBuilder;
 import org.ajdeveloppement.concours.managers.CivilityManager;
 import org.ajdeveloppement.concours.managers.EntiteManager;
 
@@ -125,8 +127,9 @@ import org.ajdeveloppement.concours.managers.EntiteManager;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CONTACT")
+@SqlTable(name="CONTACT",loadBuilder=ContactBuilder.class)
 @SqlPrimaryKey(fields="ID_CONTACT")
+@SqlUnmappedFields(fields={"UPPER_NAME"})
 public class Contact implements ObjectPersistence, Cloneable {
 	
 	// [start] Helper persistence
@@ -137,6 +140,7 @@ public class Contact implements ObjectPersistence, Cloneable {
 	@XmlID
 	@XmlAttribute(name="id")
 	private String xmlId;
+	
 	
 	@SqlField(name="ID_CONTACT")
 	@XmlTransient
@@ -516,7 +520,7 @@ public class Contact implements ObjectPersistence, Cloneable {
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			if(idContact == null)
 				idContact = UUID.randomUUID();
 			
@@ -527,7 +531,7 @@ public class Contact implements ObjectPersistence, Cloneable {
 					if(!session.contains(entite)) {
 						//si l'instance n'a pas été sauvegardé c'est qu'il existe une instance concurrente en base
 						//on va donc la récupérer et l'utiliser
-						List<Entite> entitesInDatabase = EntiteManager.getEntitesInDatabase(entite, ""); //$NON-NLS-1$
+						List<Entite> entitesInDatabase = EntiteManager.getEntitesInDatabase(entite);
 						if(entitesInDatabase != null && entitesInDatabase.size() > 0)
 							entite = entitesInDatabase.get(0);
 						else //ne devrais pas ce produire compte tenu des tests précédents mais dans le doute pour éviter les plantages on stop la sauvegarde
@@ -591,8 +595,7 @@ public class Contact implements ObjectPersistence, Cloneable {
 				throw new ObjectPersistenceException(e);
 			}
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 		}
 	}
 
@@ -601,11 +604,10 @@ public class Contact implements ObjectPersistence, Cloneable {
 	 */
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(idContact != null && (session == null || !session.contains(this))) {
+		if(idContact != null && Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 		}
 	}
 	
@@ -639,18 +641,13 @@ public class Contact implements ObjectPersistence, Cloneable {
 			if(civility.getAbreviation() == null || civility.getAbreviation().isEmpty())
 				civility = null;
 			else {
-				try {
-					List<Civility> civilities = CivilityManager.getAllCivilities();
-					
-					for(Civility c : civilities) {
-						if(c.getIdCivility().equals(civility.getIdCivility()) || (c.getAbreviation().equals(civility.getAbreviation()) && c.getLibelle().equals(civility.getLibelle()))) {
-							civility = c;
-							break;
-						}
+				List<Civility> civilities = CivilityManager.getAllCivilities();
+				
+				for(Civility c : civilities) {
+					if(c.getIdCivility().equals(civility.getIdCivility()) || (c.getAbreviation().equals(civility.getAbreviation()) && c.getLibelle().equals(civility.getLibelle()))) {
+						civility = c;
+						break;
 					}
-				} catch (ObjectPersistenceException e) {
-					civility = null;
-					e.printStackTrace();
 				}
 			}
 		}

@@ -101,6 +101,9 @@ public class MetaDataFicheConcours implements PropertyChangeListener {
 	private String intituleConcours;
 	private String filenameConcours;
 	
+	/**
+	 * 
+	 */
 	public MetaDataFicheConcours() { }
 	
 	/**

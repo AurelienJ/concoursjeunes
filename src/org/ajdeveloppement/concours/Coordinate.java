@@ -88,7 +88,6 @@
  */
 package org.ajdeveloppement.concours;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 import javax.xml.bind.Marshaller;
@@ -98,17 +97,17 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlForeignKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.builders.CoordinateBuilder;
 
 /**
  * Represent a contact coordinate.<br>
@@ -118,7 +117,7 @@ import org.ajdeveloppement.commons.persistence.sql.SqlTable;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="COORDINATE")
+@SqlTable(name="COORDINATE",loadBuilder=CoordinateBuilder.class)
 @SqlPrimaryKey(fields="ID_COORDINATE")
 public class Coordinate implements ObjectPersistence, Cloneable {
 	
@@ -152,21 +151,18 @@ public class Coordinate implements ObjectPersistence, Cloneable {
 			this.value = value;
 		}
 		
+		/**
+		 * Get the string value of an enum entry
+		 * 
+		 * @return the value of enum
+		 */
 		public String getValue() {
 			return this.value;
 		}
 
 	}
 	
-	private static StoreHelper<Coordinate> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<Coordinate>(new SqlStoreHandler<Coordinate>(
-					ApplicationCore.dbConnection, Coordinate.class));
-		} catch (SQLException e) {
-			throw new UncheckedException(e);
-		}
-	}
+	private static StoreHelper<Coordinate> helper = SqlStoreHelperFactory.getStoreHelper(Coordinate.class);
 	
 	@XmlAttribute(name="id",required=true)
 	@SqlField(name="ID_COORDINATE")
@@ -183,7 +179,9 @@ public class Coordinate implements ObjectPersistence, Cloneable {
 	private Contact contact;
 	
 	
-	
+	/**
+	 * Construct a coordinate of contact
+	 */
 	public Coordinate() {
 	}
 	
@@ -273,12 +271,12 @@ public class Coordinate implements ObjectPersistence, Cloneable {
 	
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 
 	/**
@@ -286,14 +284,13 @@ public class Coordinate implements ObjectPersistence, Cloneable {
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			if(idCoordinate == null)
 				idCoordinate = UUID.randomUUID();
 			
 			helper.save(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 		}
 	}
 	
@@ -302,11 +299,10 @@ public class Coordinate implements ObjectPersistence, Cloneable {
 	 */
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(idCoordinate != null && (session == null || !session.contains(this))) {
+		if(idCoordinate != null && Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 		}
 	}
 	

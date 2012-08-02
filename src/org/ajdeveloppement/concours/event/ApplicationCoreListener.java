@@ -88,8 +88,24 @@ package org.ajdeveloppement.concours.event;
 
 import java.util.EventListener;
 
+/**
+ * Auditeur des évenement lié à l'application
+ * 
+ * @author Aurélien JEOFFRAY
+ *
+ */
 public interface ApplicationCoreListener extends EventListener {
-	//public void databaseVersionError(ApplicationCoreEvent e);
+	/**
+	 * Invoqué à l'ajout d'un profil à l'application
+	 * 
+	 * @param e l'evenement d'ajout
+	 */
 	public void profileAdded(ApplicationCoreEvent e);
+	
+	/**
+	 * Invoqué à la suppression d'un profil à l'application
+	 * 
+	 * @param e l'evenement de suppression
+	 */
 	public void profileRemoved(ApplicationCoreEvent e);
 }

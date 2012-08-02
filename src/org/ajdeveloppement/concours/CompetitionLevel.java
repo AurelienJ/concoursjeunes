@@ -88,23 +88,21 @@
  */
 package org.ajdeveloppement.concours;
 
-import java.sql.SQLException;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlForeignKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.builders.CompetitionLevelBuilder;
 
 /**
  * Représente le niveau d'une compétition.
@@ -112,7 +110,7 @@ import org.ajdeveloppement.commons.persistence.sql.SqlTable;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="NIVEAU_COMPETITION")
+@SqlTable(name="NIVEAU_COMPETITION",loadBuilder=CompetitionLevelBuilder.class)
 @SqlPrimaryKey(fields={"CODENIVEAU","NUMFEDERATION","LANG"})
 public class CompetitionLevel implements ObjectPersistence {
 	@XmlTransient
@@ -129,15 +127,11 @@ public class CompetitionLevel implements ObjectPersistence {
 	@SqlForeignKey(mappedTo="NUMFEDERATION")
 	private Federation federation;
 	
-	private static StoreHelper<CompetitionLevel> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<CompetitionLevel>(new SqlStoreHandler<CompetitionLevel>(ApplicationCore.dbConnection, CompetitionLevel.class));
-		} catch (SQLException e) {
-			throw new UncheckedException(e);
-		}
-	}
+	private static StoreHelper<CompetitionLevel> helper = SqlStoreHelperFactory.getStoreHelper(CompetitionLevel.class);
 	
+	/**
+	 * 
+	 */
 	public CompetitionLevel() {
 		
 	}
@@ -214,46 +208,44 @@ public class CompetitionLevel implements ObjectPersistence {
 	
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 
 	/** 
 	 * Sauvegarde en base un niveau de compétition
 	 * 
-	 * @see org.ajdeveloppement.commons.sql.SqlPersistance#save()
+	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(Session)
 	 * 
-	 * @throws SQLException
+	 * @throws ObjectPersistenceException
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.save(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 		}
 	}
 
 	/** 
 	 * Sauvegarde de la base le niveau de compétition
 	 * 
-	 * @see org.ajdeveloppement.commons.sql.SqlPersistance#delete()
+	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(Session)
 	 * compte.
 	 * 
-	 * @throws SQLException
+	 * @throws ObjectPersistenceException
 	 */
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 		}
 	}
 

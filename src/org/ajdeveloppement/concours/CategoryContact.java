@@ -101,13 +101,14 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlGeneratedIdField;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
-import org.ajdeveloppement.concours.cache.CategoryContactCache;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.builders.CategoryContactBuilder;
 import org.ajdeveloppement.concours.helpers.LibelleHelper;
 
 /**
@@ -116,10 +117,19 @@ import org.ajdeveloppement.concours.helpers.LibelleHelper;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CATEGORIE_CONTACT")
+@SqlTable(name="CATEGORIE_CONTACT",loadBuilder=CategoryContactBuilder.class)
 @SqlPrimaryKey(fields="NUM_CATEGORIE_CONTACT",generatedidField=@SqlGeneratedIdField(name="NUM_CATEGORIE_CONTACT",type=Types.INTEGER))
 public class CategoryContact implements ObjectPersistence{
+	/**
+	 * Liste des catégorie par défaut
+	 * 
+	 * @author Aurélien JEOFFRAY
+	 *
+	 */
 	public enum IdDefaultCategory {
+		/**
+		 * Catégorie Archer
+		 */
 		BOWMAN(1);
 		
 		private int value;
@@ -128,6 +138,11 @@ public class CategoryContact implements ObjectPersistence{
 			this.value = value;
 		}
 		
+		/**
+		 * Retourne l'id de la catégorie
+		 * 
+		 * @return l'id de la catégorie
+		 */
 		public int value() {
 			return value;
 		}
@@ -216,7 +231,7 @@ public class CategoryContact implements ObjectPersistence{
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			if(localizedLibelle != null) {
 				for(Entry<String,String> entry : localizedLibelle.entrySet()) {
 					if(!LibelleHelper.getLibelle(idLibelle, entry.getKey()).equals(entry.getValue()))
@@ -226,11 +241,9 @@ public class CategoryContact implements ObjectPersistence{
 			
 			helper.save(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
-		
-			if(!CategoryContactCache.getInstance().containsKey(numCategoryContact))
-				CategoryContactCache.getInstance().add(this);
+			Cache.put(this);
+			
+			Session.addThreatyObject(session, this);
 		}
 	}
 	
@@ -239,13 +252,12 @@ public class CategoryContact implements ObjectPersistence{
 	 */
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Cache.remove(this);
 			
-			CategoryContactCache.getInstance().remove(numCategoryContact);
+			Session.addThreatyObject(session, this);
 		}
 	}
 

@@ -178,6 +178,10 @@ public class FicheConcoursFinalsPane extends JPanel implements ActionListener, M
 	@Localizable("finals.printclassement")
 	private JButton jbPrintClassement = new JButton();
 
+	/**
+	 * 
+	 * @param ficheConcoursPane
+	 */
 	public FicheConcoursFinalsPane(FicheConcoursPane ficheConcoursPane) {
 		this.ficheConcoursPane = ficheConcoursPane;
 		this.ficheConcours = ficheConcoursPane.getFicheConcours();
@@ -686,6 +690,9 @@ public class FicheConcoursFinalsPane extends JPanel implements ActionListener, M
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void updateGraph() {
 		completePanel();
 	}

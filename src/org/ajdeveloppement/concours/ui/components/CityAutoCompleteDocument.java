@@ -88,11 +88,13 @@
  */
 package org.ajdeveloppement.concours.ui.components;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -109,16 +111,29 @@ public class CityAutoCompleteDocument extends PlainDocument {
 	private JTextField textField;
 	private String codeCountry = "fr"; //$NON-NLS-1$
 	
+	private Thread searchThread = null;
+	
+	/**
+	 * 
+	 * @param textField
+	 * @throws SQLException
+	 */
 	public CityAutoCompleteDocument(JTextField textField) throws SQLException {
 		this(textField, "fr"); //$NON-NLS-1$
 	}
 	
+	/**
+	 * 
+	 * @param textField
+	 * @param codeCountry
+	 * @throws SQLException
+	 */
 	public CityAutoCompleteDocument(JTextField textField, String codeCountry) throws SQLException {
 		this.textField = textField;
-		String sql = "select NOM from VILLE where UPPER_NAME like concat(?, '%') and PAYS = ? order by NOM limit 1"; //$NON-NLS-1$
+		String sql = "select NOM from VILLE where PAYS = ? and UPPER_NAME like ? order by UPPER_NAME limit 1"; //$NON-NLS-1$
 		this.codeCountry = codeCountry;
 		
-		pstmt = ApplicationCore.dbConnection.prepareStatement(sql);
+		pstmt = ApplicationCore.dbConnection.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 	}
 	
 	/**
@@ -195,30 +210,75 @@ public class CityAutoCompleteDocument extends PlainDocument {
 	 * @param strLength
 	 * @throws BadLocationException
 	 */
-	private void autoComplete(int offs) throws BadLocationException {
-		String searchString = getText(0, getLength()).toUpperCase().replace(' ', '-');
+	private synchronized void autoComplete(final int offs) throws BadLocationException {
+		if(searchThread != null)
+			searchThread.interrupt();
 		
-		try {
-			pstmt.setString(1, searchString);
-			pstmt.setString(2, codeCountry);
-
-			ResultSet rs = pstmt.executeQuery();
-			try {
-				if(rs.first()) {
-					String cityResult = rs.getString("NOM"); //$NON-NLS-1$
+//		try {
+//			if(searchThread != null)
+//				searchThread.join();
+//		} catch (InterruptedException e1) {
+//		}
+		
+		final String searchString = getText(0, getLength()).toUpperCase().replace(' ', '-');
+		
+		if(searchString.isEmpty())
+			return;
+		
+		searchThread = new Thread() {
+			@Override
+			public void run() {
+				final Thread currentThread = Thread.currentThread();
+				try {
+					pstmt.setString(1, codeCountry);
+					pstmt.setString(2, searchString + '%');
 					
-					super.remove(0, getLength());
-					super.insertString(0, cityResult, null);
-					textField.setCaretPosition(cityResult.length());
-					textField.moveCaretPosition(offs);
+					if(currentThread.isInterrupted())
+						return;
+		
+					try(ResultSet rs = pstmt.executeQuery()) {
+						if(currentThread.isInterrupted())
+							return;
+						
+						if(!rs.isClosed() && rs.next()) {
+							final String cityResult = rs.getString("NOM"); //$NON-NLS-1$
+							
+							Runnable runnable = new Runnable() {
+								@Override
+								public void run() {
+									try {
+										synchronized (currentThread) {
+											if(currentThread.isAlive()) {
+												CityAutoCompleteDocument.super.remove(0, getLength());
+												CityAutoCompleteDocument.super.insertString(0, cityResult, null);
+												textField.setCaretPosition(cityResult.length());
+												textField.moveCaretPosition(offs);
+											}
+										}
+									} catch (BadLocationException e) {
+										e.printStackTrace();
+									}
+								}
+							};
+							
+							if(Thread.currentThread().isInterrupted())
+								return;
+							
+							if(SwingUtilities.isEventDispatchThread())
+								runnable.run();
+							else
+								SwingUtilities.invokeAndWait(runnable);
+						}
+					} catch (InvocationTargetException | InterruptedException e) {
+					}
+				} catch(SQLException e) {
+					//pas d'auto complément sur erreur. On se contente de logger sur la console
+					e.printStackTrace();
 				}
-			} finally {
-				rs.close();
 			}
-		} catch(SQLException e) {
-			//pas d'auto complément sur erreur. On se contente de logger sur la console
-			e.printStackTrace();
-		}
+		};
+		
+		searchThread.start();
 	}
 	
 	

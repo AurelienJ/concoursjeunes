@@ -209,10 +209,10 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 	private JTextArea jtaAddressContact = new JTextArea(4, 30);
 	@Localizable("entite.codepostal")
 	private JLabel jlZipCodeContact = new JLabel();
-	private AJSuggestTextField jtfZipCodeContact = new AJSuggestTextField("", 10); //$NON-NLS-1$
+	private AJSuggestTextField<String> jtfZipCodeContact = new AJSuggestTextField<>("", 10); //$NON-NLS-1$
 	@Localizable("entite.ville")
 	private JLabel jlCityContact = new JLabel();
-	private AJSuggestTextField jtfCityContact = new AJSuggestTextField("", 10); //$NON-NLS-1$
+	private AJSuggestTextField<String> jtfCityContact = new AJSuggestTextField<>("", 10); //$NON-NLS-1$
 	@Localizable("entite.pays")
 	private JLabel jlPays = new JLabel();
 	private CountryComboBox ccbPays = new CountryComboBox();
@@ -582,17 +582,10 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 		contactBinding = new BindingGroup();
 		
 		jcbCivility.removeAllItems();
-		try {
-			jcbCivility.addItem(null);
-			for(Civility civility : CivilityManager.getAllCivilities()) {
-				jcbCivility.addItem(civility);
-			}
-		} catch (ObjectPersistenceException e) {
-			DisplayableErrorHelper.displayException(e);
-			e.printStackTrace();
+		jcbCivility.addItem(null);
+		for(Civility civility : CivilityManager.getAllCivilities()) {
+			jcbCivility.addItem(civility);
 		}
-		
-		
 		
 		if(contact != null) {
 			jcbCivility.setEnabled(true);
@@ -648,20 +641,11 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 	}
 	
 	private void populateCategoriesPanel() {
-		List<CategoryContact> allCategories = null;
-		
-		try {
-			allCategories = CategoryContactManager.getAllCategoryContact();
-		} catch (ObjectPersistenceException e) {
-			DisplayableErrorHelper.displayException(e);
-		}
-		
+		List<CategoryContact> allCategories = CategoryContactManager.getAllCategoryContact();
 		if(allCategories == null)
 			allCategories = new ArrayList<CategoryContact>();
 		
 		dropDownMenu.removeAll();
-		
-		//jlCategories.setSize(getWidth(), jlCategories.getSize().height);
 		
 		if(contact != null) {
 			String categories = ""; //$NON-NLS-1$
@@ -853,8 +837,8 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 				editedCoordinate.setCoordinateType((Coordinate.Type)jcbTypeCoordinate.getSelectedItem());
 				editedCoordinate.setValue(jtfValueCoordinate.getText());
 				if(!coordinatesModel.getElements().contains(editedCoordinate)) {
-					if(coordinatesModel.getSize() == 1 && ((Coordinate)coordinatesModel.getElementAt(0)).getValue() == null)
-						coordinatesModel.remove((Coordinate)coordinatesModel.getElementAt(0));
+					if(coordinatesModel.getSize() == 1 && (coordinatesModel.getElementAt(0)).getValue() == null)
+						coordinatesModel.remove(coordinatesModel.getElementAt(0));
 					coordinatesModel.add(editedCoordinate);
 				}
 			}

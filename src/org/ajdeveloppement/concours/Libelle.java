@@ -88,38 +88,29 @@
  */
 package org.ajdeveloppement.concours;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
-import org.ajdeveloppement.concours.cache.LibelleCache;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.builders.LibelleBuilder;
 
 /**
  * Libellé localisé stocké en base de données
  * 
  * @author Aurélien JEOFFRAY
  */
-@SqlTable(name="LIBELLE")
+@SqlTable(name="LIBELLE",loadBuilder=LibelleBuilder.class)
 @SqlPrimaryKey(fields={"ID_LIBELLE","LANG"})
 public class Libelle implements ObjectPersistence {
-	private static StoreHelper<Libelle> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<Libelle>(new SqlStoreHandler<Libelle>(
-					ApplicationCore.dbConnection, Libelle.class));
-		} catch (SQLException e) {
-			throw new UncheckedException(e);
-		}
-	}
+	private static StoreHelper<Libelle> helper = SqlStoreHelperFactory.getStoreHelper(Libelle.class);
 	
 	@SqlField(name="ID_LIBELLE")
 	private UUID idLibelle;
@@ -201,19 +192,20 @@ public class Libelle implements ObjectPersistence {
 	 * @param libelle le libellé localisé à mettre à jour
 	 */
 	public void setLibelle(String libelle) {
-		updated = true;
+		if(libelle != this.libelle && (libelle == null || this.libelle == null || !libelle.equals(this.libelle)))
+			updated = true;
 		
 		this.libelle = libelle;
 	}
 	
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 	
 	/**
@@ -223,17 +215,16 @@ public class Libelle implements ObjectPersistence {
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if((idLibelle == null || updated) && (session == null || !session.contains(this))) {
+		if((idLibelle == null || updated) && Session.canExecute(session, this)) {
 			if(idLibelle == null) {
 				idLibelle = UUID.randomUUID();
-				
-				LibelleCache.getInstance().add(this);
 			}
 			
 			helper.save(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Cache.put(this);
+			
+			Session.addThreatyObject(session, this);
 			
 			updated = false;
 		}
@@ -246,13 +237,12 @@ public class Libelle implements ObjectPersistence {
 	 */
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 			
-			LibelleCache.getInstance().remove(new LibelleCache.LibellePK(idLibelle, lang));
+			Cache.remove(this);
 		}
 	}
 }

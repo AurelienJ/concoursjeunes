@@ -88,37 +88,28 @@
  */
 package org.ajdeveloppement.concours;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.builders.RepartitionFinalsBuilder;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@SqlTable(name="REPARTITION_PHASE_FINALE")
+@SqlTable(name="REPARTITION_PHASE_FINALE",loadBuilder=RepartitionFinalsBuilder.class)
 @SqlPrimaryKey(fields={"NUM_REPARTITION_PHASE_FINALE", "NUM_TYPE_REPARTITION"})
 public class RepartitionFinals implements ObjectPersistence {
-	private static StoreHelper<RepartitionFinals> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<RepartitionFinals>(new SqlStoreHandler<RepartitionFinals>(
-					ApplicationCore.dbConnection, RepartitionFinals.class));
-		} catch (SQLException e) {
-			throw new UncheckedException(e);
-		}
-	}
+	private static StoreHelper<RepartitionFinals> helper = SqlStoreHelperFactory.getStoreHelper(RepartitionFinals.class);
 	
 	public static final short TYPE_INDIV_INTERNATIONNAL = 1;
 	public static final short TYPE_INDIV_FRANCAIS = 2;
@@ -193,27 +184,31 @@ public class RepartitionFinals implements ObjectPersistence {
 
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			if(numRepartition > -1)
 				helper.save(this);
+			
+			Session.addThreatyObject(session, this);
 		}
 	}
 
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			if(numRepartition > -1)
 				helper.delete(this);
+			
+			Session.addThreatyObject(session, this);
 		}
 	}
 }

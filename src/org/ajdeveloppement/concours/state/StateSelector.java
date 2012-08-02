@@ -104,5 +104,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface StateSelector {
+	/**
+	 * le nom du bouton associé
+	 * @return le nom du bouton associé
+	 */
 	String name();
 }

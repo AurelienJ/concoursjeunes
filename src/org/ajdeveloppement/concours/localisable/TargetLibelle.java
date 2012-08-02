@@ -99,6 +99,8 @@ import org.ajdeveloppement.concours.Entite;
 import org.ajdeveloppement.concours.Target;
 
 /**
+ * Wrapper de cible permettant d'offrir un libellé formaté pour celle ci
+ * 
  * @author Aurélien JEOFFRAY
  *
  */
@@ -106,6 +108,12 @@ public class TargetLibelle {
 	private Target target;
 	private AjResourcesReader localisation;
 
+	/**
+	 * Construit un nouveau libellé de cible
+	 * 
+	 * @param target la cible pour laquel produire un libellé
+	 * @param localisation la resource de localisation pour le libellé
+	 */
 	public TargetLibelle(Target target, AjResourcesReader localisation) {
 		super();
 		this.target = target;
@@ -113,12 +121,17 @@ public class TargetLibelle {
 	}
 
 	/**
-	 * @return target
+	 * La cible associé au libellé
+	 * 
+	 * @return  La cible associé au libellé
 	 */
 	public Target getTarget() {
 		return target;
 	}
 	
+	/**
+	 * Le libellé généré à partir de la cible
+	 */
 	@Override
 	public String toString() {
 		String strCouleur = "<font color=\"#00AA00\">"; //$NON-NLS-1$

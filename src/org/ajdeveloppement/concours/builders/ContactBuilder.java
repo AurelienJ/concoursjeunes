@@ -94,70 +94,85 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.Contact;
 import org.ajdeveloppement.concours.managers.CoordinateManager;
+import org.ajdeveloppement.concours.sqltable.ContactTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class ContactBuilder {
-	private static LoadHelper<Contact,Map<String,Object>> loadHelper;
-	private static LoadHelper<Contact,ResultSet> resultSetLoadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<Contact,Map<String,Object>>(new SqlLoadHandler<Contact>(ApplicationCore.dbConnection, Contact.class));
-			resultSetLoadHelper = new LoadHelper<Contact, ResultSet>(new ResultSetLoadHandler<Contact>(Contact.class));
-		} catch(ObjectPersistenceException e) {
-			throw new UncheckedException(e);
-		}
-	}
+public class ContactBuilder implements ResultSetRowToObjectBinder<Contact, Void>{
+	private static LoadHelper<Contact,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Contact.class);
+	private static LoadHelper<Contact,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Contact.class);
 	
 	private static PreparedStatement pstmtCategoriesContact;
 	
 	public static Contact getContact(UUID idContact) throws ObjectPersistenceException {
-		return getContact(idContact, null);
+		return getContact(idContact, null, null);
 	}
 	
-	public static Contact getContact(ResultSet rs) throws ObjectPersistenceException {
-		return getContact(null, rs);
+	public static Contact getContact(ResultSet rs,SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		return getContact(null, rs, sessionCache);
 	}
 	
-	private static Contact getContact(UUID idContact, ResultSet rs) throws ObjectPersistenceException {
-		Contact contact = new Contact();
-		if(idContact != null) {
-			contact.setIdContact(idContact);
-			
-			Map<Class<?>, Map<String,Object>> foreignKeys = loadHelper.load(contact);
-			
-			contact.setCivility(CivilityBuilder.getCivility((UUID)foreignKeys.get(Contact.class).get("ID_CIVILITY"))); //$NON-NLS-1$
-		} else {
-			resultSetLoadHelper.load(contact, rs);
-			
-			contact.setCivility(CivilityBuilder.getCivility(rs));
-		}
-		
+	private static Contact getContact(UUID idContact, ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		try {
-			if(pstmtCategoriesContact == null)
-				pstmtCategoriesContact = ApplicationCore.dbConnection.prepareStatement("select NUM_CATEGORIE_CONTACT from ASSOCIER_CATEGORIE_CONTACT where ID_CONTACT = ?"); //$NON-NLS-1$
+			if(idContact == null && rs != null)
+				idContact = ContactTable.ID_CONTACT.getValue(rs);
 			
-			pstmtCategoriesContact.setObject(1, contact.getIdContact());
+			Contact contact = null;
+			if(sessionCache != null)
+				contact = sessionCache.get(Contact.class, new SqlLoadingSessionCache.Key(idContact));
 			
-			ResultSet rsCategoriesContact = pstmtCategoriesContact.executeQuery();
-			while(rsCategoriesContact.next()) {
-				contact.getCategories().add(CategoryContactBuilder.getCategoryContact(rsCategoriesContact.getInt("NUM_CATEGORIE_CONTACT"))); //$NON-NLS-1$
+			if(contact == null) {
+				contact = new Contact();
+				
+				Map<Class<?>, Map<String,Object>> foreignKeys;
+				if(rs == null) {
+					contact.setIdContact(idContact);
+					
+					foreignKeys = loadHelper.load(contact);
+				} else {
+					foreignKeys = resultSetLoadHelper.load(contact, rs);
+				}
+				
+				sessionCache.put(contact);
+				
+				if(foreignKeys.get(Contact.class).get(ContactTable.ID_CIVILITY.getFieldName()) != null)
+					contact.setCivility(CivilityBuilder.getCivility((UUID)foreignKeys.get(Contact.class).get(ContactTable.ID_CIVILITY.getFieldName())));
+				
+				if(foreignKeys.get(Contact.class).get(ContactTable.ID_ENTITE.getFieldName()) != null) 
+					contact.setEntite(EntiteBuilder.getEntite((UUID)foreignKeys.get(Contact.class).get(ContactTable.ID_ENTITE.getFieldName())));
+				
+				if(pstmtCategoriesContact == null)
+					pstmtCategoriesContact = ApplicationCore.dbConnection.prepareStatement("select NUM_CATEGORIE_CONTACT from ASSOCIER_CATEGORIE_CONTACT where ID_CONTACT = ?"); //$NON-NLS-1$
+				
+				pstmtCategoriesContact.setObject(1, contact.getIdContact());
+				
+				ResultSet rsCategoriesContact = pstmtCategoriesContact.executeQuery();
+				while(rsCategoriesContact.next()) {
+					contact.getCategories().add(CategoryContactBuilder.getCategoryContact(rsCategoriesContact.getInt("NUM_CATEGORIE_CONTACT"))); //$NON-NLS-1$
+				}
+				
+				contact.setCoordinates(CoordinateManager.getContactCoordinates(contact));
 			}
-			
-			contact.setCoordinates(CoordinateManager.getContactCoordinates(contact));
+			return contact;
 		} catch(SQLException e) {
 			throw new ObjectPersistenceException(e);
 		}
-		return contact;
+	}
+
+	@Override
+	public Contact get(ResultSet rs, SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap) throws ObjectPersistenceException {
+		return getContact(rs, sessionCache);
 	}
 }

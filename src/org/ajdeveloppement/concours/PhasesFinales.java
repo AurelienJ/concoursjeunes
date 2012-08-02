@@ -106,7 +106,6 @@ import java.util.Set;
 
 import org.ajdeveloppement.commons.AJTemplate;
 import org.ajdeveloppement.commons.UncheckedException;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.event.FicheConcoursEvent;
 import org.ajdeveloppement.concours.event.FicheConcoursListener;
 import org.ajdeveloppement.concours.localisable.CriteriaSetLibelle;
@@ -146,11 +145,7 @@ public class PhasesFinales implements PropertyChangeListener,FicheConcoursListen
 			throw new UncheckedException(e1);
 		}
 		
-		try {
-			repartitionsFinals = RepartitionFinalsManager.getRepartitionFinals(RepartitionFinals.TYPE_INDIV_FRANCAIS);
-		} catch (ObjectPersistenceException e) {
-			throw new UncheckedException(e);
-		}
+		repartitionsFinals = RepartitionFinalsManager.getRepartitionFinals(RepartitionFinals.TYPE_INDIV_FRANCAIS);
 		
 		refreshClassement();
 		for(Concurrent concurrent : ficheConcours.getConcurrentList().list(-1)) {

@@ -114,7 +114,6 @@ import org.ajdeveloppement.commons.net.Proxy;
 @XmlType(propOrder={"firstboot", "pdfReaderPath", "useProxy", "proxy", "lastProfile"})
 public class AppConfiguration implements Cloneable {
 	@XmlAttribute
-	@SuppressWarnings("unused")
 	private String version = "1.0"; //$NON-NLS-1$
 	
 	@XmlElement(required=false)
@@ -125,6 +124,9 @@ public class AppConfiguration implements Cloneable {
 	
 	private boolean firstboot       = true;
 	
+	/**
+	 * Construit une nouvelle configuration d'Application
+	 */
 	public AppConfiguration() {
 		
 	}
@@ -213,6 +215,8 @@ public class AppConfiguration implements Cloneable {
 
 	/**
 	 * sauvegarde la configuration général du programme
+	 * @throws JAXBException 
+	 * @throws IOException 
 	 *
 	 */
 	public void save() throws JAXBException, IOException {

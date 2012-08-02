@@ -1,7 +1,7 @@
 /*
- * Créé le 7 mai 2010 à 23:42:23 pour ArcCompetition
+ * Créé le 28 juil. 2012 à 21:25:51 pour ArcCompetition
  *
- * Copyright 2002-2010 - Aurélien JEOFFRAY
+ * Copyright 2002-2012 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,30 +86,34 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.cache;
+package org.ajdeveloppement.concours.managers;
 
-import org.ajdeveloppement.concours.CategoryContact;
+import static org.ajdeveloppement.concours.sqltable.CriterionElementTable.*;
+
+import java.util.List;
+
+import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.concours.Criterion;
+import org.ajdeveloppement.concours.CriterionElement;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class CategoryContactCache extends AbstractCache<Integer, CategoryContact> {
+public class CriterionElementManager {
 
-	private static CategoryContactCache instance = new CategoryContactCache();
-	
-	public static CategoryContactCache getInstance() {
-		return instance;
-	}
-	
-	private CategoryContactCache() {
-	}
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.concours.cache.AbstractCache#add(java.lang.Object)
+	/**
+	 * Retourne l'ensemble des éléments de critère associé à un critère donné
+	 * 
+	 * @param criterion Le critère pour lequel retourner l'ensemble des éléments
+	 * 
+	 * @return La liste des éléments du critère
 	 */
-	@Override
-	public void add(CategoryContact categoryContact) {
-		put(categoryContact.getNumCategoryContact(), categoryContact);
+	public static List<CriterionElement> getAllCriterionElementsFor(Criterion criterion) {
+		return QResults.from(CriterionElement.class, criterion)
+	    		.where(CODECRITERE.equalTo(criterion.getCode())
+	    				.and(NUMREGLEMENT.equalTo(criterion.getReglement().getNumReglement())))
+	    		.orderBy(NUMORDRE).asList();
 	}
 
 }

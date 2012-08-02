@@ -130,6 +130,9 @@ public class PluginDescription {
     @XmlElement(required = true)
     protected String reposURL = ""; //$NON-NLS-1$
     
+    /**
+     * COnstruit une nouvelle description de plugin
+     */
     public PluginDescription() {
 		
 	}

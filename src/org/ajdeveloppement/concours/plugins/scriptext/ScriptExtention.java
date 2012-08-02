@@ -122,6 +122,9 @@ public class ScriptExtention {
 	@XmlTransient
 	private ScriptExtInterface invocableEngine;
 	
+	/**
+	 * 
+	 */
 	public ScriptExtention() {
 		
 	}

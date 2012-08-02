@@ -88,50 +88,26 @@
  */
 package org.ajdeveloppement.concours.managers;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Civility;
-import org.ajdeveloppement.concours.builders.CivilityBuilder;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
 public class CivilityManager {
-	private static PreparedStatement pstmtAllCivilities = null;
-	
 	private static List<Civility> cacheCivilities = null;
 	
 	/**
 	 * Retourne l'ensemble des civilités en base.
 	 * 
 	 * @return la liste des civilités en base
-	 * @throws ObjectPersistenceException 
 	 */
-	public static List<Civility> getAllCivilities() throws ObjectPersistenceException {
-		if(cacheCivilities == null) {
-			cacheCivilities = new ArrayList<Civility>();
-			try {
-				if(pstmtAllCivilities == null)
-					pstmtAllCivilities = ApplicationCore.dbConnection.prepareStatement("select * from CIVILITY"); //$NON-NLS-1$
-				
-				ResultSet rs = pstmtAllCivilities.executeQuery();
-				try {
-					while(rs.next())
-						cacheCivilities.add(CivilityBuilder.getCivility(rs));
-				} finally {
-					rs.close();
-				}
-			} catch (SQLException e) {
-				throw new ObjectPersistenceException(e);
-			}
-		}
+	public static List<Civility> getAllCivilities() {
+		if(cacheCivilities == null)
+			cacheCivilities = QResults.from(Civility.class).asList();
 		
 		return cacheCivilities;
 	}

@@ -97,6 +97,11 @@ import junit.framework.TestSuite;
  */
 public class AllTests {
 
+	/**
+	 * Retourne la suite de test à executer
+	 * 
+	 * @return la suite de test
+	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test for org.ajdeveloppement.concours.test"); //$NON-NLS-1$
 		//$JUnit-BEGIN$

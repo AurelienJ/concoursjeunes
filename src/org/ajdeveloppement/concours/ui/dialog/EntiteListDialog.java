@@ -426,7 +426,7 @@ public class EntiteListDialog extends JDialog implements ActionListener, MouseLi
 			sorter.setRowFilter(RowFilter.regexFilter(jtfAgrement.getText().toUpperCase() + ".*", 1)); //$NON-NLS-1$
 			jTable.setRowSorter(sorter);
 		} else if(e.getSource() == this.jtfVille) {
-			sorter.setRowFilter(RowFilter.regexFilter(jtfVille.getText().toUpperCase() + ".*", 3)); //$NON-NLS-1$
+			sorter.setRowFilter(RowFilter.regexFilter(jtfVille.getText().toUpperCase().replaceAll("[-'\\. ]","[-'\\. ]") + ".*", 3)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			jTable.setRowSorter(sorter);
 		}
 	}
@@ -596,7 +596,7 @@ public class EntiteListDialog extends JDialog implements ActionListener, MouseLi
 					case 2:
 						return curEntite.getAdresse();
 					case 3:
-						return curEntite.getVille();
+						return curEntite.getVille().toUpperCase();
 					default:
 						return null;
 				}

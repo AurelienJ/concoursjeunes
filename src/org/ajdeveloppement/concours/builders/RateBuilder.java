@@ -1,7 +1,7 @@
 /*
- * Créé le 7 mai 2010 à 18:56:07 pour ArcCompetition
+ * Créé le 28 juil. 2012 à 21:37:28 pour ArcCompetition
  *
- * Copyright 2002-2010 - Aurélien JEOFFRAY
+ * Copyright 2002-2012 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,109 +86,69 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.cache;
+package org.ajdeveloppement.concours.builders;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
-import org.ajdeveloppement.concours.Libelle;
+import org.ajdeveloppement.commons.persistence.LoadHelper;
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
+import org.ajdeveloppement.concours.Rate;
+import org.ajdeveloppement.concours.sqltable.RateTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class LibelleCache extends AbstractCache<LibelleCache.LibellePK,Libelle> {
-	
-	private static LibelleCache instance = new LibelleCache();
-	
-	private LibelleCache() {
-	}
-	
-	public static LibelleCache getInstance() {
-		return instance;
-	}
+public class RateBuilder implements ResultSetRowToObjectBinder<Rate, Void> {
 
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.concours.cache.AbstractCache#add(java.lang.Object)
-	 */
+	private static LoadHelper<Rate,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Rate.class);
+	private static LoadHelper<Rate,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Rate.class);
+	
+	public static Rate getRate(UUID idTarif) throws ObjectPersistenceException {
+		return getRate(idTarif, null);
+	}
+	
+	public static Rate getRate(ResultSet rs) throws ObjectPersistenceException {
+		return getRate(null, rs);
+	}
+	
+	private static Rate getRate(UUID idTarif, ResultSet rs) throws ObjectPersistenceException {
+		try {
+			if(idTarif == null)
+				idTarif = RateTable.ID_TARIF.getValue(rs);
+			
+			Rate rate = Cache.get(Rate.class, idTarif);
+			if(rate == null) {
+				rate = new Rate();
+			
+				if(idTarif != null) {
+					loadHelper.load(rate, Collections.<String,Object>singletonMap(RateTable.ID_TARIF.getFieldName(), idTarif));
+				} else {
+					resultSetLoadHelper.load(rate, rs);
+				}
+				
+				Cache.put(rate);
+			}
+			
+			return rate;
+		} catch(SQLException e) {
+			throw new ObjectPersistenceException(e);
+		}
+	}
+	
 	@Override
-	public void add(Libelle libelle) {
-		put(new LibellePK(libelle.getIdLibelle(), libelle.getLang()), libelle);
+	public Rate get(ResultSet rs, SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap) throws ObjectPersistenceException {
+		return getRate(rs);
 	}
 
-	public static class LibellePK {
-		private UUID idLibelle;
-		private String lang;
-		
-		public LibellePK(UUID idLibelle, String lang) {
-			super();
-			this.idLibelle = idLibelle;
-			this.lang = lang;
-		}
-
-		/**
-		 * @return numLibelle
-		 */
-		public UUID getIdLibelle() {
-			return idLibelle;
-		}
-
-		/**
-		 * @param idLibelle l'identifiant du libellé
-		 */
-		public void setIdLibelle(UUID idLibelle) {
-			this.idLibelle = idLibelle;
-		}
-
-		/**
-		 * @return lang
-		 */
-		public String getLang() {
-			return lang;
-		}
-
-		/**
-		 * @param lang lang à définir
-		 */
-		public void setLang(String lang) {
-			this.lang = lang;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result
-					+ ((idLibelle == null) ? 0 : idLibelle.hashCode());
-			result = prime * result + ((lang == null) ? 0 : lang.hashCode());
-			return result;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			LibellePK other = (LibellePK) obj;
-			if (idLibelle == null) {
-				if (other.idLibelle != null)
-					return false;
-			} else if (!idLibelle.equals(other.idLibelle))
-				return false;
-			if (lang == null) {
-				if (other.lang != null)
-					return false;
-			} else if (!lang.equals(other.lang))
-				return false;
-			return true;
-		}
-	}
 }

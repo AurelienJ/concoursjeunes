@@ -88,21 +88,28 @@
  */
 package org.ajdeveloppement.concours.builders;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.LoadHelper;
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.CompetitionLevel;
 import org.ajdeveloppement.concours.Federation;
+import org.ajdeveloppement.concours.sqltable.CompetitionLevelTable;
 
 /**
  * Construit un objet CompetitionLevel à partir de la base de données
  * 
  * @author Aurélien JEOFFRAY
  */
-public class CompetitionLevelBuilder {
+public class CompetitionLevelBuilder implements ResultSetRowToObjectBinder<CompetitionLevel,Void>{
 	
+	private static LoadHelper<CompetitionLevel, ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(CompetitionLevel.class);
+
 	/**
 	 * <p>Construit un objet CompetitionLevel pour le niveaux fédéral définit à partir de la base 
 	 * de données.</p>
@@ -115,45 +122,46 @@ public class CompetitionLevelBuilder {
 	 * @param lang la langue du libellé.
 	 * 
 	 * @return le niveau de compétition généré.
-	 * @throws SQLException
+	 * @throws ObjectPersistenceException 
 	 */
 	@SuppressWarnings("nls")
-	public static CompetitionLevel getCompetitionLevel(int numLevel, Federation federation, String lang) throws SQLException {
-		String sql = "select * from NIVEAU_COMPETITION where CODENIVEAU=? and NUMFEDERATION=? and LANG=?";
-		
+	public static CompetitionLevel getCompetitionLevel(int numLevel, Federation federation, String lang) throws ObjectPersistenceException {
+
 		CompetitionLevel competitionLevel = null;
 		
-		PreparedStatement pstmt = ApplicationCore.dbConnection.prepareStatement(sql);
 		try {
-			pstmt.setInt(1, numLevel);
-			pstmt.setInt(2, federation.getNumFederation());
-			pstmt.setString(3, lang);
-			
-			ResultSet rs = pstmt.executeQuery();
-			try {
-				boolean enregexists = rs.next(); 
-				if(!enregexists) {
-					rs.close();
-					
-					pstmt.setString(3, "fr");
-					
-					rs = pstmt.executeQuery();
-					enregexists = rs.next();
-				}
-				
-				if(enregexists) {
+			try(ResultSet rs = QResults.from(CompetitionLevel.class)
+					.where(CompetitionLevelTable.CODENIVEAU.equalTo(numLevel)
+							.and(CompetitionLevelTable.NUMFEDERATION.equalTo(federation.getNumFederation()))
+							.and(CompetitionLevelTable.LANG.equalTo(lang)))
+					.asResultSet()) {
+				if(rs.next()) {
 					competitionLevel = new CompetitionLevel();
+					
+					resultSetLoadHelper.load(competitionLevel, rs);
+					
 					competitionLevel.setFederation(federation);
-					competitionLevel.setNumLevel(rs.getInt("CODENIVEAU"));
-					competitionLevel.setLang(lang);
-					competitionLevel.setLibelle(rs.getString("LIBELLE"));
-					competitionLevel.setDefaut(rs.getBoolean("DEFAUT"));
 				}
-			} finally {
-				rs.close();
 			}
-		} finally {
-			pstmt.close();
+			
+			if(competitionLevel == null) {
+				try(ResultSet rs = QResults.from(CompetitionLevel.class)
+						.where(CompetitionLevelTable.CODENIVEAU.equalTo(numLevel)
+								.and(CompetitionLevelTable.NUMFEDERATION.equalTo(federation.getNumFederation()))
+								.and(CompetitionLevelTable.LANG.equalTo("fr")))
+						.asResultSet()) {
+					if(rs.next()) {
+						competitionLevel = new CompetitionLevel();
+						
+						resultSetLoadHelper.load(competitionLevel, rs);
+						
+						competitionLevel.setFederation(federation);
+						competitionLevel.setLang(lang);
+					}
+				}
+			}
+		} catch(SQLException e) {
+			throw new ObjectPersistenceException(e);
 		}
 		
 		if(competitionLevel == null) {
@@ -165,5 +173,42 @@ public class CompetitionLevelBuilder {
 		}
 
 		return competitionLevel;
+	}
+	
+	/**
+	 * 
+	 * @param rs
+	 * @param sessionCache
+	 * @return
+	 * @throws ObjectPersistenceException
+	 */
+	public static CompetitionLevel getCompetitionLevel(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		if(sessionCache == null)
+			sessionCache = new SqlLoadingSessionCache();
+		
+		try {
+			int codeNiveau = CompetitionLevelTable.CODENIVEAU.getValue(rs);
+			int numFederation = CompetitionLevelTable.NUMFEDERATION.getValue(rs);
+			String lang = CompetitionLevelTable.LANG.getValue(rs);
+			
+			CompetitionLevel competitionLevel = sessionCache.get(CompetitionLevel.class, new SqlLoadingSessionCache.Key(codeNiveau, numFederation, lang));
+			if(competitionLevel == null) {
+				competitionLevel = new CompetitionLevel();
+				competitionLevel.setFederation(FederationBuilder.getFederation(numFederation));
+				resultSetLoadHelper.load(competitionLevel, rs);
+				
+				sessionCache.put(competitionLevel);
+			}
+			
+			return competitionLevel;
+		} catch(SQLException e) {
+			throw new ObjectPersistenceException(e);
+		}
+	}
+
+	@Override
+	public CompetitionLevel get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap)
+			throws ObjectPersistenceException {
+		return getCompetitionLevel(rs, sessionCache);
 	}
 }

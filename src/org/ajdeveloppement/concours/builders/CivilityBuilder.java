@@ -93,30 +93,23 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.Civility;
-import org.ajdeveloppement.concours.cache.CivilityCache;
+import org.ajdeveloppement.concours.sqltable.CivilityTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class CivilityBuilder {
-	private static LoadHelper<Civility,Map<String,Object>> loadHelper;
-	private static LoadHelper<Civility,ResultSet> resultSetLoadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<Civility,Map<String,Object>>(new SqlLoadHandler<Civility>(ApplicationCore.dbConnection, Civility.class));
-			resultSetLoadHelper = new LoadHelper<Civility, ResultSet>(new ResultSetLoadHandler<Civility>(Civility.class));
-		} catch(ObjectPersistenceException e) {
-			throw new UncheckedException(e);
-		}
-	}
+public class CivilityBuilder implements ResultSetRowToObjectBinder<Civility, Void>{
+	private static LoadHelper<Civility,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Civility.class);
+	private static LoadHelper<Civility,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Civility.class);
 	
 	public static Civility getCivility(UUID idCivility) throws ObjectPersistenceException {
 		return getCivility(idCivility, null);
@@ -127,16 +120,15 @@ public class CivilityBuilder {
 	}
 	
 	private static Civility getCivility(UUID idCivility, ResultSet rs) throws ObjectPersistenceException {
-		Civility civility = null;
-		if(idCivility != null)
-			civility = CivilityCache.getInstance().get(idCivility);
-		else {
+		if(idCivility == null) {
 			try {
-				civility = CivilityCache.getInstance().get((UUID)rs.getObject("CIVILITY.ID_CIVILITY")); //$NON-NLS-1$
+				idCivility = CivilityTable.ID_CIVILITY.getValue(rs);
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}
 		}
+		
+		Civility civility = Cache.get(Civility.class, idCivility);
 		
 		if(civility == null) {
 			civility = new Civility();
@@ -145,16 +137,17 @@ public class CivilityBuilder {
 				
 				loadHelper.load(civility);
 			} else {
-				try {
-					if(rs.getObject("CIVILITY.ID_CIVILITY") != null) //$NON-NLS-1$
-						resultSetLoadHelper.load(civility, rs);
-				} catch (SQLException e) {
-					throw new ObjectPersistenceException(e);
-				}
+				resultSetLoadHelper.load(civility, rs);
 			}
 			
-			CivilityCache.getInstance().add(civility);
+			Cache.put(civility);
 		}
 		return civility;
+	}
+
+	@Override
+	public Civility get(ResultSet rs, SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap) throws ObjectPersistenceException {
+		return getCivility(rs);
 	}
 }

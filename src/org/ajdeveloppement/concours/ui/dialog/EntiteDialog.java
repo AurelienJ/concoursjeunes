@@ -99,7 +99,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.List;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -155,7 +154,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 	private Profile profile;
 	private Entite entite;
 	
-	private List<Contact> contacts;
+	private Iterable<Contact> contacts;
 	
 	private boolean fullEditable = false;
 	
@@ -225,6 +224,11 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 	@Localizable("bouton.annuler")
 	private JButton jbAnnuler = new JButton();
 
+	/**
+	 * 
+	 * @param parent
+	 * @param profile
+	 */
 	public EntiteDialog(JFrame parent, Profile profile) {
 		super(parent, "", true); //$NON-NLS-1$
 
@@ -235,6 +239,11 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 		completePanel();
 	}
 
+	/**
+	 * 
+	 * @param parent
+	 * @param profile
+	 */
 	public EntiteDialog(JDialog parent, Profile profile) {
 		super(parent, "", true); //$NON-NLS-1$
 		
@@ -550,13 +559,8 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 			
 			jcbSearchCategoryContact.removeAllItems();
 			jcbSearchCategoryContact.addItem("<html>&nbsp;</html>"); //$NON-NLS-1$
-			try {
-				for(CategoryContact categoryContact : CategoryContactManager.getAllCategoryContact()) {
-					jcbSearchCategoryContact.addItem(categoryContact);
-				}
-			} catch (ObjectPersistenceException e) {
-				DisplayableErrorHelper.displayException(e);
-				e.printStackTrace();
+			for(CategoryContact categoryContact : CategoryContactManager.getAllCategoryContact()) {
+				jcbSearchCategoryContact.addItem(categoryContact);
 			}
 			
 			refreshListContact(null);
@@ -642,7 +646,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 			if(jlResultList.getSelectedValue() != null) {
 				if (JOptionPane.showConfirmDialog(this, profile.getLocalisation().getResourceString("entite.confirmation.suppression.contact"), //$NON-NLS-1$
 						profile.getLocalisation().getResourceString("entite.confirmation.suppression.contact.titre"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) { //$NON-NLS-1$
-					Contact selectedContact = (Contact)jlResultList.getSelectedValue();
+					Contact selectedContact = jlResultList.getSelectedValue();
 					try {
 						selectedContact.delete();
 					} catch (ObjectPersistenceException e) {
@@ -658,7 +662,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		if(contactPanel != null) {
-			contactPanel.setContact((Contact)jlResultList.getSelectedValue());
+			contactPanel.setContact(jlResultList.getSelectedValue());
 			//this.getGlassPane().setVisible(true);
 		}
 	}
@@ -671,7 +675,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 	@Override
 	public void contactAdded(Contact contact) {
 		contact.setEntite(entite);
-		contacts.add(contact);
+		//contacts.add(contact);
 		try {
 			contact.save();
 			

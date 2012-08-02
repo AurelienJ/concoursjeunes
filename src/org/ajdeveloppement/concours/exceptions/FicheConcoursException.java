@@ -94,10 +94,31 @@ package org.ajdeveloppement.concours.exceptions;
  */
 public class FicheConcoursException extends Exception {
 
+	/**
+	 * Nature de l'exception
+	 * 
+	 * @author Aurélien JEOFFRAY
+	 *
+	 */
 	public enum Nature {
+		/**
+		 * Le concours existe déjà
+		 */
 		ALREADY_EXISTS,
+		
+		/**
+		 * Il n'y a pas de place disponible
+		 */
 		NO_SLOT_AVAILABLE,
+		
+		/**
+		 * Erreur d'enregistrement sur le disque dur
+		 */
 		SAVE_IO_ERROR,
+		
+		/**
+		 * Erreur d'origine inconnue
+		 */
 		UNKNOWN
 	}
 	
@@ -117,6 +138,12 @@ public class FicheConcoursException extends Exception {
 		super(message, cause);
 	}
 	
+	/**
+	 * 
+	 * @param nature
+	 * @param message
+	 * @param cause
+	 */
 	public FicheConcoursException(Nature nature, String message, Throwable cause) {
 		super(message, cause);
 		this.nature = nature;
@@ -129,6 +156,11 @@ public class FicheConcoursException extends Exception {
 		super(message);
 	}
 	
+	/**
+	 * 
+	 * @param nature
+	 * @param message
+	 */
 	public FicheConcoursException(Nature nature, String message) {
 		super(message);
 		this.nature = nature;

@@ -114,10 +114,8 @@ import javax.swing.event.EventListenerList;
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.io.FileUtils;
 import org.ajdeveloppement.commons.persistence.sql.SqlPersistenceProperties;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
 import org.ajdeveloppement.commons.security.SecurityImporter;
 import org.ajdeveloppement.commons.sql.SqlManager;
-import org.ajdeveloppement.concours.db.UpgradeDatabaseEventListener;
 import org.ajdeveloppement.concours.event.ApplicationCoreEvent;
 import org.ajdeveloppement.concours.event.ApplicationCoreListener;
 import org.ajdeveloppement.concours.managers.ConfigurationManager;
@@ -139,7 +137,7 @@ public class ApplicationCore {
 	/**
 	 * Numéro de version de la base de donnée nécessaire au fonctionnement du programme
 	 */
-	public static final int DB_RELEASE_REQUIRED = 31;
+	public static final int DB_RELEASE_REQUIRED = 32;
 
 	/**
 	 * Chargement des paramétrages statiques
@@ -179,18 +177,18 @@ public class ApplicationCore {
 	 * constructeur, création de la fenêtre principale
 	 */
 	private ApplicationCore() throws SQLException {
-		SqlStoreHandler.setDatabaseEngine("h2"); //$NON-NLS-1$
+		SqlPersistenceProperties.databaseEngine = "h2"; //$NON-NLS-1$
 		
 		debugLogger();
 		openDatabase();
 		checkUpdateDatabase();
-		UpgradeDatabaseEventListener.forceCloseMonitor();
-		UpgradeDatabaseEventListener.setMonitorEnabled(false);
 		loadAppConfiguration();
 	}
 
 	/**
 	 * Initialise l'application
+	 * 
+	 * @throws SQLException 
 	 */
 	public synchronized static void initializeApplication()  throws SQLException {
 		if (null == instance) { // Premier appel

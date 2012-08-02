@@ -88,7 +88,6 @@ package org.ajdeveloppement.concours.builders;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -96,8 +95,10 @@ import java.util.UUID;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.Archer;
 import org.ajdeveloppement.concours.Concurrent;
@@ -106,6 +107,8 @@ import org.ajdeveloppement.concours.CriteriaSet;
 import org.ajdeveloppement.concours.Criterion;
 import org.ajdeveloppement.concours.CriterionElement;
 import org.ajdeveloppement.concours.Reglement;
+import org.ajdeveloppement.concours.managers.CoordinateManager;
+import org.ajdeveloppement.concours.sqltable.ContactTable;
 
 /**
  * Initialise un concurrent
@@ -113,18 +116,12 @@ import org.ajdeveloppement.concours.Reglement;
  * @author Aurélien JEOFFRAY
  * @version 1.0
  */
-public class ConcurrentBuilder {
+public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,Reglement>{
 
-	private static LoadHelper<Archer,Map<String,Object>> loadHelper;
-	private static LoadHelper<Archer,ResultSet> resultSetLoadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<Archer,Map<String,Object>>(new SqlLoadHandler<Archer>(ApplicationCore.dbConnection, Archer.class));
-			resultSetLoadHelper = new LoadHelper<Archer, ResultSet>(new ResultSetLoadHandler<Archer>(Archer.class));
-		} catch(ObjectPersistenceException e) {
-			e.printStackTrace();
-		}
-	}
+	private static LoadHelper<Archer,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Archer.class);
+	private static LoadHelper<Archer,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Archer.class);
+	
+	private static PreparedStatement pstmtCategoriesContact;
 	
 	/**
 	 * Construit un concurrent à partir de l'enregistrement SQL fournit en paramètre. Le ResultSet doit contenir
@@ -165,17 +162,33 @@ public class ConcurrentBuilder {
 		try {
 			Map<Class<?>, Map<String, Object>> foreignKeyValue;
 			if(idArcher != null) {
-				foreignKeyValue = loadHelper.load(concurrent, Collections.<String, Object>singletonMap("ID_CONTACT", idArcher)); //$NON-NLS-1$
+				foreignKeyValue = loadHelper.load(concurrent, Collections.<String, Object>singletonMap(ContactTable.ID_CONTACT.getFieldName(), idArcher));
 			} else {
 				foreignKeyValue = resultSetLoadHelper.load(concurrent, resultSet);
 			}
-			UUID idEntite = (UUID)foreignKeyValue.get(Contact.class).get("ID_ENTITE"); //$NON-NLS-1$
+			
+			if(foreignKeyValue.get(Contact.class).get(ContactTable.ID_CIVILITY.getFieldName()) != null)
+				concurrent.setCivility(CivilityBuilder.getCivility((UUID)foreignKeyValue.get(Contact.class).get(ContactTable.ID_CIVILITY.getFieldName())));
+			
+			UUID idEntite = (UUID)foreignKeyValue.get(Contact.class).get(ContactTable.ID_ENTITE.getFieldName());
 			if(idEntite != null)
 				concurrent.setEntite(EntiteBuilder.getEntite(idEntite));
+			
+			if(pstmtCategoriesContact == null)
+				pstmtCategoriesContact = ApplicationCore.dbConnection.prepareStatement("select NUM_CATEGORIE_CONTACT from ASSOCIER_CATEGORIE_CONTACT where ID_CONTACT = ?"); //$NON-NLS-1$
+			
+			pstmtCategoriesContact.setObject(1, concurrent.getIdContact());
+			
+			ResultSet rsCategoriesContact = pstmtCategoriesContact.executeQuery();
+			while(rsCategoriesContact.next()) {
+				concurrent.getCategories().add(CategoryContactBuilder.getCategoryContact(rsCategoriesContact.getInt("NUM_CATEGORIE_CONTACT"))); //$NON-NLS-1$
+			}
+			
+			concurrent.setCoordinates(CoordinateManager.getContactCoordinates(concurrent));
 
 			if(reglement != null) {
 				CriteriaSet differentiationCriteria = null;
-				String sql = "select * from distinguer where ID_CONTACT=? and NUMREGLEMENT=?"; //$NON-NLS-1$
+				String sql = "select NUMCRITERIASET from DISTINGUER where ID_CONTACT=? and NUMREGLEMENT=?"; //$NON-NLS-1$
 				if(!ApplicationCore.dbConnection.isClosed()) {
 					try (PreparedStatement pstmt = ApplicationCore.dbConnection.prepareStatement(sql)) {
 						pstmt.setString(1, concurrent.getIdContact().toString());
@@ -184,7 +197,7 @@ public class ConcurrentBuilder {
 						try (ResultSet rsCriteriaSet = pstmt.executeQuery()) {
 							if(rsCriteriaSet.first()) {
 								differentiationCriteria = CriteriaSetBuilder
-										.getCriteriaSet(rsCriteriaSet.getInt("NUMCRITERIASET"), reglement); //$NON-NLS-1$
+										.getCriteriaSet(rsCriteriaSet.getInt("NUMCRITERIASET")); //$NON-NLS-1$
 							} else {
 								differentiationCriteria = new CriteriaSet(reglement);
 								for(Criterion key : reglement.getListCriteria()) {
@@ -239,10 +252,6 @@ public class ConcurrentBuilder {
 				concurrent.setCriteriaSet(differentiationCriteria);
 			}
 			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ObjectPersistenceException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -266,5 +275,11 @@ public class ConcurrentBuilder {
 		concurrent.setCriteriaSet(differentiationCriteria);
 		
 		return concurrent;
+	}
+
+	@Override
+	public Concurrent get(ResultSet rs, SqlLoadingSessionCache sessionCache, Reglement binderRessourcesMap)
+			throws ObjectPersistenceException {
+		return getConcurrent(rs, binderRessourcesMap);
 	}
 }

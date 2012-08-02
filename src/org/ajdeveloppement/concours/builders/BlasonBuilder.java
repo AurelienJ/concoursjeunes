@@ -95,12 +95,14 @@ import java.util.Map;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.Ancrage;
-import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.Blason;
-import org.ajdeveloppement.concours.cache.BlasonCache;
+import org.ajdeveloppement.concours.sqltable.BlasonTable;
 
 /**
  * Construit un objet blason à partir des données en base
@@ -109,18 +111,10 @@ import org.ajdeveloppement.concours.cache.BlasonCache;
  * @version 1.0
  *
  */
-public class BlasonBuilder {
+public class BlasonBuilder implements ResultSetRowToObjectBinder<Blason,Void> {
 	
-	private static LoadHelper<Blason,Map<String,Object>> loadHelper;
-	private static LoadHelper<Blason,ResultSet> resultSetLoadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<Blason,Map<String,Object>>(new SqlLoadHandler<Blason>(ApplicationCore.dbConnection, Blason.class));
-			resultSetLoadHelper = new LoadHelper<Blason,ResultSet>(new ResultSetLoadHandler<Blason>(Blason.class));
-		} catch(ObjectPersistenceException e) {
-			throw new RuntimeException(e);
-		}
-	}
+	private static LoadHelper<Blason,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Blason.class);
+	private static LoadHelper<Blason,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Blason.class);
 	
 	/**
 	 * Construit un blason à partir de son identifiant en base.
@@ -130,7 +124,7 @@ public class BlasonBuilder {
 	 * @throws ObjectPersistenceException
 	 */
 	public static Blason getBlason(int numblason) throws ObjectPersistenceException {
-		return getBlason(numblason, null);
+		return getBlason(numblason, null, null);
 	}
 	
 	/**
@@ -138,25 +132,24 @@ public class BlasonBuilder {
 	 * Le jeux de résultat doit posseder les champs de la table BLASONS.
 	 * 
 	 * @param rs le jeux de résultat contenant les données du blason à fabriquer
+	 * @param sessionCache 
 	 * @return le blason construit à partir du jeux de résultat
 	 * @throws ObjectPersistenceException retourné si le jeux de résultat ne contient pas l'ensemble<br>
 	 * des champs de la table BLASONS 
 	 */
-	public static Blason getBlason(ResultSet rs) throws ObjectPersistenceException {
+	public static Blason getBlason(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		if(rs == null)
 			return null;
 		
-		return getBlason(-1, rs);
+		return getBlason(-1, rs, sessionCache);
 	}
 	
-	private static Blason getBlason(int numblason, ResultSet rs) throws ObjectPersistenceException {
+	private static Blason getBlason(int numblason, ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		try {
 			if(rs != null)
-				numblason = rs.getInt("NUMBLASON"); //$NON-NLS-1$
+				numblason = BlasonTable.NUMBLASON.getValue(rs);
 			
-			BlasonCache cache = BlasonCache.getInstance();
-			
-			Blason blason = cache.get(numblason);
+			Blason blason = Cache.get(Blason.class, numblason);
 			if(blason == null) {
 				blason = new Blason();
 				
@@ -172,7 +165,7 @@ public class BlasonBuilder {
 				// de blason. donc on ne le charge pas ici
 				//blason.setAncrages(AncragesMapBuilder.getAncragesMap(blason));
 				
-				cache.add(blason);
+				Cache.put(blason);
 			}
 			
 			return blason;
@@ -219,5 +212,10 @@ public class BlasonBuilder {
 		blason.setAncrages(ancrages);
 		
 		return blason;
+	}
+
+	@Override
+	public Blason get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap) throws ObjectPersistenceException {
+		return getBlason(rs, sessionCache);
 	}
 }

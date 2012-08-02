@@ -137,7 +137,6 @@ import org.ajdeveloppement.apps.localisation.Localizable;
 import org.ajdeveloppement.apps.localisation.LocalizationHandler;
 import org.ajdeveloppement.apps.localisation.Localizator;
 import org.ajdeveloppement.commons.AjResourcesReader;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.ui.AJList;
 import org.ajdeveloppement.commons.ui.AJTree;
 import org.ajdeveloppement.commons.ui.DefaultDialogReturn;
@@ -152,6 +151,7 @@ import org.ajdeveloppement.concours.CriterionElement;
 import org.ajdeveloppement.concours.DistancesEtBlason;
 import org.ajdeveloppement.concours.Reglement;
 import org.ajdeveloppement.concours.localisable.CriteriaSetLibelle;
+import org.ajdeveloppement.concours.managers.BlasonManager;
 import org.ajdeveloppement.swingxext.localisation.JXHeaderLocalisationHandler;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -705,13 +705,11 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 				newDb.setCriteriaSet(plCS);
 				newDb.setDistance(new int[reglement.getNbSerie()]);
 				Blason defaultBlason = new Blason();
-				try {
-					List<Blason> availableTargetFace = Blason.listAvailableTargetFace();
-					if(availableTargetFace.size() > 0)
-						defaultBlason = availableTargetFace.get(0);
-				} catch (ObjectPersistenceException e) {
-					e.printStackTrace();
-				}
+
+				List<Blason> availableTargetFace = BlasonManager.listAvailableTargetFace();
+				if(availableTargetFace.size() > 0)
+					defaultBlason = availableTargetFace.get(0);
+		
 				newDb.setTargetFace(defaultBlason);
 				
 				ajlDistancesBlasons.add(new DistancesBlasonsSet(Collections.singletonList(newDb)));
@@ -1003,7 +1001,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 	 */
 	private void editDistancesBlasons() {
 		DistancesBlasonsDialog dbDialog = new DistancesBlasonsDialog(this, localisation);
-		dbDialog.showDistancesBlasonsDialog(((DistancesBlasonsSet)ajlDistancesBlasons.getSelectedValue()).get());
+		dbDialog.showDistancesBlasonsDialog((ajlDistancesBlasons.getSelectedValue()).get());
 	}
 	
 	/**

@@ -102,6 +102,10 @@ import org.ajdeveloppement.concours.FicheConcours;
  */
 public class Debug {
     
+	/**
+	 * Attributs des points aléatoire aux archers du concours fournit en parametre
+	 * @param archerList
+	 */
     public static void attributePoints(ConcurrentList archerList) {
     	
         for(Concurrent concurrent : archerList.list(-1)) {
@@ -113,6 +117,11 @@ public class Debug {
         }
     }
     
+    /**
+     * Réinitialise les points de tous les archers de la fiche fournit en parametre
+     * 
+     * @param ficheConcours
+     */
     public static void resetPoints(FicheConcours ficheConcours) {
         for(Concurrent concurrent : ficheConcours.getConcurrentList().list(-1)) {
             for(int i = 0; i < concurrent.getScore().size(); i++) {

@@ -98,14 +98,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
-import org.ajdeveloppement.commons.persistence.sql.SqlUnmappedFields;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
 import org.ajdeveloppement.commons.sql.SqlManager;
 import org.ajdeveloppement.concours.CategoryContact.IdDefaultCategory;
 import org.ajdeveloppement.concours.builders.CategoryContactBuilder;
+import org.ajdeveloppement.concours.builders.ConcurrentBuilder;
 import org.ajdeveloppement.concours.managers.ConcurrentManager;
 
 /**
@@ -115,7 +116,7 @@ import org.ajdeveloppement.concours.managers.ConcurrentManager;
  * @version 1.0
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="ARCHERS")
+@SqlTable(name="ARCHERS",loadBuilder=ConcurrentBuilder.class)
 @SqlPrimaryKey(fields="ID_CONTACT")
 @SqlUnmappedFields(fields={"ID_CONTACT","SEXE","CATEGORIE","NIVEAU","ARC"})
 public class Archer extends Contact {
@@ -287,14 +288,14 @@ public class Archer extends Contact {
 		aComparant.setName(getName());
 		aComparant.setFirstName(getFirstName());
 
-		List<Concurrent> homonyme = ConcurrentManager.getArchersInDatabase(aComparant, null, ""); //$NON-NLS-1$
+		List<Concurrent> homonyme = ConcurrentManager.getArchersInDatabase(aComparant, null, null);
 
 		return (homonyme.size() > 1);
 	}
 
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			SqlManager sqlManager = new SqlManager(ApplicationCore.dbConnection, null);
 			//Avant d'enregistrer, on recherche dans la base si il n'y a pas déjà un enregistrement pour ce contact avec
 			//un autre id

@@ -1,7 +1,7 @@
 /*
- * Créé le 23 mars 2010 à 21:42:10 pour ArcCompetition
+ * Créé le 28 juil. 2012 à 21:39:33 pour ArcCompetition
  *
- * Copyright 2002-2010 - Aurélien JEOFFRAY
+ * Copyright 2002-2012 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,30 +86,36 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.cache;
+package org.ajdeveloppement.concours.builders;
 
-import org.ajdeveloppement.concours.Blason;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
+import org.ajdeveloppement.concours.RateCategory;
+import org.ajdeveloppement.concours.sqltable.RateCategoryTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class BlasonCache extends AbstractCache<Integer,Blason> {
+public class RateCategoryBuilder implements ResultSetRowToObjectBinder<RateCategory, Void> {
 
-	private static BlasonCache instance = new BlasonCache();
-	
-	private BlasonCache() {
-	}
-	
-	public static BlasonCache getInstance() {
-		return instance;
-	}
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.concours.cache.AbstractCache#add(java.lang.Object)
-	 */
 	@Override
-	public void add(Blason blason) {
-		put(blason.getNumblason(), blason);
+	public RateCategory get(ResultSet rs, SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap) throws ObjectPersistenceException {
+		RateCategory rateCategory = new RateCategory();
+		
+		try {
+			rateCategory.setCategory(CriteriaSetBuilder.getCriteriaSet(RateCategoryTable.NUMCRITERIASET.getValue(rs)));
+			rateCategory.setTarif(RateBuilder.getRate(RateCategoryTable.ID_TARIF.getValue(rs)));
+		} catch (SQLException e) {
+			throw new ObjectPersistenceException(e);
+		}
+		
+		return rateCategory;
 	}
 
 }

@@ -93,27 +93,20 @@ import java.util.Map;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.RepartitionFinals;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class RepartitionFinalsBuilder {
-	private static LoadHelper<RepartitionFinals,Map<String,Object>> loadHelper;
-	private static LoadHelper<RepartitionFinals,ResultSet> resultSetLoadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<RepartitionFinals,Map<String,Object>>(new SqlLoadHandler<RepartitionFinals>(ApplicationCore.dbConnection, RepartitionFinals.class));
-			resultSetLoadHelper = new LoadHelper<RepartitionFinals, ResultSet>(new ResultSetLoadHandler<RepartitionFinals>(RepartitionFinals.class));
-		} catch(ObjectPersistenceException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
+public class RepartitionFinalsBuilder implements ResultSetRowToObjectBinder<RepartitionFinals, Void>{
+	private static LoadHelper<RepartitionFinals,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(RepartitionFinals.class);
+	private static LoadHelper<RepartitionFinals,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(RepartitionFinals.class);
+
 	public static RepartitionFinals getRepartitionFinals(short numRepartition, short typeRepartition) throws ObjectPersistenceException {
 		return getRepartitionFinals(null, numRepartition, typeRepartition);
 	}
@@ -135,5 +128,12 @@ public class RepartitionFinalsBuilder {
 		}
 		
 		return repartitionFinals;
+	}
+
+	@Override
+	public RepartitionFinals get(ResultSet rs,
+			SqlLoadingSessionCache sessionCache, Void binderRessourcesMap)
+			throws ObjectPersistenceException {
+		return getRepartitionFinals(rs);
 	}
 }

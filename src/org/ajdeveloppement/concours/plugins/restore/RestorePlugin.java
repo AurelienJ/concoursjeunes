@@ -132,11 +132,19 @@ public class RestorePlugin {
 	private JFrame parentframe;
 	private Profile profile;
 	
+	/**
+	 * 
+	 * @param parentframe
+	 * @param profile
+	 */
 	public RestorePlugin(JFrame parentframe, Profile profile) {
 		this.parentframe = parentframe;
 		this.profile = profile;
 	}
 	
+	/**
+	 * 
+	 */
 	@PluginEntry
 	public void showRestoreDialog() {
 		Configuration configuration = profile.getConfiguration();

@@ -135,7 +135,6 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	private static String[] strLstLangue;
 
 	@XmlAttribute
-	@SuppressWarnings("unused")
 	private String version			= "2"; //$NON-NLS-1$
 	private String langue           = "fr";               //$NON-NLS-1$
 	private String logoPath         = "ressources/logos/default.jpg";   //$NON-NLS-1$
@@ -172,6 +171,9 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	private MetaDataFichesConcours metaDataFichesConcours = new MetaDataFichesConcours();
 	private String curProfil        = "defaut";          //$NON-NLS-1$
 
+	/**
+	 * Construit la configuration 
+	 */
 	public Configuration() {
 
 	}
@@ -542,7 +544,9 @@ public class Configuration extends DefaultParameters implements Cloneable {
 
 	/**
 	 * sauvegarde la configuration général du programme
-	 *
+	 * 
+	 * @throws JAXBException 
+	 * @throws IOException 
 	 */
 	public void save() throws JAXBException, IOException {
 		File f = new File(ApplicationCore.userRessources.getConfigPathForUser(),

@@ -440,16 +440,7 @@ public class Main {
 						break;
 					}
 				}
-			} catch (InstantiationException e1) {
-				DisplayableErrorHelper.displayException(e1);
-				e1.printStackTrace();
-			} catch (IllegalAccessException e1) {
-				DisplayableErrorHelper.displayException(e1);
-				e1.printStackTrace();
-			} catch (SecurityException e1) {
-				DisplayableErrorHelper.displayException(e1);
-				e1.printStackTrace();
-			} catch (InvocationTargetException e1) {
+			} catch (InstantiationException | IllegalAccessException | SecurityException | InvocationTargetException e1) {
 				DisplayableErrorHelper.displayException(e1);
 				e1.printStackTrace();
 			}

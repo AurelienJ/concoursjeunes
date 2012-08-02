@@ -88,51 +88,27 @@
  */
 package org.ajdeveloppement.concours.managers;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.RepartitionFinals;
-import org.ajdeveloppement.concours.builders.RepartitionFinalsBuilder;
+import org.ajdeveloppement.concours.sqltable.RepartitionFinalsTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
 public class RepartitionFinalsManager {
-	private static PreparedStatement pstmtAllRepartitionFinals = null;
-	
 	/**
 	 * Retourne la tableau de répartition des archers sur les phases finales
 	 * 
 	 * @param typeRepartition ({@link RepartitionFinals#TYPE_INDIV_FRANCAIS} ou {@link RepartitionFinals#TYPE_INDIV_INTERNATIONNAL}
 	 * @return la tableau de répartition des archers sur les phases finales
-	 * 
-	 * @throws ObjectPersistenceException
 	 */
-	public static List<RepartitionFinals> getRepartitionFinals(short typeRepartition) throws ObjectPersistenceException {
-		List<RepartitionFinals> lRepartitionFinals = new ArrayList<RepartitionFinals>();
-		try {
-			if(pstmtAllRepartitionFinals== null)
-				pstmtAllRepartitionFinals = ApplicationCore.dbConnection.prepareStatement(
-						String.format("select * from REPARTITION_PHASE_FINALE where NUM_TYPE_REPARTITION=%s order by NUM_REPARTITION_PHASE_FINALE",//$NON-NLS-1$
-								typeRepartition)); 
-			
-			ResultSet rs = pstmtAllRepartitionFinals.executeQuery();
-			try {
-				while(rs.next()) {
-					lRepartitionFinals.add(RepartitionFinalsBuilder.getRepartitionFinals(rs));
-				}
-			} finally {
-				rs.close();
-			}
-		} catch (SQLException e) {
-			throw new ObjectPersistenceException(e);
-		}
-		return lRepartitionFinals;
+	public static List<RepartitionFinals> getRepartitionFinals(short typeRepartition) {
+		return QResults.from(RepartitionFinals.class)
+				.where(RepartitionFinalsTable.NUM_TYPE_REPARTITION.equalTo(typeRepartition))
+				.orderBy(RepartitionFinalsTable.NUM_REPARTITION_PHASE_FINALE)
+				.asList();
 	}
 }

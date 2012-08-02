@@ -91,7 +91,6 @@ package org.ajdeveloppement.concours;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
@@ -116,13 +115,17 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlForeignKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlGeneratedIdField;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.builders.ReglementBuilder;
+import org.ajdeveloppement.concours.sqltable.ReglementTable;
 
 /**
  * <p>
@@ -149,7 +152,7 @@ import org.ajdeveloppement.commons.persistence.sql.SqlTable;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="REGLEMENT")
+@SqlTable(name="REGLEMENT",loadBuilder=ReglementBuilder.class)
 @SqlPrimaryKey(fields="NUMREGLEMENT",generatedidField=@SqlGeneratedIdField(name="NUMREGLEMENT",type=Types.INTEGER))
 public class Reglement implements ObjectPersistence {
 	
@@ -170,6 +173,9 @@ public class Reglement implements ObjectPersistence {
 		NATURE
 	}
 
+	/**
+	 * Le numéro de version courant du format de réglement
+	 */
 	public static final int CURRENT_VERSION = 2;
 	
 	@XmlAttribute
@@ -223,19 +229,9 @@ public class Reglement implements ObjectPersistence {
 	@SqlField(name="REMOVABLE")
 	private boolean removable = true;
 	
-	private boolean inDatabase = true; 
+	private static StoreHelper<Reglement> helper = SqlStoreHelperFactory.getStoreHelper(Reglement.class);
 	
-	private static StoreHelper<Reglement> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<Reglement>(new SqlStoreHandler<Reglement>(ApplicationCore.dbConnection, Reglement.class));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@XmlTransient
-	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	protected transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	/**
 	 * Constructeur java-beans. Initialise un règlement par défaut
@@ -253,10 +249,18 @@ public class Reglement implements ObjectPersistence {
 		this.name = name;
 	}
 	
+	/**
+	 * Permet d'ajouter un auditeur PropertyChangeListener
+	 * @param l l'auditeur
+	 */
 	public void addPropertyChangeListener(PropertyChangeListener l) {
 		pcs.addPropertyChangeListener(l);
 	}
 	
+	/**
+	 * Permet de supprimer un auditeur PropertyChangeListener
+	 * @param l l'auditeur à supprimer
+	 */
 	public void removePropertyChangeListener(PropertyChangeListener l) {
 		pcs.removePropertyChangeListener(l);
 	}
@@ -293,15 +297,19 @@ public class Reglement implements ObjectPersistence {
 	}
 
 	/**
-	 * Définit l'identifiant du réglementen base
+	 * Définit l'identifiant du réglement en base
 	 * 
 	 * @param numReglement Identifiant du réglement en base
 	 */
 	public void setNumReglement(int numReglement) {
+		Object oldValue = this.numReglement;
+		
 		this.numReglement = numReglement;
 		
 		//force le recalcul du hashCode des Entry
 		surclassement = new HashMap<CriteriaSet, CriteriaSet>(surclassement);
+		
+		pcs.firePropertyChange("numReglement", oldValue, numReglement); //$NON-NLS-1$
 	}
 
 	/**
@@ -795,12 +803,12 @@ public class Reglement implements ObjectPersistence {
 	}
 
 	/**
-	 * Détermine si un tableau de score donnée est ou non valide sur le règlement
+	 * Détermine si un tableau de scores donnée est ou non valide sur le règlement
 	 * 
-	 * @param scores le tableau de score à validé
-	 * @return true si le score est valide, false dans le cas contraire
+	 * @param scores le tableau de scores à valider
+	 * @return <code>true</code> si le score est valide, <code>false</code> dans le cas contraire
 	 */
-	public boolean isValidScore(List<Integer> scores) {
+	public boolean isValidScore(Iterable<Integer> scores) {
 		boolean valid = true;
 		for (int score : scores) {
 			if (score > nbVoleeParSerie * nbFlecheParVolee * nbPointsParFleche) {
@@ -877,36 +885,14 @@ public class Reglement implements ObjectPersistence {
 		return removable;
 	}
 
-	/**
-	 * Indique si le règlement est présent en base ou non. Si le règlement n'est pas
-	 * présent en base, les concurrents se basant sur ce règlement ne peuvent pas
-	 * voir leur catégorie rendu persistant.
-	 * 
-	 * @return <code>true</code> si le règlement est présent en base
-	 */
-	public boolean isInDatabase() {
-		return inDatabase;
-	}
-
-	/**
-	 * Définit si le règlement est présent en base ou non. Si le règlement n'est pas
-	 * présent en base, les concurrents se basant sur ce règlement ne peuvent pas
-	 * voir leur catégorie rendu persistant.
-	 * 
-	 * @param inDatabase <code>true</code> si le règlement est présent en base
-	 */
-	public void setInDatabase(boolean inDatabase) {
-		this.inDatabase = inDatabase;
-	}
-	
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 
 	/**
@@ -917,7 +903,7 @@ public class Reglement implements ObjectPersistence {
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			if(federation.getNumFederation() == 0)
 				federation.save(session);
 			
@@ -925,21 +911,12 @@ public class Reglement implements ObjectPersistence {
 			//une entré en base de données
 			if(numReglement == 0) {
 				try {
-					String sql = "select NUMREGLEMENT from REGLEMENT where NOMREGLEMENT=?"; //$NON-NLS-1$
-					PreparedStatement pstmt = ApplicationCore.dbConnection.prepareStatement(sql);
-					try {
-						pstmt.setString(1, name);
-						ResultSet rs = pstmt.executeQuery();
-						try {
-							if(rs.first()) {
-								setNumReglement(rs.getInt(1));
-							}
-						} finally {
-							rs.close();
-						}
-					} finally {
-						pstmt.close();
-					}
+					Integer dbNumReglement = QResults.from(Reglement.class)
+							.where(ReglementTable.NOMREGLEMENT.equalTo(name))
+							.singleValue(ReglementTable.NUMREGLEMENT);
+					if(dbNumReglement != null)
+						setNumReglement(dbNumReglement);
+					
 				} catch (SQLException e) {
 					throw new ObjectPersistenceException(e);
 				}
@@ -948,10 +925,12 @@ public class Reglement implements ObjectPersistence {
 			boolean creation = false;
 			if(numReglement == 0)
 				creation = true;
+			
 			helper.save(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Cache.put(this);
+			
+			Session.addThreatyObject(session,this);
 			
 			if(creation)
 				setNumReglement(numReglement); //force le recalcule des hashCode des surclassements
@@ -1105,16 +1084,17 @@ public class Reglement implements ObjectPersistence {
 	 * Supprime la persistance du règlement. Cette persistance ne peut être
 	 * supprimé qu'à la condition que le règlement ne soit pas officiel
 	 * 
-	 * @throws SqlPersistanceException
+	 * @throws ObjectPersistenceException
 	 */
 	@Override
-	public void delete(Session session) throws ObjectPersistenceException{
+	public void delete(Session session) throws ObjectPersistenceException {
 		if (!officialReglement) {
-			if(session == null || !session.contains(this)) {
+			if(Session.canExecute(session, this)) {
 				helper.delete(this);
 				
-				if(session != null)
-					session.addThreatyObject(this);
+				Cache.remove(this);
+				
+				Session.addThreatyObject(session, this);
 			}
 		} else
 			throw new ObjectPersistenceException("delete this Reglement is not authorized because there is official"); //$NON-NLS-1$

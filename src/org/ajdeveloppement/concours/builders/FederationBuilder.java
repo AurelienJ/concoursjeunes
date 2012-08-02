@@ -90,36 +90,29 @@ package org.ajdeveloppement.concours.builders;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.CompetitionLevel;
 import org.ajdeveloppement.concours.Federation;
-import org.ajdeveloppement.concours.cache.FederationCache;
+import org.ajdeveloppement.concours.sqltable.CompetitionLevelTable;
+import org.ajdeveloppement.concours.sqltable.FederationTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class FederationBuilder {
+public class FederationBuilder implements ResultSetRowToObjectBinder<Federation,Void>{
 	
-	private static LoadHelper<Federation,Map<String,Object>> loadHelper;
-	private static LoadHelper<Federation,ResultSet> resultSetLoadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<Federation,Map<String,Object>>(new SqlLoadHandler<Federation>(ApplicationCore.dbConnection, Federation.class));
-			resultSetLoadHelper = new LoadHelper<Federation, ResultSet>(new ResultSetLoadHandler<Federation>(Federation.class));
-		} catch(ObjectPersistenceException e) {
-			throw new RuntimeException(e);
-		}
-	}
+	private static LoadHelper<Federation,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Federation.class);
+	private static LoadHelper<Federation,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Federation.class);
 	
 	/**
 	 * Retourne la fédération qualifié par son identifiant en base
@@ -129,18 +122,19 @@ public class FederationBuilder {
 	 * @throws ObjectPersistenceException
 	 */
 	public static Federation getFederation(int numFederation) throws ObjectPersistenceException {
-		return getFederation(numFederation, null);
+		return getFederation(numFederation, null, null);
 	}
 	
 	/**
 	 * Construit la fédération a partir du jeux de résultat correspondant
 	 * 
 	 * @param rs le resultset contenant les enregistrement en base permettant de construire la fédération
+	 * @param sessionCache 
 	 * @return la fédération a retourner
 	 * @throws ObjectPersistenceException
 	 */
-	public static Federation getFederation(ResultSet rs) throws ObjectPersistenceException {
-		return getFederation(0, rs);
+	public static Federation getFederation(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		return getFederation(0, rs, sessionCache);
 	}
 	
 	/**
@@ -150,18 +144,17 @@ public class FederationBuilder {
 	 * @return
 	 * @throws ObjectPersistenceException
 	 */
-	@SuppressWarnings("nls")
-	private static Federation getFederation(int numFederation, ResultSet resultSet) throws ObjectPersistenceException {
+	private static Federation getFederation(int numFederation, ResultSet resultSet, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		Federation federation = null;
 		
 		if(resultSet != null) {
 			try {
-				federation = FederationCache.getInstance().get(resultSet.getInt("FEDERATION.NUMFEDERATION"));
+				federation = Cache.get(Federation.class, FederationTable.NUMFEDERATION.getValue(resultSet));
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}
 		} else
-			federation = FederationCache.getInstance().get(numFederation);
+			federation = Cache.get(Federation.class, numFederation);
 		
 		if(federation == null) {
 			federation = new Federation();
@@ -172,47 +165,21 @@ public class FederationBuilder {
 			} else {
 				resultSetLoadHelper.load(federation, resultSet);
 			}
-		
-			try {
-				Statement stmt = ApplicationCore.dbConnection.createStatement();
-				try {
-					//ResultSet rs = stmt.executeQuery(sql);
-					ResultSet rs = null;
-					try {
-						//retourne les langues disponible pour les niveaux de compétition
-						List<String> langs = new ArrayList<String>();
-						String sql = "select distinct LANG from NIVEAU_COMPETITION where NUMFEDERATION=" + numFederation;
-						rs = stmt.executeQuery(sql);
-						while(rs.next()) {
-							langs.add(rs.getString(1));
-						}
-						rs.close();
-						
-						//construit les niveaux
-						List<CompetitionLevel> competitionLevels = new ArrayList<CompetitionLevel>();
-						sql = "select distinct CODENIVEAU from NIVEAU_COMPETITION where NUMFEDERATION=" + numFederation;
-						rs = stmt.executeQuery(sql);
-						while(rs.next()) {
-							for(String lang : langs) {
-								competitionLevels.add(CompetitionLevelBuilder.getCompetitionLevel(
-										rs.getInt(1), federation, lang));
-							}
-						}
-						federation.setCompetitionLevels(competitionLevels);
-						
-						FederationCache.getInstance().add(federation);
-					} finally {
-						if(rs != null)
-							rs.close();
-					}
-				} finally {
-					stmt.close();
-				}
-			} catch (SQLException e) {
-				throw new ObjectPersistenceException(e);
-			}
+			
+			Cache.put(federation);
+
+			federation.setCompetitionLevels(
+					QResults.from(CompetitionLevel.class).where(CompetitionLevelTable.NUMFEDERATION.equalTo(numFederation))
+						.orderBy(CompetitionLevelTable.CODENIVEAU, CompetitionLevelTable.LANG)
+						.asList());
 		}
 		
 		return federation;
+	}
+
+	@Override
+	public Federation get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap)
+			throws ObjectPersistenceException {
+		return getFederation(rs, sessionCache);
 	}
 }

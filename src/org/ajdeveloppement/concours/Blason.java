@@ -88,13 +88,7 @@
  */
 package org.ajdeveloppement.concours;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -106,15 +100,15 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlGeneratedIdField;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.concours.builders.AncragesMapBuilder;
 import org.ajdeveloppement.concours.builders.BlasonBuilder;
-import org.ajdeveloppement.concours.cache.BlasonCache;
 
 /**
  * Bean représentant un blason de tir et ses caractéristiques
@@ -123,7 +117,7 @@ import org.ajdeveloppement.concours.cache.BlasonCache;
  * @version 1.0
  *
  */
-@SqlTable(name="BLASONS")
+@SqlTable(name="BLASONS",loadBuilder=BlasonBuilder.class)
 @SqlPrimaryKey(fields={"NUMBLASON"},generatedidField=@SqlGeneratedIdField(name="NUMBLASON",type=Types.INTEGER))
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Blason implements ObjectPersistence {
@@ -149,6 +143,9 @@ public class Blason implements ObjectPersistence {
 	
 	private static StoreHelper<Blason> helper = SqlStoreHelperFactory.getStoreHelper(Blason.class);
 	
+	/**
+	 * Construit un nouveau blason
+	 */
 	public Blason() {
 	}
 
@@ -202,30 +199,6 @@ public class Blason implements ObjectPersistence {
 		this.verticalRatio = verticalRatio;
 		this.numordre = numordre;
 		this.nbArcher = nbArcher;
-	}
-
-	/**
-	 * Liste l'ensemble des blasons existant dans la base
-	 * 
-	 * @return la liste des blasons existant
-	 * @throws SQLException
-	 */
-	public static List<Blason> listAvailableTargetFace() throws ObjectPersistenceException {
-		ArrayList<Blason> blasons = new ArrayList<Blason>();
-		
-		try {
-			String sql = "select * from BLASONS order by NUMORDRE desc"; //$NON-NLS-1$
-			
-			Statement stmt = ApplicationCore.dbConnection.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			while(rs.next()) {
-				blasons.add(BlasonBuilder.getBlason(rs));
-			}
-		} catch (SQLException e) {
-			throw new ObjectPersistenceException(e);
-		}
-		
-		return blasons;
 	}
 
 	/**
@@ -365,14 +338,9 @@ public class Blason implements ObjectPersistence {
 	 * @return la table des points d'ancrages possible du blason
 	 */
 	public Map<Integer, Ancrage> getAncrages() {
-		if(ancrages == null) {
-			try {
-				ancrages = AncragesMapBuilder.getAncragesMap(this);
-			} catch (ObjectPersistenceException e) {
-				e.printStackTrace();
-				ancrages = new HashMap<Integer, Ancrage>();
-			}
-		}
+		if(ancrages == null)
+			ancrages = AncragesMapBuilder.getAncragesMap(this);
+
     	return ancrages;
     }
 
@@ -466,38 +434,34 @@ public class Blason implements ObjectPersistence {
 	 * Sauvegarde l'objet dans la base en créant une nouvelle ligne si le numero de blason est à 0
 	 * ou en mettant à jour la ligne existante dans la base et identifié par le numero de blason
 	 * 
-	 * @throws SqlPersistanceException
+	 * @throws ObjectPersistenceException
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.save(this);
 			
 			for(Entry<Integer, Ancrage> entry : ancrages.entrySet()) {
 				entry.getValue().save(session);
 			}
-			
-			if(!BlasonCache.getInstance().containsKey(numblason))
-				BlasonCache.getInstance().add(this);
-			
-			if(session != null)
-				session.addThreatyObject(this);
+
+			Cache.put(this);
+			Session.addThreatyObject(session, this);
 		}
 	}
 	
 	/**
 	 * Supprime la persistance de l'objet
 	 * 
-	 * @throws SqlPersistanceException
+	 * @throws ObjectPersistenceException
 	 */
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.delete(this);
-			BlasonCache.getInstance().remove(numblason);
+			Cache.remove(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 		}
 	}
 

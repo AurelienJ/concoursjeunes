@@ -138,6 +138,9 @@ public class PluginLoader {
 	}
 	
 
+	/**
+	 * Construit un nouveau chargeur de plugin
+	 */
 	public PluginLoader() {
 		
 	}

@@ -141,6 +141,11 @@ public class FFTAImportDialog extends JDialog implements ActionListener, FFTAImp
 			"org.ajdeveloppement.concours.plugins.FFTAImport.FFTAImportPlugin_libelle", //$NON-NLS-1$
 			FFTAImportDialog.class.getClassLoader());
 
+	/**
+	 * 
+	 * @param parentframe
+	 * @param profile
+	 */
 	public FFTAImportDialog(JFrame parentframe, Profile profile) {
 		super(parentframe);
 		
@@ -212,6 +217,9 @@ public class FFTAImportDialog extends JDialog implements ActionListener, FFTAImp
 
 	}
 
+	/**
+	 * Affiche la boite de dialogue d'import à partir du site de la FFTA
+	 */
 	@PluginEntry
 	public void showFFTAImportDialog() {
 		completePane();

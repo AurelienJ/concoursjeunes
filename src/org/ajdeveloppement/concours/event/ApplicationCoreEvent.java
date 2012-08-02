@@ -88,9 +88,18 @@ package org.ajdeveloppement.concours.event;
 
 import org.ajdeveloppement.concours.Profile;
 
+/**
+ * 
+ * @author Aurélien JEOFFRAY
+ *
+ */
 public class ApplicationCoreEvent {
 	private Profile profile;
 	
+	/**
+	 * 
+	 * @param profile
+	 */
 	public ApplicationCoreEvent(Profile profile) {
 		this.profile = profile;
 	}

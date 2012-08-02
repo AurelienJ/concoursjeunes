@@ -93,9 +93,10 @@ import java.util.Map;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.Criterion;
 import org.ajdeveloppement.concours.CriterionElement;
 
@@ -103,18 +104,10 @@ import org.ajdeveloppement.concours.CriterionElement;
  * @author Aurélien JEOFFRAY
  *
  */
-public class CriterionElementBuilder {
+public class CriterionElementBuilder implements ResultSetRowToObjectBinder<CriterionElement, Criterion>{
 	
-	private static LoadHelper<CriterionElement,Map<String,Object>> loadHelper;
-	private static LoadHelper<CriterionElement,ResultSet> resultSetLoadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<CriterionElement,Map<String,Object>>(new SqlLoadHandler<CriterionElement>(ApplicationCore.dbConnection, CriterionElement.class));
-			resultSetLoadHelper = new LoadHelper<CriterionElement,ResultSet>(new ResultSetLoadHandler<CriterionElement>(CriterionElement.class));
-		} catch(ObjectPersistenceException e) {
-			e.printStackTrace();
-		}
-	}
+	private static LoadHelper<CriterionElement,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(CriterionElement.class);
+	private static LoadHelper<CriterionElement,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(CriterionElement.class);
 	
 	/**
 	 * Construit l'élément de critère représenté par son code et appartenant au critére et réglement transmis en parametre 
@@ -175,5 +168,12 @@ public class CriterionElementBuilder {
 		element.setNumordre(numordre);
 		
 		return element;
+	}
+
+	@Override
+	public CriterionElement get(ResultSet rs,
+			SqlLoadingSessionCache sessionCache, Criterion binderRessourcesMap)
+			throws ObjectPersistenceException {
+		return getCriterionElement(binderRessourcesMap, rs);
 	}
 }

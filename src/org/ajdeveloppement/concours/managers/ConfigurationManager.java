@@ -88,8 +88,7 @@
  */
 package org.ajdeveloppement.concours.managers;
 
-import static org.ajdeveloppement.concours.ApplicationCore.staticParameters;
-import static org.ajdeveloppement.concours.ApplicationCore.userRessources;
+import static org.ajdeveloppement.concours.ApplicationCore.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -103,7 +102,6 @@ import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.concours.AppConfiguration;
 import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.Configuration;
-import org.ajdeveloppement.concours.builders.ConfigurationBuilder;
 
 /**
  * Gére le chargement de la configuration du programme
@@ -166,7 +164,7 @@ public class ConfigurationManager {
 		}
 		
 		if(configuration == null) {
-			configuration = ConfigurationBuilder.getDefaultConfiguration();
+			configuration = new Configuration();
 		} else if(configuration.getFederation().getNomFederation().isEmpty() && configuration.getFederation().getSigleFederation().isEmpty()) {
 			try {
 				org.ajdeveloppement.concours.legacy.Configuration configurationLegacy = XMLSerializer.loadMarshallStructure(confFile, org.ajdeveloppement.concours.legacy.Configuration.class);

@@ -134,7 +134,10 @@ public class AboutDialog extends JDialog implements ActionListener, HyperlinkLis
 
 	MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
 	/**
+	 * Construit la boite de dialogue "A Propos"
 	 * 
+	 * @param parentframe la fenetre parente lié.
+	 * @param localisation la localisation de l'UI
 	 */
 	public AboutDialog(JFrame parentframe, AjResourcesReader localisation) {
 		super(parentframe, true);
@@ -186,6 +189,9 @@ public class AboutDialog extends JDialog implements ActionListener, HyperlinkLis
 				+ localisation.getResourceString("apropos.liens") + "</b></td></tr></table></html>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
+	/**
+	 * Affiche la boite de dialogue "A Propos"
+	 */
 	public void showAboutDialog() {
  		setSize(new Dimension(427, 376));
 		//pack();

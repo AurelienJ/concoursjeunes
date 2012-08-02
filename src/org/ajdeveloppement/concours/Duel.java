@@ -102,6 +102,8 @@ public class Duel {
 	/**
 	 * @param concurrent1
 	 * @param concurrent2
+	 * @param phase 
+	 * @param numDuel 
 	 */
 	public Duel(Concurrent concurrent1, Concurrent concurrent2, int phase, int numDuel) {
 		this.concurrent1 = concurrent1;

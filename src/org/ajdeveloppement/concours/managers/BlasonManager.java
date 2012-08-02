@@ -88,15 +88,13 @@
  */
 package org.ajdeveloppement.concours.managers;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.concours.ApplicationCore;
+import static org.ajdeveloppement.concours.sqltable.BlasonTable.*;
+
+import java.util.List;
+
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Blason;
-import org.ajdeveloppement.concours.DistancesEtBlason;
-import org.ajdeveloppement.concours.builders.BlasonBuilder;
 
 /**
  * Gére la construction des blasons à partir des données trouvé en base
@@ -106,73 +104,23 @@ import org.ajdeveloppement.concours.builders.BlasonBuilder;
  */
 public class BlasonManager {
 	
-	private static PreparedStatement pstmtBlasonWithDistancesEtBlason = null;
-	
-	private static PreparedStatement pstmtBlasonByName = null;
-	
-	/**
-	 * Retourne le blason associé à une ligne distance/blason d'un réglement donnée
-	 * 
-	 * @param distancesEtBlason l'objet DistancesEtBlason associé
-	 * @return le blason associé à la ligne d/b du réglement donnée
-	 * @throws ObjectPersistenceException 
-	 */
-	public static Blason findBlasonAssociateToDistancesEtBlason(DistancesEtBlason distancesEtBlason) throws ObjectPersistenceException {
-		try {
-			if(pstmtBlasonWithDistancesEtBlason == null) {
-				String sql = "select B.* from DISTANCESBLASONS D inner join BLASONS B on D.NUMBLASON=B.NUMBLASON " //$NON-NLS-1$
-					+ "where NUMDISTANCESBLASONS=? and NUMREGLEMENT=?"; //$NON-NLS-1$
-				
-				pstmtBlasonWithDistancesEtBlason = ApplicationCore.dbConnection.prepareStatement(sql);
-			}
-			
-			pstmtBlasonWithDistancesEtBlason.setInt(1, distancesEtBlason.getNumdistancesblason());
-			pstmtBlasonWithDistancesEtBlason.setInt(2, distancesEtBlason.getReglement().getNumReglement());
-			
-			ResultSet rs = pstmtBlasonWithDistancesEtBlason.executeQuery();
-			try {
-				if(rs.first())
-					return BlasonBuilder.getBlason(rs);
-			} finally {
-				rs.close();
-			}
-		} catch (SQLException e) {
-			throw new ObjectPersistenceException(e);
-		}
-		
-		return null;
-	}
-	
 	/**
 	 * Recherche dans la base le blason correspondant au nom donnée en parametre
 	 * 
 	 * @param name le nom du blason à trouver
 	 * 
 	 * @return l'objet Blason trouvé ou null si inexistant
-	 * @throws SQLException
 	 */
-	public static Blason findBlasonByName(String name) throws ObjectPersistenceException {	
-		
-		try {
-			if(pstmtBlasonByName == null) {
-				String sql = "select * from BLASONS where NOMBLASON=?"; //$NON-NLS-1$
-				
-				pstmtBlasonByName = ApplicationCore.dbConnection.prepareStatement(sql);
-			}
-			
-			pstmtBlasonByName.setString(1, name);
-			
-			ResultSet rs = pstmtBlasonByName.executeQuery();
-			try {
-				if(rs.first())
-					return BlasonBuilder.getBlason(rs);
-			} finally {
-				rs.close();
-			}
-		} catch (SQLException e) {
-			throw new ObjectPersistenceException(e);
-		}
-		
-		return null;
+	public static Blason findBlasonByName(String name) {	
+		return QResults.from(Blason.class).where(NOMBLASON.equalTo(name)).first();
+	}
+
+	/**
+	 * Liste l'ensemble des blasons existant dans la base
+	 * 
+	 * @return la liste des blasons existant
+	 */
+	public static List<Blason> listAvailableTargetFace() {
+		return QResults.from(Blason.class).orderBy(NUMORDRE).asList();
 	}
 }

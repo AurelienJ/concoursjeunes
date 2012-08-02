@@ -97,6 +97,9 @@ public class MetaDataFichesConcours {
 	
 	private ArrayList<MetaDataFicheConcours> fiches = new ArrayList<MetaDataFicheConcours>();
 	
+	/**
+	 * 
+	 */
 	public MetaDataFichesConcours() { }
 
 	/**

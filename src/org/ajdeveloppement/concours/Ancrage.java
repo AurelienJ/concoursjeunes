@@ -98,11 +98,12 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlForeignKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.builders.AncrageBuilder;
 
 /**
  * Représente la position physique relative d'un blason
@@ -111,21 +112,49 @@ import org.ajdeveloppement.commons.persistence.sql.SqlTable;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="ANCRAGES_BLASONS")
+@SqlTable(name="ANCRAGES_BLASONS", loadBuilder=AncrageBuilder.class)
 @SqlPrimaryKey(fields={"NUMBLASON","EMPLACEMENT"})
 public class Ancrage implements ObjectPersistence {
 	private static StoreHelper<Ancrage> helper = SqlStoreHelperFactory.getStoreHelper(Ancrage.class);
 	
+	/**
+	 * Emplacement de la cible pour la position A
+	 */
 	public static final int POSITION_A = 0;
+	
+	/**
+	 * Emplacement de la cible pour la position B
+	 */
 	public static final int POSITION_B = 1;
+	
+	/**
+	 * Emplacement de la cible pour la position C
+	 */
 	public static final int POSITION_C = 2;
+	
+	/**
+	 * Emplacement de la cible pour la position D
+	 */
 	public static final int POSITION_D = 3;
+	
+	/**
+	 * Emplacement de la cible pour un postionnement global
+	 * commmun ABCD
+	 */
 	public static final int POSITION_ABCD = 4;
+	
+	/**
+	 * Emplacement de la cible pour la position commune A et C (Haut)
+	 */
 	public static final int POSITION_AC = 5;
+	
+	/**
+	 * Emplacement de la cible pour la position commune B et D (Bas)
+	 */
 	public static final int POSITION_BD = 6;
 	
 	@SqlField(name="EMPLACEMENT")
-	private int emplacement = POSITION_A;
+	protected int emplacement = POSITION_A;
 	
 	@SqlField(name="ANCRAGEX")
 	private double x = 0;
@@ -136,8 +165,10 @@ public class Ancrage implements ObjectPersistence {
 	@SqlForeignKey(mappedTo="NUMBLASON")
 	private Blason blason;
 	
+	/**
+	 * Construit un nouvel encrange de blason
+	 */
 	public Ancrage() {
-		
 	}
 	
 	/**

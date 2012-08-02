@@ -94,22 +94,61 @@ package org.ajdeveloppement.concours.exceptions;
  */
 public class PlacementException extends Exception {
 	
+	/**
+	 * Nature de l'exception
+	 */
 	public enum Nature {
+		/**
+		 * Tentative de placement d'un concurrent null
+		 */
 		NULL_CONCURRENT,
+		
+		/**
+		 * Pas de place disponible pour le concurrent
+		 */
 		ANY_AVAILABLE_POSITION,
+		
+		/**
+		 * Tentative de placement d'un concurrent à la mauvaise distance
+		 */
 		BAD_DISTANCES,
+		
+		/**
+		 *  Tentative de placement d'un concurrent sur le mauvais blason
+		 */
 		BAD_TARGETFACE,
+		
+		/**
+		 * Position disponible uniquement à un concurrent valide (n'ayant pas de
+		 * handicap nécessitant la réservation d'une place supplémentaire)
+		 */
 		POSITION_AVAILABLE_FOR_VALID_CONCURRENT,
+		
+		/**
+		 * Position vérrouillé par un archer handicapé
+		 */
 		POSITION_RESERVED_FOR_HANDICAP,
+		
+		/**
+		 * Erreur d'origine inconnue
+		 */
 		UNKNOWN_ERROR
 	}
 	
 	private Nature nature = Nature.UNKNOWN_ERROR; 
 	
+	/**
+	 * 
+	 */
 	public PlacementException() {
 		super();
 	}
 	
+	/**
+	 * Construit une nouvelle erreur de placement
+	 * 
+	 * @param nature la nature de l'exception
+	 */
 	public PlacementException(Nature nature) {
 		super();
 		

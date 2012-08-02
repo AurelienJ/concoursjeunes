@@ -88,18 +88,13 @@
  */
 package org.ajdeveloppement.concours.builders;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
-import org.ajdeveloppement.commons.persistence.LoadHelper;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Ancrage;
-import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.Blason;
+import org.ajdeveloppement.concours.sqltable.AncrageTable;
 
 /**
  * Construit la table des ancrages possible d'un blason sur une cible 
@@ -110,41 +105,17 @@ import org.ajdeveloppement.concours.Blason;
  */
 public class AncragesMapBuilder {
 	
-	private static LoadHelper<Ancrage,ResultSet> loadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<Ancrage,ResultSet>(new ResultSetLoadHandler<Ancrage>(Ancrage.class));
-		} catch (ObjectPersistenceException e) {
-			throw new RuntimeException(e);
-		}
-	}
 	/**
 	 * Construit la tables des ancrages à partir de la refernce du blason en base
 	 * 
 	 * @param blason la reference du blason pour récuperer les informations en base
 	 * @return la tables des ancrages ou null si non trouvé en base
-	 * @throws SQLException
 	 */
-	public static ConcurrentMap<Integer, Ancrage> getAncragesMap(Blason blason) throws ObjectPersistenceException {
-		ConcurrentMap<Integer, Ancrage> ancrages = new ConcurrentHashMap<Integer, Ancrage>();
+	public static Map<Integer, Ancrage> getAncragesMap(Blason blason) {
+		Map<Integer, Ancrage> ancrages = new ConcurrentHashMap<Integer, Ancrage>();
 		
-		String sql = "select * from ANCRAGES_BLASONS where NUMBLASON=?"; //$NON-NLS-1$
-		
-		try (PreparedStatement pstmt =  ApplicationCore.dbConnection.prepareStatement(sql)) {
-			pstmt.setInt(1, blason.getNumblason());
-			
-			try (ResultSet rs = pstmt.executeQuery()) {
-				while(rs.next()) {
-					Ancrage ancrage = new Ancrage();
-					ancrage.setBlason(blason);
-					
-					loadHelper.load(ancrage, rs);
-					
-					ancrages.put(ancrage.getEmplacement(), ancrage);
-				}
-			}
-		} catch (SQLException e) {
-			throw new ObjectPersistenceException(e);
+		for(Ancrage ancrage : QResults.from(Ancrage.class).where(AncrageTable.NUMBLASON.equalTo(blason.getNumblason()))) {
+			ancrages.put(ancrage.getEmplacement(), ancrage);
 		}
 		
 		if(ancrages.size() == 0)
@@ -159,8 +130,8 @@ public class AncragesMapBuilder {
 	 * @param nbArcher le nombre d'archer devant être présent
 	 * @return la tables des ancrages
 	 */
-	public static ConcurrentMap<Integer, Ancrage> getAncragesMap(int nbArcher) {
-		ConcurrentMap<Integer, Ancrage> ancrages = new ConcurrentHashMap<Integer, Ancrage>();
+	public static Map<Integer, Ancrage> getAncragesMap(int nbArcher) {
+		Map<Integer, Ancrage> ancrages = new ConcurrentHashMap<Integer, Ancrage>();
 		if(nbArcher > 2) {
 			ancrages.put(Ancrage.POSITION_ABCD, new Ancrage(Ancrage.POSITION_ABCD, 0, 0));
 		} else if(nbArcher > 1) {

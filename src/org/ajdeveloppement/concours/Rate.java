@@ -87,7 +87,6 @@
 package org.ajdeveloppement.concours;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -103,27 +102,28 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.sql.SqlManager;
+import org.ajdeveloppement.concours.builders.RateBuilder;
+import org.ajdeveloppement.concours.sqltable.RateCategoryTable;
 
+/**
+ * 
+ * @author Aurélien JEOFFRAY
+ *
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="TARIF")
+@SqlTable(name="TARIF",loadBuilder=RateBuilder.class)
 @SqlPrimaryKey(fields="ID_TARIF")
 public class Rate implements ObjectPersistence {
 	// [start] Helper persistence
-	private static StoreHelper<Rate> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<Rate>(new SqlStoreHandler<Rate>(
-					ApplicationCore.dbConnection, Rate.class));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+	private static StoreHelper<Rate> helper = SqlStoreHelperFactory.getStoreHelper(Rate.class);
 	// [end]
 	
 	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
@@ -141,12 +141,21 @@ public class Rate implements ObjectPersistence {
 	@SqlField(name="TARIF")
 	private double tarif = 0.0;
 	
-	private List<CriteriaSet> categoriesTarif = new ArrayList<CriteriaSet>();
+	@XmlTransient
+	private List<RateCategory> categoriesTarif = null;
 	
+	/**
+	 * 
+	 */
 	public Rate() {
 		
 	}
 	
+	/**
+	 * 
+	 * @param intituleTarif
+	 * @param tarif
+	 */
 	public Rate(String intituleTarif, double tarif) {
 		super();
 		this.intituleTarif = intituleTarif;
@@ -184,25 +193,28 @@ public class Rate implements ObjectPersistence {
 	/**
 	 * @return categoriesTarif
 	 */
-	public List<CriteriaSet> getCategoriesTarif() {
+	public List<RateCategory> getCategoriesTarif() {
+		if(categoriesTarif == null)
+			categoriesTarif = QResults.from(RateCategory.class)
+					.where(RateCategoryTable.ID_TARIF.equalTo(idTarif)).asList();
 		return categoriesTarif;
 	}
 
 	/**
 	 * @param categoriesTarif categoriesTarif à définir
 	 */
-	public void setCategoriesTarif(List<CriteriaSet> categoriesTarif) {
+	public void setCategoriesTarif(List<RateCategory> categoriesTarif) {
 		this.categoriesTarif = categoriesTarif;
 	}
 	
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 	
 	/**
@@ -210,7 +222,7 @@ public class Rate implements ObjectPersistence {
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			if(idTarif == null)
 				idTarif = UUID.randomUUID();
 			
@@ -219,20 +231,21 @@ public class Rate implements ObjectPersistence {
 			SqlManager sqlManager = new SqlManager(ApplicationCore.dbConnection, null);
 			
 			try {
-				sqlManager.executeUpdate("delete from CATEGORIE_TARIF where ID_TARIF='" + idTarif.toString() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-				
-				for(CriteriaSet criteriaSet : categoriesTarif) {
-					criteriaSet.save(session);
+				String savedCriteriaSetIds = ""; //$NON-NLS-1$
+				for(RateCategory rateCategory : categoriesTarif) {
+					rateCategory.save(session);
 					
-					sqlManager.executeUpdate("insert into CATEGORIE_TARIF (ID_TARIF, NUMCRITERIASET) " //$NON-NLS-1$
-							+ "VALUES ('" + idTarif.toString() + "', " + criteriaSet.getNumCriteriaSet() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					savedCriteriaSetIds += (!savedCriteriaSetIds.isEmpty() ? ",": "")  //$NON-NLS-1$ //$NON-NLS-2$
+						+ rateCategory.getCategory().getNumCriteriaSet();
 				}
+				sqlManager.executeUpdate("delete from CATEGORIE_TARIF where ID_TARIF='" + idTarif.toString() + "' and NUMCRITERIASET not in (" + savedCriteriaSetIds +")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} catch(SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Cache.put(this);
+			
+			Session.addThreatyObject(session, this);
 		}
 	}
 	
@@ -241,11 +254,12 @@ public class Rate implements ObjectPersistence {
 	 */
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(idTarif != null && (session == null || !session.contains(this))) {
+		if(idTarif != null && Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Cache.remove(this);
+			
+			Session.addThreatyObject(session, this);
 		}
 	}
 	

@@ -86,7 +86,7 @@
  */
 package org.ajdeveloppement.concours;
 
-import static org.ajdeveloppement.concours.ApplicationCore.userRessources;
+import static org.ajdeveloppement.concours.ApplicationCore.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,7 +94,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.naming.ConfigurationException;
 import javax.swing.event.EventListenerList;
 import javax.xml.bind.JAXBException;
 
@@ -278,7 +277,9 @@ public class Profile {
 	/**
 	 * Création d'une nouvelle fiche concours
 	 * 
-	 * @throws ConfigurationException
+	 * @throws NullConfigurationException 
+	 * @throws IOException 
+	 * @throws JAXBException 
 	 */
 	public void createFicheConcours()
 			throws NullConfigurationException, IOException, JAXBException {
@@ -289,7 +290,9 @@ public class Profile {
 	 * Création d'une nouvelle fiche concours ayant les paramètres fournit
 	 * 
 	 * @param parametre les paramètres du concours
-	 * @throws ConfigurationException
+	 * @throws NullConfigurationException 
+	 * @throws IOException 
+	 * @throws JAXBException 
 	 */
 	public void createFicheConcours(Parametre parametre)
 			throws NullConfigurationException, IOException, JAXBException {
@@ -312,8 +315,9 @@ public class Profile {
 	 * 
 	 * @param metaDataFicheConcours le fichier de meta-données contenant les
 	 * informations sur le concours à supprimer
-	 * 
-	 * @throws ConfigurationException
+	 * @throws NullConfigurationException 
+	 * @throws IOException 
+	 * @throws JAXBException 
 	 */
 	public void deleteFicheConcours(MetaDataFicheConcours metaDataFicheConcours)
 			throws NullConfigurationException, IOException, JAXBException {
@@ -333,8 +337,9 @@ public class Profile {
 	 * Referme une fiche de concours
 	 * 
 	 * @param ficheConcours la fiche concours à décharger de la mémoire
-	 * 
-	 * @throws ConfigurationException
+	 * @throws NullConfigurationException 
+	 * @throws IOException 
+	 * @throws JAXBException 
 	 */
 	public void closeFicheConcours(FicheConcours ficheConcours)
 			throws NullConfigurationException, IOException, JAXBException {
@@ -350,8 +355,9 @@ public class Profile {
 
 	/**
 	 * Décharge de la mémoire l'ensemble des fiches ouvertes
-	 * 
-	 * @throws ConfigurationException
+	 * @throws NullConfigurationException 
+	 * @throws IOException 
+	 * @throws JAXBException 
 	 */
 	public void closeAllFichesConcours()
 			throws NullConfigurationException, IOException, JAXBException {
@@ -372,8 +378,7 @@ public class Profile {
 	 * Restaure le concours dont l'objet de meta-données est fournit en paramètre
 	 * 
 	 * @param metaDataFicheConcours l'objet meta-données du concours à restaurer
-	 * 
-	 * @throws ConfigurationException
+	 * @throws NullConfigurationException 
 	 * @throws IOException
 	 * @throws JAXBException 
 	 */
@@ -392,8 +397,9 @@ public class Profile {
 
 	/**
 	 * Sauvegarde l'ensemble des fiches de concours actuellement ouverte
-	 * 
-	 * @exception ConfigurationException
+	 * @throws NullConfigurationException 
+	 * @throws IOException 
+	 * @throws JAXBException 
 	 */
 	public void saveAllFichesConcours()
 			throws NullConfigurationException, IOException, JAXBException {

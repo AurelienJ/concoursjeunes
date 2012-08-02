@@ -90,13 +90,11 @@ import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.concours.plugins.Plugin.Type;
 
 /**
+ * Méta-données associé à un plugin
+ * 
  * @author Aurélien JEOFFRAY
  */
 public class PluginMetadata {
-	/*public static final int ALL = 0;
-	public static final int ONDEMAND_PLUGIN = 1;
-	public static final int STARTUP_PLUGIN = 3;*/
-		
 	private String pluginLocalisationPropertiesPath;
 	private AjResourcesReader localisation;
 
@@ -109,6 +107,9 @@ public class PluginMetadata {
 	private String[] menuPath;
 	private Class<?> pluginClass;
 
+	/**
+	 * 
+	 */
 	public PluginMetadata() {
 
 	}
@@ -233,10 +234,19 @@ public class PluginMetadata {
 		this.version = version;
 	}
 
+	/**
+	 * Retourne le chemin de l'entrée du menu permettant le lancement du plugin
+	 * 
+	 * @return le chemin de l'entrée du menu
+	 */
 	public String[] getMenuPath() {
 		return menuPath;
 	}
 
+	/**
+	 * Définit le chemin de l'entrée du menu permettant le lancement du plugin
+	 * @param menuPath le chemin de l'entrée du menu
+	 */
 	public void setMenuPath(String[] menuPath) {
 		this.menuPath = menuPath;
 	}

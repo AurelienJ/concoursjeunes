@@ -104,6 +104,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -112,16 +114,18 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlForeignKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlGeneratedIdField;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
-import org.ajdeveloppement.commons.persistence.sql.SqlUnmappedFields;
-import org.ajdeveloppement.concours.cache.CriteriaSetCache;
-import org.ajdeveloppement.concours.cache.CriteriaSetCache.CriteriaSetPK;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
+import org.ajdeveloppement.concours.builders.CriteriaSetBuilder;
+import org.ajdeveloppement.concours.sqltable.RateCategoryTable;
 
 /**
  * Jeux de critères utilisé pour distinguer un archer a des fins
@@ -130,11 +134,15 @@ import org.ajdeveloppement.concours.cache.CriteriaSetCache.CriteriaSetPK;
  * @author  Aurélien Jeoffray
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CRITERIASET")
+@SqlTable(name="CRITERIASET",loadBuilder=CriteriaSetBuilder.class)
 @SqlPrimaryKey(fields="NUMCRITERIASET",generatedidField=@SqlGeneratedIdField(name="NUMCRITERIASET",type=Types.INTEGER))
 @SqlUnmappedFields(fields={"IDCRITERIASET"})
 public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 
+	@XmlAttribute(name="id")
+	@XmlID
+	private String xmlId = null;
+	
 	@XmlTransient
 	@SqlField(name="NUMCRITERIASET")
 	private int numCriteriaSet = 0;
@@ -142,29 +150,46 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 	@XmlTransient
 	@SqlForeignKey(mappedTo="NUMREGLEMENT")
 	private Reglement reglement;
+	
+	@XmlTransient
+	private List<RateCategory> tarifsCategorie = null;
+	
 	@XmlJavaTypeAdapter(JAXBMapRefAdapter.class)
 	private Map<Criterion, CriterionElement> criteria = new HashMap<Criterion, CriterionElement>(5);
 	
-	private static StoreHelper<CriteriaSet> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<CriteriaSet>(new SqlStoreHandler<CriteriaSet>(ApplicationCore.dbConnection, CriteriaSet.class));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+	private static StoreHelper<CriteriaSet> helper = SqlStoreHelperFactory.getStoreHelper(CriteriaSet.class);
 
+	/**
+	 * Initialise un nouveau jeux de critères
+	 */
 	public CriteriaSet() {
 	}
 	
+	/**
+	 * Initialise un nouveau jeux de critères pour le réglement fournit en paramètre.
+	 * 
+	 * @param reglement le réglement associé au jeux de critères
+	 */
 	public CriteriaSet(Reglement reglement) {
 		this(reglement, null);
 	}
 
+	/**
+	 * Initialise un nouveau jeux de critères avec les critères fournit en paramètre.
+	 * 
+	 * @param criteria les critères constitutif du jeux de critères
+	 */
 	public CriteriaSet(Map<Criterion, CriterionElement> criteria) {
 		this(null, criteria);
 	}
 	
+	/**
+	 * Initialise un nouveau jeux de critères avec les critères fournit en paramètre et
+	 * associé au réglement fournit.
+	 * 
+	 * @param reglement le réglement associé au jeux de critères
+	 * @param criteria les critères constitutif du jeux de critères
+	 */
 	public CriteriaSet(Reglement reglement, Map<Criterion, CriterionElement> criteria) {
 		if(reglement != null)
 			setReglement(reglement);
@@ -210,6 +235,25 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 	 */
 	public Reglement getReglement() {
 		return reglement;
+	}
+
+	/**
+	 * @return tarifsCategorie
+	 */
+	public List<RateCategory> getTarifsCategorie() {
+		if(tarifsCategorie == null) {
+			tarifsCategorie = QResults.from(RateCategory.class)
+					.where(RateCategoryTable.NUMCRITERIASET.equalTo(numCriteriaSet))
+					.asList();
+		}
+		return tarifsCategorie;
+	}
+
+	/**
+	 * @param tarifsCategorie tarifsCategorie à définir
+	 */
+	public void setTarifsCategorie(List<RateCategory> tarifsCategorie) {
+		this.tarifsCategorie = tarifsCategorie;
 	}
 
 	/**
@@ -310,23 +354,23 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 	
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 	
 	/**
 	 * Sauvegarde en base le jeux de critère. Les arguments sont ignoré
 	 * 
-	 * @see org.ajdeveloppement.commons.sql.SqlPersistance#save()
+	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(Session)
 	 * 
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			//vérifie si le jeux n'existe pas déjà
 			String uid = getUID();
 			String sql = "select NUMCRITERIASET from CRITERIASET where IDCRITERIASET='" + uid.replace("'","''") + "'"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -355,8 +399,9 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 	
 			helper.save(this, Collections.<String, Object>singletonMap("IDCRITERIASET", uid)); //$NON-NLS-1$
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Cache.put(this);
+			
+			Session.addThreatyObject(session, this);
 			
 			try {
 				sql = "delete from POSSEDE where NUMCRITERIASET=" + numCriteriaSet; //$NON-NLS-1$
@@ -389,21 +434,17 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}
-			
-			if(!CriteriaSetCache.getInstance().containsKey(new CriteriaSetPK(numCriteriaSet, reglement)))
-				CriteriaSetCache.getInstance().add(this);
 		}
 	}
 
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			CriteriaSetCache.getInstance().remove(new CriteriaSetPK(numCriteriaSet, reglement));
+			Cache.remove(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 		}
 	}
 	
@@ -412,6 +453,7 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 	 * @param marshaller
 	 */
 	protected void beforeMarshal(Marshaller marshaller) {
+		xmlId = Integer.toString(numCriteriaSet);
 		/*jaxbCriteria = new HashMap<String, String>();
 		for(Entry<Criterion, CriterionElement> entry : criteria.entrySet()) {
 			jaxbCriteria.put(entry.getKey().getCode(), entry.getValue().getCode());
@@ -424,6 +466,8 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 	 * @param parent
 	 */
 	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
+		if(xmlId != null && !xmlId.isEmpty())
+		numCriteriaSet = Integer.parseInt(xmlId);
 		/*if(parent instanceof Reglement) {
 			Reglement reglement = (Reglement)parent;
 			for(Entry<String, String> entry : jaxbCriteria.entrySet()) {

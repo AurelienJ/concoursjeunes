@@ -94,13 +94,18 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ajdeveloppement.commons.persistence.LoadHelper;
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.CriteriaSet;
 import org.ajdeveloppement.concours.Criterion;
 import org.ajdeveloppement.concours.CriterionElement;
-import org.ajdeveloppement.concours.Reglement;
-import org.ajdeveloppement.concours.cache.CriteriaSetCache;
-import org.ajdeveloppement.concours.cache.CriteriaSetCache.CriteriaSetPK;
+import org.ajdeveloppement.concours.sqltable.CriteriaSetTable;
 
 /**
  * Construit un jeux de critères à partir des données en base
@@ -108,79 +113,124 @@ import org.ajdeveloppement.concours.cache.CriteriaSetCache.CriteriaSetPK;
  * @author Aurélien JEOFFRAY
  *
  */
-public class CriteriaSetBuilder {
+public class CriteriaSetBuilder implements ResultSetRowToObjectBinder<CriteriaSet, Void>{
 	
+	private static LoadHelper<CriteriaSet,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(CriteriaSet.class);
+	private static LoadHelper<CriteriaSet,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(CriteriaSet.class);
+	
+	private static PreparedStatement pstmt = null;
 	/**
 	 * Construit un jeux de critéres à partir des valeurs de la clé primaire de la table en base
 	 * 
 	 * @param numCriteriaSet le numero d'identifiant du jeux de critères dans la base
-	 * @param reglement le reglement concerné par le jeux de critères
 	 * 
 	 * @return le jeux de critères concerné
+	 * @throws ObjectPersistenceException 
 	 */
-	public static CriteriaSet getCriteriaSet(int numCriteriaSet, Reglement reglement) {
-		return getCriteriaSet(numCriteriaSet, reglement, false);
+	public static CriteriaSet getCriteriaSet(int numCriteriaSet) throws ObjectPersistenceException {
+		return getCriteriaSet(null, numCriteriaSet, false, null);
 	}
 	
 	/**
 	 * Construit un jeux de critéres à partir des valeurs de la clé primaire de la table en base
 	 * 
 	 * @param numCriteriaSet le numero d'identifiant du jeux de critères dans la base
-	 * @param reglement le reglement concerné par le jeux de critères
 	 * @param doNotUseCache ne pas utiliser le cache
+	 * @param sessionCache 
 	 * 
 	 * @return le jeux de critères concerné
+	 * @throws ObjectPersistenceException 
 	 */
-	public static CriteriaSet getCriteriaSet(int numCriteriaSet, Reglement reglement, boolean doNotUseCache) {
-		try {
-			CriteriaSetCache cache = CriteriaSetCache.getInstance();
+	public static CriteriaSet getCriteriaSet(int numCriteriaSet, boolean doNotUseCache, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		return getCriteriaSet(null, numCriteriaSet, false, null);
+	}
+	
+	/**
+	 * @param rs
+	 * @param sessionCache
+	 * @return le jeux de critères concerné
+	 * @throws ObjectPersistenceException
+	 */
+	public static CriteriaSet getCriteriaSet(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		return getCriteriaSet(rs, 0, false, null);
+	}
+	
+	
+	private static CriteriaSet getCriteriaSet(ResultSet rs, int numCriteriaSet, boolean doNotUseCache, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		if(rs != null) {
+			try {
+				numCriteriaSet = CriteriaSetTable.NUMCRITERIASET.getValue(rs);
+			} catch (SQLException e) {
+				throw new ObjectPersistenceException(e);
+			}
+		}
+		
+		CriteriaSet criteriaSet = null;
+		if(!doNotUseCache)
+			criteriaSet = Cache.get(CriteriaSet.class, numCriteriaSet);
+		else {
+			if(sessionCache == null)
+				sessionCache = new SqlLoadingSessionCache();
 			
-			CriteriaSet criteriaSet = null;
-			if(!doNotUseCache)
-				criteriaSet = cache.get(new CriteriaSetPK(numCriteriaSet, reglement));
-			if(criteriaSet == null) {
+			criteriaSet = sessionCache.get(CriteriaSet.class, new SqlLoadingSessionCache.Key(numCriteriaSet));
+		}
 			
+		if(criteriaSet == null) {
+			criteriaSet = new CriteriaSet();
+			criteriaSet.setNumCriteriaSet(numCriteriaSet);
+			
+			Map<Class<?>,Map<String,Object>> foreignKeysValues = null;
+			if(rs == null)
+				foreignKeysValues = loadHelper.load(criteriaSet);
+			else {
+				foreignKeysValues = resultSetLoadHelper.load(criteriaSet, rs);
+			}
+			
+			criteriaSet.setReglement(ReglementBuilder.getReglement(
+					(int)foreignKeysValues.get(CriteriaSet.class).get(CriteriaSetTable.NUMREGLEMENT.getFieldName()),
+					doNotUseCache,
+					sessionCache)
+				);
+			
+			try {
 				Map<Criterion, CriterionElement> criteria = new HashMap<Criterion, CriterionElement>();
-				String sql = "select * from POSSEDE where NUMCRITERIASET=? and NUMREGLEMENT=?"; //$NON-NLS-1$
 				
-				PreparedStatement pstmt = ApplicationCore.dbConnection.prepareStatement(sql);
-				try {
-					pstmt.setInt(1, numCriteriaSet);
-					pstmt.setInt(2, reglement.getNumReglement());
-					
-					ResultSet rs = pstmt.executeQuery();
-					
-					
-					while(rs.next()) {
-						Criterion protoCriterion = new Criterion(rs.getString("CODECRITERE")); //$NON-NLS-1$
-						protoCriterion.setReglement(reglement);
+				if(pstmt == null) {
+					String sql = "select CODECRITERE,CODECRITEREELEMENT from POSSEDE where NUMCRITERIASET=?"; //$NON-NLS-1$
+					pstmt = ApplicationCore.dbConnection.prepareStatement(sql);
+				}
+				
+				pstmt.setInt(1, numCriteriaSet);
+				
+				try(ResultSet rsCriteres = pstmt.executeQuery()) {
+					while(rsCriteres.next()) {
+						Criterion protoCriterion = new Criterion(rsCriteres.getString("CODECRITERE")); //$NON-NLS-1$
+						protoCriterion.setReglement(criteriaSet.getReglement());
 						
-						Criterion criterion = reglement.getListCriteria().get(reglement.getListCriteria().indexOf(protoCriterion));
-						CriterionElement tempCriterionElement = new CriterionElement(rs.getString("CODECRITEREELEMENT")); //$NON-NLS-1$
-						tempCriterionElement.setCriterion(criterion);
+						Criterion criterion = criteriaSet.getReglement().getListCriteria().get(criteriaSet.getReglement().getListCriteria().indexOf(protoCriterion));
+						
+						CriterionElement protoCriterionElement = new CriterionElement(rsCriteres.getString("CODECRITEREELEMENT")); //$NON-NLS-1$
+						protoCriterionElement.setCriterion(criterion);
 						
 						criteria.put(
 								criterion,
-								criterion.getCriterionElements().get(criterion.getCriterionElements().indexOf(tempCriterionElement)));
+								criterion.getCriterionElements().get(criterion.getCriterionElements().indexOf(protoCriterionElement)));
 					}
-				} finally {
-					pstmt.close();
-					pstmt = null;
 				}
-				
-				criteriaSet = new CriteriaSet();
-				criteriaSet.setReglement(reglement);
-				criteriaSet.setNumCriteriaSet(numCriteriaSet); 
 				criteriaSet.setCriteria(criteria);
+				
 				if(!doNotUseCache)
-					cache.add(criteriaSet);
+					Cache.put(criteriaSet);
+			} catch(SQLException e) {
+				throw new ObjectPersistenceException(e);
 			}
-			
-			return criteriaSet;
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
-		
-		return null;
+		return criteriaSet;
+	}
+
+	@Override
+	public CriteriaSet get(ResultSet rs, SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap) throws ObjectPersistenceException {
+		return getCriteriaSet(rs, sessionCache);
 	}
 }

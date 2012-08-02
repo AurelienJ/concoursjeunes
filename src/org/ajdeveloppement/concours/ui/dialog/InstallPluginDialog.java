@@ -507,7 +507,7 @@ public class InstallPluginDialog extends JDialog implements ActionListener, Care
 			List<RowFilter<PluginDescriptionTableModel, Integer>> filters = new ArrayList<RowFilter<PluginDescriptionTableModel, Integer>>();
 			filters.add(RowFilter.<PluginDescriptionTableModel, Integer>regexFilter("(?i)" + jtfSearch.getText())); //$NON-NLS-1$
 			if(jlCategorie.getSelectedIndex() > 0)
-				filters.add(RowFilter.<PluginDescriptionTableModel, Integer>regexFilter((String)jlCategorie.getSelectedValue()));
+				filters.add(RowFilter.<PluginDescriptionTableModel, Integer>regexFilter(jlCategorie.getSelectedValue()));
 			
 			sorter.setRowFilter(RowFilter.<PluginDescriptionTableModel, Integer>andFilter((Iterable<RowFilter<PluginDescriptionTableModel, Integer>>)filters));
 			jtPlugins.setRowSorter(sorter);
@@ -526,7 +526,7 @@ public class InstallPluginDialog extends JDialog implements ActionListener, Care
 			List<RowFilter<PluginDescriptionTableModel, Integer>> filters = new ArrayList<RowFilter<PluginDescriptionTableModel, Integer>>();
 			filters.add(RowFilter.<PluginDescriptionTableModel, Integer>regexFilter("(?i)" + jtfSearch.getText())); //$NON-NLS-1$
 			if(jlCategorie.getSelectedIndex() > 0)
-				filters.add(RowFilter.<PluginDescriptionTableModel, Integer>regexFilter((String)jlCategorie.getSelectedValue()));
+				filters.add(RowFilter.<PluginDescriptionTableModel, Integer>regexFilter(jlCategorie.getSelectedValue()));
 			sorter.setRowFilter(RowFilter.<PluginDescriptionTableModel, Integer>andFilter((Iterable<RowFilter<PluginDescriptionTableModel, Integer>>)filters));
 			jtPlugins.setRowSorter(sorter);
 		}

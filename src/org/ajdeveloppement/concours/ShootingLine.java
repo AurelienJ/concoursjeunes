@@ -436,6 +436,7 @@ public class ShootingLine implements FicheConcoursListener {
 	 * @param concurrent - le concurrent à placer
 	 * @param cible - la cible sur laquelle placer le concurrent
 	 * @param position - la position du concurrent sur la cible
+	 * @throws PlacementException 
 	 */
 	public void placementConcurrent(Concurrent concurrent, Target cible, int position) 
 			throws PlacementException {

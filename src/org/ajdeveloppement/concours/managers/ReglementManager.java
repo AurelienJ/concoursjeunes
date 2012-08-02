@@ -91,9 +91,6 @@ package org.ajdeveloppement.concours.managers;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,10 +98,10 @@ import javax.xml.bind.JAXBException;
 
 import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Federation;
 import org.ajdeveloppement.concours.Reglement;
-import org.ajdeveloppement.concours.builders.ReglementBuilder;
+import org.ajdeveloppement.concours.sqltable.ReglementTable;
 
 /**
  * Permet la gestion listage, sélection, ajout et suppression des
@@ -114,8 +111,6 @@ import org.ajdeveloppement.concours.builders.ReglementBuilder;
  *
  */
 public class ReglementManager {
-	
-	private static PreparedStatement pstmAllReglementOrdered = null;
 	
 	private List<Reglement> availableReglements = new ArrayList<Reglement>();
 	private List<Federation> federation = new ArrayList<Federation>();
@@ -142,38 +137,22 @@ public class ReglementManager {
 		availableReglements.clear();
 		federation.clear();
 		categorie.clear();
-		
-		try {
-			if(pstmAllReglementOrdered == null)
-				pstmAllReglementOrdered = ApplicationCore.dbConnection.prepareStatement(
-						"select * from REGLEMENT where NOMREGLEMENT <> 'default' order by LIBELLE"); //$NON-NLS-1$
-
-			ResultSet rs = pstmAllReglementOrdered.executeQuery();
-			try {
-				while (rs.next()) {
-					Reglement reglement = ReglementBuilder.getReglement(rs);
-					
-					if(!federation.contains(reglement.getFederation()))
-						federation.add(reglement.getFederation());
-					if(!categorie.contains(reglement.getCategory()))
-						categorie.add(reglement.getCategory());
-					availableReglements.add(reglement); 
-				}
-			} finally {
-				rs.close();
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} catch (ObjectPersistenceException e) {
-			throw new RuntimeException(e);
+	
+		for(Reglement reglement : QResults.from(Reglement.class).where(ReglementTable.NOMREGLEMENT.differentOf("default")).orderBy(ReglementTable.LIBELLE)) { //$NON-NLS-1$
+			if(!federation.contains(reglement.getFederation()))
+				federation.add(reglement.getFederation());
+			if(!categorie.contains(reglement.getCategory()))
+				categorie.add(reglement.getCategory());
+			availableReglements.add(reglement); 
 		}
+
 	}
 	
 	/**
 	 * Ajoute le règlement fournit en paramètre à la base et au gestionnaire
 	 * 
 	 * @param reglement le règlement à ajouter
-	 * @throws SqlPersistanceException
+	 * @throws ObjectPersistenceException
 	 */
 	public void addReglement(Reglement reglement) throws ObjectPersistenceException {
 		if(reglement == null)
@@ -192,6 +171,7 @@ public class ReglementManager {
 	 * Supprime un règlement de la base et du gestionnaire
 	 * 
 	 * @param reglement le règlement à supprimer
+	 * @throws ObjectPersistenceException 
 	 */
 	public void removeReglement(Reglement reglement) throws ObjectPersistenceException {
 		reglement.delete();
@@ -209,7 +189,7 @@ public class ReglementManager {
 	 * Si le règlement n'existe pas en base, se contente de le créer
 	 * 
 	 * @param reglement
-	 * @throws SqlPersistanceException
+	 * @throws ObjectPersistenceException
 	 */
 	public void updateReglement(Reglement reglement) throws ObjectPersistenceException {
 		availableReglements.remove(reglement);
@@ -221,6 +201,7 @@ public class ReglementManager {
 		addReglement(reglement);
 	}
 	
+
 	public void removeFederation(Federation f) throws ObjectPersistenceException {
 		federation.remove(f);
 		f.delete();
@@ -346,7 +327,7 @@ public class ReglementManager {
 	 * @return l'objet règlement résultant
 	 * 
 	 * @throws IOException
-	 * @throws SQLException
+	 * @throws ObjectPersistenceException
 	 */
 	public Reglement importReglement(File importFile) throws IOException, ObjectPersistenceException {
 		Reglement reglement = null;

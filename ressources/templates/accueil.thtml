@@ -92,6 +92,7 @@ a {
 			</table>
 		</td>
 		<td>
+			<div align="right">{NOTIFICATION}</div>
 			<center>
 				<table>
 					<tr>

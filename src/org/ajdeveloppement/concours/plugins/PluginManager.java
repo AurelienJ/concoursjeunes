@@ -101,6 +101,18 @@ import org.ajdeveloppement.concours.plugins.Plugin.Type;
  *
  */
 public class PluginManager {
+	/**
+	 * Instancie le plugin représenté par ces méta-données
+	 * 
+	 * @param pluginMetadata les méta-données du plugins a instancié
+	 * @return l'instance du plugin
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws IllegalArgumentException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
 	public static Object instantiatePlugin(PluginMetadata pluginMetadata)
 			throws SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		Class<?> pluginClass = pluginMetadata.getPluginClass();

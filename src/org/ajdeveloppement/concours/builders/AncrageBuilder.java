@@ -1,7 +1,7 @@
 /*
- * Créé le 21 mars 2010 à 17:57:41 pour ArcCompetition
+ * Créé le 13 juin 2012 à 22:04:39 pour ArcCompetition
  *
- * Copyright 2002-2010 - Aurélien JEOFFRAY
+ * Copyright 2002-2012 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,84 +86,51 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.cache;
+package org.ajdeveloppement.concours.builders;
 
-import org.ajdeveloppement.concours.Criterion;
-import org.ajdeveloppement.concours.Reglement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.ajdeveloppement.commons.persistence.LoadHelper;
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
+import org.ajdeveloppement.concours.Ancrage;
+import org.ajdeveloppement.concours.sqltable.AncrageTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class CriterionCache extends AbstractCache<CriterionCache.CriterionPK,Criterion> {
+public class AncrageBuilder implements ResultSetRowToObjectBinder<Ancrage, Void> {
+	private static LoadHelper<Ancrage,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Ancrage.class);
+	
+	public static Ancrage getAncrage(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		Ancrage ancrage = null;
+		if(sessionCache == null) {
+			sessionCache = new SqlLoadingSessionCache();
+		}
+		try {
+			int numBlason = AncrageTable.NUMBLASON.getValue(rs);
+			int emplacement = AncrageTable.EMPLACEMENT.getValue(rs);
+			
+			ancrage = sessionCache.get(Ancrage.class, new SqlLoadingSessionCache.Key(numBlason, emplacement));
+			if(ancrage == null) {
+				ancrage = new Ancrage();
+				
+				resultSetLoadHelper.load(ancrage, rs);
+				
+				sessionCache.put(ancrage);
+			}
+			return ancrage;
+		} catch(SQLException e) {
+			throw new ObjectPersistenceException(e);
+		}
+	}
 
-	private static CriterionCache instance = new CriterionCache();
-	
-	private CriterionCache() {
-	}
-	
-	public static CriterionCache getInstance() {
-		return instance;
-	}
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.concours.cache.AbstractCache#add(java.lang.Object)
-	 */
 	@Override
-	public void add(Criterion criterion) {
-		put(new CriterionPK(criterion.getCode(), criterion.getReglement()), criterion);
-	}
-
-	public static class CriterionPK {
-		private String code;
-		private Reglement reglement;
-		
-		public CriterionPK(String code, Reglement reglement) {
-			this.code = code;
-			this.reglement = reglement;
-		}
-		public String getCode() {
-			return code;
-		}
-		public void setCode(String code) {
-			this.code = code;
-		}
-		public Reglement getReglement() {
-			return reglement;
-		}
-		public void setReglement(Reglement reglement) {
-			this.reglement = reglement;
-		}
-		
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((code == null) ? 0 : code.hashCode());
-			result = prime * result
-					+ ((reglement == null) ? 0 : reglement.hashCode());
-			return result;
-		}
-		
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			CriterionPK other = (CriterionPK) obj;
-			if (code == null) {
-				if (other.code != null)
-					return false;
-			} else if (!code.equals(other.code))
-				return false;
-			if (reglement == null) {
-				if (other.reglement != null)
-					return false;
-			} else if (!reglement.equals(other.reglement))
-				return false;
-			return true;
-		}
+	public Ancrage get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap) throws ObjectPersistenceException {
+		return getAncrage(rs, sessionCache);
 	}
 }

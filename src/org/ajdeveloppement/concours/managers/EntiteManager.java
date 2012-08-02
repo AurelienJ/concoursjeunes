@@ -88,16 +88,12 @@
  */
 package org.ajdeveloppement.concours.managers;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.QField;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Entite;
-import org.ajdeveloppement.concours.builders.EntiteBuilder;
+import org.ajdeveloppement.concours.sqltable.EntiteTable;
 
 /**
  * Gére le chargement des Entités à partir de la base de données
@@ -115,48 +111,28 @@ public class EntiteManager {
 	 * est possible (%, _)
 	 * 
 	 * @param eGeneric l'entite générique permettant de filtré les résultats
-	 * @param orderfield le champs de tri de la liste
+	 * @param orderfields le champs de tri de la liste
 	 * 
 	 * @return la liste des entité répondant aux critères de recherche
 	 */
-	@SuppressWarnings("nls")
-	public static List<Entite> getEntitesInDatabase(Entite eGeneric, String orderfield) throws ObjectPersistenceException {
-		List<Entite> entites = new ArrayList<Entite>();
-		
-		try (Statement stmt = ApplicationCore.dbConnection.createStatement()){
-			String sql = "select * from Entite";
-			if(eGeneric != null && (!eGeneric.getNom().isEmpty() || !eGeneric.getAgrement().isEmpty() || !eGeneric.getVille().isEmpty()) ) {
-				sql += " where ";
-				ArrayList<String> filters = new ArrayList<String>();
-				if(eGeneric.getNom().length() > 0) {
-					filters.add("UPPER(NOMENTITE) like '" + eGeneric.getNom().toUpperCase().replaceAll("'", "''") + "'");
-				}
-				if(eGeneric.getAgrement().length() > 0) {
-					filters.add("UPPER(AGREMENTENTITE) like '" + eGeneric.getAgrement().toUpperCase().replaceAll("'", "''") + "'");
-				}
-				if(eGeneric.getVille().length() > 0) {
-					filters.add("UPPER(VILLEENTITE) like '" + eGeneric.getVille().toUpperCase().replaceAll("'", "''") + "'");
-				}
-				
-				for(String filter : filters) {
-					sql += " and " + filter;
-				}
+	public static List<Entite> getEntitesInDatabase(Entite eGeneric, QField<?>... orderfields) {
+
+		QResults<Entite, Void> entites = QResults.from(Entite.class);
+		if(eGeneric != null && (!eGeneric.getNom().isEmpty() || !eGeneric.getAgrement().isEmpty() || !eGeneric.getVille().isEmpty()) ) {
+			if(eGeneric.getNom().length() > 0) {
+				entites = entites.where(EntiteTable.NOMENTITE.upper().like(eGeneric.getNom().toUpperCase()));
 			}
-			sql = sql.replaceFirst(" and ", "");
-			if(orderfield != null && !orderfield.isEmpty())
-				sql += " order by " + orderfield;
-			
-			try(ResultSet rs = stmt.executeQuery(sql)) {
-				while(rs.next()) {
-					Entite entite = EntiteBuilder.getEntite(rs);
-					
-					entites.add(entite);
-				}
+			if(eGeneric.getAgrement().length() > 0) {
+				entites = entites.where(EntiteTable.AGREMENTENTITE.upper().like(eGeneric.getAgrement().toUpperCase()));
 			}
-		} catch (SQLException e) {
-			throw new ObjectPersistenceException(e);
+			if(eGeneric.getVille().length() > 0) {
+				entites = entites.where(EntiteTable.VILLEENTITE.upper().like(eGeneric.getVille().toUpperCase()));
+			}
 		}
+
+		if(orderfields != null && orderfields.length > 0)
+			entites = entites.orderBy(orderfields);
 		
-		return entites;
+		return entites.asList();
 	}
 }

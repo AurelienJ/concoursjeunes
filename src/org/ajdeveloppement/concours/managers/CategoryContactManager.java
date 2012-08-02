@@ -88,44 +88,28 @@
  */
 package org.ajdeveloppement.concours.managers;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.CategoryContact;
-import org.ajdeveloppement.concours.builders.CategoryContactBuilder;
 
 /**
+ * Gestionnaire de categories de contact
+ * 
  * @author Aurélien JEOFFRAY
  *
  */
 public class CategoryContactManager {
-	private static PreparedStatement pstmtAllCategoryContact = null;
+	private static List<CategoryContact> cacheCategoryContact = null;
 	
-	public static List<CategoryContact> getAllCategoryContact() throws ObjectPersistenceException {
-		List<CategoryContact> categories = new ArrayList<CategoryContact>();
-		try {
-			if(pstmtAllCategoryContact == null)
-				pstmtAllCategoryContact = ApplicationCore.dbConnection.prepareStatement("select * from CATEGORIE_CONTACT"); //$NON-NLS-1$
-			
-			ResultSet rs = pstmtAllCategoryContact.executeQuery();
-			try {
-				while(rs.next()) {
-					CategoryContact categoryContact = CategoryContactBuilder.getCategoryContact(rs);
-					
-					categories.add(categoryContact);
-				}
-			} finally {
-				rs.close();
-			}
-		} catch (SQLException e) {
-			throw new ObjectPersistenceException(e);
-		}
-		
-		return categories;
+	/**
+	 * Retourne l'ensemble des catégories de contacts disponible
+	 * 
+	 * @return la liste des catégories de contacts
+	 */
+	public static List<CategoryContact> getAllCategoryContact() {
+		if(cacheCategoryContact == null)
+			cacheCategoryContact = QResults.from(CategoryContact.class).asList();
+		return cacheCategoryContact;
 	}
 }

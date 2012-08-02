@@ -105,12 +105,13 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlForeignKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlGeneratedIdField;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.builders.DistancesEtBlasonBuilder;
 import org.ajdeveloppement.concours.xml.bind.BlasonAdapter;
 
 /**
@@ -119,7 +120,7 @@ import org.ajdeveloppement.concours.xml.bind.BlasonAdapter;
  * @author Aurélien Jeoffray
  * @version 1.0
  */
-@SqlTable(name="DISTANCESBLASONS")
+@SqlTable(name="DISTANCESBLASONS",loadBuilder=DistancesEtBlasonBuilder.class)
 @SqlPrimaryKey(fields={"NUMDISTANCESBLASONS","NUMREGLEMENT"},generatedidField=@SqlGeneratedIdField(name="NUMDISTANCESBLASONS",type=Types.INTEGER))
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DistancesEtBlason implements ObjectPersistence {
@@ -146,14 +147,7 @@ public class DistancesEtBlason implements ObjectPersistence {
 	@SqlForeignKey(mappedTo="NUMREGLEMENT")
 	private Reglement reglement = new Reglement();
 	
-	private static StoreHelper<DistancesEtBlason> helper = null;
-	static {
-		try {
-			helper = new StoreHelper<DistancesEtBlason>(new SqlStoreHandler<DistancesEtBlason>(ApplicationCore.dbConnection, DistancesEtBlason.class));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+	private static StoreHelper<DistancesEtBlason> helper = SqlStoreHelperFactory.getStoreHelper(DistancesEtBlason.class);
 
 	/**
 	 * construit un DistancesEtBlason avec les options par défaut (pour sérialisation XML)
@@ -279,10 +273,19 @@ public class DistancesEtBlason implements ObjectPersistence {
 			reglement = criteriaSet.getReglement();
 	}
 	
+	/**
+	 * Retourne le réglement associé
+	 * 
+	 * @return le réglement associé
+	 */
 	public Reglement getReglement() {
 		return reglement;
 	}
 	
+	/**
+	 * Associe un réglement
+	 * @param reglement le réglement à associer
+	 */
 	public void setReglement(Reglement reglement) {
 		this.reglement = reglement; 
 	}
@@ -307,46 +310,42 @@ public class DistancesEtBlason implements ObjectPersistence {
 	
 	@Override
 	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startSaveSession(this);
 	}
 	
 	@Override
 	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(ApplicationCore.dbConnection, this);
+		SessionHelper.startDeleteSession(this);
 	}
 	
 	/**
 	 * Sauvegarde le couple distances/blasons en base.
 	 * 
-	 * @see org.ajdeveloppement.commons.sql.SqlPersistance#save()
-	 * @throws SqlPersistanceException
+	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(Session)
+	 * @throws ObjectPersistenceException
 	 */
 	@SuppressWarnings("nls")
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			criteriaSet.setReglement(reglement);
 			criteriaSet.save(session);
 			
-			if(criteriaSet.getNumCriteriaSet() == 0)
+			if(criteriaSet.getNumCriteriaSet() == 0 && session != null)
 				criteriaSet = session.getSavedInstanceOf(criteriaSet);
 			
 			helper.save(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 			
 			try {
-				Statement stmt = ApplicationCore.dbConnection.createStatement();
-				try {
+				try(Statement stmt = ApplicationCore.dbConnection.createStatement()) {
 					stmt.executeUpdate("delete from DISTANCES where NUMDISTANCESBLASONS=" + numdistancesblason + " and NUMREGLEMENT=" + criteriaSet.getReglement().getNumReglement()); 
 					int i = 1;
 					for(int distance : distances) {
 						stmt.executeUpdate("insert into DISTANCES (NUMDISTANCES, NUMDISTANCESBLASONS, NUMREGLEMENT, DISTANCE) " + //$NON-NLS-1$
 								"VALUES (" + (i++) +", " + numdistancesblason + ", " + criteriaSet.getReglement().getNumReglement() +", " + distance + ")"); 
 					}
-				} finally {
-					stmt.close();
 				}
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
@@ -357,15 +356,14 @@ public class DistancesEtBlason implements ObjectPersistence {
 	/**
 	 * Supprime le distances/blason de la base.
 	 * 
-	 * @throws SQLException
+	 * @throws ObjectPersistenceException
 	 */
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addThreatyObject(session, this);
 		}
 	}
 

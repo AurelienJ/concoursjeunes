@@ -102,12 +102,13 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
+import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
-import org.ajdeveloppement.commons.persistence.sql.SqlTable;
-import org.ajdeveloppement.concours.cache.CivilityCache;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.builders.CivilityBuilder;
 
 /**
  * A physical or moral civility information for a contact
@@ -116,7 +117,7 @@ import org.ajdeveloppement.concours.cache.CivilityCache;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CIVILITY")
+@SqlTable(name="CIVILITY",loadBuilder=CivilityBuilder.class)
 @SqlPrimaryKey(fields="ID_CIVILITY")
 public class Civility implements ObjectPersistence {
 	private static StoreHelper<Civility> helper = SqlStoreHelperFactory.getStoreHelper(Civility.class);;
@@ -254,7 +255,7 @@ public class Civility implements ObjectPersistence {
 			helper.save(this);
 			
 			Session.addThreatyObject(session, this);
-			CivilityCache.getInstance().addOnce(this);
+			Cache.put(this);
 		}
 	}
 	
@@ -269,7 +270,7 @@ public class Civility implements ObjectPersistence {
 			helper.delete(this);
 			
 			Session.addThreatyObject(session, this);
-			CivilityCache.getInstance().remove(idCivility);
+			Cache.remove(this);
 		}
 	}
 	

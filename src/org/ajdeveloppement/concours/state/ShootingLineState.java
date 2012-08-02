@@ -112,6 +112,11 @@ import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
 
+/**
+ * 
+ * @author Aurélien JEOFFRAY
+ *
+ */
 public class ShootingLineState {
 	
 	private static final double topMargin = 0.5;
@@ -131,6 +136,14 @@ public class ShootingLineState {
 	private float pageHeight = 0;
 	private int maxDistance = 0;
 	
+	/**
+	 * 
+	 * @param localisation
+	 * @param profile
+	 * @param pasDeTir
+	 * @param document
+	 * @param writer
+	 */
 	public ShootingLineState(AjResourcesReader localisation, Profile profile, ShootingLine pasDeTir, Document document, PdfWriter writer) {
 		this.localisation = localisation;
 		this.profile = profile;
@@ -152,6 +165,9 @@ public class ShootingLineState {
 		paint();
 	}
 	
+	/**
+	 * 
+	 */
 	public void paint() {
 		int page = 1;
 		try {

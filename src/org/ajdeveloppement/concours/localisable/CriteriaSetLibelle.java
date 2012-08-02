@@ -108,6 +108,7 @@ public class CriteriaSetLibelle {
      * Construit le libellé associé au jeux de critères  fournit en parametre
      * 
      * @param criteriaSet le jeux de criteres pour lequelle construire le libellé
+     * @param localisation la ressource de localisation du libellé
      */
     public CriteriaSetLibelle(CriteriaSet criteriaSet, AjResourcesReader localisation) {
         this.criteriaSet = criteriaSet;
@@ -133,6 +134,12 @@ public class CriteriaSetLibelle {
         this.libelle = strSCNA.trim();
     }
     
+    /**
+     * Retourne le libellé associé au jeux de critères  fournit en parametre
+     * @param criteriaSet le jeux de critère associé
+     * @param localisation la resource de localisation du libellé
+     * @return le libellé associé au jeux de critères  fournit en parametre
+     */
     public static String getLibelle(CriteriaSet criteriaSet, AjResourcesReader localisation) {
     	return new CriteriaSetLibelle(criteriaSet, localisation).toString();
     }

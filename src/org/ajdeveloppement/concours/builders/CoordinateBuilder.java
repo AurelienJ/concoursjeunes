@@ -92,29 +92,21 @@ import java.sql.ResultSet;
 import java.util.Map;
 import java.util.UUID;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.Coordinate;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class CoordinateBuilder {
-	private static LoadHelper<Coordinate,Map<String,Object>> loadHelper;
-	private static LoadHelper<Coordinate,ResultSet> resultSetLoadHelper;
-	static {
-		try {
-			loadHelper = new LoadHelper<Coordinate,Map<String,Object>>(new SqlLoadHandler<Coordinate>(ApplicationCore.dbConnection, Coordinate.class));
-			resultSetLoadHelper = new LoadHelper<Coordinate, ResultSet>(new ResultSetLoadHandler<Coordinate>(Coordinate.class));
-		} catch(ObjectPersistenceException e) {
-			throw new UncheckedException(e);
-		}
-	}
+public class CoordinateBuilder implements ResultSetRowToObjectBinder<Coordinate, Void> {
+	private static LoadHelper<Coordinate,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Coordinate.class);
+	private static LoadHelper<Coordinate,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Coordinate.class);
 	
 	public static Coordinate getCoordinate(UUID idCoordinate) throws ObjectPersistenceException {
 		return getCoordinate(idCoordinate, null);
@@ -135,5 +127,11 @@ public class CoordinateBuilder {
 			resultSetLoadHelper.load(coordinate, rs);
 		
 		return coordinate;
+	}
+
+	@Override
+	public Coordinate get(ResultSet rs, SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap) throws ObjectPersistenceException {
+		return getCoordinate(rs);
 	}
 }

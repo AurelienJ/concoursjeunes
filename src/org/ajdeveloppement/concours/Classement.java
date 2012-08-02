@@ -100,21 +100,34 @@ import java.util.Map;
 public class Classement {
 	private Map<CriteriaSet, List<Concurrent>> classementPhaseQualificative;
 	
+	/**
+	 * 
+	 */
 	public Classement() {
 	}
 
 	/**
-	 * @return classementPhaseQualificative
+	 * Retourne la table des classements de la phase qualificative
+	 * 
+	 * @return la table des classements de la phase qualificative
 	 */
 	public Map<CriteriaSet, List<Concurrent>> getClassementPhaseQualificative() {
 		return classementPhaseQualificative;
 	}
 	
+	/**
+	 * Retourne le classement de la phase qualificative pour la catégorie fournit en paramètre.
+	 * 
+	 * @param criteriaSet la catégorie de classement pour laquel retourner le classement
+	 * @return le classement de la phase qualificative pour la catégorie fournit en paramètre.
+	 */
 	public List<Concurrent> getClassementPhaseQualificative(CriteriaSet criteriaSet) {
 		return classementPhaseQualificative.get(criteriaSet);
 	}
 
 	/**
+	 * Définit le classement
+	 * 
 	 * @param classementPhaseQualificative classementPhaseQualificative à définir
 	 */
 	public void setClassementPhaseQualificative(

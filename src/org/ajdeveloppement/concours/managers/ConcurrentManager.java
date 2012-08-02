@@ -88,18 +88,20 @@
  */
 package org.ajdeveloppement.concours.managers;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.commons.persistence.sql.QField;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Archer;
 import org.ajdeveloppement.concours.Concurrent;
+import org.ajdeveloppement.concours.Contact;
+import org.ajdeveloppement.concours.Entite;
 import org.ajdeveloppement.concours.Reglement;
-import org.ajdeveloppement.concours.builders.ConcurrentBuilder;
+import org.ajdeveloppement.concours.sqltable.ArcherTable;
+import org.ajdeveloppement.concours.sqltable.ContactTable;
+import org.ajdeveloppement.concours.sqltable.EntiteTable;
 
 /**
  * Gére le chargement en mémoire des Concurrents
@@ -124,7 +126,7 @@ public class ConcurrentManager {
 	 * 
 	 * @return la liste des archers correspondant aux critères de recherche
 	 */
-	public static List<Concurrent> getArchersInDatabase(Archer aGeneric, Reglement reglement, String orderfield) {
+	public static List<Concurrent> getArchersInDatabase(Archer aGeneric, Reglement reglement, QField<?>[] orderfield) {
 		return getArchersInDatabase(aGeneric, reglement, orderfield, -1);
 	}
 	
@@ -144,7 +146,7 @@ public class ConcurrentManager {
 	 * 
 	 * @return la liste des archers correspondant aux critères de recherche
 	 */
-	public static List<Concurrent> getArchersInDatabase(Archer aGeneric, Reglement reglement, String orderfield, ConcurrentManagerProgress concurrentManagerProgress) {
+	public static List<Concurrent> getArchersInDatabase(Archer aGeneric, Reglement reglement,QField<?>[] orderfield, ConcurrentManagerProgress concurrentManagerProgress) {
 		return getArchersInDatabase(aGeneric, reglement, orderfield, -1, concurrentManagerProgress);
 	}
 	
@@ -165,7 +167,7 @@ public class ConcurrentManager {
 	 * 
 	 * @return la liste des archers correspondant aux critères de recherche
 	 */
-	public static List<Concurrent> getArchersInDatabase(Archer aGeneric, Reglement reglement, String orderfield, int nbmaxenreg) {
+	public static List<Concurrent> getArchersInDatabase(Archer aGeneric, Reglement reglement, QField<?>[] orderfield, int nbmaxenreg) {
 		return getArchersInDatabase(aGeneric, reglement, orderfield, nbmaxenreg, null);
 	}
 	
@@ -188,75 +190,94 @@ public class ConcurrentManager {
 	 * 
 	 * @return la liste des archers correspondant aux critères de recherche
 	 */
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	public static List<Concurrent> getArchersInDatabase(
-			Archer aGeneric, Reglement reglement, String orderfield, int nbmaxenreg, ConcurrentManagerProgress concurrentManagerProgress) {
+			Archer aGeneric, Reglement reglement, QField<?>[] orderfield, int nbmaxenreg, ConcurrentManagerProgress concurrentManagerProgress) {
 		List<Concurrent> concurrents = new ArrayList<Concurrent>();
 
-		try (Statement stmt = ApplicationCore.dbConnection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
-			String sql = "select %s from ARCHERS inner join CONTACT on ARCHERS.ID_CONTACT=CONTACT.ID_CONTACT";
+
+		//try (Statement stmt = ApplicationCore.dbConnection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+		//	String sql = "select %s from ARCHERS inner join CONTACT on ARCHERS.ID_CONTACT=CONTACT.ID_CONTACT";
+			QResults<Concurrent,Reglement> archers = QResults.from(Concurrent.class, reglement)
+				.innerJoin(Contact.class, ArcherTable.ID_CONTACT.equalTo(ContactTable.ID_CONTACT));
 
 			if(aGeneric != null) {
-				sql += " where ";
-				List<String> filters = new ArrayList<String>();
+				//sql += " where ";
+				//List<String> filters = new ArrayList<String>();
 
 				if(!aGeneric.getNumLicenceArcher().isEmpty()) {
-					filters.add("NUMLICENCEARCHER like '" + aGeneric.getNumLicenceArcher().replaceAll("'", "''").replaceAll("%", "%%") + "'");
+					//filters.add("NUMLICENCEARCHER like '" + aGeneric.getNumLicenceArcher().replaceAll("'", "''").replaceAll("%", "%%") + "'");
+					archers = archers.where(ArcherTable.NUMLICENCEARCHER.like(aGeneric.getNumLicenceArcher()));
 				}
 				if(aGeneric.getName() != null && !aGeneric.getName().isEmpty()) {
-					filters.add("UPPER_NAME like '" + aGeneric.getName().toUpperCase().replaceAll("'", "''").replaceAll("%", "%%") + "'");
+					//filters.add("UPPER_NAME like '" + aGeneric.getName().toUpperCase().replaceAll("'", "''").replaceAll("%", "%%") + "'");
+					archers = archers.where(ContactTable.UPPER_NAME.like(aGeneric.getName().toUpperCase()));
 				}
 				if(aGeneric.getFirstName() != null && !aGeneric.getFirstName().isEmpty()) {
-					filters.add("UPPER(FIRSTNAME) like '" + aGeneric.getFirstName().toUpperCase().replaceAll("'", "''").replaceAll("%", "%%") + "'");
+					//filters.add("UPPER(FIRSTNAME) like '" + aGeneric.getFirstName().toUpperCase().replaceAll("'", "''").replaceAll("%", "%%") + "'");
+					archers = archers.where(ContactTable.FIRSTNAME.upper().like(aGeneric.getFirstName().toUpperCase()));
 				}
 				if(!aGeneric.getEntite().getAgrement().isEmpty()) {
-					filters.add("ID_ENTITE in (select ID_ENTITE from ENTITE where AGREMENTENTITE like '" + aGeneric.getEntite().getAgrement().replaceAll("'", "''").replaceAll("%", "%%") + "')");
+					//filters.add("ID_ENTITE in (select ID_ENTITE from ENTITE where AGREMENTENTITE like '" + aGeneric.getEntite().getAgrement().replaceAll("'", "''").replaceAll("%", "%%") + "')");
+					archers = archers.where(ContactTable.ID_ENTITE.in(
+							QResults.from(Entite.class).where(EntiteTable.AGREMENTENTITE.like(aGeneric.getEntite().getAgrement())).asSubQuery(EntiteTable.ID_ENTITE)));
 				}
 
-				for(String filter : filters) {
-					sql += " and " + filter;
-				}
+//				for(String filter : filters) {
+//					sql += " and " + filter;
+//				}
 			}
-			sql = sql.replaceFirst(" and ", "");
+			//sql = sql.replaceFirst(" and ", "");
 
 			sqlLock.lock();
 			try {
 				if(concurrentManagerProgress != null) {
-					try (ResultSet rs = stmt.executeQuery(String.format(sql, "count(*)"))) {
-						if(rs.first() && concurrentManagerProgress !=null)
-							concurrentManagerProgress.setConcurrentCount(rs.getInt(1));
-					}
+					concurrentManagerProgress.setConcurrentCount(archers.count());
+//					try (ResultSet rs = stmt.executeQuery(String.format(sql, "count(*)"))) {
+//						if(rs.first() && concurrentManagerProgress !=null)
+//							concurrentManagerProgress.setConcurrentCount(rs.getInt(1));
+//					}
 				}
 			} finally {
 				sqlLock.unlock();
 			}
 			
-			if(!orderfield.isEmpty())
-				sql += " order by " + orderfield;
+			if(orderfield != null && orderfield.length > 0) {
+				archers = archers.orderBy(orderfield);
+				//sql += " order by " + orderfield;
+			}
 			
 			if(nbmaxenreg > 0)
-				sql += " limit " + nbmaxenreg;
+				archers = archers.limit(nbmaxenreg);
+			//	sql += " limit " + nbmaxenreg;
 			
 			sqlLock.lock();
 			try {
-				try (ResultSet rs = stmt.executeQuery(String.format(sql, "ARCHERS.*,CONTACT.*"))) {
-					while(!ApplicationCore.dbConnection.isClosed() && !rs.isClosed() && rs.next()) {
-						if(!Thread.currentThread().isInterrupted()) {
-							Concurrent concurrent = ConcurrentBuilder.getConcurrent(rs, reglement);
-							if(concurrent != null) {
-								concurrents.add(concurrent);
-								if(concurrentManagerProgress != null)
-									concurrentManagerProgress.setCurrentConcurrent(concurrent);
-							}
-						}
-					}
+				for(Concurrent concurrent : archers) {
+					if(Thread.currentThread().isInterrupted())
+						break;
+					
+					concurrents.add(concurrent);
+					if(concurrentManagerProgress != null)
+						concurrentManagerProgress.setCurrentConcurrent(concurrent);
 				}
+//				try (ResultSet rs = stmt.executeQuery(String.format(sql, "ARCHERS.*,CONTACT.*"))) {
+//					while(!ApplicationCore.dbConnection.isClosed() && !rs.isClosed() && rs.next()) {
+//						if(!Thread.currentThread().isInterrupted()) {
+//							Concurrent concurrent = ConcurrentBuilder.getConcurrent(rs, reglement);
+//							if(concurrent != null) {
+//								concurrents.add(concurrent);
+//								if(concurrentManagerProgress != null)
+//									concurrentManagerProgress.setCurrentConcurrent(concurrent);
+//							}
+//						}
+//					}
+//				}
 			} finally {
 				sqlLock.unlock();
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+
+
 		return concurrents;
 	}
 }

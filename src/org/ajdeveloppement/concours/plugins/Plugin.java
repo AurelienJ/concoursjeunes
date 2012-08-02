@@ -110,6 +110,12 @@ public @interface Plugin {
 	 */
 	Type type();
 	
+	/**
+	 * Type de plugin
+	 * 
+	 * @author Aurélien JEOFFRAY
+	 *
+	 */
 	public static enum Type {
 		/**
 		 * plugin se lançant au démarrage de l'application
