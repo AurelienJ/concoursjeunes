@@ -156,6 +156,8 @@ public class NewReglementDialog extends JDialog implements ActionListener {
 	private Reglement reglement = null;
 
 	/**
+	 * @param parentframe la fenêtre parente
+	 * @param profile le profile associé
 	 * 
 	 */
 	public NewReglementDialog(Window parentframe, Profile profile) {
@@ -237,6 +239,11 @@ public class NewReglementDialog extends JDialog implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Affiche la boite de dialogue de création d'un nouveau réglement.
+	 * 
+	 * @return le réglement créé ou null si l'opération est annulé.
+	 */
 	public Reglement showNewReglementDialog() {
 		completePanel();
 		

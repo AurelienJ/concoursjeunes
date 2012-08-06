@@ -177,6 +177,7 @@ public class EquipeDialog extends JDialog implements ActionListener, TreeSelecti
 	 *            la fenetre parente dont dépend la boite de dialogue
 	 * @param ficheConcours -
 	 *            La fiche concours associé
+	 * @param localisation la localisation de la boite de dialogue
 	 */
 	public EquipeDialog(JFrame parentFrame, FicheConcours ficheConcours, AjResourcesReader localisation) {
 		super(parentFrame, true);

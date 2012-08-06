@@ -102,8 +102,8 @@ import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.CompetitionLevel;
 import org.ajdeveloppement.concours.Federation;
-import org.ajdeveloppement.concours.sqltable.CompetitionLevelTable;
-import org.ajdeveloppement.concours.sqltable.FederationTable;
+import org.ajdeveloppement.concours.T_CompetitionLevel;
+import org.ajdeveloppement.concours.T_Federation;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -126,6 +126,18 @@ public class FederationBuilder implements ResultSetRowToObjectBinder<Federation,
 	}
 	
 	/**
+	 * Retourne la fédération qualifié par son identifiant en base
+	 * 
+	 * @param numFederation l'id de la fédération
+	 * @param sessionCache cache de session
+	 * @return la fédération a retourner
+	 * @throws ObjectPersistenceException
+	 */
+	public static Federation getFederation(int numFederation, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		return getFederation(numFederation, null, sessionCache);
+	}
+	
+	/**
 	 * Construit la fédération a partir du jeux de résultat correspondant
 	 * 
 	 * @param rs le resultset contenant les enregistrement en base permettant de construire la fédération
@@ -145,17 +157,18 @@ public class FederationBuilder implements ResultSetRowToObjectBinder<Federation,
 	 * @throws ObjectPersistenceException
 	 */
 	private static Federation getFederation(int numFederation, ResultSet resultSet, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		Federation federation = null;
+		if(sessionCache == null)
+			sessionCache = new SqlLoadingSessionCache();
 		
 		if(resultSet != null) {
 			try {
-				federation = Cache.get(Federation.class, FederationTable.NUMFEDERATION.getValue(resultSet));
+				numFederation =  T_Federation.NUMFEDERATION.getValue(resultSet);
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}
-		} else
-			federation = Cache.get(Federation.class, numFederation);
-		
+		}
+			
+		Federation federation = Cache.get(Federation.class, numFederation);
 		if(federation == null) {
 			federation = new Federation();
 			if(resultSet == null) {
@@ -169,8 +182,9 @@ public class FederationBuilder implements ResultSetRowToObjectBinder<Federation,
 			Cache.put(federation);
 
 			federation.setCompetitionLevels(
-					QResults.from(CompetitionLevel.class).where(CompetitionLevelTable.NUMFEDERATION.equalTo(numFederation))
-						.orderBy(CompetitionLevelTable.CODENIVEAU, CompetitionLevelTable.LANG)
+					QResults.from(CompetitionLevel.class, sessionCache)
+						.where(T_CompetitionLevel.NUMFEDERATION.equalTo(numFederation))
+						.orderBy(T_CompetitionLevel.CODENIVEAU)
 						.asList());
 		}
 		

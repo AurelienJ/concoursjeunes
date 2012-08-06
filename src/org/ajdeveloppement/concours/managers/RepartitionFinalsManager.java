@@ -92,7 +92,7 @@ import java.util.List;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.RepartitionFinals;
-import org.ajdeveloppement.concours.sqltable.RepartitionFinalsTable;
+import org.ajdeveloppement.concours.T_RepartitionFinals;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -107,8 +107,8 @@ public class RepartitionFinalsManager {
 	 */
 	public static List<RepartitionFinals> getRepartitionFinals(short typeRepartition) {
 		return QResults.from(RepartitionFinals.class)
-				.where(RepartitionFinalsTable.NUM_TYPE_REPARTITION.equalTo(typeRepartition))
-				.orderBy(RepartitionFinalsTable.NUM_REPARTITION_PHASE_FINALE)
+				.where(T_RepartitionFinals.NUM_TYPE_REPARTITION.equalTo(typeRepartition))
+				.orderBy(T_RepartitionFinals.NUM_REPARTITION_PHASE_FINALE)
 				.asList();
 	}
 }

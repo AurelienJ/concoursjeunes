@@ -113,7 +113,7 @@ public interface PluginsWebService {
     @WebMethod
     @WebResult(partName = "return")
     public PluginDescriptionArray getAvailablePluginsForVersion(
-        @WebParam(name = "version", partName = "version")
+        @WebParam(partName = "version")
         String version);
 
     /**
@@ -126,9 +126,9 @@ public interface PluginsWebService {
     @WebMethod(action = "http://webservices.concoursjeunes.org/getLibelleCategory")
     @WebResult(partName = "return")
     public String getLibelleCategory(
-        @WebParam(name = "category", partName = "category")
+        @WebParam(partName = "category")
         String category,
-        @WebParam(name = "lang", partName = "lang")
+        @WebParam(partName = "lang")
         String lang);
 
 }

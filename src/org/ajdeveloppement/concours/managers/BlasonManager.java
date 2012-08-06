@@ -89,7 +89,7 @@
 package org.ajdeveloppement.concours.managers;
 
 
-import static org.ajdeveloppement.concours.sqltable.BlasonTable.*;
+import static org.ajdeveloppement.concours.T_Blason.*;
 
 import java.util.List;
 

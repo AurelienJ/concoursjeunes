@@ -92,7 +92,7 @@ import java.util.List;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Federation;
-import org.ajdeveloppement.concours.sqltable.FederationTable;
+import org.ajdeveloppement.concours.T_Federation;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -106,6 +106,6 @@ public class FederationManager {
 	 * @return la liste des fédérations disponible
 	 */
 	public static List<Federation> getAvailableFederations() {
-		return QResults.from(Federation.class).orderBy(FederationTable.SIGLEFEDERATION).asList();
+		return QResults.from(Federation.class).orderBy(T_Federation.SIGLEFEDERATION).asList();
 	}
 }

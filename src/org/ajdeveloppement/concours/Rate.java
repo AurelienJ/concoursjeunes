@@ -111,7 +111,6 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.sql.SqlManager;
 import org.ajdeveloppement.concours.builders.RateBuilder;
-import org.ajdeveloppement.concours.sqltable.RateCategoryTable;
 
 /**
  * 
@@ -196,7 +195,7 @@ public class Rate implements ObjectPersistence {
 	public List<RateCategory> getCategoriesTarif() {
 		if(categoriesTarif == null)
 			categoriesTarif = QResults.from(RateCategory.class)
-					.where(RateCategoryTable.ID_TARIF.equalTo(idTarif)).asList();
+					.where(T_RateCategory.ID_TARIF.equalTo(idTarif)).asList();
 		return categoriesTarif;
 	}
 

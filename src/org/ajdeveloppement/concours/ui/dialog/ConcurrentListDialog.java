@@ -179,6 +179,9 @@ public class ConcurrentListDialog extends JDialog implements ActionListener, Mou
 	 * 
 	 * @param parentframe -
 	 *            la fenetre principal de l'application (pour le point modal)
+	 * @param profile le profile associé
+	 * @param reglement le réglement permetant de construire le concurrent à partir d'un archer
+	 * @param filter filtre de recherche par défaut
 	 */
 	public ConcurrentListDialog(JDialog parentframe, Profile profile, Reglement reglement, Archer filter) {
 		super(parentframe, "", ModalityType.APPLICATION_MODAL); //$NON-NLS-1$
@@ -699,9 +702,9 @@ public class ConcurrentListDialog extends JDialog implements ActionListener, Mou
 		private Archer filter;
 		private int nbConcurrent = 0;
 		private int nbLoadedConcurrent = 0;
-		//private List<Concurrent> concurrents = new ArrayList<Concurrent>();
+		
 		/**
-		 * 
+		 * @param filter filtre de recherche pour le chargement des archers
 		 */
 		public ArchersTableLoader(Archer filter) {
 			this.filter = filter;

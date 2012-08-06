@@ -145,7 +145,7 @@ public class PluginDescriptionArray {
      * Objects of the following type(s) are allowed in the list
      * {@link PluginDescription }
      * 
-     * 
+     * @return collection de description de plugin
      */
     public List<PluginDescription> getItem() {
         if (item == null) {

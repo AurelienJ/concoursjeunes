@@ -133,6 +133,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.html.HTMLEditorKit;
 import javax.xml.bind.JAXBException;
 import javax.xml.ws.WebServiceException;
 
@@ -201,6 +202,11 @@ public class InstallPluginDialog extends JDialog implements ActionListener, Care
 	
 	private AjUpdater ajUpdater;
 	
+	/**
+	 * 
+	 * @param parentframe
+	 * @param profile
+	 */
 	public InstallPluginDialog(JFrame parentframe, Profile profile) {
 		super(parentframe, true);
 		
@@ -230,6 +236,7 @@ public class InstallPluginDialog extends JDialog implements ActionListener, Care
 		jspTablePlugins.setPreferredSize(new Dimension(450,200));
 		jtpDescription.setPreferredSize(new Dimension(450,200));
 		jtpDescription.setEditable(false);
+		jtpDescription.setEditorKit(new HTMLEditorKit());
 		
 		jlCategorie.addListSelectionListener(this);
 		jlCategorie.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -521,7 +528,7 @@ public class InstallPluginDialog extends JDialog implements ActionListener, Care
 	public void valueChanged(ListSelectionEvent e) {
 		if(e.getSource() instanceof DefaultListSelectionModel) {
 			if(((DefaultListSelectionModel)e.getSource()).getMinSelectionIndex() > -1)
-				jtpDescription.setText(pdtm.getPluginDescriptionAt(((DefaultListSelectionModel)e.getSource()).getMinSelectionIndex()).getLongDescription());
+				jtpDescription.setText("<html><body style=\"font-family: Tahoma, Arial, Verdana, sans-serif;\">" +pdtm.getPluginDescriptionAt(((DefaultListSelectionModel)e.getSource()).getMinSelectionIndex()).getLongDescription()+"</body></html>"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if(e.getSource() == jlCategorie) {
 			List<RowFilter<PluginDescriptionTableModel, Integer>> filters = new ArrayList<RowFilter<PluginDescriptionTableModel, Integer>>();
 			filters.add(RowFilter.<PluginDescriptionTableModel, Integer>regexFilter("(?i)" + jtfSearch.getText())); //$NON-NLS-1$

@@ -100,7 +100,7 @@ import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.CategoryContact;
-import org.ajdeveloppement.concours.sqltable.CategoryContactTable;
+import org.ajdeveloppement.concours.T_CategoryContact;
 
 /**
  * Utilities class to build CategoryContact with database data
@@ -137,7 +137,7 @@ public class CategoryContactBuilder implements ResultSetRowToObjectBinder<Catego
 	private static CategoryContact getCategoryContact(int numCategory, ResultSet rs) throws ObjectPersistenceException {
 		if(rs != null) {
 			try {
-				numCategory = CategoryContactTable.NUM_CATEGORIE_CONTACT.getValue(rs);
+				numCategory = T_CategoryContact.NUM_CATEGORIE_CONTACT.getValue(rs);
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}

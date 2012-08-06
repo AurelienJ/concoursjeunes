@@ -99,7 +99,7 @@ import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.Entite;
-import org.ajdeveloppement.concours.sqltable.EntiteTable;
+import org.ajdeveloppement.concours.T_Entite;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -138,7 +138,7 @@ public class EntiteBuilder implements ResultSetRowToObjectBinder<Entite, Void>{
 	private static Entite getEntite(UUID idEntite, ResultSet rs) throws ObjectPersistenceException {
 		if(idEntite == null) {
 			try {
-				idEntite = EntiteTable.ID_ENTITE.getValue(rs);
+				idEntite = T_Entite.ID_ENTITE.getValue(rs);
 				if(idEntite == null)
 					throw new ObjectPersistenceException("Le resultset doit retourner un ID_ENTITE"); //$NON-NLS-1$
 			} catch (SQLException e) {
@@ -162,7 +162,7 @@ public class EntiteBuilder implements ResultSetRowToObjectBinder<Entite, Void>{
 			
 			Map<String, Object> fkEntite = foreignKeyValue.get(Entite.class);
 			if(fkEntite != null)
-				entite.setFederation(FederationBuilder.getFederation((Integer)fkEntite.get(EntiteTable.NUMFEDERATION.getFieldName())));
+				entite.setFederation(FederationBuilder.getFederation((Integer)fkEntite.get(T_Entite.NUMFEDERATION.getFieldName())));
 			
 			Cache.put(entite);
 		}

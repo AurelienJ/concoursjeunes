@@ -112,10 +112,10 @@ import org.ajdeveloppement.concours.CriteriaSet;
 import org.ajdeveloppement.concours.Criterion;
 import org.ajdeveloppement.concours.DistancesEtBlason;
 import org.ajdeveloppement.concours.Reglement;
+import org.ajdeveloppement.concours.T_Criterion;
+import org.ajdeveloppement.concours.T_DistancesEtBlason;
+import org.ajdeveloppement.concours.T_Reglement;
 import org.ajdeveloppement.concours.managers.ReglementManager;
-import org.ajdeveloppement.concours.sqltable.CriterionTable;
-import org.ajdeveloppement.concours.sqltable.DistancesEtBlasonTable;
-import org.ajdeveloppement.concours.sqltable.ReglementTable;
 
 /**
  * <p>
@@ -275,7 +275,7 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Reglement,Vo
 		
 		try {
 			if(rs != null)
-				numreglement = ReglementTable.NUMREGLEMENT.getValue(rs);
+				numreglement = T_Reglement.NUMREGLEMENT.getValue(rs);
 			
 			Reglement reglement = null;
 			if(!doNotUseCache) {
@@ -310,7 +310,7 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Reglement,Vo
 				
 				reglement.setFederation(
 						FederationBuilder.getFederation(
-								(Integer)foreignKeys.get(Reglement.class).get(ReglementTable.NUMFEDERATION.getFieldName())));
+								(Integer)foreignKeys.get(Reglement.class).get(T_Reglement.NUMFEDERATION.getFieldName())));
 				
 				Statement stmt = ApplicationCore.dbConnection.createStatement();
 				try {
@@ -332,8 +332,8 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Reglement,Vo
 					
 					
 					try(ResultSet rsCriterion = QResults.from(Criterion.class)
-							.where(CriterionTable.NUMREGLEMENT.equalTo(numreglement))
-							.orderBy(CriterionTable.NUMORDRE)
+							.where(T_Criterion.NUMREGLEMENT.equalTo(numreglement))
+							.orderBy(T_Criterion.NUMORDRE)
 							.asResultSet()) {
 
 						while(rsCriterion.next()) {
@@ -345,7 +345,7 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Reglement,Vo
 					// Récupération des distances blason
 					List<DistancesEtBlason> listDistancesEtBlason = new ArrayList<DistancesEtBlason>();
 					try(ResultSet rsDB = QResults.from(DistancesEtBlason.class)
-							.where(DistancesEtBlasonTable.NUMREGLEMENT.equalTo(numreglement))
+							.where(T_DistancesEtBlason.NUMREGLEMENT.equalTo(numreglement))
 							.asResultSet()) {
 						while(rsDB.next()) {
 							DistancesEtBlason db = DistancesEtBlasonBuilder.getDistancesEtBlason(rsDB, doNotUseCache, sessionCache);

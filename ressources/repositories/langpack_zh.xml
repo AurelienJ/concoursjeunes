@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<repository name="langpack_zh" moduleVersion="0.00.10">
+	<url>https://arccompetition.ajdeveloppement.org/update/1.0/langpack/zh</url>
+	<mirror>0</mirror>
+	<canDisable>true</canDisable>
+	<mustBeSigned>true</mustBeSigned>
+</repository>

@@ -143,6 +143,13 @@ function printState(ficheConcours, template, document, writer, options) {
 				tplClassement.loopBloc("categories");
 			}
 		}
-		com.lowagie.text.xml.XmlParser.parse(document, new java.io.StringReader(tplClassement.output()));
+		var iTextHandler = new com.lowagie.text.xml.SAXiTextHandler(document);
+		if(new java.io.File("ressources/ARIALUNI.TTF").exists()) {
+			iTextHandler.setBaseFont(com.lowagie.text.pdf.BaseFont.createFont("ressources/ARIALUNI.TTF", 
+					com.lowagie.text.pdf.BaseFont.IDENTITY_H, com.lowagie.text.pdf.BaseFont.EMBEDDED));
+		}
+		var parser = javax.xml.parsers.SAXParserFactory.newInstance().newSAXParser();
+		parser.parse(new org.xml.sax.InputSource(new java.io.StringReader(tplClassement.output())), iTextHandler);
+		//com.lowagie.text.xml.XmlParser.parse(document, new java.io.StringReader(tplClassement.output()));
 	}
 }

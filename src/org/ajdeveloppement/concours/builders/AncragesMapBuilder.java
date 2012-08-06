@@ -94,7 +94,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Ancrage;
 import org.ajdeveloppement.concours.Blason;
-import org.ajdeveloppement.concours.sqltable.AncrageTable;
+import org.ajdeveloppement.concours.T_Ancrage;
 
 /**
  * Construit la table des ancrages possible d'un blason sur une cible 
@@ -114,7 +114,7 @@ public class AncragesMapBuilder {
 	public static Map<Integer, Ancrage> getAncragesMap(Blason blason) {
 		Map<Integer, Ancrage> ancrages = new ConcurrentHashMap<Integer, Ancrage>();
 		
-		for(Ancrage ancrage : QResults.from(Ancrage.class).where(AncrageTable.NUMBLASON.equalTo(blason.getNumblason()))) {
+		for(Ancrage ancrage : QResults.from(Ancrage.class).where(T_Ancrage.NUMBLASON.equalTo(blason.getNumblason()))) {
 			ancrages.put(ancrage.getEmplacement(), ancrage);
 		}
 		

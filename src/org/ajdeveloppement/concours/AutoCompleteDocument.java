@@ -101,9 +101,6 @@ import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.event.AutoCompleteDocumentEvent;
 import org.ajdeveloppement.concours.event.AutoCompleteDocumentListener;
 import org.ajdeveloppement.concours.managers.ConcurrentManager;
-import org.ajdeveloppement.concours.sqltable.ArcherTable;
-import org.ajdeveloppement.concours.sqltable.ContactTable;
-import org.ajdeveloppement.concours.sqltable.EntiteTable;
 
 /**
  * Réalise la saisi semi automatique d'un concurrent en fonction de
@@ -350,11 +347,11 @@ public class AutoCompleteDocument extends PlainDocument {
 		searchArcher.setName(searchString.toUpperCase() + "%"); //$NON-NLS-1$
 		
 		if(getLength() > 0) {
-			//List<Concurrent> concurrents = ConcurrentManager.getArchersInDatabase(searchArcher, context.getReglement(), new QField<?>[] { ContactTable.NAME, ContactTable.FIRSTNAME }, 1);
+			//List<Concurrent> concurrents = ConcurrentManager.getArchersInDatabase(searchArcher, context.getReglement(), new QField<?>[] { T_Contact.NAME, T_Contact.FIRSTNAME }, 1);
 			Concurrent concurrent = QResults.from(Concurrent.class, context.getReglement())
-				.innerJoin(Contact.class, ArcherTable.ID_CONTACT.equalTo(ContactTable.ID_CONTACT))
-				.where(ContactTable.NAME.like(searchArcher.getName()))
-				.orderBy(ContactTable.NAME, ContactTable.FIRSTNAME)
+				.innerJoin(Contact.class, T_Archer.ID_CONTACT.equalTo(T_Contact.ID_CONTACT))
+				.where(T_Contact.NAME.like(searchArcher.getName()))
+				.orderBy(T_Contact.NAME, T_Contact.FIRSTNAME)
 				.first();
 			if(!Thread.currentThread().isInterrupted()) {
 				if(concurrent != null) {
@@ -433,7 +430,7 @@ public class AutoCompleteDocument extends PlainDocument {
 			searchArcher.setFirstName(searchString + "%"); //$NON-NLS-1$
 			
 			
-			List<Concurrent> concurrents = ConcurrentManager.getArchersInDatabase(searchArcher, context.getReglement(),  new QField<?>[] { ContactTable.FIRSTNAME });
+			List<Concurrent> concurrents = ConcurrentManager.getArchersInDatabase(searchArcher, context.getReglement(),  new QField<?>[] { T_Contact.FIRSTNAME });
 			if(!Thread.currentThread().isInterrupted()) {
 				if(concurrents.size() > 0) {
 					tempConcurrent = concurrents.get(0);
@@ -505,7 +502,7 @@ public class AutoCompleteDocument extends PlainDocument {
 		Archer searchArcher = new Archer();
 		searchArcher.setNumLicenceArcher(searchString + "%"); //$NON-NLS-1$
 		if(getLength() > 0) {
-			List<Concurrent> concurrents = ConcurrentManager.getArchersInDatabase(searchArcher, context.getReglement(),  new QField<?>[] { ArcherTable.NUMLICENCEARCHER }, 1);
+			List<Concurrent> concurrents = ConcurrentManager.getArchersInDatabase(searchArcher, context.getReglement(),  new QField<?>[] { T_Archer.NUMLICENCEARCHER }, 1);
 			if(!Thread.currentThread().isInterrupted()) {
 				if(concurrents.size() > 0)
 					context.setConcurrent(concurrents.get(0));
@@ -576,10 +573,10 @@ public class AutoCompleteDocument extends PlainDocument {
 		Entite searchEntite = new Entite();
 		searchEntite.setVille(searchString.toUpperCase().replaceAll("[- \\']", "_") + "%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if(getLength() > 0) {
-			//List<Entite> entites = EntiteManager.getEntitesInDatabase(searchEntite, EntiteTable.VILLEENTITE);
+			//List<Entite> entites = EntiteManager.getEntitesInDatabase(searchEntite, T_Entite.VILLEENTITE);
 			Entite entite = QResults.from(Entite.class)
-					.where(EntiteTable.VILLEENTITE.upper().like(searchEntite.getVille()))
-					.orderBy(EntiteTable.VILLEENTITE)
+					.where(T_Entite.VILLEENTITE.upper().like(searchEntite.getVille()))
+					.orderBy(T_Entite.VILLEENTITE)
 					.first();
 			if(!Thread.currentThread().isInterrupted()) {
 				if(entite != null)
@@ -651,10 +648,10 @@ public class AutoCompleteDocument extends PlainDocument {
 		searchEntite.setAgrement(searchString.toUpperCase() + "%"); //$NON-NLS-1$
 		if(getLength() > 0) {
 			Entite entite = QResults.from(Entite.class)
-					.where(EntiteTable.AGREMENTENTITE.like(searchEntite.getAgrement()))
-					.orderBy(EntiteTable.AGREMENTENTITE)
+					.where(T_Entite.AGREMENTENTITE.like(searchEntite.getAgrement()))
+					.orderBy(T_Entite.AGREMENTENTITE)
 					.first();
-			//List<Entite> entites = EntiteManager.getEntitesInDatabase(searchEntite, EntiteTable.AGREMENTENTITE);
+			//List<Entite> entites = EntiteManager.getEntitesInDatabase(searchEntite, T_Entite.AGREMENTENTITE);
 			if(!Thread.currentThread().isInterrupted()) {
 				if(entite != null)
 					context.setEntite(entite);

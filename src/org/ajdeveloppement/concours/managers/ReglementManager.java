@@ -101,7 +101,7 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Federation;
 import org.ajdeveloppement.concours.Reglement;
-import org.ajdeveloppement.concours.sqltable.ReglementTable;
+import org.ajdeveloppement.concours.T_Reglement;
 
 /**
  * Permet la gestion listage, sélection, ajout et suppression des
@@ -138,7 +138,7 @@ public class ReglementManager {
 		federation.clear();
 		categorie.clear();
 	
-		for(Reglement reglement : QResults.from(Reglement.class).where(ReglementTable.NOMREGLEMENT.differentOf("default")).orderBy(ReglementTable.LIBELLE)) { //$NON-NLS-1$
+		for(Reglement reglement : QResults.from(Reglement.class).where(T_Reglement.NOMREGLEMENT.differentOf("default")).orderBy(T_Reglement.LIBELLE)) { //$NON-NLS-1$
 			if(!federation.contains(reglement.getFederation()))
 				federation.add(reglement.getFederation());
 			if(!categorie.contains(reglement.getCategory()))

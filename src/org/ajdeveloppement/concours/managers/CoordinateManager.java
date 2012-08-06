@@ -93,14 +93,19 @@ import java.util.List;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Contact;
 import org.ajdeveloppement.concours.Coordinate;
-import org.ajdeveloppement.concours.sqltable.CoordinateTable;
+import org.ajdeveloppement.concours.T_Coordinate;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
 public class CoordinateManager {
+	/**
+	 * Retourne les coordonnées associées à un contact
+	 * @param contact le contact pour lequel récupérer les coordonnées
+	 * @return les coordonnées du contact
+	 */
 	public static List<Coordinate> getContactCoordinates(Contact contact) {
-		return QResults.from(Coordinate.class).where(CoordinateTable.ID_CONTACT.equalTo(contact.getIdContact())).asList();
+		return QResults.from(Coordinate.class).where(T_Coordinate.ID_CONTACT.equalTo(contact.getIdContact())).asList();
 	}
 }

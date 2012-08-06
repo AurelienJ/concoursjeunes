@@ -155,8 +155,8 @@ public class EntiteListDialog extends JDialog implements ActionListener, MouseLi
 	private JFrame parentframe;
 	private Profile profile;
 
-	private EntiteTableModel dtm;
-	private TableRowSorter<EntiteTableModel> sorter;
+	private T_EntiteModel dtm;
+	private TableRowSorter<T_EntiteModel> sorter;
 
 	@Localizable("listeentite.header")
 	private JXHeader jxhHeader = new JXHeader();
@@ -230,7 +230,7 @@ public class EntiteListDialog extends JDialog implements ActionListener, MouseLi
 		jcbFederation.setSelectedItem(profile.getConfiguration().getFederation());
 		jcbFederation.addItemListener(this);
 		
-		dtm = new EntiteTableModel((Federation)jcbFederation.getSelectedItem());
+		dtm = new T_EntiteModel((Federation)jcbFederation.getSelectedItem());
 
 		//jtfNom.addFocusListener(this);
 		jtfNom.addCaretListener(this);
@@ -334,7 +334,7 @@ public class EntiteListDialog extends JDialog implements ActionListener, MouseLi
 	 */    
 	private JTable getJTable() {
 		if (this.jTable == null) {
-			this.sorter = new TableRowSorter<EntiteTableModel>(dtm);
+			this.sorter = new TableRowSorter<T_EntiteModel>(dtm);
 			this.jTable = new JTable(dtm);
 			this.jTable.setAutoCreateRowSorter(true);
 			this.jTable.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
@@ -475,7 +475,7 @@ public class EntiteListDialog extends JDialog implements ActionListener, MouseLi
 		}
 	}
 	
-	private class EntiteTableModel implements TableModel {
+	private class T_EntiteModel implements TableModel {
 		
 		/**
 		 * Fédération de rattachement de l'entité
@@ -493,7 +493,7 @@ public class EntiteListDialog extends JDialog implements ActionListener, MouseLi
 		private int nbRows = 0;
 		private int curIndex = 0;
 
-		public EntiteTableModel(Federation federation) {
+		public T_EntiteModel(Federation federation) {
 			this.federation = federation;
 
 			columnName.add(profile.getLocalisation().getResourceString("listeentite.nom")); //$NON-NLS-1$

@@ -119,6 +119,7 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link PluginDescriptionArray }
      * 
+     * @return Wrapper de collections de description de plugin
      */
     public PluginDescriptionArray createPluginDescriptionArray() {
         return new PluginDescriptionArray();
@@ -127,6 +128,7 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link PluginDescription }
      * 
+     * @return description de plugin
      */
     public PluginDescription createPluginDescription() {
         return new PluginDescription();

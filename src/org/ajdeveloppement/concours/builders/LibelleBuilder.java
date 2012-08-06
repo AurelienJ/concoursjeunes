@@ -97,7 +97,7 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.concours.Libelle;
-import org.ajdeveloppement.concours.sqltable.LibelleTable;
+import org.ajdeveloppement.concours.T_Libelle;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -106,12 +106,19 @@ import org.ajdeveloppement.concours.sqltable.LibelleTable;
 public class LibelleBuilder {
 	private static LoadHelper<Libelle,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Libelle.class);
 	
+	/**
+	 * Retourne le libellé représenté par son id et sa langue
+	 * @param idLibelle identifiant du libellé
+	 * @param lang langue du libellé
+	 * @return le libellé localisé
+	 * @throws ObjectPersistenceException
+	 */
 	public static Libelle getLibelle(UUID idLibelle, String lang) throws ObjectPersistenceException {
 		Libelle libelle = Cache.get(Libelle.class, idLibelle, lang);
 		if(libelle == null) {
 			Map<String, Object> persistenceInformations = new HashMap<String, Object>();
-			persistenceInformations.put(LibelleTable.ID_LIBELLE.getFieldName(), idLibelle);
-			persistenceInformations.put(LibelleTable.LANG.getFieldName(), lang);
+			persistenceInformations.put(T_Libelle.ID_LIBELLE.getFieldName(), idLibelle);
+			persistenceInformations.put(T_Libelle.LANG.getFieldName(), lang);
 			
 			libelle = new Libelle();
 			loadHelper.load(libelle, persistenceInformations);

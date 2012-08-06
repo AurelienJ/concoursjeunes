@@ -101,8 +101,8 @@ import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.Criterion;
 import org.ajdeveloppement.concours.Reglement;
+import org.ajdeveloppement.concours.T_Criterion;
 import org.ajdeveloppement.concours.managers.CriterionElementManager;
-import org.ajdeveloppement.concours.sqltable.CriterionTable;
 
 /**
  * Permet l'instanciation d'un objet critère
@@ -183,7 +183,7 @@ public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, R
 	private static Criterion getCriterion(String codeCritere, Reglement reglement, ResultSet rs, boolean doNotUseCache) throws ObjectPersistenceException {
 		if(rs != null) {
 			try {
-				codeCritere = CriterionTable.CODECRITERE.getValue(rs);
+				codeCritere = T_Criterion.CODECRITERE.getValue(rs);
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}

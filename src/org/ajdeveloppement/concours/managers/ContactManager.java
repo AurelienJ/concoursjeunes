@@ -91,7 +91,7 @@ package org.ajdeveloppement.concours.managers;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Contact;
 import org.ajdeveloppement.concours.Entite;
-import org.ajdeveloppement.concours.sqltable.ContactTable;
+import org.ajdeveloppement.concours.T_Contact;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -109,8 +109,8 @@ public class ContactManager {
 		QResults<Contact, Void> qContacts = QResults.from(Contact.class);
 		
 		if(entity != null && entity.getIdEntite() != null)
-			qContacts = qContacts.where(ContactTable.ID_ENTITE.equalTo(entity.getIdEntite()));
+			qContacts = qContacts.where(T_Contact.ID_ENTITE.equalTo(entity.getIdEntite()));
 		
-		return qContacts.orderBy(ContactTable.NAME, ContactTable.FIRSTNAME);
+		return qContacts.orderBy(T_Contact.NAME, T_Contact.FIRSTNAME);
 	}
 }

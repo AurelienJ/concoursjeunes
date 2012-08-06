@@ -288,7 +288,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				if(value instanceof CompetitionLevel)
-					value = ((CompetitionLevel)value).getLibelle();
+					value = ((CompetitionLevel)value).getLibelle(profile.getConfiguration().getLangue());
 				return super.getListCellRendererComponent(list, value, index, isSelected,
 						cellHasFocus);
 			}
@@ -518,7 +518,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 		jlSelectedReglement.setText("<html><b>" + tempReglement.getDisplayName() + "</b> - " + tempReglement.getFederation().getSigleFederation()+ "</html>");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		jbSelectReglement.setEnabled(!parametre.isReglementLock());
 		jcbNiveauChampionnat.removeAllItems();
-		for(CompetitionLevel cl : tempReglement.getFederation().getCompetitionLevels(profile.getConfiguration().getLangue()))
+		for(CompetitionLevel cl : tempReglement.getFederation().getCompetitionLevels())
 			jcbNiveauChampionnat.addItem(cl);
 		jcbNiveauChampionnat.setSelectedItem(parametre.getNiveauChampionnat());
 		jcbCloseCompetition.setSelected(!parametre.isOpen());
@@ -660,7 +660,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 				jlSelectedReglement.setText("<html><b>" + reglement.getDisplayName() + "</b> - " + reglement.getFederation().getSigleFederation()+ "</html>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				
 				jcbNiveauChampionnat.removeAllItems();
-				for(CompetitionLevel cl : tempReglement.getFederation().getCompetitionLevels(profile.getConfiguration().getLangue()))
+				for(CompetitionLevel cl : tempReglement.getFederation().getCompetitionLevels())
 					jcbNiveauChampionnat.addItem(cl);
 				jcbNiveauChampionnat.setSelectedItem(parametre.getNiveauChampionnat());
 				

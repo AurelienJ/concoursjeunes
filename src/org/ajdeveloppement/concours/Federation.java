@@ -88,16 +88,11 @@
  */
 package org.ajdeveloppement.concours;
 
-import static org.ajdeveloppement.concours.sqltable.FederationTable.*;
-
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import javax.xml.bind.Marshaller;
@@ -155,6 +150,9 @@ public class Federation implements ObjectPersistence {
 	@XmlElement(name="niveau")
 	private List<CompetitionLevel> competitionLevels = new ArrayList<CompetitionLevel>();
 	
+	/**
+	 * Construit une nouvelle fédération
+	 */
 	public Federation() {
 		//xmlId = UUID.randomUUID().toString();
 	}
@@ -257,18 +255,6 @@ public class Federation implements ObjectPersistence {
 	}
 
 	/**
-	 * <p>Retourne la liste des niveaux de compétition disponible pour cette fédération.</p>
-	 * <p>Un niveau de compétition peut être retourné plusieurs fois si il est disponible
-	 * dans plusieurs langues, aussi préférer l'utilisation de {@link #getCompetitionLevels(String)}
-	 * en précisant la langue pour retourner la liste des niveaux.</p>
-	 * 
-	 * @return competitionLevels la liste des niveaux de compétition disponible
-	 */
-	public List<CompetitionLevel> getCompetitionLevels() {
-		return competitionLevels;
-	}
-
-	/**
 	 * <p>Définit la liste des niveaux de compétition disponible.</p>
 	 * <p>Comme aucune vérification de la présence en base des niveaux n'est réalisé,
 	 * cette méthode est uniquement présente pour une utilisation par les
@@ -312,34 +298,21 @@ public class Federation implements ObjectPersistence {
 
 	/**
 	 * <p>Retourne la liste de tous les niveaux de compétition accessible pour la
-	 * fédération en fonction de la langue fournit en paramètre.</p>
-	 * <p>Si le niveau n'a pas été traduit dans la langue désiré, la valeur
-	 * pour la localisation <i>fr</i> sera retourné.</p>
+	 * fédération</p>
 	 * 
-	 * @param lang la langue des libellés de niveau de compétition au format ISO 639 (langue sur 2 caractères).
 	 * @return la liste de tous les niveaux de compétition accessible pour la
 	 * fédération
 	 */
-	public List<CompetitionLevel> getCompetitionLevels(String lang) {
-		List<CompetitionLevel> competitionLevelList = new ArrayList<CompetitionLevel>();
-
-		for(CompetitionLevel cl : competitionLevels) {
-			if(cl.getLang().equals(lang))
-				competitionLevelList.add(cl);
-		}
-		
-		if(competitionLevelList.size() == 0 && !lang.equals("fr")) //$NON-NLS-1$
-			competitionLevelList = getCompetitionLevels("fr"); //$NON-NLS-1$
-		
-		return competitionLevelList;
+	public List<CompetitionLevel> getCompetitionLevels() {
+		return competitionLevels;
 	}
 
 	private void checkAlreadyExists() throws ObjectPersistenceException {
 		try {
 			Integer nullableNumFederation = QResults.from(Federation.class).where(
-					SIGLEFEDERATION.equalTo(sigleFederation)
-							.and(NOMFEDERATION.equalTo(nomFederation))
-					).singleValue(NUMFEDERATION);
+					T_Federation.SIGLEFEDERATION.equalTo(sigleFederation)
+							.and(T_Federation.NOMFEDERATION.equalTo(nomFederation))
+					).singleValue(T_Federation.NUMFEDERATION);
 			
 			if(nullableNumFederation != null) {
 				numFederation = nullableNumFederation;
@@ -379,23 +352,14 @@ public class Federation implements ObjectPersistence {
 				Statement stmt = ApplicationCore.dbConnection.createStatement();
 				String sql = "delete from NIVEAU_COMPETITION where NUMFEDERATION=" + numFederation; //$NON-NLS-1$
 				stmt.executeUpdate(sql);
-				
-				Map<String, List<CompetitionLevel>> langFilteredCL = new HashMap<String, List<CompetitionLevel>>();
-				
+
+				int i = 1;
 				for(CompetitionLevel cl : competitionLevels) {
-					if(!langFilteredCL.containsKey(cl.getLang()))
-						langFilteredCL.put(cl.getLang(), new ArrayList<CompetitionLevel>());
-					langFilteredCL.get(cl.getLang()).add(cl);
+					cl.setNumLevel(i++);
+					cl.setFederation(this);
+					cl.save(session);
 				}
-				
-				for(Entry<String, List<CompetitionLevel>> entry : langFilteredCL.entrySet()) {
-					int i = 1;
-					for(CompetitionLevel cl : entry.getValue()) {
-						cl.setNumLevel(i++);
-						cl.setFederation(this);
-						cl.save(session);
-					}
-				}
+
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}
@@ -434,15 +398,16 @@ public class Federation implements ObjectPersistence {
 	 * @param parent
 	 */
 	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		int i = 1;
-		for(CompetitionLevel competitionLevel : competitionLevels) {
-			competitionLevel.setFederation(this);
-			competitionLevel.setNumLevel(i++);
-		}
 		try {
 			checkAlreadyExists();
 		} catch (ObjectPersistenceException e) {
 			e.printStackTrace();
+		}
+		
+		int i = 1;
+		for(CompetitionLevel competitionLevel : competitionLevels) {
+			competitionLevel.setFederation(this);
+			competitionLevel.setNumLevel(i++);
 		}
 	}
 	

@@ -105,7 +105,7 @@ import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.CriteriaSet;
 import org.ajdeveloppement.concours.Criterion;
 import org.ajdeveloppement.concours.CriterionElement;
-import org.ajdeveloppement.concours.sqltable.CriteriaSetTable;
+import org.ajdeveloppement.concours.T_CriteriaSet;
 
 /**
  * Construit un jeux de critères à partir des données en base
@@ -159,7 +159,7 @@ public class CriteriaSetBuilder implements ResultSetRowToObjectBinder<CriteriaSe
 	private static CriteriaSet getCriteriaSet(ResultSet rs, int numCriteriaSet, boolean doNotUseCache, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		if(rs != null) {
 			try {
-				numCriteriaSet = CriteriaSetTable.NUMCRITERIASET.getValue(rs);
+				numCriteriaSet = T_CriteriaSet.NUMCRITERIASET.getValue(rs);
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}
@@ -187,7 +187,7 @@ public class CriteriaSetBuilder implements ResultSetRowToObjectBinder<CriteriaSe
 			}
 			
 			criteriaSet.setReglement(ReglementBuilder.getReglement(
-					(int)foreignKeysValues.get(CriteriaSet.class).get(CriteriaSetTable.NUMREGLEMENT.getFieldName()),
+					(int)foreignKeysValues.get(CriteriaSet.class).get(T_CriteriaSet.NUMREGLEMENT.getFieldName()),
 					doNotUseCache,
 					sessionCache)
 				);

@@ -102,8 +102,8 @@ import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.Contact;
+import org.ajdeveloppement.concours.T_Contact;
 import org.ajdeveloppement.concours.managers.CoordinateManager;
-import org.ajdeveloppement.concours.sqltable.ContactTable;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -126,7 +126,7 @@ public class ContactBuilder implements ResultSetRowToObjectBinder<Contact, Void>
 	private static Contact getContact(UUID idContact, ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		try {
 			if(idContact == null && rs != null)
-				idContact = ContactTable.ID_CONTACT.getValue(rs);
+				idContact = T_Contact.ID_CONTACT.getValue(rs);
 			
 			Contact contact = null;
 			if(sessionCache != null)
@@ -146,11 +146,11 @@ public class ContactBuilder implements ResultSetRowToObjectBinder<Contact, Void>
 				
 				sessionCache.put(contact);
 				
-				if(foreignKeys.get(Contact.class).get(ContactTable.ID_CIVILITY.getFieldName()) != null)
-					contact.setCivility(CivilityBuilder.getCivility((UUID)foreignKeys.get(Contact.class).get(ContactTable.ID_CIVILITY.getFieldName())));
+				if(foreignKeys.get(Contact.class).get(T_Contact.ID_CIVILITY.getFieldName()) != null)
+					contact.setCivility(CivilityBuilder.getCivility((UUID)foreignKeys.get(Contact.class).get(T_Contact.ID_CIVILITY.getFieldName())));
 				
-				if(foreignKeys.get(Contact.class).get(ContactTable.ID_ENTITE.getFieldName()) != null) 
-					contact.setEntite(EntiteBuilder.getEntite((UUID)foreignKeys.get(Contact.class).get(ContactTable.ID_ENTITE.getFieldName())));
+				if(foreignKeys.get(Contact.class).get(T_Contact.ID_ENTITE.getFieldName()) != null) 
+					contact.setEntite(EntiteBuilder.getEntite((UUID)foreignKeys.get(Contact.class).get(T_Contact.ID_ENTITE.getFieldName())));
 				
 				if(pstmtCategoriesContact == null)
 					pstmtCategoriesContact = ApplicationCore.dbConnection.prepareStatement("select NUM_CATEGORIE_CONTACT from ASSOCIER_CATEGORIE_CONTACT where ID_CONTACT = ?"); //$NON-NLS-1$

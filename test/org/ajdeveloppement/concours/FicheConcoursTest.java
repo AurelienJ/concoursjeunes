@@ -144,13 +144,16 @@ public class FicheConcoursTest extends TestCase {
 		profile.createFicheConcours(parametre);
 	}
 	
+	/**
+	 * Test la création d'une fiche concours
+	 */
 	@Test
 	public void testFicheConcours() {
 		
 	}
 
 	/**
-	 * Méthode de test pour {@link org.ajdeveloppement.concours.FicheConcours#addConcurrent(org.ajdeveloppement.concours.Concurrent)}.
+	 * Méthode de test pour {@link org.ajdeveloppement.concours.FicheConcours#addConcurrent(org.ajdeveloppement.concours.Concurrent, int)}.
 	 */
 	@Test
 	public void testAddConcurrent() {

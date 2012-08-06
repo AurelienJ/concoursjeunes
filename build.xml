@@ -50,7 +50,7 @@
 		<javadoc
 			access="package"
 			additionalparam=" -encoding utf8 -docencoding utf8 -charset utf8"
-			sourcepath="src"
+			sourcepath="${projet.pack.dir}/src"
 			destdir="docs"
 			classpath="${compilclasspath}">
 			<link href="http://java.sun.com/javase/6/docs/api/" />
@@ -86,8 +86,14 @@
 				<exclude name="ressources/states/**"/>
 				<exclude name="ressources/repositories/**"/>
 				<exclude name="config/ffta.properties" />
+				<!--exlcusion du pack de langue chinois-->
+				<exclude name="lang/**/*_zh.properties" />
+				<!--exlcusion de la font unicode arial inutile hors pack chinois-->
+				<exclude name="ressources/fonts/ARIALUNI.TTF" />
 			</fileset>
 		</copy>
+		
+		<antcall target="langpack_zh" />
 		
 		<copy todir="${projet.pack.dir}" >
 			<fileset dir="." >
@@ -146,6 +152,39 @@
 			    property="version.numero"/>
 		</replace>
 
+	</target>
+	
+	<target name="langpack_zh">
+		<mkdir dir="${projet.pack.dir}/langpack/zh" />
+				
+		<copy todir="${projet.pack.dir}/langpack/zh" >
+			<fileset dir="." >
+				<include name="lang/**/*_zh.properties" />
+				<!--exlcusion de la font unicode arial inutile hors pack chinois-->
+				<include name="ressources/fonts/ARIALUNI.TTF" />
+				<include name="ressources/repositories/langpack_zh.xml" />
+			</fileset>
+		</copy>
+		<zip destfile="${projet.pack.dir}/langpack/langpack_zh.zip"
+							basedir="${projet.pack.dir}/langpack/zh" />
+		
+		<taskdef name="revisionscreator" classname="org.ajdeveloppement.updater.ant.RevisionsCreator">
+			<classpath location="lib/ajcommons.jar"/>
+		</taskdef>
+
+		<revisionscreator 
+				revisionpath="${projet.pack.dir}/langpack/zh/revision.xml.gz"
+				reposname="langpack_zh"
+				keystorepath="${projet.keystorepath}"
+				keystorepassword="${projet.keystorepassword}"
+				signkeysalias="${projet.signkeyalias}"
+				signkeysaliaspassword="${projet.signkeyaliaspassword}">
+			<fileset dir="${projet.pack.dir}/langpack/zh/">
+				<include name="**/**"/>
+				
+				<exclude name="*-filelist.txt"/>
+			</fileset>
+		</revisionscreator>
 	</target>
 
 	<target name="compile" depends="pack_stage1">

@@ -88,14 +88,27 @@
  */
 package org.ajdeveloppement.concours;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
@@ -103,6 +116,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.concours.builders.CompetitionLevelBuilder;
+import org.ajdeveloppement.concours.helpers.LibelleHelper;
 
 /**
  * Représente le niveau d'une compétition.
@@ -111,21 +125,28 @@ import org.ajdeveloppement.concours.builders.CompetitionLevelBuilder;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="NIVEAU_COMPETITION",loadBuilder=CompetitionLevelBuilder.class)
-@SqlPrimaryKey(fields={"CODENIVEAU","NUMFEDERATION","LANG"})
+@SqlPrimaryKey(fields={"CODENIVEAU","NUMFEDERATION"})
 public class CompetitionLevel implements ObjectPersistence {
 	@XmlTransient
 	@SqlField(name="CODENIVEAU")
 	private int numlevel = 0;
-	@SqlField(name="LANG")
-	private String lang = "fr"; //$NON-NLS-1$
-	@SqlField(name="LIBELLE")
-	private String libelle = ""; //$NON-NLS-1$
+	
+	@XmlTransient
+	@SqlField(name="ID_LIBELLE")
+	private UUID idLibelle = null;
+	
 	@SqlField(name="DEFAUT")
 	private boolean defaut = false;
 	
 	@XmlTransient
 	@SqlForeignKey(mappedTo="NUMFEDERATION")
 	private Federation federation;
+	
+	//Pour mise à jour ancienne version
+	private String libelle = null;
+	private String lang = null;
+	private List<Libelles> libelles = null;
+	private transient Map<String, String> localizedLibelle;
 	
 	private static StoreHelper<CompetitionLevel> helper = SqlStoreHelperFactory.getStoreHelper(CompetitionLevel.class);
 	
@@ -162,34 +183,65 @@ public class CompetitionLevel implements ObjectPersistence {
 	 */
 	public void setFederation(Federation federation) {
 		this.federation = federation;
+		
+		if(idLibelle == null && federation != null) {
+			try {
+				String lang = null;
+				String libelle = null;
+				for(Entry<String, String> entry: localizedLibelle.entrySet()) {
+					lang = entry.getKey();
+					libelle = entry.getValue();
+					break;
+				}
+				idLibelle = QResults.from(Libelle.class)
+					.where(T_Libelle.ID_LIBELLE.in(QResults.from(CompetitionLevel.class)
+								.where(T_CompetitionLevel.NUMFEDERATION.equalTo(federation.getNumFederation()))
+								.asSubQuery(T_CompetitionLevel.ID_LIBELLE))
+							.and(T_Libelle.LANG.equalTo(lang))
+							.and(T_Libelle.LIBELLE.equalTo(libelle)))
+					.singleValue(T_Libelle.ID_LIBELLE);
+			} catch (SQLException e) {
+				throw new UncheckedException(e);
+			}
+		}
 	}
 
 	/**
-	 * @return lang
-	 */
-	public String getLang() {
-		return lang;
-	}
-
-	/**
-	 * @param lang lang à définir
-	 */
-	public void setLang(String lang) {
-		this.lang = lang;
-	}
-
-	/**
+	 * @param lang la langue des libellés de niveau de compétition au format ISO 639 (langue sur 2 caractères).
 	 * @return libelle
 	 */
-	public String getLibelle() {
+	public String getLibelle(String lang) {
+		if(localizedLibelle == null)
+			localizedLibelle = new HashMap<String, String>();
+		else {
+			if(localizedLibelle.containsKey(lang))
+				return localizedLibelle.get(lang);
+		}
+		
+		String libelle = LibelleHelper.getLibelle(idLibelle, lang);
+		localizedLibelle.put(lang, libelle);
+	
 		return libelle;
+	}
+	
+	/**
+	 * Retourne La liste des langues disponible pour le libellé
+	 * 
+	 * @return La liste des langues disponible pour le libellé
+	 */
+	public List<String> getAvailableLangForLibelle() {
+		return LibelleHelper.getAvailableLangForLibelle(idLibelle);
 	}
 
 	/**
 	 * @param libelle libelle à définir
+	 * @param lang la langue du libellé
 	 */
-	public void setLibelle(String libelle) {
-		this.libelle = libelle;
+	public void setLibelle(String libelle, String lang) {
+		if(localizedLibelle == null)
+			localizedLibelle = new HashMap<String, String>();
+		
+		localizedLibelle.put(lang, libelle);
 	}
 	
 	/**
@@ -226,6 +278,14 @@ public class CompetitionLevel implements ObjectPersistence {
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
 		if(Session.canExecute(session, this)) {
+			if(localizedLibelle != null) {
+				for(Entry<String,String> entry : localizedLibelle.entrySet()) {
+					String libelle = LibelleHelper.getLibelle(idLibelle, entry.getKey());
+					if(libelle == null || !libelle.equals(entry.getValue()))
+						new Libelle(idLibelle, entry.getValue(), entry.getKey()).save(session);
+				}
+			}
+			
 			helper.save(this);
 			
 			Session.addThreatyObject(session, this);
@@ -279,6 +339,58 @@ public class CompetitionLevel implements ObjectPersistence {
 
 	@Override
 	public String toString() {
-		return libelle;
+		return getLibelle(LibelleHelper.getDefaultLanguage());
+	}
+	
+	/**
+	 * Use only by JAXB. Do not use.
+	 * 
+	 * @param marshaller
+	 */
+	protected void beforeMarshal(Marshaller marshaller) {
+		//Force le chargement de tous les libellés
+		for(String lang : getAvailableLangForLibelle()) {
+			getLibelle(lang);
+		}
+		if(localizedLibelle != null) {
+			
+			if(libelles == null)
+				libelles = new ArrayList<>();
+			else
+				libelles.clear();
+			for(Entry<String, String> entry: localizedLibelle.entrySet()) {
+				Libelles ls = new Libelles();
+				ls.lang = entry.getKey();
+				ls.libelle= entry.getValue();
+				
+				libelles.add(ls);
+			}
+		}
+	}
+	
+	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
+		if(lang != null && libelle != null) {
+			setLibelle(libelle, lang);
+			
+			libelle = null;
+			lang = null;
+		}
+		
+		if(libelles != null) {
+			if(localizedLibelle == null)
+				localizedLibelle = new HashMap<>();
+			for(Libelles l : libelles) {
+				localizedLibelle.put(l.lang, l.libelle);	
+			}
+			libelles = null;
+		}
+	}
+	
+	@XmlAccessorType(XmlAccessType.FIELD)
+	private static class Libelles {
+		@XmlAttribute()
+		public String lang = null;
+		@XmlAttribute()
+		public String libelle = null;
 	}
 }

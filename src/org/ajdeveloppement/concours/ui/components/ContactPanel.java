@@ -256,6 +256,10 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 	
 	private EventListenerList listeners = new EventListenerList();
 	
+	/**
+	 * 
+	 * @param profile le profile associé
+	 */
 	public ContactPanel(Profile profile) {
 		this.profile = profile;
 		
@@ -699,10 +703,20 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 		}
 	}
 	
+	/**
+	 * Abonnements aux évenments d'édition/création d'un contact
+	 * 
+	 * @param listener l'auditeur des événements de création/suppression
+	 */
 	public void addContactPanelListener(ContactPanelListener listener) {
 		listeners.add(ContactPanelListener.class, listener);
 	}
 	
+	/**
+	 * Desabonnements aux évenments d'édition/création d'un contact
+	 * 
+	 * @param listener l'auditeur des événements de création/suppression à retirer
+	 */
 	public void removeContactPanelListener(ContactPanelListener listener) {
 		listeners.remove(ContactPanelListener.class, listener);
 	}
@@ -720,6 +734,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 	 * Définit le contact à afficher / modifier
 	 * 
 	 * @param contact le contact à afficher / modifier
+	 * @param create indique si on affiche le contact en mode création ou modification
 	 */
 	public void setContact(Contact contact, boolean create) {
 		this.contact = contact;
@@ -742,6 +757,12 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 		this.parentEntite = parentEntite;
 	}
 
+	/**
+	 * Active ou désactive la possibilité de créer un nouveau contact
+	 * 
+	 * @param enabledCreateContact <code>true</code> si il est possible de créer
+	 * un nouveau contact
+	 */
 	public void setEnabledCreateContact(boolean enabledCreateContact) {
 		jxhNewContact.setEnabled(enabledCreateContact);
 	}
@@ -924,9 +945,22 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 		}
 	}
 	
+	/**
+	 * Listener sur les événements de création/édition d'un contact
+	 */
 	public static interface ContactPanelListener extends EventListener {
+		/**
+		 * Invoqué lorsqu'un contact est modifié
+		 * 
+		 * @param contact le contact modifié
+		 */
 		public void contactEdited(Contact contact);
 		
+		/**
+		 * Invoqué lorsqu'un contact est créer
+		 * 
+		 * @param contact le contact créé
+		 */
 		public void contactAdded(Contact contact);
 	}
 }

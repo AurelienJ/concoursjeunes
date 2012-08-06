@@ -103,7 +103,7 @@ import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.DistancesEtBlason;
-import org.ajdeveloppement.concours.sqltable.DistancesEtBlasonTable;
+import org.ajdeveloppement.concours.T_DistancesEtBlason;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -212,8 +212,8 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 				distancesEtBlason.setReglement(ReglementBuilder.getReglement(numReglement, doNotUseCache, sessionCache));
 				distancesEtBlason.setNumdistancesblason(numdistancesblason);
 			} else {
-				numdistancesblason = DistancesEtBlasonTable.NUMDISTANCESBLASONS.getValue(rs);
-				numReglement = DistancesEtBlasonTable.NUMREGLEMENT.getValue(rs);
+				numdistancesblason = T_DistancesEtBlason.NUMDISTANCESBLASONS.getValue(rs);
+				numReglement = T_DistancesEtBlason.NUMREGLEMENT.getValue(rs);
 			}
 			
 			if(pstmtDistances == null) {

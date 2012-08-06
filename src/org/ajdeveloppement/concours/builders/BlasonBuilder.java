@@ -102,7 +102,7 @@ import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.Ancrage;
 import org.ajdeveloppement.concours.Blason;
-import org.ajdeveloppement.concours.sqltable.BlasonTable;
+import org.ajdeveloppement.concours.T_Blason;
 
 /**
  * Construit un objet blason à partir des données en base
@@ -147,7 +147,7 @@ public class BlasonBuilder implements ResultSetRowToObjectBinder<Blason,Void> {
 	private static Blason getBlason(int numblason, ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		try {
 			if(rs != null)
-				numblason = BlasonTable.NUMBLASON.getValue(rs);
+				numblason = T_Blason.NUMBLASON.getValue(rs);
 			
 			Blason blason = Cache.get(Blason.class, numblason);
 			if(blason == null) {

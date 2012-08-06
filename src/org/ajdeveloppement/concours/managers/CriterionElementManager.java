@@ -88,7 +88,7 @@
  */
 package org.ajdeveloppement.concours.managers;
 
-import static org.ajdeveloppement.concours.sqltable.CriterionElementTable.*;
+import static org.ajdeveloppement.concours.T_CriterionElement.*;
 
 import java.util.List;
 

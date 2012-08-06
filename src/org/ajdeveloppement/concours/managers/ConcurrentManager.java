@@ -99,9 +99,9 @@ import org.ajdeveloppement.concours.Concurrent;
 import org.ajdeveloppement.concours.Contact;
 import org.ajdeveloppement.concours.Entite;
 import org.ajdeveloppement.concours.Reglement;
-import org.ajdeveloppement.concours.sqltable.ArcherTable;
-import org.ajdeveloppement.concours.sqltable.ContactTable;
-import org.ajdeveloppement.concours.sqltable.EntiteTable;
+import org.ajdeveloppement.concours.T_Archer;
+import org.ajdeveloppement.concours.T_Contact;
+import org.ajdeveloppement.concours.T_Entite;
 
 /**
  * Gére le chargement en mémoire des Concurrents
@@ -199,7 +199,7 @@ public class ConcurrentManager {
 		//try (Statement stmt = ApplicationCore.dbConnection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
 		//	String sql = "select %s from ARCHERS inner join CONTACT on ARCHERS.ID_CONTACT=CONTACT.ID_CONTACT";
 			QResults<Concurrent,Reglement> archers = QResults.from(Concurrent.class, reglement)
-				.innerJoin(Contact.class, ArcherTable.ID_CONTACT.equalTo(ContactTable.ID_CONTACT));
+				.innerJoin(Contact.class, T_Archer.ID_CONTACT.equalTo(T_Contact.ID_CONTACT));
 
 			if(aGeneric != null) {
 				//sql += " where ";
@@ -207,20 +207,20 @@ public class ConcurrentManager {
 
 				if(!aGeneric.getNumLicenceArcher().isEmpty()) {
 					//filters.add("NUMLICENCEARCHER like '" + aGeneric.getNumLicenceArcher().replaceAll("'", "''").replaceAll("%", "%%") + "'");
-					archers = archers.where(ArcherTable.NUMLICENCEARCHER.like(aGeneric.getNumLicenceArcher()));
+					archers = archers.where(T_Archer.NUMLICENCEARCHER.like(aGeneric.getNumLicenceArcher()));
 				}
 				if(aGeneric.getName() != null && !aGeneric.getName().isEmpty()) {
 					//filters.add("UPPER_NAME like '" + aGeneric.getName().toUpperCase().replaceAll("'", "''").replaceAll("%", "%%") + "'");
-					archers = archers.where(ContactTable.UPPER_NAME.like(aGeneric.getName().toUpperCase()));
+					archers = archers.where(T_Contact.UPPER_NAME.like(aGeneric.getName().toUpperCase()));
 				}
 				if(aGeneric.getFirstName() != null && !aGeneric.getFirstName().isEmpty()) {
 					//filters.add("UPPER(FIRSTNAME) like '" + aGeneric.getFirstName().toUpperCase().replaceAll("'", "''").replaceAll("%", "%%") + "'");
-					archers = archers.where(ContactTable.FIRSTNAME.upper().like(aGeneric.getFirstName().toUpperCase()));
+					archers = archers.where(T_Contact.FIRSTNAME.upper().like(aGeneric.getFirstName().toUpperCase()));
 				}
 				if(!aGeneric.getEntite().getAgrement().isEmpty()) {
 					//filters.add("ID_ENTITE in (select ID_ENTITE from ENTITE where AGREMENTENTITE like '" + aGeneric.getEntite().getAgrement().replaceAll("'", "''").replaceAll("%", "%%") + "')");
-					archers = archers.where(ContactTable.ID_ENTITE.in(
-							QResults.from(Entite.class).where(EntiteTable.AGREMENTENTITE.like(aGeneric.getEntite().getAgrement())).asSubQuery(EntiteTable.ID_ENTITE)));
+					archers = archers.where(T_Contact.ID_ENTITE.in(
+							QResults.from(Entite.class).where(T_Entite.AGREMENTENTITE.like(aGeneric.getEntite().getAgrement())).asSubQuery(T_Entite.ID_ENTITE)));
 				}
 
 //				for(String filter : filters) {

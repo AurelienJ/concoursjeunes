@@ -50,6 +50,10 @@ if(dbVersion == 0) {
 		sql.executeUpdate("CREATE INDEX IF NOT EXISTS I_UPPER_VILLE_ENTITE ON ENTITE (UPPER_VILLEENTITE ASC);");
 		sql.executeUpdate("CREATE INDEX IF NOT EXISTS I_VILLE_NOM ON VILLE (NOM ASC);");
 	}
+	
+	if(dbVersion < 33) {
+		sql.executeScript("03-V32toV33.sql", true);
+	}
 }
 
 if(dbVersion != org.ajdeveloppement.concours.ApplicationCore.DB_RELEASE_REQUIRED) {

@@ -94,6 +94,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -181,7 +182,8 @@ public class StateProcessor {
 					+ " - " + DateFormat.getDateInstance().format(new Date()) + " " + new SimpleDateFormat("HH.mm.ss").format(new Date()) + ".pdf";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
 		}
 		
-		AjResourcesReader langReader = new AjResourcesReader("lang", new URLClassLoader(new URL[] { state.getStateURL() })); //$NON-NLS-1$
+		AjResourcesReader langReader = new AjResourcesReader("lang", new URLClassLoader( //$NON-NLS-1$
+				new URL[] { state.getStateURL(), Paths.get("lang", "states", state.getName()).toUri().toURL() })); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		StateOptions options = new StateOptions(depart, serie, langReader, profile);
 		

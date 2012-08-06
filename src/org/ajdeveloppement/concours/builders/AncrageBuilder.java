@@ -97,7 +97,7 @@ import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.Ancrage;
-import org.ajdeveloppement.concours.sqltable.AncrageTable;
+import org.ajdeveloppement.concours.T_Ancrage;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -106,14 +106,21 @@ import org.ajdeveloppement.concours.sqltable.AncrageTable;
 public class AncrageBuilder implements ResultSetRowToObjectBinder<Ancrage, Void> {
 	private static LoadHelper<Ancrage,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Ancrage.class);
 	
+	/**
+	 * Retourne un ancrage de blason à partir de la ligne de ResultSEt
+	 * @param rs la ligne contenant les données permettant de construire l'ancrage
+	 * @param sessionCache le cache de session
+	 * @return l'Ancrage correspondant aux données du ResultSet
+	 * @throws ObjectPersistenceException
+	 */
 	public static Ancrage getAncrage(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		Ancrage ancrage = null;
 		if(sessionCache == null) {
 			sessionCache = new SqlLoadingSessionCache();
 		}
 		try {
-			int numBlason = AncrageTable.NUMBLASON.getValue(rs);
-			int emplacement = AncrageTable.EMPLACEMENT.getValue(rs);
+			int numBlason = T_Ancrage.NUMBLASON.getValue(rs);
+			int emplacement = T_Ancrage.EMPLACEMENT.getValue(rs);
 			
 			ancrage = sessionCache.get(Ancrage.class, new SqlLoadingSessionCache.Key(numBlason, emplacement));
 			if(ancrage == null) {

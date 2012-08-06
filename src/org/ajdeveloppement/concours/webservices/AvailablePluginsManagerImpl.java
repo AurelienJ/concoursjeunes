@@ -109,6 +109,8 @@ public class AvailablePluginsManagerImpl extends AvailablePluginsManager {
 	private List<PluginDescription> pluginsDetail;
 	private Hashtable<String, String> categories;
 	/**
+	 * @param profile 
+	 * @throws WebServiceException 
 	 * 
 	 */
 	public AvailablePluginsManagerImpl(Profile profile) throws WebServiceException {

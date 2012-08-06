@@ -102,7 +102,7 @@ import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.Rate;
-import org.ajdeveloppement.concours.sqltable.RateTable;
+import org.ajdeveloppement.concours.T_Rate;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -124,14 +124,14 @@ public class RateBuilder implements ResultSetRowToObjectBinder<Rate, Void> {
 	private static Rate getRate(UUID idTarif, ResultSet rs) throws ObjectPersistenceException {
 		try {
 			if(idTarif == null)
-				idTarif = RateTable.ID_TARIF.getValue(rs);
+				idTarif = T_Rate.ID_TARIF.getValue(rs);
 			
 			Rate rate = Cache.get(Rate.class, idTarif);
 			if(rate == null) {
 				rate = new Rate();
 			
 				if(idTarif != null) {
-					loadHelper.load(rate, Collections.<String,Object>singletonMap(RateTable.ID_TARIF.getFieldName(), idTarif));
+					loadHelper.load(rate, Collections.<String,Object>singletonMap(T_Rate.ID_TARIF.getFieldName(), idTarif));
 				} else {
 					resultSetLoadHelper.load(rate, rs);
 				}

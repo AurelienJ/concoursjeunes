@@ -101,7 +101,7 @@ import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.Civility;
-import org.ajdeveloppement.concours.sqltable.CivilityTable;
+import org.ajdeveloppement.concours.T_Civility;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -122,7 +122,7 @@ public class CivilityBuilder implements ResultSetRowToObjectBinder<Civility, Voi
 	private static Civility getCivility(UUID idCivility, ResultSet rs) throws ObjectPersistenceException {
 		if(idCivility == null) {
 			try {
-				idCivility = CivilityTable.ID_CIVILITY.getValue(rs);
+				idCivility = T_Civility.ID_CIVILITY.getValue(rs);
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}

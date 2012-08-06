@@ -95,7 +95,7 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.RateCategory;
-import org.ajdeveloppement.concours.sqltable.RateCategoryTable;
+import org.ajdeveloppement.concours.T_RateCategory;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -109,8 +109,8 @@ public class RateCategoryBuilder implements ResultSetRowToObjectBinder<RateCateg
 		RateCategory rateCategory = new RateCategory();
 		
 		try {
-			rateCategory.setCategory(CriteriaSetBuilder.getCriteriaSet(RateCategoryTable.NUMCRITERIASET.getValue(rs)));
-			rateCategory.setTarif(RateBuilder.getRate(RateCategoryTable.ID_TARIF.getValue(rs)));
+			rateCategory.setCategory(CriteriaSetBuilder.getCriteriaSet(T_RateCategory.NUMCRITERIASET.getValue(rs)));
+			rateCategory.setTarif(RateBuilder.getRate(T_RateCategory.ID_TARIF.getValue(rs)));
 		} catch (SQLException e) {
 			throw new ObjectPersistenceException(e);
 		}

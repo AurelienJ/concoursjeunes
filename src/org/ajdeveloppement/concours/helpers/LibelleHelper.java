@@ -88,11 +88,15 @@
  */
 package org.ajdeveloppement.concours.helpers;
 
+import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Libelle;
+import org.ajdeveloppement.concours.T_Libelle;
 import org.ajdeveloppement.concours.builders.LibelleBuilder;
 
 /**
@@ -145,5 +149,20 @@ public class LibelleHelper {
 		}
 		
 		return ""; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Retourne la liste des langues disponible pour le libellé
+	 * @param idLibelle l'identifiant du libellé pour lequel retourner la liste des langues diponible
+	 * @return la liste des langues disponible pour le libellé
+	 */
+	public static List<String> getAvailableLangForLibelle(UUID idLibelle) {
+		try {
+			return QResults.from(Libelle.class)
+				.where(T_Libelle.ID_LIBELLE.equalTo(idLibelle))
+				.selectOneColumn(true, T_Libelle.LANG);
+		} catch (SQLException e) {
+			throw new UncheckedException(e);
+		}
 	}
 }

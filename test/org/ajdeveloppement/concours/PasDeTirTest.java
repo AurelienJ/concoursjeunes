@@ -149,7 +149,7 @@ public class PasDeTirTest extends TestCase{
 	}
 
 	/**
-	 * Test method for {@link org.ajdeveloppement.concours.ShootingLine#placementConcurrent(org.ajdeveloppement.concours.Concurrent, org.ajdeveloppement.concours.Cible, int)}.
+	 * Test method for {@link org.ajdeveloppement.concours.ShootingLine#placementConcurrent(org.ajdeveloppement.concours.Concurrent, org.ajdeveloppement.concours.Target, int)}.
 	 */
 	@Test
 	public void testPlacementConcurrent() {

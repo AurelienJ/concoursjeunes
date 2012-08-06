@@ -93,7 +93,7 @@ import java.util.List;
 import org.ajdeveloppement.commons.persistence.sql.QField;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.Entite;
-import org.ajdeveloppement.concours.sqltable.EntiteTable;
+import org.ajdeveloppement.concours.T_Entite;
 
 /**
  * Gére le chargement des Entités à partir de la base de données
@@ -120,13 +120,13 @@ public class EntiteManager {
 		QResults<Entite, Void> entites = QResults.from(Entite.class);
 		if(eGeneric != null && (!eGeneric.getNom().isEmpty() || !eGeneric.getAgrement().isEmpty() || !eGeneric.getVille().isEmpty()) ) {
 			if(eGeneric.getNom().length() > 0) {
-				entites = entites.where(EntiteTable.NOMENTITE.upper().like(eGeneric.getNom().toUpperCase()));
+				entites = entites.where(T_Entite.NOMENTITE.upper().like(eGeneric.getNom().toUpperCase()));
 			}
 			if(eGeneric.getAgrement().length() > 0) {
-				entites = entites.where(EntiteTable.AGREMENTENTITE.upper().like(eGeneric.getAgrement().toUpperCase()));
+				entites = entites.where(T_Entite.AGREMENTENTITE.upper().like(eGeneric.getAgrement().toUpperCase()));
 			}
 			if(eGeneric.getVille().length() > 0) {
-				entites = entites.where(EntiteTable.VILLEENTITE.upper().like(eGeneric.getVille().toUpperCase()));
+				entites = entites.where(T_Entite.VILLEENTITE.upper().like(eGeneric.getVille().toUpperCase()));
 			}
 		}
 

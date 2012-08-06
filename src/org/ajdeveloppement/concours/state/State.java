@@ -99,6 +99,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -207,7 +208,10 @@ public class State implements Comparable<State> {
 			ResourceBundle rb = ResourceBundle.getBundle(
 					"lang", //$NON-NLS-1$
 					Locale.getDefault(),
-					new URLClassLoader(new URL[] {new File(statePath).toURI().toURL() })); 
+					new URLClassLoader(new URL[] {
+							new File(statePath).toURI().toURL(), 
+							Paths.get("lang", "states", name).toUri().toURL() //$NON-NLS-1$//$NON-NLS-2$
+						}));  
 			try {
 				actionName = rb.getString(displayName);
 				actionName = new String(actionName.getBytes("ISO-8859-1"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -435,7 +439,7 @@ public class State implements Comparable<State> {
 		pdfPath.getParentFile().mkdirs();
 		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfPath));
 		writer.setFullCompression();
-		
+
 		stateScript.printState(ficheConcours, new URL(((isZipped) ? "jar:" : "") + getStateURL().toString() + ((isZipped) ? "!" : "") + "/" + template), document, writer, options);
 		
 		//writer.flush();

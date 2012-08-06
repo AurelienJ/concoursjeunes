@@ -125,7 +125,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdFie
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.concours.builders.ReglementBuilder;
-import org.ajdeveloppement.concours.sqltable.ReglementTable;
+
 
 /**
  * <p>
@@ -912,8 +912,8 @@ public class Reglement implements ObjectPersistence {
 			if(numReglement == 0) {
 				try {
 					Integer dbNumReglement = QResults.from(Reglement.class)
-							.where(ReglementTable.NOMREGLEMENT.equalTo(name))
-							.singleValue(ReglementTable.NUMREGLEMENT);
+							.where(T_Reglement.NOMREGLEMENT.equalTo(name))
+							.singleValue(T_Reglement.NUMREGLEMENT);
 					if(dbNumReglement != null)
 						setNumReglement(dbNumReglement);
 					

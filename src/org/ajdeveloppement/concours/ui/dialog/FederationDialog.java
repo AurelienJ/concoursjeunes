@@ -96,8 +96,10 @@ import java.awt.GridBagConstraints;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -178,6 +180,12 @@ public class FederationDialog extends JDialog implements ActionListener {
 	
 	private Federation federation = null;
 	
+	/**
+	 * Construit une nouvelle boite de dialogue de gestion d'une fédération
+	 * 
+	 * @param parentframe la fenetre parente de la boite de dialogue
+	 * @param profile le profile associé
+	 */
 	public FederationDialog(Window parentframe, Profile profile) {
 		super(parentframe, ModalityType.TOOLKIT_MODAL);
 		
@@ -305,31 +313,39 @@ public class FederationDialog extends JDialog implements ActionListener {
 		jtfFederatonSigle.setText(federation.getSigleFederation());
 		jtfFederatonName.setText(federation.getNomFederation());
 		ccbCountryFederation.setSelectedCountry(federation.getCodeCountry());
+		
+		List<String> langs = null;
 
 		for(CompetitionLevel cl : federation.getCompetitionLevels()) {
-			if(cl.getLang().equals(profile.getConfiguration().getLangue())) {
-				String tmp = ""; //$NON-NLS-1$
-				if(!jtfFederationNiveau.getText().isEmpty())
-					tmp = jtfFederationNiveau.getText() + ","; //$NON-NLS-1$
-				tmp += cl.getLibelle();
-				jtfFederationNiveau.setText(tmp);
-			} else {
-				if(!mTraduction.containsKey(cl.getLang())) {
-					addLocaleLevelField(cl.getLang());
-					jcbAvailableLocale.removeItem(new Locale(cl.getLang()));
-					if(jcbAvailableLocale.getItemCount() == 0) {
-						jcbAvailableLocale.setEnabled(false);
-						jbAddLocale.setEnabled(false);
+			if(langs == null)
+				langs = cl.getAvailableLangForLibelle();
+			
+			for(String lang : langs) {
+				if(lang.equals(profile.getConfiguration().getLangue())) {
+					String tmp = ""; //$NON-NLS-1$
+					if(!jtfFederationNiveau.getText().isEmpty())
+						tmp = jtfFederationNiveau.getText() + ","; //$NON-NLS-1$
+					tmp += cl.getLibelle(profile.getConfiguration().getLangue());
+					jtfFederationNiveau.setText(tmp);
+				} else {
+					if(!mTraduction.containsKey(lang)) {
+						addLocaleLevelField(lang);
+						jcbAvailableLocale.removeItem(new Locale(lang));
+						if(jcbAvailableLocale.getItemCount() == 0) {
+							jcbAvailableLocale.setEnabled(false);
+							jbAddLocale.setEnabled(false);
+						}
+						jlAddLocaleInfo.setVisible(true);
 					}
-					jlAddLocaleInfo.setVisible(true);
+					String tmp = ""; //$NON-NLS-1$
+					JTextField tmpTF = mTraduction.get(lang);
+					if(!tmpTF.getText().isEmpty())
+						tmp = tmpTF.getText() + ","; //$NON-NLS-1$
+					tmp += cl.getLibelle(lang);
+					tmpTF.setText(tmp);
 				}
-				String tmp = ""; //$NON-NLS-1$
-				JTextField tmpTF = mTraduction.get(cl.getLang());
-				if(!tmpTF.getText().isEmpty())
-					tmp = tmpTF.getText() + ","; //$NON-NLS-1$
-				tmp += cl.getLibelle();
-				tmpTF.setText(tmp);
 			}
+			
 		}
 	}
 	
@@ -352,6 +368,7 @@ public class FederationDialog extends JDialog implements ActionListener {
 	
 	/**
 	 * Affiche la boite de dialogue de création de dédération
+	 * @param federation la fération à gérer
 	 * 
 	 * @return la federation créer
 	 */
@@ -380,26 +397,32 @@ public class FederationDialog extends JDialog implements ActionListener {
 			}
 			federation.setCodeCountry(((Country)ccbCountryFederation.getSelectedItem()).getCode().toLowerCase());
 			federation.getCompetitionLevels().clear();
+			
+			List<String> langs = new ArrayList<>();
+			langs.add(profile.getConfiguration().getLangue());
+			Map<String, String[]> libellesNiveauxCompetition = new HashMap<>();
+			libellesNiveauxCompetition.put(profile.getConfiguration().getLangue(), jtfFederationNiveau.getText().split(",")); //$NON-NLS-1$
+			for(Entry<String, JTextField> le : mTraduction.entrySet()) {
+				langs.add(le.getKey());
+				libellesNiveauxCompetition.put(le.getKey(), le.getValue().getText().split(",")); //$NON-NLS-1$
+			}
+			
 			boolean first = true;
-			for(String level : jtfFederationNiveau.getText().split(",")) { //$NON-NLS-1$
+			for(int i = 0; i < libellesNiveauxCompetition.get(profile.getConfiguration().getLangue()).length; i++) {
 				CompetitionLevel cl = new CompetitionLevel();
-				cl.setDefaut(first);
-				first = false;
-				cl.setLang(profile.getConfiguration().getLangue());
-				cl.setLibelle(level);
+				if(first) {
+					cl.setDefaut(true);
+					first = false;
+				}
+				
+				for(Entry<String, String[]> entry : libellesNiveauxCompetition.entrySet()) {
+					if(i < entry.getValue().length)
+						cl.setLibelle(entry.getValue()[i], entry.getKey());
+				}
+				
 				federation.addCompetitionLevel(cl);
 			}
-			for(Entry<String, JTextField> le : mTraduction.entrySet()) {
-				first = true;
-				for(String level : le.getValue().getText().split(",")) { //$NON-NLS-1$
-					CompetitionLevel cl = new CompetitionLevel();
-					cl.setDefaut(first);
-					first = false;
-					cl.setLang(le.getKey());
-					cl.setLibelle(level);
-					federation.addCompetitionLevel(cl);
-				}
-			}
+			
 			try {
 				federation.save();
 			} catch (ObjectPersistenceException e1) {

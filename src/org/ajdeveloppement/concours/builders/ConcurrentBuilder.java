@@ -107,8 +107,8 @@ import org.ajdeveloppement.concours.CriteriaSet;
 import org.ajdeveloppement.concours.Criterion;
 import org.ajdeveloppement.concours.CriterionElement;
 import org.ajdeveloppement.concours.Reglement;
+import org.ajdeveloppement.concours.T_Contact;
 import org.ajdeveloppement.concours.managers.CoordinateManager;
-import org.ajdeveloppement.concours.sqltable.ContactTable;
 
 /**
  * Initialise un concurrent
@@ -162,15 +162,15 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 		try {
 			Map<Class<?>, Map<String, Object>> foreignKeyValue;
 			if(idArcher != null) {
-				foreignKeyValue = loadHelper.load(concurrent, Collections.<String, Object>singletonMap(ContactTable.ID_CONTACT.getFieldName(), idArcher));
+				foreignKeyValue = loadHelper.load(concurrent, Collections.<String, Object>singletonMap(T_Contact.ID_CONTACT.getFieldName(), idArcher));
 			} else {
 				foreignKeyValue = resultSetLoadHelper.load(concurrent, resultSet);
 			}
 			
-			if(foreignKeyValue.get(Contact.class).get(ContactTable.ID_CIVILITY.getFieldName()) != null)
-				concurrent.setCivility(CivilityBuilder.getCivility((UUID)foreignKeyValue.get(Contact.class).get(ContactTable.ID_CIVILITY.getFieldName())));
+			if(foreignKeyValue.get(Contact.class).get(T_Contact.ID_CIVILITY.getFieldName()) != null)
+				concurrent.setCivility(CivilityBuilder.getCivility((UUID)foreignKeyValue.get(Contact.class).get(T_Contact.ID_CIVILITY.getFieldName())));
 			
-			UUID idEntite = (UUID)foreignKeyValue.get(Contact.class).get(ContactTable.ID_ENTITE.getFieldName());
+			UUID idEntite = (UUID)foreignKeyValue.get(Contact.class).get(T_Contact.ID_ENTITE.getFieldName());
 			if(idEntite != null)
 				concurrent.setEntite(EntiteBuilder.getEntite(idEntite));
 			

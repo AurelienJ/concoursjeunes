@@ -116,8 +116,10 @@ public class PageFooter extends PdfPageEventHelper {
 		total = writer.getDirectContent().createTemplate(100, 100);
 		total.setBoundingBox(new Rectangle(0, -20, 100, 100));
 
+		
+		
 		try {
-			helv = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+			helv = BaseFont.createFont("ressources/ARIALUNI.TTF", BaseFont.IDENTITY_H, BaseFont.EMBEDDED); //$NON-NLS-1$
 		} catch (DocumentException e) {
 			DisplayableErrorHelper.displayException(e);
 			e.printStackTrace();
@@ -125,6 +127,8 @@ public class PageFooter extends PdfPageEventHelper {
 			DisplayableErrorHelper.displayException(e);
 			e.printStackTrace();
 		}
+		//helv.s
+		writer.getDirectContent().setFontAndSize(helv, 12);
 	}
 	
 	@Override

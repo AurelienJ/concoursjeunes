@@ -125,7 +125,6 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
 import org.ajdeveloppement.concours.builders.CriteriaSetBuilder;
-import org.ajdeveloppement.concours.sqltable.RateCategoryTable;
 
 /**
  * Jeux de critères utilisé pour distinguer un archer a des fins
@@ -243,7 +242,7 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 	public List<RateCategory> getTarifsCategorie() {
 		if(tarifsCategorie == null) {
 			tarifsCategorie = QResults.from(RateCategory.class)
-					.where(RateCategoryTable.NUMCRITERIASET.equalTo(numCriteriaSet))
+					.where(T_RateCategory.NUMCRITERIASET.equalTo(numCriteriaSet))
 					.asList();
 		}
 		return tarifsCategorie;

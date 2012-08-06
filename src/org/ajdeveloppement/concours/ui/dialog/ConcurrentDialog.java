@@ -313,7 +313,8 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 	/**
 	 * Création de la boite de dialogue de gestion de concurrent
 	 * 
-	 * @param arcCompetitionFrame la fenêtre parentes dont dépend la boite de dialogue 
+	 * @param arcCompetitionFrame la fenêtre parentes dont dépend la boite de dialogue
+	 * @param profile le profile associé
 	 * @param ficheConcours la fiche concours à laquelle est/doit être rattaché le concurrent
 	 */
 	public ConcurrentDialog(ArcCompetitionFrame arcCompetitionFrame, Profile profile, FicheConcours ficheConcours) {
@@ -774,6 +775,9 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 	 * Affiche la boite de dialogue de création d'un concurrent
 	 * 
 	 * @param depart le depart affecté au concurrent
+	 * @return Code de l'action de fermeture parmis {@link ConcurrentDialog#CONFIRM_AND_CLOSE}, 
+	 * {@link ConcurrentDialog#CONFIRM_AND_NEXT}, {@link ConcurrentDialog#CONFIRM_AND_PREVIOUS},
+	 * {@link ConcurrentDialog#CANCEL}
 	 */
 	public int showNewConcurrentDialog(int depart) {
 		
@@ -822,6 +826,8 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 	 * Affiche la boite de dialogue de gestion du concurrent donné en paramètre
 	 * 
 	 * @param concurrent la concurrent à afficher
+	 * @param hasPrevious indique si il y a un autre concurrent après et donc si on doit activer le bouton suivant
+	 * @param hasNext indique si il y a un autre concurrent avant et donc si on doit activer le bouton précédent
 	 * @return le code de retour de la boite de dialogue
 	 */
 	public int showConcurrentDialog(Concurrent concurrent, boolean hasPrevious, boolean hasNext) {
