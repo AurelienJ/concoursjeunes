@@ -188,10 +188,12 @@ public class CompetitionLevel implements ObjectPersistence {
 			try {
 				String lang = null;
 				String libelle = null;
-				for(Entry<String, String> entry: localizedLibelle.entrySet()) {
-					lang = entry.getKey();
-					libelle = entry.getValue();
-					break;
+				if(localizedLibelle != null) {
+					for(Entry<String, String> entry: localizedLibelle.entrySet()) {
+						lang = entry.getKey();
+						libelle = entry.getValue();
+						break;
+					}
 				}
 				idLibelle = QResults.from(Libelle.class)
 					.where(T_Libelle.ID_LIBELLE.in(QResults.from(CompetitionLevel.class)

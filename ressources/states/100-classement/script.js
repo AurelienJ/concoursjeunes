@@ -144,8 +144,8 @@ function printState(ficheConcours, template, document, writer, options) {
 			}
 		}
 		var iTextHandler = new com.lowagie.text.xml.SAXiTextHandler(document);
-		if(new java.io.File("ressources/ARIALUNI.TTF").exists()) {
-			iTextHandler.setBaseFont(com.lowagie.text.pdf.BaseFont.createFont("ressources/ARIALUNI.TTF", 
+		if(new java.io.File("ressources/fonts/ARIALUNI.TTF").exists()) {
+			iTextHandler.setBaseFont(com.lowagie.text.pdf.BaseFont.createFont("ressources/fonts/ARIALUNI.TTF", 
 					com.lowagie.text.pdf.BaseFont.IDENTITY_H, com.lowagie.text.pdf.BaseFont.EMBEDDED));
 		}
 		var parser = javax.xml.parsers.SAXParserFactory.newInstance().newSAXParser();

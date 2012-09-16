@@ -14,8 +14,8 @@ function updateReglements() {
 
 if(dbVersion == 0) {
 	//passe l'ensemble des scripts de base
-	sql.executeScript("01-create_db.sql");
-	sql.executeScript("../sql/ImportClubFFTA.sql");
+	sql.executeScript("01-create_db.sql",true);
+	sql.executeScript("../sql/ImportClubFFTA.sql",true);
 	sql.executeUpdate("RUNSCRIPT FROM 'ressources/sql/ImportVillesFr.sql'");
 	//sql.executeScript("../sql/ImportVillesFr.sql");
 	

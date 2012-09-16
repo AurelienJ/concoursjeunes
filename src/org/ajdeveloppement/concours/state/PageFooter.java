@@ -119,7 +119,7 @@ public class PageFooter extends PdfPageEventHelper {
 		
 		
 		try {
-			helv = BaseFont.createFont("ressources/ARIALUNI.TTF", BaseFont.IDENTITY_H, BaseFont.EMBEDDED); //$NON-NLS-1$
+			helv = BaseFont.createFont("ressources/fonts/ARIALUNI.TTF", BaseFont.IDENTITY_H, BaseFont.EMBEDDED); //$NON-NLS-1$
 		} catch (DocumentException e) {
 			DisplayableErrorHelper.displayException(e);
 			e.printStackTrace();
