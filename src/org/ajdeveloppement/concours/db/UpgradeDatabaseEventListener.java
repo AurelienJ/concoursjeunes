@@ -102,7 +102,7 @@ import org.h2.api.DatabaseEventListener;
  * @author Aurélien JEOFFRAY
  *
  */
-public class UpgradeDatabaseEventListener implements org.h2.upgrade.v1_1.api.DatabaseEventListener,DatabaseEventListener {
+public class UpgradeDatabaseEventListener implements DatabaseEventListener {
 
 //	private static ProgressMonitor monitor = new ProgressMonitor(null, "Chargement/Migration de la base\nL'opération peut durer plusieurs minutes\n ", "", 0, 1); //$NON-NLS-1$ //$NON-NLS-2$
 	//private static boolean enabled = true;
@@ -201,9 +201,5 @@ public class UpgradeDatabaseEventListener implements org.h2.upgrade.v1_1.api.Dat
 			});
 			
 		}
-	}
-
-	@Override
-	public void diskSpaceIsLow(long arg0) throws SQLException {
 	}
 }
