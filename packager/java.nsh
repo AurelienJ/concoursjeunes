@@ -26,6 +26,9 @@ FunctionEnd
  
  
 Function DetectJRE
+	${If} ${RunningX64}
+		 SetRegView 64
+	${EndIf}
 	ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
 	IfErrors checkWoW64
 	GoTo checkVersion
