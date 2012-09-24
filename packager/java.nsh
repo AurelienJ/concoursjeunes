@@ -26,13 +26,13 @@ FunctionEnd
  
  
 Function DetectJRE
-	;${If} ${RunningX64}
-		 SetRegView 64
-	;${EndIf}
-	ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
-	IfErrors checkWoW64
-	GoTo checkVersion
-  
+	${If} ${RunningX64}
+		SetRegView 64
+		ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
+		StrCmp $1 "" checkWoW64
+		GoTo checkVersion
+	${EndIf}
+	
   checkWoW64:
 	SetRegView 32
 	ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
