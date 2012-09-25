@@ -282,4 +282,12 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 			throws ObjectPersistenceException {
 		return getConcurrent(rs, binderRessourcesMap);
 	}
+
+	@Override
+	public Concurrent get(SqlLoadingSessionCache sessionCache,
+			Reglement binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return null;
+	}
 }

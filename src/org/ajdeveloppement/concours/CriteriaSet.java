@@ -400,7 +400,7 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 			
 			Cache.put(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 			
 			try {
 				sql = "delete from POSSEDE where NUMCRITERIASET=" + numCriteriaSet; //$NON-NLS-1$
@@ -443,7 +443,7 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 			
 			Cache.remove(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 	

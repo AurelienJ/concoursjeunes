@@ -175,4 +175,12 @@ public class EntiteBuilder implements ResultSetRowToObjectBinder<Entite, Void>{
 			Void binderRessourcesMap) throws ObjectPersistenceException {
 		return getEntite(rs);
 	}
+
+	@Override
+	public Entite get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return null;
+	}
 }

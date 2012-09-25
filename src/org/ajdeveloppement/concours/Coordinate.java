@@ -290,7 +290,7 @@ public class Coordinate implements ObjectPersistence, Cloneable {
 			
 			helper.save(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 	
@@ -302,7 +302,7 @@ public class Coordinate implements ObjectPersistence, Cloneable {
 		if(idCoordinate != null && Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 	

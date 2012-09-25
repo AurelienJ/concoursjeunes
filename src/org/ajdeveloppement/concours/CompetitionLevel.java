@@ -290,7 +290,7 @@ public class CompetitionLevel implements ObjectPersistence {
 			
 			helper.save(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 
@@ -307,7 +307,7 @@ public class CompetitionLevel implements ObjectPersistence {
 		if(Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 

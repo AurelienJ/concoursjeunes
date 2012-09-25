@@ -492,7 +492,7 @@ public class Criterion implements ObjectPersistence, Cloneable {
 		if(Session.canExecute(session, this)) {
 			helper.save(this); //$NON-NLS-1$
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 	
 			try {
 				Statement stmt = ApplicationCore.dbConnection.createStatement();
@@ -535,7 +535,7 @@ public class Criterion implements ObjectPersistence, Cloneable {
 			
 			Cache.remove(this);
 
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 	

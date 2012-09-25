@@ -140,4 +140,11 @@ public class AncrageBuilder implements ResultSetRowToObjectBinder<Ancrage, Void>
 	public Ancrage get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap) throws ObjectPersistenceException {
 		return getAncrage(rs, sessionCache);
 	}
+
+	@Override
+	public Ancrage get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		return null;
+	}
 }

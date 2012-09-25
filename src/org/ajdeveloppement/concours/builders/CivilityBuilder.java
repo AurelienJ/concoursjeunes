@@ -150,4 +150,12 @@ public class CivilityBuilder implements ResultSetRowToObjectBinder<Civility, Voi
 			Void binderRessourcesMap) throws ObjectPersistenceException {
 		return getCivility(rs);
 	}
+
+	@Override
+	public Civility get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return getCivility((UUID)primaryKeyValues[0]);
+	}
 }

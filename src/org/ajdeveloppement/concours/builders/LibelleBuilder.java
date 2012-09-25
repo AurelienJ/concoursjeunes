@@ -88,6 +88,8 @@
  */
 package org.ajdeveloppement.concours.builders;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -95,7 +97,10 @@ import java.util.UUID;
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.Libelle;
 import org.ajdeveloppement.concours.T_Libelle;
 
@@ -103,29 +108,73 @@ import org.ajdeveloppement.concours.T_Libelle;
  * @author Aurélien JEOFFRAY
  *
  */
-public class LibelleBuilder {
+public class LibelleBuilder implements ResultSetRowToObjectBinder<Libelle, Void> {
 	private static LoadHelper<Libelle,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Libelle.class);
+	private static LoadHelper<Libelle,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Libelle.class);
 	
 	/**
 	 * Retourne le libellé représenté par son id et sa langue
+	 * 
 	 * @param idLibelle identifiant du libellé
 	 * @param lang langue du libellé
 	 * @return le libellé localisé
 	 * @throws ObjectPersistenceException
 	 */
 	public static Libelle getLibelle(UUID idLibelle, String lang) throws ObjectPersistenceException {
+		return getLibelle(idLibelle, lang, null);
+	}
+	
+	/**
+	 * Retourne le libellé correspondant au jeux de résultat fournit
+	 * 
+	 * @param rs le jeux de resultat correspondant à un libellé
+	 * @return le libellé construit à partir du jeux de résultat
+	 * @throws ObjectPersistenceException
+	 */
+	public static Libelle getLibelle(ResultSet rs) throws ObjectPersistenceException {
+		return  getLibelle(null, null, rs);
+	}
+	
+	private static Libelle getLibelle(UUID idLibelle, String lang, ResultSet rs)
+			throws ObjectPersistenceException{
+		if(rs != null) {
+			try {
+				idLibelle = T_Libelle.ID_LIBELLE.getValue(rs);
+				lang = T_Libelle.LANG.getValue(rs);
+			} catch (SQLException e) {
+				throw new ObjectPersistenceException(e);
+			}
+		}
+		
 		Libelle libelle = Cache.get(Libelle.class, idLibelle, lang);
 		if(libelle == null) {
-			Map<String, Object> persistenceInformations = new HashMap<String, Object>();
-			persistenceInformations.put(T_Libelle.ID_LIBELLE.getFieldName(), idLibelle);
-			persistenceInformations.put(T_Libelle.LANG.getFieldName(), lang);
-			
 			libelle = new Libelle();
-			loadHelper.load(libelle, persistenceInformations);
 			
-			Cache.put(libelle);
+			if(rs != null) {
+				resultSetLoadHelper.load(libelle, rs);
+			} else {
+				Map<String, Object> persistenceInformations = new HashMap<String, Object>();
+				persistenceInformations.put(T_Libelle.ID_LIBELLE.getFieldName(), idLibelle);
+				persistenceInformations.put(T_Libelle.LANG.getFieldName(), lang);
+				
+				loadHelper.load(libelle, persistenceInformations);
+			}
 		}
 		
 		return libelle;
+	}
+
+	@Override
+	public Libelle get(ResultSet rs, SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap) throws ObjectPersistenceException {
+		return getLibelle(rs);
+	}
+
+	@Override
+	public Libelle get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return null;
 	}
 }

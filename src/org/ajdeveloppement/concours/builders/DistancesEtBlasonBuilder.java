@@ -262,4 +262,12 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 			throws ObjectPersistenceException {
 		return getDistancesEtBlason(rs, sessionCache);
 	}
+
+	@Override
+	public DistancesEtBlason get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return null;
+	}
 }

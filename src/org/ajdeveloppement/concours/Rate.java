@@ -244,7 +244,7 @@ public class Rate implements ObjectPersistence {
 			
 			Cache.put(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 	
@@ -258,7 +258,7 @@ public class Rate implements ObjectPersistence {
 			
 			Cache.remove(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 	

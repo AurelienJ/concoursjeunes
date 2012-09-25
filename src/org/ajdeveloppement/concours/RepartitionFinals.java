@@ -198,7 +198,7 @@ public class RepartitionFinals implements ObjectPersistence {
 			if(numRepartition > -1)
 				helper.save(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 
@@ -208,7 +208,7 @@ public class RepartitionFinals implements ObjectPersistence {
 			if(numRepartition > -1)
 				helper.delete(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 }

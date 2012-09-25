@@ -291,21 +291,19 @@ public class Ancrage implements ObjectPersistence {
 	
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.save(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 	
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
+		if(Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			if(session != null)
-				session.addThreatyObject(this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 

@@ -930,7 +930,7 @@ public class Reglement implements ObjectPersistence {
 			
 			Cache.put(this);
 			
-			Session.addThreatyObject(session,this);
+			Session.addProcessedObject(session,this);
 			
 			if(creation)
 				setNumReglement(numReglement); //force le recalcule des hashCode des surclassements
@@ -1094,7 +1094,7 @@ public class Reglement implements ObjectPersistence {
 				
 				Cache.remove(this);
 				
-				Session.addThreatyObject(session, this);
+				Session.addProcessedObject(session, this);
 			}
 		} else
 			throw new ObjectPersistenceException("delete this Reglement is not authorized because there is official"); //$NON-NLS-1$

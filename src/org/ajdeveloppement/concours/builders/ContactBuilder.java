@@ -175,4 +175,12 @@ public class ContactBuilder implements ResultSetRowToObjectBinder<Contact, Void>
 			Void binderRessourcesMap) throws ObjectPersistenceException {
 		return getContact(rs, sessionCache);
 	}
+
+	@Override
+	public Contact get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return null;
+	}
 }

@@ -219,6 +219,9 @@ public class ConcurrentManager {
 				}
 				if(!aGeneric.getEntite().getAgrement().isEmpty()) {
 					//filters.add("ID_ENTITE in (select ID_ENTITE from ENTITE where AGREMENTENTITE like '" + aGeneric.getEntite().getAgrement().replaceAll("'", "''").replaceAll("%", "%%") + "')");
+//					archers = archers.innerJoin(Entite.class, T_Contact.ID_ENTITE.equalTo(T_Entite.ID_ENTITE))
+//							.where(T_Entite.AGREMENTENTITE.like(aGeneric.getEntite().getAgrement()));
+					
 					archers = archers.where(T_Contact.ID_ENTITE.in(
 							QResults.from(Entite.class).where(T_Entite.AGREMENTENTITE.like(aGeneric.getEntite().getAgrement())).asSubQuery(T_Entite.ID_ENTITE)));
 				}

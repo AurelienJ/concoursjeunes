@@ -118,4 +118,12 @@ public class RateCategoryBuilder implements ResultSetRowToObjectBinder<RateCateg
 		return rateCategory;
 	}
 
+	@Override
+	public RateCategory get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return null;
+	}
+
 }

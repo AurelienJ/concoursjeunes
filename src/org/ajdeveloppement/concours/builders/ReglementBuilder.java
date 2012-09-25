@@ -407,4 +407,12 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Reglement,Vo
 			throws ObjectPersistenceException {
 		return getReglement(rs, sessionCache);
 	}
+
+	@Override
+	public Reglement get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return null;
+	}
 }

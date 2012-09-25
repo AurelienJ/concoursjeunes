@@ -454,7 +454,7 @@ public class Entite implements ObjectPersistence {
 
 			helper.save(this);
 
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 
 			Cache.put(this);
 		}
@@ -465,7 +465,7 @@ public class Entite implements ObjectPersistence {
 		if (Session.canExecute(session, this)) {
 			helper.delete(this);
 
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 			Cache.remove(this);
 		}
 	}

@@ -164,4 +164,11 @@ public class CategoryContactBuilder implements ResultSetRowToObjectBinder<Catego
 			throws ObjectPersistenceException {
 		return getCategoryContact(rs);
 	}
+
+	@Override
+	public CategoryContact get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		return getCategoryContact((int)primaryKeyValues[0]);
+	}
 }

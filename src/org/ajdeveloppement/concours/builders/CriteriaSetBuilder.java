@@ -233,4 +233,12 @@ public class CriteriaSetBuilder implements ResultSetRowToObjectBinder<CriteriaSe
 			Void binderRessourcesMap) throws ObjectPersistenceException {
 		return getCriteriaSet(rs, sessionCache);
 	}
+
+	@Override
+	public CriteriaSet get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return null;
+	}
 }

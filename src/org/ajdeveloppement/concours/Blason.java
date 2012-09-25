@@ -446,7 +446,7 @@ public class Blason implements ObjectPersistence {
 			}
 
 			Cache.put(this);
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 	
@@ -461,7 +461,7 @@ public class Blason implements ObjectPersistence {
 			helper.delete(this);
 			Cache.remove(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 

@@ -595,7 +595,7 @@ public class Contact implements ObjectPersistence, Cloneable {
 				throw new ObjectPersistenceException(e);
 			}
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 
@@ -607,7 +607,7 @@ public class Contact implements ObjectPersistence, Cloneable {
 		if(idContact != null && Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 	

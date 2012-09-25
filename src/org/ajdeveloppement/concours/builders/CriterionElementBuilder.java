@@ -176,4 +176,12 @@ public class CriterionElementBuilder implements ResultSetRowToObjectBinder<Crite
 			throws ObjectPersistenceException {
 		return getCriterionElement(binderRessourcesMap, rs);
 	}
+
+	@Override
+	public CriterionElement get(SqlLoadingSessionCache sessionCache,
+			Criterion binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return null;
+	}
 }

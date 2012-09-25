@@ -219,4 +219,12 @@ public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, R
 			Reglement binderRessourcesMap) throws ObjectPersistenceException {
 		return getCriterion(binderRessourcesMap, rs);
 	}
+
+	@Override
+	public Criterion get(SqlLoadingSessionCache sessionCache,
+			Reglement binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return null;
+	}
 }

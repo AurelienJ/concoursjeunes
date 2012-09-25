@@ -218,4 +218,11 @@ public class BlasonBuilder implements ResultSetRowToObjectBinder<Blason,Void> {
 	public Blason get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap) throws ObjectPersistenceException {
 		return getBlason(rs, sessionCache);
 	}
+
+	@Override
+	public Blason get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		return getBlason((int)primaryKeyValues[0]);
+	}
 }

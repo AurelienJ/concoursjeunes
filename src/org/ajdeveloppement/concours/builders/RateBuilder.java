@@ -151,4 +151,12 @@ public class RateBuilder implements ResultSetRowToObjectBinder<Rate, Void> {
 		return getRate(rs);
 	}
 
+	@Override
+	public Rate get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return null;
+	}
+
 }

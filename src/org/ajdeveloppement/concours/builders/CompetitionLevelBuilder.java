@@ -165,4 +165,11 @@ public class CompetitionLevelBuilder implements ResultSetRowToObjectBinder<Compe
 			throws ObjectPersistenceException {
 		return getCompetitionLevel(rs, sessionCache);
 	}
+
+	@Override
+	public CompetitionLevel get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		return null;
+	}
 }

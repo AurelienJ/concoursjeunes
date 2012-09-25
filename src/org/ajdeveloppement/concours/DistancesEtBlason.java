@@ -336,7 +336,7 @@ public class DistancesEtBlason implements ObjectPersistence {
 			
 			helper.save(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 			
 			try {
 				try(Statement stmt = ApplicationCore.dbConnection.createStatement()) {
@@ -363,7 +363,7 @@ public class DistancesEtBlason implements ObjectPersistence {
 		if(Session.canExecute(session, this)) {
 			helper.delete(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 

@@ -136,4 +136,12 @@ public class RepartitionFinalsBuilder implements ResultSetRowToObjectBinder<Repa
 			throws ObjectPersistenceException {
 		return getRepartitionFinals(rs);
 	}
+
+	@Override
+	public RepartitionFinals get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return null;
+	}
 }

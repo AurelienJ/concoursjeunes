@@ -100,6 +100,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlLoadBuilder;
+import org.ajdeveloppement.concours.builders.ConcurrentBuilder;
 
 /**
  * Objet de Base de stockage des Information sur un concurrent:
@@ -108,6 +110,7 @@ import org.ajdeveloppement.commons.persistence.Session;
  * @author  Aurélien Jeoffray
  * @version  3.0
  */
+@SqlLoadBuilder(ConcurrentBuilder.class)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Concurrent extends Archer implements Cloneable {
 	/**

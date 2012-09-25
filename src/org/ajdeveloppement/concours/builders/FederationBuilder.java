@@ -196,4 +196,12 @@ public class FederationBuilder implements ResultSetRowToObjectBinder<Federation,
 			throws ObjectPersistenceException {
 		return getFederation(rs, sessionCache);
 	}
+
+	@Override
+	public Federation get(SqlLoadingSessionCache sessionCache,
+			Void binderRessourcesMap, Object... primaryKeyValues)
+			throws ObjectPersistenceException {
+		// TODO Raccord de méthode auto-généré
+		return null;
+	}
 }

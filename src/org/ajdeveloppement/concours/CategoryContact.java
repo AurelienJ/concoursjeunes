@@ -243,7 +243,7 @@ public class CategoryContact implements ObjectPersistence{
 			
 			Cache.put(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 	
@@ -257,7 +257,7 @@ public class CategoryContact implements ObjectPersistence{
 			
 			Cache.remove(this);
 			
-			Session.addThreatyObject(session, this);
+			Session.addProcessedObject(session, this);
 		}
 	}
 
