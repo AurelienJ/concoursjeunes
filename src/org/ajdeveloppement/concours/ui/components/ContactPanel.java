@@ -206,7 +206,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 	private JXHyperlink jxhCategories = new JXHyperlink();
 	@Localizable("entite.adresse")
 	private JLabel jlAdressContact = new JLabel();
-	private JTextArea jtaAddressContact = new JTextArea(4, 30);
+	private JTextArea jtaAddressContact = new JTextArea(3, 30);
 	@Localizable("entite.codepostal")
 	private JLabel jlZipCodeContact = new JLabel();
 	private AJSuggestTextField<String> jtfZipCodeContact = new AJSuggestTextField<>("", 10); //$NON-NLS-1$
@@ -227,7 +227,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 	private JButton jbEditCoordinate = new JButton();
 	@Localizable("entite.note")
 	private JLabel jlNoteContact = new JLabel();
-	private JTextArea jtaNoteContact = new JTextArea(4, 30);
+	private JTextArea jtaNoteContact = new JTextArea(3, 30);
 	@Localizable("entite.newcontact")
 	private JXHyperlink jxhNewContact = new JXHyperlink();
 	@Localizable("entite.savecontact")
@@ -386,7 +386,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 		jbEditCoordinate.setEnabled(false);
 		
 		JScrollPane jspNoteContact = new JScrollPane(jtaNoteContact);
-		jspNoteContact.setMinimumSize(new Dimension(150, 70));
+		jspNoteContact.setMinimumSize(new Dimension(300, 70));
 		jtaNoteContact.setEnabled(false);
 		
 		jxhNewContact.addActionListener(this);

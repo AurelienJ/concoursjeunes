@@ -144,7 +144,8 @@ public class ContactBuilder implements ResultSetRowToObjectBinder<Contact, Void>
 					foreignKeys = resultSetLoadHelper.load(contact, rs);
 				}
 				
-				sessionCache.put(contact);
+				if(sessionCache != null)
+					sessionCache.put(contact);
 				
 				if(foreignKeys.get(Contact.class).get(T_Contact.ID_CIVILITY.getFieldName()) != null)
 					contact.setCivility(CivilityBuilder.getCivility((UUID)foreignKeys.get(Contact.class).get(T_Contact.ID_CIVILITY.getFieldName())));

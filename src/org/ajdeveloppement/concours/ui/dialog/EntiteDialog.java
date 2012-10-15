@@ -110,6 +110,8 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
@@ -162,6 +164,9 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 	
 	@Localizable("entite.header")
 	private JXHeader jxhEntite = new JXHeader();
+	
+	@Localizable("entite.tabs")
+	private JTabbedPane tbGlobal = new JTabbedPane(); 
 
 	@Localizable(value="entite.identite",textMethod="setTitle")
 	private TitledBorder tbIdentite = new TitledBorder(""); //$NON-NLS-1$
@@ -266,6 +271,9 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 		JPanel jpAdresse = new JPanel();
 		JPanel jpDivers = new JPanel();
 		JPanel jpContact = new JPanel();
+		
+		tbGlobal.addTab("entitepane.tabs.entity", entitePane); //$NON-NLS-1$
+		tbGlobal.addTab("entitepane.tabs.contact", jpContact); //$NON-NLS-1$
 		
 		contactPanel = new ContactPanel(profile);
 		//contactPanel.setSize(450, 400);
@@ -467,13 +475,23 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 		gridbagComposer.addComponentIntoGrid(jbAddContact, c);
 		c.gridy++;
 		gridbagComposer.addComponentIntoGrid(jbRemoveContact, c);
-		c.gridy++;
-		c.gridwidth = 4;
-		c.weighty = 0.0;
+		c.gridy=0;
+		c.gridwidth = 1;
+		c.gridheight = 4;
+		c.fill = GridBagConstraints.VERTICAL;
+		c.weighty = 1.0;
+		c.weightx = 0.0;
+		c.insets = new Insets(1, 6, 1, 6);
+		gridbagComposer.addComponentIntoGrid(new JSeparator(JSeparator.VERTICAL), c);
+		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(1, 1, 1, 1);
 		gridbagComposer.addComponentIntoGrid(jxtsDetailsContacts, c);
+		c.gridheight = 3;
+		c.weighty = 1.0;
 		c.gridy++;
-		c.gridwidth = 4;
+		//c.fill = GridBagConstraints.HORIZONTAL;
+		//gridbagComposer.addComponentIntoGrid(jxtsDetailsContacts, c);
 		c.fill = GridBagConstraints.BOTH;
 		gridbagComposer.addComponentIntoGrid(contactPanel, c);
 		// [end]
@@ -490,9 +508,9 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 		c.weightx = 1.0;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		gridbagComposer.addComponentIntoGrid(jpIdentite, c);
-		c.gridheight = 3;
-		c.fill = GridBagConstraints.BOTH;
-		gridbagComposer.addComponentIntoGrid(jpContact, c);
+		//c.gridheight = 3;
+		//c.fill = GridBagConstraints.BOTH;
+		//gridbagComposer.addComponentIntoGrid(jpContact, c);
 		c.gridy++;
 		c.gridx = 0;
 		c.gridheight = 1;
@@ -511,7 +529,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jxhEntite, BorderLayout.NORTH);
-		getContentPane().add(entitePane, BorderLayout.CENTER);
+		getContentPane().add(tbGlobal, BorderLayout.CENTER);
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 		// [end]
 		
@@ -592,7 +610,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 		
 		//setSize(910, 715);
 		pack();
-		setResizable(false);
+		//setResizable(false);
 		setLocationRelativeTo(null);
 		
 		setVisible(true);
