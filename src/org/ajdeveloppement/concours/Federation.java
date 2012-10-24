@@ -105,6 +105,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.ajdeveloppement.commons.StringUtils;
 import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
@@ -348,17 +349,30 @@ public class Federation implements ObjectPersistence {
 				Session.addProcessedObject(session,this);
 				
 				Cache.put(this);
-		
-				Statement stmt = ApplicationCore.dbConnection.createStatement();
-				String sql = "delete from NIVEAU_COMPETITION where NUMFEDERATION=" + numFederation; //$NON-NLS-1$
-				stmt.executeUpdate(sql);
+				
+				
+				//String sql = "delete from NIVEAU_COMPETITION where NUMFEDERATION=" + numFederation; //$NON-NLS-1$
+				
 
 				int i = 1;
+				String[] idsCompetitionLevel = new String[competitionLevels.size()];
 				for(CompetitionLevel cl : competitionLevels) {
+					idsCompetitionLevel[i-1] = String.valueOf(i);
+					
 					cl.setNumLevel(i++);
 					cl.setFederation(this);
 					cl.save(session);
+					
 				}
+				String sql = String.format(
+						"delete from %s where %s=%s and %s not in (%s)", //$NON-NLS-1$
+						T_CompetitionLevel.TABLE_NAME,
+						T_CompetitionLevel.NUMFEDERATION.getFieldName(),
+						numFederation,
+						T_CompetitionLevel.CODENIVEAU.getFieldName(),
+						StringUtils.join(",", idsCompetitionLevel)); //$NON-NLS-1$
+				Statement stmt = ApplicationCore.dbConnection.createStatement();
+				stmt.executeUpdate(sql);
 
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);

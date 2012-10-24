@@ -195,13 +195,15 @@ public class CompetitionLevel implements ObjectPersistence {
 						break;
 					}
 				}
-				idLibelle = QResults.from(Libelle.class)
-					.where(T_Libelle.ID_LIBELLE.in(QResults.from(CompetitionLevel.class)
-								.where(T_CompetitionLevel.NUMFEDERATION.equalTo(federation.getNumFederation()))
-								.asSubQuery(T_CompetitionLevel.ID_LIBELLE))
-							.and(T_Libelle.LANG.equalTo(lang))
-							.and(T_Libelle.LIBELLE.equalTo(libelle)))
-					.singleValue(T_Libelle.ID_LIBELLE);
+				if(libelle != null && !libelle.isEmpty()) {
+					idLibelle = QResults.from(Libelle.class)
+						.where(T_Libelle.ID_LIBELLE.in(QResults.from(CompetitionLevel.class)
+									.where(T_CompetitionLevel.NUMFEDERATION.equalTo(federation.getNumFederation()))
+									.asSubQuery(T_CompetitionLevel.ID_LIBELLE))
+								.and(T_Libelle.LANG.equalTo(lang))
+								.and(T_Libelle.LIBELLE.equalTo(libelle)))
+						.singleValue(T_Libelle.ID_LIBELLE);
+				}
 			} catch (SQLException e) {
 				throw new UncheckedException(e);
 			}
@@ -283,8 +285,12 @@ public class CompetitionLevel implements ObjectPersistence {
 			if(localizedLibelle != null) {
 				for(Entry<String,String> entry : localizedLibelle.entrySet()) {
 					String libelle = LibelleHelper.getLibelle(idLibelle, entry.getKey());
-					if(libelle == null || !libelle.equals(entry.getValue()))
-						new Libelle(idLibelle, entry.getValue(), entry.getKey()).save(session);
+					if(libelle == null || !libelle.equals(entry.getValue())) {
+						Libelle newLibelle = new Libelle(idLibelle, entry.getValue(), entry.getKey());
+						newLibelle.save(session);
+						
+						idLibelle = newLibelle.getIdLibelle();
+					}
 				}
 			}
 			
