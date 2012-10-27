@@ -222,8 +222,12 @@ public class CompetitionLevel implements ObjectPersistence {
 				return localizedLibelle.get(lang);
 		}
 		
-		String libelle = LibelleHelper.getLibelle(idLibelle, lang);
-		localizedLibelle.put(lang, libelle);
+		String libelle = null;
+				
+		if(idLibelle != null) {
+			libelle = LibelleHelper.getLibelle(idLibelle, lang);
+			localizedLibelle.put(lang, libelle);
+		}
 	
 		return libelle;
 	}
@@ -234,7 +238,10 @@ public class CompetitionLevel implements ObjectPersistence {
 	 * @return La liste des langues disponible pour le libellé
 	 */
 	public List<String> getAvailableLangForLibelle() {
-		return LibelleHelper.getAvailableLangForLibelle(idLibelle);
+		if(idLibelle != null)
+			return LibelleHelper.getAvailableLangForLibelle(idLibelle);
+		
+		return null;
 	}
 
 	/**
@@ -284,7 +291,9 @@ public class CompetitionLevel implements ObjectPersistence {
 		if(Session.canExecute(session, this)) {
 			if(localizedLibelle != null) {
 				for(Entry<String,String> entry : localizedLibelle.entrySet()) {
-					String libelle = LibelleHelper.getLibelle(idLibelle, entry.getKey());
+					String libelle = null;
+					if(idLibelle != null)
+						libelle = LibelleHelper.getLibelle(idLibelle, entry.getKey());
 					if(libelle == null || !libelle.equals(entry.getValue())) {
 						Libelle newLibelle = new Libelle(idLibelle, entry.getValue(), entry.getKey());
 						newLibelle.save(session);
@@ -357,8 +366,10 @@ public class CompetitionLevel implements ObjectPersistence {
 	 */
 	protected void beforeMarshal(Marshaller marshaller) {
 		//Force le chargement de tous les libellés
-		for(String lang : getAvailableLangForLibelle()) {
-			getLibelle(lang);
+		if(idLibelle != null) {
+			for(String lang : getAvailableLangForLibelle()) {
+				getLibelle(lang);
+			}
 		}
 		if(localizedLibelle != null) {
 			

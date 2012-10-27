@@ -528,7 +528,7 @@ public class Contact implements ObjectPersistence, Cloneable {
 				if(!entite.getNom().isEmpty()) {
 					entite.save(session);
 					
-					if(!session.contains(entite)) {
+					if(session != null && !session.contains(entite)) {
 						//si l'instance n'a pas été sauvegardé c'est qu'il existe une instance concurrente en base
 						//on va donc la récupérer et l'utiliser
 						List<Entite> entitesInDatabase = EntiteManager.getEntitesInDatabase(entite);

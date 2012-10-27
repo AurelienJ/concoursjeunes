@@ -90,7 +90,6 @@ package org.ajdeveloppement.concours.builders;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -137,27 +136,23 @@ public class LibelleBuilder implements ResultSetRowToObjectBinder<Libelle, Void>
 	
 	private static Libelle getLibelle(UUID idLibelle, String lang, ResultSet rs)
 			throws ObjectPersistenceException{
+		Object[] pkValues = new Object[] { idLibelle, lang };
 		if(rs != null) {
 			try {
-				idLibelle = T_Libelle.ID_LIBELLE.getValue(rs);
-				lang = T_Libelle.LANG.getValue(rs);
+				pkValues = T_Libelle.getPrimaryKeyValues(rs);
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}
 		}
 		
-		Libelle libelle = Cache.get(Libelle.class, idLibelle, lang);
+		Libelle libelle = Cache.get(Libelle.class, pkValues);
 		if(libelle == null) {
 			libelle = new Libelle();
 			
 			if(rs != null) {
 				resultSetLoadHelper.load(libelle, rs);
 			} else {
-				Map<String, Object> persistenceInformations = new HashMap<String, Object>();
-				persistenceInformations.put(T_Libelle.ID_LIBELLE.getFieldName(), idLibelle);
-				persistenceInformations.put(T_Libelle.LANG.getFieldName(), lang);
-				
-				loadHelper.load(libelle, persistenceInformations);
+				loadHelper.load(libelle, T_Libelle.getPrimaryKeyMap(idLibelle, lang));
 			}
 		}
 		
@@ -170,11 +165,23 @@ public class LibelleBuilder implements ResultSetRowToObjectBinder<Libelle, Void>
 		return getLibelle(rs);
 	}
 
+	/**
+	 * Retourne un libellé à partir de sa clé primaire
+	 * 
+	 * @param sessionCache inutilisé, libellé utilise le cache global
+	 * @param binderRessourcesMap inutilisé
+	 * @param primaryKeyValues la clé primaire du libellé à retourner: param1: id de libellé, param2: localisation du libellé
+	 */
 	@Override
 	public Libelle get(SqlLoadingSessionCache sessionCache,
 			Void binderRessourcesMap, Object... primaryKeyValues)
 			throws ObjectPersistenceException {
-		// TODO Raccord de méthode auto-généré
+		
+		if(primaryKeyValues.length == 2 
+				&& primaryKeyValues[0] instanceof UUID 
+				&& primaryKeyValues[1] instanceof String)
+			return getLibelle((UUID)primaryKeyValues[0], (String)primaryKeyValues[1]);
+		
 		return null;
 	}
 }

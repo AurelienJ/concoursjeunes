@@ -118,7 +118,7 @@ public class Libelle implements ObjectPersistence {
 	private String lang;
 	@SqlField(name="LIBELLE")
 	private String libelle;
-	
+
 	private boolean updated = false;
 	
 	/**

@@ -320,32 +320,33 @@ public class FederationDialog extends JDialog implements ActionListener {
 			if(langs == null)
 				langs = cl.getAvailableLangForLibelle();
 			
-			for(String lang : langs) {
-				if(lang.equals(profile.getConfiguration().getLangue())) {
-					String tmp = ""; //$NON-NLS-1$
-					if(!jtfFederationNiveau.getText().isEmpty())
-						tmp = jtfFederationNiveau.getText() + ","; //$NON-NLS-1$
-					tmp += cl.getLibelle(profile.getConfiguration().getLangue());
-					jtfFederationNiveau.setText(tmp);
-				} else {
-					if(!mTraduction.containsKey(lang)) {
-						addLocaleLevelField(lang);
-						jcbAvailableLocale.removeItem(new Locale(lang));
-						if(jcbAvailableLocale.getItemCount() == 0) {
-							jcbAvailableLocale.setEnabled(false);
-							jbAddLocale.setEnabled(false);
+			if(langs != null) {
+				for(String lang : langs) {
+					if(lang.equals(profile.getConfiguration().getLangue())) {
+						String tmp = ""; //$NON-NLS-1$
+						if(!jtfFederationNiveau.getText().isEmpty())
+							tmp = jtfFederationNiveau.getText() + ","; //$NON-NLS-1$
+						tmp += cl.getLibelle(profile.getConfiguration().getLangue());
+						jtfFederationNiveau.setText(tmp);
+					} else {
+						if(!mTraduction.containsKey(lang)) {
+							addLocaleLevelField(lang);
+							jcbAvailableLocale.removeItem(new Locale(lang));
+							if(jcbAvailableLocale.getItemCount() == 0) {
+								jcbAvailableLocale.setEnabled(false);
+								jbAddLocale.setEnabled(false);
+							}
+							jlAddLocaleInfo.setVisible(true);
 						}
-						jlAddLocaleInfo.setVisible(true);
+						String tmp = ""; //$NON-NLS-1$
+						JTextField tmpTF = mTraduction.get(lang);
+						if(!tmpTF.getText().isEmpty())
+							tmp = tmpTF.getText() + ","; //$NON-NLS-1$
+						tmp += cl.getLibelle(lang);
+						tmpTF.setText(tmp);
 					}
-					String tmp = ""; //$NON-NLS-1$
-					JTextField tmpTF = mTraduction.get(lang);
-					if(!tmpTF.getText().isEmpty())
-						tmp = tmpTF.getText() + ","; //$NON-NLS-1$
-					tmp += cl.getLibelle(lang);
-					tmpTF.setText(tmp);
 				}
 			}
-			
 		}
 	}
 	
