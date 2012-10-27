@@ -349,10 +349,6 @@ public class Federation implements ObjectPersistence {
 				Session.addProcessedObject(session,this);
 				
 				Cache.put(this);
-				
-				
-				//String sql = "delete from NIVEAU_COMPETITION where NUMFEDERATION=" + numFederation; //$NON-NLS-1$
-				
 
 				int i = 1;
 				String[] idsCompetitionLevel = new String[competitionLevels.size()];

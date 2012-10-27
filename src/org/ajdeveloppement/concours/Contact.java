@@ -108,6 +108,7 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
+import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
@@ -571,26 +572,8 @@ public class Contact implements ObjectPersistence, Cloneable {
 				} else {
 					sqlManager.executeUpdate(String.format("delete from ASSOCIER_CATEGORIE_CONTACT where ID_CONTACT = '%s'", idContact.toString())); //$NON-NLS-1$
 				}
-			
-				if(coordinates != null && coordinates.size() > 0) {
-					String savedIdCoordinates = ""; //$NON-NLS-1$
-					
-					for(Coordinate coordinate : coordinates) {
-						coordinate.save(session);
-						
-						savedIdCoordinates += String.format("'%s',", coordinate.getIdCoordinate().toString()); //$NON-NLS-1$
-					}
-					
-					if(!savedIdCoordinates.isEmpty()) {
-						savedIdCoordinates = savedIdCoordinates.substring(0, savedIdCoordinates.length() - 1);
-						
-						sqlManager.executeUpdate(String.format("delete from COORDINATE where ID_CONTACT = '%s' and ID_COORDINATE not in (%s)", //$NON-NLS-1$
-								idContact.toString(),
-								savedIdCoordinates));
-					}
-				} else {
-					sqlManager.executeUpdate(String.format("delete from COORDINATE where ID_CONTACT = '%s'", idContact.toString())); //$NON-NLS-1$
-				}
+				
+				PersitentCollection.save(coordinates, session, T_Contact.getPrimaryKeyMap(idContact));
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}

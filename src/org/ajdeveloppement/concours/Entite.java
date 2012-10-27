@@ -103,13 +103,13 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
-import org.ajdeveloppement.concours.builders.EntiteBuilder;
 import org.ajdeveloppement.concours.managers.ContactManager;
 
 /**
@@ -125,7 +125,7 @@ import org.ajdeveloppement.concours.managers.ContactManager;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name = "ENTITE",loadBuilder=EntiteBuilder.class)
+@SqlTable(name = "ENTITE",loadBuilder=DefaultSqlBuilder.class)
 @SqlPrimaryKey(fields = { "ID_ENTITE" })
 public class Entite implements ObjectPersistence {
 
