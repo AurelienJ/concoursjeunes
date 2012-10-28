@@ -64,9 +64,14 @@ namespace AJDeveloppement.ArcCompetition
             if (File.Exists(Path.Combine(updatPath + @"\files", Properties.Settings.Default.ApplyUpdateLib)))
                 applyUpdateLib = Path.Combine(updatPath + @"\files", Properties.Settings.Default.ApplyUpdateLib);
 
+            string tempPath = Path.Combine(Path.GetTempPath(), @"ajcommons\lib.jar");
+            if (!Directory.Exists(tempPath))
+                Directory.CreateDirectory(Path.GetDirectoryName(tempPath));
+            File.Copy(applyUpdateLib, tempPath);
+
             ProcessStartInfo startInfo = new ProcessStartInfo(javaPath + @"\bin\javaw.exe");
             startInfo.Arguments = Properties.Settings.Default.VMArgs
-                    + " -cp " + applyUpdateLib
+                    + " -cp " + tempPath
                     + " " + Properties.Settings.Default.MainClass + " \"" + updatPath + "\" \"" + programPath + "\"";
             if (Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version.Major >= 6)
                 startInfo.Verb = "runas";
