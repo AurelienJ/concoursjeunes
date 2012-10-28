@@ -20,4 +20,8 @@
     <FallbackCulture>fr-FR</FallbackCulture>
     <VerifyUploadedFiles>false</VerifyUploadedFiles>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <StartArguments>"C:\ProgramData\ArcCompetition\update" "C:\Program Files\ArcCompetition"</StartArguments>
+    <StartWorkingDirectory>C:\Program Files\ArcCompetition</StartWorkingDirectory>
+  </PropertyGroup>
 </Project>

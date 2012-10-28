@@ -67,16 +67,23 @@ namespace AJDeveloppement.ArcCompetition
             string tempPath = Path.Combine(Path.GetTempPath(), @"ajcommons\lib.jar");
             if (!Directory.Exists(tempPath))
                 Directory.CreateDirectory(Path.GetDirectoryName(tempPath));
-            File.Copy(applyUpdateLib, tempPath);
+            File.Copy(applyUpdateLib, tempPath, true);
 
-            ProcessStartInfo startInfo = new ProcessStartInfo(javaPath + @"\bin\javaw.exe");
-            startInfo.Arguments = Properties.Settings.Default.VMArgs
-                    + " -cp " + tempPath
-                    + " " + Properties.Settings.Default.MainClass + " \"" + updatPath + "\" \"" + programPath + "\"";
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version.Major >= 6)
-                startInfo.Verb = "runas";
-            Process updateProcess = Process.Start(startInfo);
-            updateProcess.WaitForExit();
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo(javaPath + @"\bin\javaw.exe");
+                startInfo.Arguments = Properties.Settings.Default.VMArgs
+                        + " -cp " + tempPath
+                        + " " + Properties.Settings.Default.MainClass + " \"" + updatPath + "\" \"" + programPath + "\"";
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version.Major >= 6)
+                    startInfo.Verb = "runas";
+                Process updateProcess = Process.Start(startInfo);
+                updateProcess.WaitForExit();
+            }
+            finally
+            {
+                File.Delete(tempPath);
+            }
         }
 
         private static void ExecuteAfterUpgradeCommand(string command, string args = null)
