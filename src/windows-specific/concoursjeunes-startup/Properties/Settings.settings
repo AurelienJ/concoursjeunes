@@ -2,13 +2,13 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="AJDeveloppement.ArcCompetition.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="memoryMaxSize" Type="System.String" Scope="User">
+    <Setting Name="memoryMaxSize" Type="System.String" Scope="Application">
       <Value Profile="(Default)">128m</Value>
     </Setting>
-    <Setting Name="jarFile" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ConcoursJeunes.jar</Value>
+    <Setting Name="jarFile" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ArcCompetition.jar</Value>
     </Setting>
-    <Setting Name="VMArgs" Type="System.String" Scope="User">
+    <Setting Name="VMArgs" Type="System.String" Scope="Application">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

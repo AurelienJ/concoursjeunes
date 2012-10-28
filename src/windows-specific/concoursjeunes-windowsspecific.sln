@@ -1,9 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "concoursjeunes-applyupdate", "concoursjeunes-applyupdate\concoursjeunes-applyupdate.csproj", "{3962ADD9-59E4-446F-B9ED-AE2795B9761C}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "arccompetition-applyupdate", "concoursjeunes-applyupdate\arccompetition-applyupdate.csproj", "{3962ADD9-59E4-446F-B9ED-AE2795B9761C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "concoursjeunes-startup", "concoursjeunes-startup\concoursjeunes-startup.csproj", "{FAFF321C-CC59-4D82-AF8C-9153BA851D57}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "arccompetition-startup", "concoursjeunes-startup\arccompetition-startup.csproj", "{FAFF321C-CC59-4D82-AF8C-9153BA851D57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

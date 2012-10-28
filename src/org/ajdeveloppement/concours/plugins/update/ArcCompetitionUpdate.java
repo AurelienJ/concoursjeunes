@@ -387,12 +387,12 @@ public class ArcCompetitionUpdate extends Thread implements AjUpdaterListener {
 					} else {
 						//sur les systèmes Windows et Linux, invoque le programme "arccompetition-applyupdate"
 						//qui s'occupe d'élever les priviléges utilisateur si nécessaire.
-						process = Runtime.getRuntime().exec(command); 
+						Runtime.getRuntime().exec(command); 
 					}
 					if(process != null)
 						process.waitFor();
 
-					System.exit(3);
+					System.exit(0);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				} catch (InterruptedException e1) {
