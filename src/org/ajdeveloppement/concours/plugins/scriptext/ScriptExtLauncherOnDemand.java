@@ -90,6 +90,7 @@ package org.ajdeveloppement.concours.plugins.scriptext;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
@@ -115,14 +116,25 @@ public class ScriptExtLauncherOnDemand {
 	
 	private List<ScriptExtention> scripts = null;
 	
-	public ScriptExtLauncherOnDemand(JFrame parentframe, final Profile profile) {
+	public ScriptExtLauncherOnDemand(final JFrame parentframe, final Profile profile) {
 		if(parentframe instanceof ConcoursJeunesFrame) {
-			
 			final ConcoursJeunesFrame concoursJeunesFrame = (ConcoursJeunesFrame)parentframe;
+			
+			JMenuItem jmiManageScript = new JMenuItem(pluginLocalisation.getResourceString("menu.managescript")); //$NON-NLS-1$
+			MenuBarTools.addItem(jmiManageScript, parentframe.getJMenuBar(), new String[] { "tools", "Scripts", "manageScript" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
 			JMenuItem jmiUnloadScript = new JMenuItem(pluginLocalisation.getResourceString("menu.reloadscript")); //$NON-NLS-1$
 			MenuBarTools.addItem(jmiUnloadScript, parentframe.getJMenuBar(), new String[] { "tools", "Scripts", "reloadScript" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			MenuBarTools.addSeparator(parentframe.getJMenuBar(), new String[] { "tools", "Scripts", "" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			
+			jmiManageScript.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					ScriptManagerDialog dialog = new ScriptManagerDialog(parentframe, pluginLocalisation);
+					dialog.showScriptManagerDialog();
+				}
+			});
 			
 			jmiUnloadScript.addActionListener(new ActionListener() {
 				@Override
@@ -148,10 +160,31 @@ public class ScriptExtLauncherOnDemand {
 				}
 			});
 			
-			scripts = ScriptExtLauncher.getOnDemandScripts();
+			scripts = ScriptExtLauncher.getUiStartupScripts();
 			for(ScriptExtention script : scripts) {
 				if(script.getScriptInterface() != null)
 					script.getScriptInterface().load(concoursJeunesFrame, profile);
+			}
+			
+			List<ScriptExtention> onDemandScripts = ScriptExtLauncher.getOnDemandScripts();
+			int numScript = 0;
+			for(final ScriptExtention script : onDemandScripts) {
+				final File scriptPath = new File(script.getMainPath());
+				
+				JMenuItem jmiScript = new JMenuItem(scriptPath.getName());
+				jmiScript.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent ae) {
+						//SourceDialog sd = new SourceDialog(concoursJeunesFrame, profile.getLocalisation());
+						//sd.showTextDialog("", new File(scriptPath, "script.js"));  //$NON-NLS-1$//$NON-NLS-2$
+						
+						
+						if(script.getScriptInterface() != null)
+							script.getScriptInterface().load(concoursJeunesFrame, profile);
+					}
+				});
+				MenuBarTools.addItem(jmiScript, parentframe.getJMenuBar(), 
+						new String[] { "tools", "Scripts", "S" + numScript }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 	}

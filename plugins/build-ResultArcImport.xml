@@ -10,6 +10,7 @@
 		<copy todir="${projet.pack.dir}/plugins/ResultArcImport/" >
 			<fileset dir="." >
 				<include name="plugins/properties/ResultArcImportPlugin.properties" />
+				<include name="ressources/sql/importResultArc.sql"/>
 				<include name="ExportWinFFTA.exe" />
 				<include name="*.DLL" />
 				<include name="ressources/repositories/ResultArcImport.xml"/>

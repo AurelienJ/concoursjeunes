@@ -99,6 +99,9 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadHandler;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
 import org.ajdeveloppement.concours.Contact;
+import org.ajdeveloppement.concours.builders.CategoryContactBuilder;
+import org.ajdeveloppement.concours.builders.CivilityBuilder;
+import org.ajdeveloppement.concours.managers.CoordinateManager;
 import org.concoursjeunes.ApplicationCore;
 import org.concoursjeunes.Archer;
 import org.concoursjeunes.Concurrent;
@@ -125,6 +128,8 @@ public class ConcurrentBuilder {
 			e.printStackTrace();
 		}
 	}
+	
+	private static PreparedStatement pstmtCategoriesContact;
 	
 	/**
 	 * Construit un concurrent à partir de l'enregistrement SQL fournit en paramètre. Le ResultSet doit contenir
@@ -169,9 +174,31 @@ public class ConcurrentBuilder {
 			} else {
 				foreignKeyValue = resultSetLoadHelper.load(concurrent, resultSet);
 			}
+			
+			UUID idCivility = (UUID)foreignKeyValue.get(Contact.class).get("ID_CIVILITY"); //$NON-NLS-1$
+			if(idCivility != null)
+				concurrent.setCivility(CivilityBuilder.getCivility(idCivility));
+			
 			UUID idEntite = (UUID)foreignKeyValue.get(Contact.class).get("ID_ENTITE"); //$NON-NLS-1$
 			if(idEntite != null)
 				concurrent.setEntite(EntiteBuilder.getEntite(idEntite));
+			
+			concurrent.setCoordinates(CoordinateManager.getContactCoordinates(concurrent));
+			
+			try {
+				if(pstmtCategoriesContact == null)
+					pstmtCategoriesContact = ApplicationCore.dbConnection.prepareStatement("select NUM_CATEGORIE_CONTACT from ASSOCIER_CATEGORIE_CONTACT where ID_CONTACT = ?"); //$NON-NLS-1$
+				
+				pstmtCategoriesContact.setObject(1, concurrent.getIdContact());
+				
+				ResultSet rsCategoriesContact = pstmtCategoriesContact.executeQuery();
+				while(rsCategoriesContact.next()) {
+					concurrent.getCategories().add(CategoryContactBuilder.getCategoryContact(rsCategoriesContact.getInt("NUM_CATEGORIE_CONTACT"))); //$NON-NLS-1$
+				}
+				
+			} catch(SQLException e) {
+				throw new ObjectPersistenceException(e);
+			}
 
 			if(reglement != null) {
 				CriteriaSet differentiationCriteria = null;

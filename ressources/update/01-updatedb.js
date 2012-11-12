@@ -51,7 +51,7 @@ if(dbVersion == 0) {
 	}
 	
 	if(dbVersion < 33) {
-		sql.executeUpdate("INSERT INTO BLASONS VALUES (11, '60cm Réduit (8-10)', 0.5, 0.5, 1, 58, 'targetface_fita_60_reducted.png')");
+		sql.executeUpdate("INSERT INTO BLASONS VALUES (11, STRINGDECODE('60cm R\u00e9dduit (8-10)'), 0.5, 0.5, 1, 58, 'targetface_fita_60_reducted.png')");
 		sql.executeUpdate("INSERT INTO ANCRAGES_BLASONS VALUES (11, 0, 0, 0)");
 		sql.executeUpdate("INSERT INTO ANCRAGES_BLASONS VALUES (11, 1, 0.5, 0)");
 		sql.executeUpdate("INSERT INTO ANCRAGES_BLASONS VALUES (11, 2, 0, 0.5)");

@@ -121,8 +121,21 @@ public class ScriptExtLauncher {
 //		return new File(ApplicationCore.userRessources.getAllusersDataPath(), "scripts"); //$NON-NLS-1$
 //	}
 	
-	private static File getUserScriptsPath() {
+	public static File getUserScriptsPath() {
 		return new File(ApplicationCore.userRessources.getUserPath(), "scripts"); //$NON-NLS-1$
+	}
+	
+	public static List<ScriptExtention> getUiStartupScripts() {
+		List<ScriptExtention> uiStartupScript = new ArrayList<ScriptExtention>();
+		if(scripts.size() == 0) {
+			loadScripts();
+		}
+		for(final ScriptExtention extention : scripts) {
+			if(extention.getType() == Plugin.Type.UI_STARTUP) {
+				uiStartupScript.add(extention);
+			}
+		}
+		return uiStartupScript;
 	}
 	
 	public static List<ScriptExtention> getOnDemandScripts() {

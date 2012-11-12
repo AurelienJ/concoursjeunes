@@ -10,6 +10,7 @@
 			<fileset dir="." >
 				<include name="plugins/properties/ScriptExtPluginStartup.properties" />
 				<include name="plugins/properties/ScriptExtPluginUIStartup.properties" />
+				<include name="plugins/jsyntaxpane-0.9.5-b29.jar"/>
 				<include name="ressources/repositories/ScriptExt.xml"/>
 			</fileset>
 		</copy>

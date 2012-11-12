@@ -102,6 +102,7 @@ import org.ajdeveloppement.commons.persistence.sql.SqlLoadHandler;
 import org.ajdeveloppement.concours.Contact;
 import org.ajdeveloppement.concours.managers.CoordinateManager;
 import org.concoursjeunes.ApplicationCore;
+import org.concoursjeunes.builders.EntiteBuilder;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -131,17 +132,24 @@ public class ContactBuilder {
 	
 	private static Contact getContact(UUID idContact, ResultSet rs) throws ObjectPersistenceException {
 		Contact contact = new Contact();
+		Map<Class<?>, Map<String,Object>> foreignKeys = null;
 		if(idContact != null) {
 			contact.setIdContact(idContact);
 			
-			Map<Class<?>, Map<String,Object>> foreignKeys = loadHelper.load(contact);
+			foreignKeys = loadHelper.load(contact);
 			
-			contact.setCivility(CivilityBuilder.getCivility((UUID)foreignKeys.get(Contact.class).get("ID_CIVILITY"))); //$NON-NLS-1$
+			UUID idCivility = (UUID)foreignKeys.get(Contact.class).get("ID_CIVILITY"); //$NON-NLS-1$
+			if(idCivility != null)
+				contact.setCivility(CivilityBuilder.getCivility(idCivility));
 		} else {
-			resultSetLoadHelper.load(contact, rs);
+			foreignKeys = resultSetLoadHelper.load(contact, rs);
 			
 			contact.setCivility(CivilityBuilder.getCivility(rs));
 		}
+		
+		UUID idEntite = (UUID)foreignKeys.get(Contact.class).get("ID_ENTITE"); //$NON-NLS-1$
+		if(idEntite != null)
+			contact.setEntite(EntiteBuilder.getEntite(idEntite));
 		
 		try {
 			if(pstmtCategoriesContact == null)

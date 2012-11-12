@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.7.0_07" class="java.beans.XMLDecoder">
+<java version="1.7.0_09" class="java.beans.XMLDecoder">
  <object class="java.util.ArrayList">
   <void method="add">
    <object class="org.ajdeveloppement.updater.Version">
@@ -753,6 +753,29 @@
     </void>
     <void property="version">
      <string>2.30.09</string>
+    </void>
+   </object>
+  </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Correction problème import ResultArc si des archers étranger ont été saisi dans celui-ci
+  * Correction problème de chargement des informations annexe sur les contacts et archers
+  * Correction de problèmes sur le paquet debian linux</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1352760943652</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.10</string>
     </void>
    </object>
   </void>

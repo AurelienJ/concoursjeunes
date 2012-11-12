@@ -11,7 +11,7 @@
     <key>CFBundleIconFile</key>
     <string>iconCJ.icns</string>
     <key>CFBundleIdentifier</key>
-    <string>org.ajdeveloppement.concours.Main</string>
+    <string>org.ajdeveloppement.concours</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>

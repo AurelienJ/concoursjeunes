@@ -90,9 +90,11 @@ package org.ajdeveloppement.concours.plugins.scriptext;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.Writer;
 import java.net.MalformedURLException;
 
 import javax.script.Invocable;
@@ -114,9 +116,12 @@ import org.concoursjeunes.plugins.Plugin;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ScriptExtention {
 	private Plugin.Type type;
+	private String scriptName;
+	private String scriptVersion;
 	private String scriptFile = "script.js"; //$NON-NLS-1$
 	private String mainFunction;
 	private boolean asynchrone = false;
+
 	@XmlTransient
 	private String mainPath = ""; //$NON-NLS-1$
 	@XmlTransient
@@ -138,6 +143,26 @@ public class ScriptExtention {
 
 	public void setType(Plugin.Type type) {
 		this.type = type;
+	}
+
+	public String getScriptName() {
+		return scriptName;
+	}
+
+	public void setScriptName(String scriptName) {
+		this.scriptName = scriptName;
+	}
+	
+	public String getScriptId() {
+		return new File(getMainPath()).getName();
+	}
+
+	public String getScriptVersion() {
+		return scriptVersion;
+	}
+
+	public void setScriptVersion(String scriptVersion) {
+		this.scriptVersion = scriptVersion;
 	}
 
 	public String getScriptFile() {
@@ -181,6 +206,11 @@ public class ScriptExtention {
 	public void setMainPath(String mainPath) {
 		this.mainPath = mainPath;
 	}
+	
+	private transient Writer outputWriter;
+	public void setWriter(Writer outputWriter) {
+		this.outputWriter = outputWriter;
+	}
 
 	/**
 	 * Compile le script de l'extention.
@@ -192,9 +222,11 @@ public class ScriptExtention {
 	public void compileScript() throws MalformedURLException, IOException, ScriptException {
 		ScriptEngineManager se = new ScriptEngineManager();
 		ScriptEngine scriptEngine = se.getEngineByName("JavaScript"); //$NON-NLS-1$
+		if(outputWriter != null)
+			scriptEngine.getContext().setWriter(outputWriter);
 		if(scriptEngine != null) {
-			Reader reader = new BufferedReader(new FileReader(
-					new File(mainPath, scriptFile)));
+			Reader reader = new BufferedReader(new InputStreamReader(
+                    new FileInputStream(new File(mainPath, scriptFile)), "UTF-8")); //$NON-NLS-1$
 			scriptEngine.eval(reader);
 			reader.close();
 			

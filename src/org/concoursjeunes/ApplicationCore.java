@@ -180,6 +180,13 @@ public class ApplicationCore {
 	private ApplicationCore() throws SQLException {
 		SqlStoreHandler.setDatabaseEngine("h2"); //$NON-NLS-1$
 		
+		//Workaround correction bug base en espace utilisateur sur version < 2.30.10
+		//evite de se retrouver avec des données obsolete
+		File basePath = new File(
+				ApplicationCore.staticParameters.getResourceString("path.base", userRessources.getUserPath())); //$NON-NLS-1$
+		if(basePath.exists())
+			userRessources.setAllusersDataPath(userRessources.getUserPath());
+		
 		debugLogger();
 		openDatabase();
 		checkUpdateDatabase();

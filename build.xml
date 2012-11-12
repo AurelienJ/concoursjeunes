@@ -89,6 +89,7 @@
 				<exclude name="**/.svn*" />
 				<exclude name="ressources/states/**"/>
 				<exclude name="ressources/repositories/**"/>
+				<exclude name="ressources/sql/importResultArc.sql"/>
 				<exclude name="config/ffta.properties" />
 			</fileset>
 		</copy>
