@@ -191,7 +191,7 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 	private JTextField jtfScriptVersion = new JTextField();
 	@Localizable("scriptmanager.type")
 	private JLabel jlScriptType = new JLabel();
-	private JComboBox<Plugin.Type> jcbScriptType = new JComboBox<Plugin.Type>();
+	private JComboBox jcbScriptType = new JComboBox();
 	@Localizable("scriptmanager.asynchrone")
 	private JLabel jlScriptAsynchrone = new JLabel();
 	@Localizable("scriptmanager.asynchrone.yes")
