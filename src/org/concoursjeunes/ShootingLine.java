@@ -408,7 +408,9 @@ public class ShootingLine implements FicheConcoursListener {
 				int startCible = curCible;
 				int endCible = curCible + (int)Math.ceil((double)nbConcurrent / (double)nbTireurParCible) - 1;
 				
-				//if(endCible >= startCible) {
+				if(startCible < 1)
+					startCible = 1;
+				
 					//calcul le nombre de slot à occuper sur la dernière cible
 					int nbArcherOnFirstTarget = (currentTargetsTable.get(startCible - 1).getNbArcher() + currentTargetsTable.get(startCible - 1).getNbHandicap());
 					if(nbArcherOnFirstTarget > 0) {
@@ -452,7 +454,7 @@ public class ShootingLine implements FicheConcoursListener {
 					
 					//passe au bloc suivant
 					curCible = endCible;
-			//	}
+				//}
 			//}
 		}
 		

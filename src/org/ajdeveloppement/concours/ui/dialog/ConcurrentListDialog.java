@@ -186,7 +186,9 @@ public class ConcurrentListDialog extends JDialog implements ActionListener, Mou
 		this.localisation = profile.getLocalisation();
 
 		if (filter == null && profile.getConfiguration().getClub().getAgrement().length() > 0) {
-			if(profile.getConfiguration().getFederation().getSigleFederation().equals("FFTA"))  {//$NON-NLS-1$
+			if(profile.getConfiguration().getFederation() != null
+					&& profile.getConfiguration().getFederation().getSigleFederation() != null
+					&& profile.getConfiguration().getFederation().getSigleFederation().equals("FFTA"))  {//$NON-NLS-1$
 				filter = new Archer();
 				Entite entite = new Entite();
 				entite.setAgrement(profile.getConfiguration().getClub().getAgrement().substring(0, 2) + "%"); //$NON-NLS-1$

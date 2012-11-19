@@ -171,6 +171,8 @@
 			<fileset dir="${projet.pack.dir}/src" >
 				<include name="**/*.properties" />
 				<include name="**/*.xml" />
+				<include name="**/*.png" />
+				<include name="**/*.gif" />
 			</fileset>
 		</copy>
 	</target>

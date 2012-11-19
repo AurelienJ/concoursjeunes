@@ -170,31 +170,42 @@ public class ScriptExtLauncher {
 		}
 	}
 	
+	public static ScriptExtention loadScript(File scriptFolder) {
+		ScriptExtention extention = null;
+		if(scriptFolder.isDirectory()) {
+			File scriptFile = new File(scriptFolder, "scriptext.xml"); //$NON-NLS-1$
+			if(scriptFile.exists()) {
+				try {
+					extention = XMLSerializer.loadMarshallStructure(scriptFile, ScriptExtention.class);
+					extention.setMainPath(scriptFolder.getPath());
+					extention.compileScript();
+					scripts.add(extention);
+				} catch (JAXBException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (ScriptException e) {
+					e.printStackTrace();
+				}
+			}
+		} /*else if(scriptFolder.getName().endsWith(".zip")) { //$NON-NLS-1$
+			
+		}*/
+		
+		return extention;
+	}
+	
+	public static void removeScript(ScriptExtention extention) {
+		scripts.remove(extention);
+	}
+	
 	private static void loadScripts() {
 		File scriptsPath = getUserScriptsPath();
 		
 		List<File> scriptsFolders = FileUtils.listAllFiles(scriptsPath, ".*", true); //$NON-NLS-1$
 		
 		for(File scriptFolder : scriptsFolders) {
-			if(scriptFolder.isDirectory()) {
-				File scriptFile = new File(scriptFolder, "scriptext.xml"); //$NON-NLS-1$
-				if(scriptFile.exists()) {
-					try {
-						ScriptExtention extention = XMLSerializer.loadMarshallStructure(scriptFile, ScriptExtention.class);
-						extention.setMainPath(scriptFolder.getPath());
-						extention.compileScript();
-						scripts.add(extention);
-					} catch (JAXBException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (ScriptException e) {
-						e.printStackTrace();
-					}
-				}
-			} else if(scriptFolder.getName().endsWith(".zip")) { //$NON-NLS-1$
-				
-			}
+			loadScript(scriptFolder);
 		}
 	}
 }

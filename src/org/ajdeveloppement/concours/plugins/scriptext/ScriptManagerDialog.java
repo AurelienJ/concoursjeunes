@@ -92,13 +92,19 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -111,34 +117,53 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import javax.script.ScriptException;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.JToolBar;
 import javax.swing.JTree;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableRowSorter;
+import javax.swing.text.BadLocationException;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.xml.bind.JAXBException;
-
-import jsyntaxpane.DefaultSyntaxKit;
 
 import org.ajdeveloppement.apps.localisation.Localizable;
 import org.ajdeveloppement.apps.localisation.Localizator;
@@ -150,22 +175,41 @@ import org.ajdeveloppement.commons.ui.AJTabbedPaneListener;
 import org.ajdeveloppement.commons.ui.AJTree;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.concours.ui.ConcoursJeunesFrame;
+import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
 import org.concoursjeunes.ApplicationCore;
 import org.concoursjeunes.plugins.Plugin;
+import org.fife.rsta.ac.LanguageSupportFactory;
+import org.fife.rsta.ac.java.buildpath.JarLibraryInfo;
+import org.fife.rsta.ac.js.JavaScriptLanguageSupport;
+import org.fife.ui.rsyntaxtextarea.ErrorStrip;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.parser.ParserNotice;
+import org.fife.ui.rtextarea.Gutter;
+import org.fife.ui.rtextarea.RTextScrollPane;
+
+import sun.org.mozilla.javascript.Context;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
+@Localizable(textMethod="setTitle",value="scriptmanager.title")
 public class ScriptManagerDialog extends JFrame implements ActionListener,MouseListener,AJTabbedPaneListener,TreeSelectionListener {
 	
 	public static final String UTF8_BOM = "\uFEFF"; //$NON-NLS-1$
+	
+	private static Map<String, ImageIcon> iconsCache = new HashMap<String, ImageIcon>();
+	private AjResourcesReader iconsResources = new AjResourcesReader("org.ajdeveloppement.concours.plugins.scriptext.icons.icons", ScriptManagerDialog.class.getClassLoader()); //$NON-NLS-1$
 
 	private JFrame parentframe;
 	private AjResourcesReader localisation;
 	
+	@Localizable(tooltip="scriptmanager.newscript",value="")
 	private JButton jbNewScript = new JButton();
+	@Localizable(tooltip="scriptmanager.importscript",value="")
 	private JButton jbImportScript = new JButton();
+	@Localizable(tooltip="scriptmanager.exportscript",value="")
 	private JButton jbExportScript = new JButton();
 	
 	private DefaultMutableTreeNode treeRoot = new DefaultMutableTreeNode("scripts"); //$NON-NLS-1$
@@ -174,6 +218,26 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 	private DefaultMutableTreeNode nodeOnDemand = new DefaultMutableTreeNode();
 	private DefaultTreeModel treeModel = new DefaultTreeModel(treeRoot);
 	private AJTree jtScripts = new AJTree(treeModel);
+	
+	private JPopupMenu jpmTreeAction;
+	@Localizable("scriptmanager.newscript")
+	private JMenuItem jmiNewScript = new JMenuItem();
+	@Localizable("scriptmanager.editscript")
+	private JMenuItem jmiEditScript = new JMenuItem();
+	@Localizable("scriptmanager.executescript")
+	private JMenuItem jmiExecuteScript = new JMenuItem();
+	@Localizable("scriptmanager.exportscript")
+	private JMenuItem jmiExportScript = new JMenuItem();
+	@Localizable("scriptmanager.importscript")
+	private JMenuItem jmiImportScript = new JMenuItem();
+	@Localizable("scriptmanager.deletescript")
+	private JMenuItem jmiDeleteScript = new JMenuItem();
+	@Localizable("scriptmanager.addfile")
+	private JMenuItem jmiAddFile = new JMenuItem();
+	@Localizable("scriptmanager.newfile")
+	private JMenuItem jmiNewFile = new JMenuItem();
+	@Localizable("scriptmanager.createdirectory")
+	private JMenuItem jmiCreateDirectory = new JMenuItem();
 	
 	
 	@Localizable(value="scriptmanager.properties",textMethod="setTitle")
@@ -191,6 +255,7 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 	private JTextField jtfScriptVersion = new JTextField();
 	@Localizable("scriptmanager.type")
 	private JLabel jlScriptType = new JLabel();
+	@SuppressWarnings("rawtypes")
 	private JComboBox jcbScriptType = new JComboBox();
 	@Localizable("scriptmanager.asynchrone")
 	private JLabel jlScriptAsynchrone = new JLabel();
@@ -207,7 +272,7 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 		super();
 		this.localisation = localisation;
 		this.parentframe = parentframe;
-		
+
 		init();
 		affectLabels();
 	}
@@ -220,20 +285,21 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 		nodeOnDemand.setUserObject(localisation.getResourceString("scriptmanager.category.onDemand")); //$NON-NLS-1$
 	}
 
+	@SuppressWarnings("unchecked")
 	private void init() {
 		JPanel jpLeftPane = new JPanel();
 		JPanel jpCenterPane = new JPanel();
 		
 		JScrollPane jsListeScript = new JScrollPane(jtScripts);
 		
-		jbNewScript.setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.addcriteria")); //$NON-NLS-1$
-		jbNewScript.setMargin(new Insets(0, 0, 0, 0));
+		jbNewScript.setIcon(getIcon("file.icon.script.new")); //$NON-NLS-1$
+		jbNewScript.setMargin(new Insets(0, 2, 0, 2));
 		jbNewScript.addActionListener(this);
-		jbImportScript.setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.downelement")); //$NON-NLS-1$
-		jbImportScript.setMargin(new Insets(0, 0, 0, 0));
+		jbImportScript.setIcon(getIcon("file.icon.import")); //$NON-NLS-1$
+		jbImportScript.setMargin(new Insets(0, 2, 0, 2));
 		jbImportScript.addActionListener(this);
-		jbExportScript.setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.upelement")); //$NON-NLS-1$
-		jbExportScript.setMargin(new Insets(0, 0, 0, 0));
+		jbExportScript.setIcon(getIcon("file.icon.export")); //$NON-NLS-1$
+		jbExportScript.setMargin(new Insets(0, 2, 0, 2));
 		jbExportScript.addActionListener(this);
 
 		jsListeScript.setMinimumSize(new Dimension(300, 500));
@@ -268,17 +334,45 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 							value = new File(((ScriptExtention)o).getMainPath()).getName();
 						
 						setText(value.toString());
-						setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.script.js")); //$NON-NLS-1$
+						setIcon(ScriptManagerDialog.this.getIcon("file.icon.script.js")); //$NON-NLS-1$
 					} else if (o instanceof File) {
 						setText(((File)o).getName());
+						if(((File)o).isDirectory())
+							setIcon(ScriptManagerDialog.this.getIcon("file.icon.script.folder")); //$NON-NLS-1$
+						else
+							setIcon(ScriptManagerDialog.this.getIcon("file.icon.script.document")); //$NON-NLS-1$
 					} else if (o instanceof String && row != 0) {
-						setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.script.type")); //$NON-NLS-1$
+						setIcon(ScriptManagerDialog.this.getIcon("file.icon.script.type")); //$NON-NLS-1$
+					} else if(row == 0) {
+						setIcon(ScriptManagerDialog.this.getIcon("file.icon.script.root")); //$NON-NLS-1$
 					}
 				}
 					
 				return this;
 			}
 		});
+		
+		jpmTreeAction = new JPopupMenu("Edit"); //$NON-NLS-1$
+		jpmTreeAction.add(jmiNewScript);
+		jpmTreeAction.add(jmiEditScript);
+		jpmTreeAction.add(jmiExecuteScript);
+		jpmTreeAction.add(jmiImportScript);
+		jpmTreeAction.add(jmiExportScript);
+		jpmTreeAction.addSeparator();
+		jpmTreeAction.add(jmiCreateDirectory);
+		jpmTreeAction.add(jmiNewFile);
+		jpmTreeAction.add(jmiAddFile);
+		jpmTreeAction.add(jmiDeleteScript);
+		
+		jmiNewScript.addActionListener(this);
+		jmiEditScript.addActionListener(this);
+		jmiExecuteScript.addActionListener(this);
+		jmiImportScript.addActionListener(this);
+		jmiExportScript.addActionListener(this);
+		jmiDeleteScript.addActionListener(this);
+		jmiAddFile.addActionListener(this);
+		jmiNewFile.addActionListener(this);
+		jmiCreateDirectory.addActionListener(this);
 		
 		jpProperties.setMinimumSize(new Dimension(300, 500));
 		jpProperties.setVisible(false);
@@ -400,10 +494,16 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 						else if(extention.getType() == Plugin.Type.ON_DEMAND)
 							nodeOnDemand.add(nodeScript);
 						
+						jtScripts.expandPath(new TreePath(nodeScript.getParent()));
+						
 						for(File annexe : scriptFolder.listFiles()) {
 							if(!annexe.getName().equals(extention.getScriptFile()) && !annexe.getName().equals("scriptext.xml")) { //$NON-NLS-1$
 								DefaultMutableTreeNode nodeAnnexe = new DefaultMutableTreeNode(annexe);
 								nodeScript.add(nodeAnnexe);
+								
+								if(annexe.isDirectory()) {
+									addFileNode(annexe, nodeAnnexe);
+								}
 							}
 						}
 						
@@ -438,6 +538,36 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 		}
 	}
 	
+	private void executeScript(ScriptExtention extension, JTextPane jtpOutput, boolean evalOnly) {
+		try {
+			ConcoursJeunesFrame concoursJeunesFrame = (ConcoursJeunesFrame)parentframe;
+			
+			StringWriter writer = new StringWriter();
+			extension.setWriter(writer);
+			
+			if(!evalOnly && extension.getScriptInterface() != null)
+				extension.getScriptInterface().unload();
+			extension.compileScript();
+			if(!evalOnly)
+				extension.getScriptInterface().load(concoursJeunesFrame, concoursJeunesFrame.profile);
+			jtpOutput.setForeground(Color.black);
+			jtpOutput.setText(writer.toString());
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ScriptException e) {
+			jtpOutput.setForeground(Color.RED);
+			jtpOutput.setText(e.toString());
+		} catch (UndeclaredThrowableException e) {
+			jtpOutput.setForeground(Color.RED);
+			jtpOutput.setText(e.getUndeclaredThrowable().toString());
+		} catch (Exception e) {
+			jtpOutput.setForeground(Color.RED);
+			jtpOutput.setText(e.toString());
+		}
+	}
+	
 	private Component getScriptPane(File scriptFile) {
 		return getScriptPane(null, scriptFile);
 	}
@@ -452,12 +582,114 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 		
 		final String scriptPath = scriptFile.getPath();
 		
+		final NoticeTableModel noticeTableModel = new NoticeTableModel();
+		TableRowSorter<NoticeTableModel> sorter = new TableRowSorter<NoticeTableModel>(noticeTableModel);
+		List<SortKey> dSortKeys = new ArrayList<SortKey>();
+		dSortKeys.add(new SortKey(1, SortOrder.ASCENDING));
+		dSortKeys.add(new SortKey(0, SortOrder.ASCENDING));
+		sorter.setSortKeys(dSortKeys);
+		
 		JPanel jpMainEditor = new JPanel();
 		
-		DefaultSyntaxKit.initKit();
+		JToolBar jtbAction = new JToolBar();
 		
-		final JEditorPane jepScript = new JEditorPane();
-		JScrollPane jspScript = new JScrollPane(jepScript);
+		String fileSyntax = SyntaxConstants.SYNTAX_STYLE_NONE;
+		if(scriptFile.getName().endsWith(".xml")) { //$NON-NLS-1$
+			fileSyntax = SyntaxConstants.SYNTAX_STYLE_XML;
+		} else if(scriptFile.getName().endsWith(".html")) { //$NON-NLS-1$
+			fileSyntax = SyntaxConstants.SYNTAX_STYLE_HTML;
+		} else if(scriptFile.getName().endsWith(".css")) { //$NON-NLS-1$
+			fileSyntax = SyntaxConstants.SYNTAX_STYLE_CSS;
+		} else if(scriptFile.getName().endsWith(".properties")) { //$NON-NLS-1$
+			fileSyntax = SyntaxConstants.SYNTAX_STYLE_PROPERTIES_FILE;
+		} else if(scriptFile.getName().endsWith(".sql")) { //$NON-NLS-1$
+			fileSyntax = SyntaxConstants.SYNTAX_STYLE_SQL;
+		} else if(scriptFile.getName().endsWith(".js")) {  //$NON-NLS-1$
+			fileSyntax = SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
+		}
+
+		final RSyntaxTextArea jepScript = new RSyntaxTextArea(20, 60);
+		LanguageSupportFactory lsf = LanguageSupportFactory.get();
+		
+		if(fileSyntax.equals(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT)) {
+			JavaScriptLanguageSupport support = (JavaScriptLanguageSupport)lsf.getSupportFor(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+			support.setStrictMode(true);
+			support.setLanguageVersion(Context.VERSION_1_6);
+			try {
+				support.getJarManager().addCurrentJreClassFileSource();
+				for(String lib : System.getProperty("java.class.path").split(System.getProperty("path.separator"))) { //$NON-NLS-1$ //$NON-NLS-2$
+					if(lib.endsWith(".jar")) { //$NON-NLS-1$
+						JarLibraryInfo jarlib = new JarLibraryInfo(lib);
+						/*if(lib.endsWith("ajcommons.jar")) {
+							SourceLocation sourceLocation = new DirSourceLocation("/data/developpement/projets_maintenance/ajcommons/src");
+							jarlib.setSourceLocation(sourceLocation);
+						}*/
+						support.getJarManager().addClassFileSource(jarlib);
+					}
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		lsf.register(jepScript);
+		jepScript.setSyntaxEditingStyle(fileSyntax);
+		jepScript.setCodeFoldingEnabled(true);
+		jepScript.setAntiAliasingEnabled(true);
+		jepScript.setAutoIndentEnabled(true);
+		jepScript.setBracketMatchingEnabled(true);
+		jepScript.setClearWhitespaceLinesEnabled(true);
+		jepScript.setCloseCurlyBraces(true);
+		jepScript.setMarkOccurrences(true);
+		jepScript.setMarginLineEnabled(true);
+		jepScript.addPropertyChangeListener(new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				String name = evt.getPropertyName();
+
+				// A text area has been re-parsed
+				if (RSyntaxTextArea.PARSER_NOTICES_PROPERTY.equals(name)) {
+					RSyntaxTextArea textArea = (RSyntaxTextArea)evt.getSource();
+					RTextScrollPane sp = (RTextScrollPane)textArea.getParent().
+																getParent();
+					Gutter g = sp.getGutter();
+					// TODO: Note this isn't entirely correct; if some other
+					// component has added tracking icons to the gutter, this will
+					// remove those as well!
+					g.removeAllTrackingIcons();
+					noticeTableModel.clear();
+					@SuppressWarnings({ "cast", "unchecked" })
+					List<ParserNotice> notices = (List<ParserNotice>)textArea.getParserNotices();
+					for (ParserNotice notice : notices) {
+						int line = notice.getLine();
+						Icon icon = null;
+						if(notice.getLevel() == 0)
+							icon = getIcon("file.icon.script.error"); //$NON-NLS-1$
+						else
+							icon = getIcon("file.icon.script.warning"); //$NON-NLS-1$
+						try {
+							g.addLineTrackingIcon(line, icon, notice.getMessage());
+							noticeTableModel.addNotice(notice);
+						} catch (BadLocationException ble) { // Never happens
+							ble.printStackTrace();
+						}
+					}
+					
+				}
+			}
+		});
+		
+		RTextScrollPane jspScript = new RTextScrollPane(jepScript);
+		jspScript.setFoldIndicatorEnabled(true);
+		jspScript.setIconRowHeaderEnabled(true);
+		
+		ErrorStrip es = new ErrorStrip(jepScript);
+		es.setLevelThreshold(org.fife.ui.rsyntaxtextarea.parser.ParserNotice.WARNING);
+		JPanel temp = new JPanel(new BorderLayout());
+		temp.add(jspScript);
+		temp.add(es, BorderLayout.LINE_END);
+		
+		final JTabbedPane jtbConsole= new JTabbedPane();
 		
 		final JTextPane jtpOutput = new JTextPane();
 		JScrollPane jspOutput = new JScrollPane(jtpOutput); 
@@ -465,6 +697,30 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 		jtpOutput.setPreferredSize(new Dimension(500, 150));
 		jtpOutput.setForeground(Color.gray);
 		jtpOutput.setText("Console de debugage..."); //$NON-NLS-1$
+		
+		final JTable jtNotice = new JTable();
+		JScrollPane jspNotice = new JScrollPane(jtNotice); 
+		jtNotice.setModel(noticeTableModel);
+		jtNotice.setPreferredSize(new Dimension(500, 150));
+		jtNotice.setRowSorter(sorter);
+		jtNotice.getColumnModel().getColumn(0).setMaxWidth(60);
+		jtNotice.getColumnModel().getColumn(1).setMaxWidth(60);
+		jtNotice.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount() == 2) {
+//					jtNotice.getSelectedRow().
+//					jepScript.getDocument()  
+//                    	.getDefaultRootElement().getElement(index-2)  
+//                    	.getStartOffset()
+				}
+			}
+		});
+		
+		jspNotice.setPreferredSize(new Dimension(500, 150));
+		
+		jtbConsole.addTab(localisation.getResourceString("scriptmanager.debug.tabbedpane.console"), jspOutput); //$NON-NLS-1$
+		jtbConsole.addTab(localisation.getResourceString("scriptmanager.debug.tabbedpane.notice"), jspNotice); //$NON-NLS-1$
 
 		BufferedReader bufferedReader = null;
 		try {
@@ -483,15 +739,15 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 				firstLine = false;
 			}
 			
-			jepScript.setContentType("text/javascript"); //$NON-NLS-1$
+			//jepScript.setContentType("text/javascript"); //$NON-NLS-1$
 			jepScript.setText(stringBuilder.toString());
-			jepScript.setCaretPosition(0);
+			//jepScript.setCaretPosition(0);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			jepScript.setText(e.getMessage());
+			//jepScript.setText(e.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
-			jepScript.setText(e.getMessage());
+			//jepScript.setText(e.getMessage());
 		} finally {
 			if(bufferedReader != null) {
 				try {
@@ -500,9 +756,8 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 			}
 		}
 		
-		JPanel jpAction = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		
-		final JButton jbSauvegarder = new JButton("Sauvegarder");
+		final JButton jbSauvegarder = new JButton(localisation.getResourceString("scriptmanager.script.save"), //$NON-NLS-1$
+				getIcon("file.icon.save")); //$NON-NLS-1$
 		jbSauvegarder.setEnabled(false);
 		jbSauvegarder.addActionListener(new ActionListener() {
 			
@@ -512,45 +767,55 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 				jbSauvegarder.setEnabled(false);
 			}
 		});
-		jpAction.add(jbSauvegarder);
+		jtbAction.add(jbSauvegarder);
+		
+		jepScript.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) {
+					saveScript(new File(scriptPath), jepScript.getText());
+					jbSauvegarder.setEnabled(false);
+				}
+			}
+		});
 		
 		if(extension != null) {
-			JButton jbExecuter =new JButton("Executer");
+			JButton jbEvaluer = new JButton(localisation.getResourceString("scriptmanager.evalscript"), //$NON-NLS-1$
+					getIcon("file.icon.script.eval")); //$NON-NLS-1$
+			jbEvaluer.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					saveScript(new File(scriptPath), jepScript.getText());
+					
+					executeScript(extension, jtpOutput, true);
+					
+					jbSauvegarder.setEnabled(false);
+					
+					jtbConsole.setSelectedIndex(0);
+				}
+			});
+			jtbAction.add(jbEvaluer);
+			
+			JButton jbExecuter = new JButton(localisation.getResourceString("scriptmanager.executescript"), //$NON-NLS-1$
+					getIcon("file.icon.script.run")); //$NON-NLS-1$
 			jbExecuter.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					saveScript(new File(scriptPath), jepScript.getText());
 					
-					try {
-						ConcoursJeunesFrame concoursJeunesFrame = (ConcoursJeunesFrame)parentframe;
-						
-						StringWriter writer = new StringWriter();
-						extension.setWriter(writer);
-						extension.compileScript();
-						extension.getScriptInterface().load(concoursJeunesFrame, concoursJeunesFrame.profile);
-						jtpOutput.setForeground(Color.black);
-						jtpOutput.setText(writer.toString());
-					} catch (MalformedURLException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (ScriptException e) {
-						jtpOutput.setForeground(Color.RED);
-						jtpOutput.setText(e.toString());
-					} catch (UndeclaredThrowableException e) {
-						jtpOutput.setForeground(Color.RED);
-						jtpOutput.setText(e.getUndeclaredThrowable().toString());
-					} catch (Exception e) {
-						jtpOutput.setForeground(Color.RED);
-						jtpOutput.setText(e.toString());
-					}
+					executeScript(extension, jtpOutput, false);
 					
 					jbSauvegarder.setEnabled(false);
+					
+					jtbConsole.setSelectedIndex(0);
 				}
 			});
-			jpAction.add(jbExecuter);
+			jtbAction.add(jbExecuter);
 		}
+		
+		//jtbAction.ad
 		
 		jepScript.getDocument().addDocumentListener(new DocumentListener() {
 			
@@ -571,9 +836,9 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 		});
 		
 		jpMainEditor.setLayout(new BorderLayout());
-		jpMainEditor.add(jpAction, BorderLayout.NORTH);
-		jpMainEditor.add(jspScript, BorderLayout.CENTER);
-		jpMainEditor.add(jspOutput, BorderLayout.SOUTH);
+		jpMainEditor.add(jtbAction, BorderLayout.NORTH);
+		jpMainEditor.add(temp, BorderLayout.CENTER);
+		jpMainEditor.add(jtbConsole, BorderLayout.SOUTH);
 		
 		return jpMainEditor;
 	}
@@ -582,6 +847,91 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 		return new File(ApplicationCore.userRessources.getUserPath(), "scripts"); //$NON-NLS-1$
 	}
 	
+	private void addEntryToZip(File fileEntry, String newEntryName, ZipOutputStream zos)
+			throws IOException {
+		ZipEntry ze = new ZipEntry(newEntryName);
+		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileEntry));
+		zos.putNextEntry(ze);
+		
+		byte[] buffer = new byte[512 * 1024];
+		int nbLecture;
+		while ((nbLecture = bis.read(buffer)) != -1) {
+			zos.write(buffer, 0, nbLecture);
+		}
+		bis.close();
+		
+		//jos.finish();
+		zos.closeEntry();
+	}
+	
+	private void addToTypeNode(DefaultMutableTreeNode node, Plugin.Type type) {
+		switch (type) {
+			case STARTUP:
+				nodeStartup.add(node);
+				break;
+			case UI_STARTUP:
+				nodeUiStartup.add(node);
+				break;
+			case ON_DEMAND:
+				nodeOnDemand.add(node);
+				break;
+			default:
+				break;
+		}
+	}
+	
+	private void addFileNode(File path, DefaultMutableTreeNode parentNode) {
+		for(File child : path.listFiles()) {
+			DefaultMutableTreeNode nodeChild = new DefaultMutableTreeNode(child);
+			parentNode.add(nodeChild);
+			
+			if(child.isDirectory()) {
+				addFileNode(child, nodeChild);
+			}
+		}
+	}
+	
+	private void openScriptTabForSelectedTreePath() {
+		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)jtScripts.getSelectionPath().getLastPathComponent();
+		if(selectedNode.getUserObject() instanceof ScriptExtention) {
+			ScriptExtention ext = (ScriptExtention)selectedNode.getUserObject();
+			
+			String scriptName = ext.getScriptName();
+			if(scriptName == null || scriptName.isEmpty())
+				scriptName = new File(ext.getMainPath()).getName();
+			
+			jtpScriptEditorTabs.addTab(scriptName, getScriptPane(ext));
+			jtpScriptEditorTabs.setSelectedIndex(jtpScriptEditorTabs.getTabCount()-1);
+		} else if(selectedNode.getUserObject() instanceof File) {
+			String scriptName = ((File)selectedNode.getUserObject()).getName();
+			if(scriptName.endsWith(".js") //$NON-NLS-1$
+					|| scriptName.endsWith(".xml") //$NON-NLS-1$
+					|| scriptName.endsWith(".html") //$NON-NLS-1$
+					|| scriptName.endsWith(".css") //$NON-NLS-1$
+					|| scriptName.endsWith(".properties") //$NON-NLS-1$
+					|| scriptName.endsWith(".sql") //$NON-NLS-1$
+					|| scriptName.endsWith(".txt")) { //$NON-NLS-1$
+				//jtpScriptEditorTabs.addTab(scriptName, getScriptPane(ext));
+				jtpScriptEditorTabs.setSelectedIndex(jtpScriptEditorTabs.getTabCount()-1);
+				
+				jtpScriptEditorTabs.addTab(scriptName, getScriptPane((File)selectedNode.getUserObject()));
+				jtpScriptEditorTabs.setSelectedIndex(jtpScriptEditorTabs.getTabCount()-1);
+			}
+		}
+	}
+	
+	private ImageIcon getIcon(String propertyKey) {
+		ImageIcon icon = iconsCache.get(propertyKey);
+		if(icon == null) {
+			URL urlIcon = ScriptManagerDialog.class.getResource(iconsResources.getResourceString(propertyKey));
+			if(urlIcon != null) {
+				icon = new ImageIcon(urlIcon);
+				iconsCache.put(propertyKey, icon);
+			}
+		}
+		
+		return icon;
+	}
 	
 	public void showScriptManagerDialog() {
 		completePanel();
@@ -596,62 +946,71 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == jbSaveScriptProperties) {
-			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)jtScripts.getSelectionPath().getLastPathComponent();
-			if(selectedNode.getUserObject() instanceof ScriptExtention) {
-				ScriptExtention ext = (ScriptExtention)selectedNode.getUserObject();
-				
-				if(jcbScriptType.getSelectedItem() != ext.getType()) {
-					//jtScripts.removeSelectionPath(jtScripts.getSelectionPath());
-					treeModel.removeNodeFromParent(selectedNode);
-					switch ((Plugin.Type)jcbScriptType.getSelectedItem()) {
-						case STARTUP:
-							nodeStartup.add(selectedNode);
-							break;
-						case UI_STARTUP:
-							nodeUiStartup.add(selectedNode);
-							break;
-						case ON_DEMAND:
-							nodeOnDemand.add(selectedNode);
-							break;
-						default:
-							break;
-					}
-					treeModel.reload();	
-				}
-				
-				ext.setScriptName(jtfScriptLibelle.getText());
-				ext.setScriptVersion(jtfScriptVersion.getText());
-				ext.setType((Plugin.Type)jcbScriptType.getSelectedItem());
-				ext.setAsynchrone(jrbScriptAsynchroneYes.isSelected());
-				
-				File scriptFolder = new File(ext.getMainPath());
-				File scriptsFolder = scriptFolder.getParentFile();
-				File newScriptFolder = new File(scriptsFolder, jtfScriptName.getText());
-				
-				if(!scriptFolder.getName().equals(newScriptFolder.getName())) {
-					ext.setMainPath(newScriptFolder.getPath());
+			if(jtScripts.getSelectionPath() != null) {
+				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)jtScripts.getSelectionPath().getLastPathComponent();
+				if(selectedNode.getUserObject() instanceof ScriptExtention) {
+					ScriptExtention ext = (ScriptExtention)selectedNode.getUserObject();
 					
-					scriptFolder.renameTo(newScriptFolder);
+					if(jcbScriptType.getSelectedItem() != ext.getType()) {
+						//jtScripts.removeSelectionPath(jtScripts.getSelectionPath());
+						treeModel.removeNodeFromParent(selectedNode);
+						addToTypeNode(selectedNode, (Plugin.Type)jcbScriptType.getSelectedItem());
+						
+						treeModel.reload();	
+					}
+					
+					ext.setScriptName(jtfScriptLibelle.getText());
+					ext.setScriptVersion(jtfScriptVersion.getText());
+					ext.setType((Plugin.Type)jcbScriptType.getSelectedItem());
+					ext.setAsynchrone(jrbScriptAsynchroneYes.isSelected());
+					
+					File scriptFolder = new File(ext.getMainPath());
+					File scriptsFolder = scriptFolder.getParentFile();
+					File newScriptFolder = new File(scriptsFolder, jtfScriptName.getText());
+					
+					if(!scriptFolder.getName().equals(newScriptFolder.getName())) {
+						ext.setMainPath(newScriptFolder.getPath());
+						
+						scriptFolder.renameTo(newScriptFolder);
+					}
+					
+					try {
+						XMLSerializer.saveMarshallStructure(new File(newScriptFolder, "scriptext.xml"), ext); //$NON-NLS-1$
+					} catch (JAXBException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
+			}
+		} else if(e.getSource() == jbNewScript || e.getSource() == jmiNewScript) {
+			
+			try {
+				ScriptExtention scriptExtention = new ScriptExtention();
+				scriptExtention.setScriptName(localisation.getResourceString("scriptmanager.newscript")); //$NON-NLS-1$
+				
+				File scriptPath = new File(ScriptExtLauncher.getUserScriptsPath(), "nouveauScript"); //$NON-NLS-1$
+				scriptPath.mkdirs();
+				scriptExtention.setMainPath(scriptPath.getPath());
+				
+				if(jtScripts.getSelectionPath() != null) {
+					if(((DefaultMutableTreeNode)jtScripts.getSelectionPath().getLastPathComponent()) == nodeStartup)
+						scriptExtention.setType(Plugin.Type.ON_DEMAND);
+					else if(((DefaultMutableTreeNode)jtScripts.getSelectionPath().getLastPathComponent()) == nodeUiStartup)
+						scriptExtention.setType(Plugin.Type.UI_STARTUP);
+					else if(((DefaultMutableTreeNode)jtScripts.getSelectionPath().getLastPathComponent()) == nodeOnDemand)
+						scriptExtention.setType(Plugin.Type.ON_DEMAND);
+				}				
+				else
+					scriptExtention.setType(Plugin.Type.ON_DEMAND);
 				
 				try {
-					XMLSerializer.saveMarshallStructure(new File(newScriptFolder, "scriptext.xml"), ext); //$NON-NLS-1$
+					XMLSerializer.saveMarshallStructure(new File(scriptPath, "scriptext.xml"), scriptExtention); //$NON-NLS-1$
 				} catch (JAXBException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-			}
-		} else if(e.getSource() == jbNewScript) {
-			
-			try {
-				ScriptExtention scriptExtention = new ScriptExtention();
-				scriptExtention.setScriptName("Nouveau script");
-				
-				File scriptPath = new File(ScriptExtLauncher.getUserScriptsPath(), "nouveauScript"); //$NON-NLS-1$
-				scriptPath.mkdirs();
-				scriptExtention.setMainPath(scriptPath.getPath());
-				scriptExtention.setType(Plugin.Type.ON_DEMAND);
 				
 				
 				File scriptTemplateFile = new File(ApplicationCore.staticParameters.getResourceString("path.ressources"), "templates" + File.separator + "scriptext" + File.separator +"exemple.js");    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
@@ -660,47 +1019,384 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 				FileUtils.copyFile(scriptTemplateFile, scriptFile);
 				
 				DefaultMutableTreeNode scriptNode = new DefaultMutableTreeNode(scriptExtention);
-				nodeOnDemand.add(scriptNode);
+				addToTypeNode(scriptNode, scriptExtention.getType());
 				
 				treeModel.reload();
 				
 				jtScripts.setSelectionPath(new TreePath(scriptNode.getPath()));
 			} catch (FileNotFoundException e1) {
-				// TODO Bloc catch auto-généré
 				e1.printStackTrace();
 			} catch (IOException e1) {
-				// TODO Bloc catch auto-généré
 				e1.printStackTrace();
 			}
-		} else if(e.getSource() == jbExportScript) {
 			
+			openScriptTabForSelectedTreePath();
+		} else if(e.getSource() == jbExportScript || e.getSource() == jmiExportScript) {
+			if(jtScripts.getSelectionPath() != null) {
+				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)jtScripts.getSelectionPath().getLastPathComponent();
+				if(selectedNode.getUserObject() instanceof ScriptExtention) {
+					ScriptExtention ext = (ScriptExtention)selectedNode.getUserObject();
+					
+					JFileChooser chooser = new JFileChooser();
+				    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				    		localisation.getResourceString("description.type.file.zip"), "zip"); //$NON-NLS-1$ //$NON-NLS-2$
+				    chooser.setFileFilter(filter);
+				    chooser.setSelectedFile(new File(ext.getScriptId() + ".zip")); //$NON-NLS-1$
+				    
+				    int returnVal = chooser.showSaveDialog(parentframe);
+				    if(returnVal == JFileChooser.APPROVE_OPTION && chooser.getSelectedFile() != null) {
+				    	ZipOutputStream zous = null;
+				    	try {
+				    		zous = new ZipOutputStream(new FileOutputStream(chooser.getSelectedFile()));
+				    		
+				    		List<File> files = FileUtils.listAllFiles(new File(ext.getMainPath()), null);
+				    		for(File f : files) {
+				    			String relativePath = ext.getScriptId() + f.getPath().replace(ext.getMainPath(), ""); //$NON-NLS-1$
+				    			addEntryToZip(f, relativePath, zous);
+				    		}
+				    	} catch(IOException e1) {
+				    		e1.printStackTrace();
+				    	} finally {
+				    		try {
+				    			if(zous != null)
+				    				zous.close();
+							} catch (IOException e1) {
+							}
+				    	}
+				    }
+					
+					//File scriptPath = new File(ScriptExtLauncher.getUserScriptsPath(), "nouveauScript"); //$NON-NLS-1$
+					//FileUtils.
+				}
+			}
+			
+		} else if(e.getSource() == jbImportScript || e.getSource() == jmiImportScript) {
+
+			JFileChooser chooser = new JFileChooser();
+		    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+		    		localisation.getResourceString("description.type.file.zip"), "zip"); //$NON-NLS-1$ //$NON-NLS-2$
+		    chooser.setFileFilter(filter);
+		    
+		    int returnVal = chooser.showOpenDialog(parentframe);
+		    if(returnVal == JFileChooser.APPROVE_OPTION && chooser.getSelectedFile() != null) {
+		    	File scriptFolder = null; 
+		    	
+		    	ZipInputStream zis = null;
+		    	try {
+		    		zis = new ZipInputStream(new FileInputStream(chooser.getSelectedFile()));
+		    		ZipEntry entry = null;
+		    		while((entry = zis.getNextEntry()) != null) {
+		    			File outputFile = new File(getUserScriptsPath(), entry.getName());
+		    			if(!outputFile.isDirectory() && !entry.getName().endsWith("/")) //$NON-NLS-1$
+		    				outputFile.getParentFile().mkdirs();
+		    			else
+		    				outputFile.mkdirs();
+		    			
+		    			if(!outputFile.isDirectory()) {
+			    			if(outputFile.getName().equals("scriptext.xml")) //$NON-NLS-1$
+			    				scriptFolder = outputFile.getParentFile();
+			    			
+			    			FileUtils.dumpStreamToFile(zis, outputFile, false);
+		    			}
+		    		}
+		    	} catch(IOException e1) {
+		    		e1.printStackTrace();
+		    	} finally {
+		    		try {
+		    			if(zis != null)
+		    				zis.close();
+					} catch (IOException e1) {
+					}
+		    	}
+		    	
+		    	if(scriptFolder != null) {
+		    		ScriptExtention scriptExtention = ScriptExtLauncher.loadScript(scriptFolder);
+		    		
+		    		DefaultMutableTreeNode scriptNode = new DefaultMutableTreeNode(scriptExtention);
+		    		addToTypeNode(scriptNode, scriptExtention.getType());
+					
+					for(File annexe : scriptFolder.listFiles()) {
+						if(!annexe.getName().equals(scriptExtention.getScriptFile()) && !annexe.getName().equals("scriptext.xml")) { //$NON-NLS-1$
+							DefaultMutableTreeNode nodeAnnexe = new DefaultMutableTreeNode(annexe);
+							scriptNode.add(nodeAnnexe);
+							
+							if(annexe.isDirectory()) {
+								addFileNode(annexe, nodeAnnexe);
+							}
+						}
+					}
+					
+					treeModel.reload();
+					
+					jtScripts.setSelectionPath(new TreePath(scriptNode.getPath()));
+					
+					openScriptTabForSelectedTreePath();
+		    	}
+		    }
+		} else if(e.getSource() == jmiEditScript) {
+			openScriptTabForSelectedTreePath();
+		} else if(e.getSource() == jmiDeleteScript) {
+			//
+			if(jtScripts.getSelectionPath() != null) {
+				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)jtScripts.getSelectionPath().getLastPathComponent();
+				if(selectedNode.getUserObject() instanceof ScriptExtention) {
+					ScriptExtention ext = (ScriptExtention)selectedNode.getUserObject();
+					if (JOptionPane.showConfirmDialog(this, 
+							localisation.getResourceString("scriptmanager.confirm.delete", ext.getScriptName()), //$NON-NLS-1$
+							localisation.getResourceString("scriptmanager.confirm.delete.title"), //$NON-NLS-1$
+							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+					
+						selectedNode.removeFromParent();
+						
+						ScriptExtLauncher.removeScript(ext);
+						
+						treeModel.reload();
+						
+						try {
+							FileUtils.deleteFilesPath(new File(ext.getMainPath()));
+						} catch (IOException e1) {
+							DisplayableErrorHelper.displayException(e1);
+							e1.printStackTrace();
+						}
+					}
+				} else if(selectedNode.getUserObject() instanceof File) {
+					File deleteFile = (File)selectedNode.getUserObject();
+					if (JOptionPane.showConfirmDialog(this, 
+							localisation.getResourceString("scriptmanager.confirm.file.delete", deleteFile.getName()), //$NON-NLS-1$
+							localisation.getResourceString("scriptmanager.confirm.delete.title"), //$NON-NLS-1$
+							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+						if(deleteFile.isDirectory()) {
+							try {
+								FileUtils.deleteFilesPath(deleteFile);
+							} catch (IOException e1) {
+								DisplayableErrorHelper.displayException(e1);
+								e1.printStackTrace();
+							}
+						} else {
+							deleteFile.delete();
+						}
+						
+						selectedNode.removeFromParent();
+						treeModel.reload();
+					}
+				}
+			}
+		} else if(e.getSource() == jmiExecuteScript) {
+			if(jtScripts.getSelectionPath() != null) {
+				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)jtScripts.getSelectionPath().getLastPathComponent();
+				if(selectedNode.getUserObject() instanceof ScriptExtention) {
+					ScriptExtention ext = (ScriptExtention)selectedNode.getUserObject();
+					
+					try {
+						if(ext.getScriptInterface() != null)
+							ext.getScriptInterface().unload();
+						ext.compileScript();
+						ext.getScriptInterface().load((ConcoursJeunesFrame)parentframe, ((ConcoursJeunesFrame)parentframe).profile);
+					} catch (MalformedURLException ex) {
+						DisplayableErrorHelper.displayException(ex);
+						ex.printStackTrace();
+					} catch (IOException ex) {
+						ex.printStackTrace();
+					} catch (ScriptException ex) {
+						DisplayableErrorHelper.displayException(ex);
+					} catch (UndeclaredThrowableException ex) {
+						DisplayableErrorHelper.displayException(ex.getUndeclaredThrowable());
+					} catch (Exception ex) {
+						DisplayableErrorHelper.displayException(ex);
+					}
+				}
+			}
+		} else if(e.getSource() == jmiAddFile) {
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)jtScripts.getSelectionPath().getLastPathComponent();
+			
+			JFileChooser chooser = new JFileChooser();		    
+		    int returnVal = chooser.showOpenDialog(parentframe);
+		    if(returnVal == JFileChooser.APPROVE_OPTION && chooser.getSelectedFile() != null) {
+		    	File parentDirectory = null;
+				
+				if(selectedNode.getUserObject() instanceof ScriptExtention) {
+					ScriptExtention ext = (ScriptExtention)selectedNode.getUserObject();
+					
+					parentDirectory = new File(ext.getMainPath());
+				} else {
+					parentDirectory = (File)selectedNode.getUserObject();
+				}
+				
+				if(parentDirectory != null) {
+					try {
+						File importedFile = new File(parentDirectory, chooser.getSelectedFile().getName());
+						FileUtils.copyFile(chooser.getSelectedFile(), importedFile);
+						
+						DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode(importedFile);
+			    		selectedNode.add(fileNode);
+			    		
+			    		treeModel.reload();
+					} catch (FileNotFoundException e1) {
+						DisplayableErrorHelper.displayException(e1);
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						DisplayableErrorHelper.displayException(e1);
+						e1.printStackTrace();
+					}
+				}
+		    }
+		}  else if(e.getSource() == jmiCreateDirectory) {
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)jtScripts.getSelectionPath().getLastPathComponent();
+			File parentDirectory = null;
+			
+			if(selectedNode.getUserObject() instanceof ScriptExtention) {
+				ScriptExtention ext = (ScriptExtention)selectedNode.getUserObject();
+				
+				parentDirectory = new File(ext.getMainPath());
+			} else {
+				parentDirectory = (File)selectedNode.getUserObject();
+			}
+			
+			if(parentDirectory != null) {
+				String directoryName = null;
+				
+				Object[] message = new Object[2];
+		        message[0] = localisation.getResourceString("scriptmanager.newdirectory.name.query"); //Message apparaissant dans le corps du dialog //$NON-NLS-1$
+		        message[1] = new JTextField();
+		 
+		        //Options (nom des boutons)
+		        String option[] = {
+		        		localisation.getResourceString("scriptmanager.newdirectory.validate"), //$NON-NLS-1$
+		        		localisation.getResourceString("scriptmanager.newdirectory.cancel") //$NON-NLS-1$
+		        	};
+		 
+		        int result = JOptionPane.showOptionDialog(
+		                null, // fenêtre parente
+		                message, // corps du dialogue
+		                localisation.getResourceString("scriptmanager.newdirectory.title"),// Titre du dialogue //$NON-NLS-1$
+		                JOptionPane.DEFAULT_OPTION, // type de dialogue
+		                JOptionPane.QUESTION_MESSAGE, // type icône
+		                null, // icône optionnelle
+		                option, // boutons
+		                message[1] // objet ayant le focus par défaut
+		        );
+		 
+		        if(result == 0){
+		        	directoryName = new String(((JTextField)message[1]).getText());
+		        }
+		        
+		        if(directoryName != null) {
+		        	File newDirectory = new File(parentDirectory,directoryName);
+		        	
+		        	newDirectory.mkdirs();
+		        	
+		        	DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode(newDirectory);
+		    		selectedNode.add(fileNode);
+		    		
+		    		treeModel.reload();
+		        }
+			}
+		} else if(e.getSource() == jmiNewFile) {
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)jtScripts.getSelectionPath().getLastPathComponent();
+			File parentDirectory = null;
+			
+			if(selectedNode.getUserObject() instanceof ScriptExtention) {
+				ScriptExtention ext = (ScriptExtention)selectedNode.getUserObject();
+				
+				parentDirectory = new File(ext.getMainPath());
+			} else {
+				parentDirectory = (File)selectedNode.getUserObject();
+			}
+			
+			if(parentDirectory != null) {
+				String fileName = null;
+				
+				Object[] message = new Object[2];
+		        message[0] = localisation.getResourceString("scriptmanager.newfile.name.query"); //Message apparaissant dans le corps du dialog //$NON-NLS-1$
+		        message[1] = new JTextField();
+		 
+		        //Options (nom des boutons)
+		        String option[] = {
+		        		localisation.getResourceString("scriptmanager.newfile.validate"), //$NON-NLS-1$
+		        		localisation.getResourceString("scriptmanager.newfile.cancel") //$NON-NLS-1$
+		        	};
+		 
+		        int result = JOptionPane.showOptionDialog(
+		                null, // fenêtre parente
+		                message, // corps du dialogue
+		                localisation.getResourceString("scriptmanager.newfile.title"),// Titre du dialogue //$NON-NLS-1$
+		                JOptionPane.DEFAULT_OPTION, // type de dialogue
+		                JOptionPane.QUESTION_MESSAGE, // type icône
+		                null, // icône optionnelle
+		                option, // boutons
+		                message[1] // objet ayant le focus par défaut
+		        );
+		 
+		        if(result == 0){
+		        	fileName = ((JTextField)message[1]).getText();
+		        }
+		        
+		        if(fileName != null) {
+		        	File newFile = new File(parentDirectory,fileName);
+		        	
+		        	try {
+						if(newFile.createNewFile()) {
+							DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode(newFile);
+				    		selectedNode.add(fileNode);
+				    		
+				    		treeModel.reload();
+						}
+					} catch (IOException e1) {
+						DisplayableErrorHelper.displayException(e1);
+						e1.printStackTrace();
+					}
+		        }
+			}
 		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == jtScripts) {
-			if(e.getClickCount() == 2) {
-				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)jtScripts.getSelectionPath().getLastPathComponent();
-				if(selectedNode.getUserObject() instanceof ScriptExtention) {
-					ScriptExtention ext = (ScriptExtention)selectedNode.getUserObject();
-					
-					String scriptName = ext.getScriptName();
-					if(scriptName == null || scriptName.isEmpty())
-						scriptName = new File(ext.getMainPath()).getName();
-					
-					jtpScriptEditorTabs.addTab(scriptName, getScriptPane(ext));
-					jtpScriptEditorTabs.setSelectedIndex(jtpScriptEditorTabs.getTabCount()-1);
-				} else if(selectedNode.getUserObject() instanceof File) {
-					String scriptName = ((File)selectedNode.getUserObject()).getName();
-					//jtpScriptEditorTabs.addTab(scriptName, getScriptPane(ext));
-					jtpScriptEditorTabs.setSelectedIndex(jtpScriptEditorTabs.getTabCount()-1);
-					
-					jtpScriptEditorTabs.addTab(scriptName, getScriptPane((File)selectedNode.getUserObject()));
-					jtpScriptEditorTabs.setSelectedIndex(jtpScriptEditorTabs.getTabCount()-1);
-				}
-			} else if(e.getModifiers() == MouseEvent.BUTTON3) {
+			if(e.getClickCount() == 2 && jtScripts.getSelectionPath() != null) {
+				openScriptTabForSelectedTreePath();
+			} else if(e.getButton() == MouseEvent.BUTTON3) {
+				Point coord = e.getPoint();
+
+				TreePath destinationPath = jtScripts.getPathForLocation(coord.x, coord.y);
+
+				if(destinationPath != null) {
+					jtScripts.setSelectionPath(destinationPath);
 				
+					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)destinationPath.getLastPathComponent();
+					if(selectedNode.getUserObject() instanceof ScriptExtention) {
+						jmiNewScript.setVisible(false);
+						jmiEditScript.setVisible(true);
+						jmiExecuteScript.setVisible(true);
+						jmiImportScript.setVisible(false);
+						jmiExportScript.setVisible(true);
+						jmiNewFile.setVisible(true);
+						jmiDeleteScript.setVisible(true);
+						jmiAddFile.setVisible(true);
+						jmiCreateDirectory.setVisible(true);
+					} else if(selectedNode.getUserObject() instanceof File){
+						jmiNewScript.setVisible(false);
+						jmiEditScript.setVisible(false);
+						jmiExecuteScript.setVisible(false);
+						jmiImportScript.setVisible(false);
+						jmiExportScript.setVisible(false);
+						jmiDeleteScript.setVisible(true);
+						jmiNewFile.setVisible(((File)selectedNode.getUserObject()).isDirectory());
+						jmiAddFile.setVisible(((File)selectedNode.getUserObject()).isDirectory());
+						jmiCreateDirectory.setVisible(((File)selectedNode.getUserObject()).isDirectory());
+					} else {
+						jmiNewScript.setVisible(true);
+						jmiEditScript.setVisible(false);
+						jmiExecuteScript.setVisible(false);
+						jmiImportScript.setVisible(true);
+						jmiExportScript.setVisible(false);
+						jmiDeleteScript.setVisible(false);
+						jmiAddFile.setVisible(false);
+						jmiNewFile.setVisible(false);
+						jmiCreateDirectory.setVisible(false);
+					}
+					jpmTreeAction.show(e.getComponent(), e.getX(), e.getY());
+				}
 			}
 		}
 	}
@@ -757,5 +1453,70 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 			}
 		}
 	}
-
+	
+	class NoticeTableModel extends AbstractTableModel {
+		
+		List<ParserNotice> notices = new ArrayList<ParserNotice>();
+		
+		public void addNotice(ParserNotice notice) {
+			notices.add(notice);
+			
+			fireTableRowsInserted(notices.size()-1,notices.size()-1);
+		}
+		
+		public void clear() {
+			if(notices.size() > 0) {
+				int nbDeletedElement = notices.size();
+				
+				notices.clear();
+				
+				fireTableRowsDeleted(0, nbDeletedElement-1);
+			}
+		}
+		
+		@SuppressWarnings("nls")
+		@Override
+		public String getColumnName(int column) {
+			switch (column) {
+				case 0:
+					return localisation.getResourceString("scriptmanager.noticetab.line");
+				case 1:
+					return localisation.getResourceString("scriptmanager.noticetab.level");
+				case 2:
+					return localisation.getResourceString("scriptmanager.noticetab.message");
+			}
+			return "";
+		}
+		
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			if(rowIndex < notices.size()) {
+				ParserNotice notice = notices.get(rowIndex);
+				
+				switch (columnIndex) {
+					case 0:
+						return (notice.getLine()+1);
+					case 1:
+						//String color = notice.getLevel() == 0 ? "red" : "orange";
+						//return "<html><span style=\"color:" + color +";\">" + notice.getLevel() + "</span></html>";
+						return notice.getLevel();
+					case 2:
+						return notice.getMessage();
+					default:
+						break;
+				}
+			}
+			return null;
+		}
+		
+		@Override
+		public int getRowCount() {
+			return notices.size();
+		}
+		
+		@Override
+		public int getColumnCount() {
+			return 3;
+		}
+	}
 }
