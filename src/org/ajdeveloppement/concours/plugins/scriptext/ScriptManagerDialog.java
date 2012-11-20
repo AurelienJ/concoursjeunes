@@ -187,8 +187,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.parser.ParserNotice;
 import org.fife.ui.rtextarea.Gutter;
 import org.fife.ui.rtextarea.RTextScrollPane;
-
-import sun.org.mozilla.javascript.Context;
+import org.mozilla.javascript.Context;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -283,6 +282,8 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 		nodeStartup.setUserObject(localisation.getResourceString("scriptmanager.category.startup")); //$NON-NLS-1$
 		nodeUiStartup.setUserObject(localisation.getResourceString("scriptmanager.category.uiStartup")); //$NON-NLS-1$
 		nodeOnDemand.setUserObject(localisation.getResourceString("scriptmanager.category.onDemand")); //$NON-NLS-1$
+		
+		treeModel.reload();
 	}
 
 	@SuppressWarnings("unchecked")

@@ -15,6 +15,7 @@
 				<include name="plugins/language_support.jar"/>
 				<include name="plugins/js-14.jar"/>
 				<include name="ressources/repositories/ScriptExt.xml"/>
+				<include name="ressources/templates/scriptext/**"/>
 			</fileset>
 		</copy>
 		

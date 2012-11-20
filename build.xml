@@ -91,6 +91,7 @@
 				<exclude name="ressources/repositories/**"/>
 				<exclude name="ressources/sql/importResultArc.sql"/>
 				<exclude name="config/ffta.properties" />
+				<exclude name="ressources/templates/scriptext/**"/>
 			</fileset>
 		</copy>
 		

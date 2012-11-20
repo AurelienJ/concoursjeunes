@@ -7,7 +7,8 @@
  * Doc API concoursjeunes:
  * http://hudson.ajdeveloppement.org/job/ConcoursJeunes_2.3_Release/javadoc/
  * 
- * Les fonction load() et unload() ne doivent pas être supprimer pour que le script fonctionne
+ * Les fonctions load() et unload() ne doivent pas être supprimées pour que le script 
+ * fonctionne
  * 
  * @author: <Votre Nom>
  */
