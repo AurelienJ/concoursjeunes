@@ -19,7 +19,7 @@
 	<classpathentry kind="lib" path="lib/h2-1.3.160.jar"/>
 	<classpathentry kind="lib" path="plugins/rsyntaxtextarea.jar" sourcepath="/RSyntaxTextArea/src"/>
 	<classpathentry kind="lib" path="plugins/autocomplete.jar"/>
-	<classpathentry kind="lib" path="plugins/js-14.jar"/>
 	<classpathentry kind="lib" path="plugins/language_support.jar"/>
+	<classpathentry kind="lib" path="plugins/js-14.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
