@@ -41,7 +41,8 @@ if(dbVersion == 0) {
 		updateReglements();
 		sql.executeScript("../sql/ImportClubLFBTA.sql");
 	} else if(dbVersion < 31) {
-		sql.executeUpdate("ALTER TABLE CONTACT ADD UPPER_NAME VARCHAR(128) as UPPER(NAME)");
+
+		sql.executeUpdate("ALTER TABLE CONTACT ADD UPPER_NAME IF NOT EXISTS VARCHAR(128) as UPPER(NAME)");
 		sql.executeUpdate("CREATE INDEX IF NOT EXISTS I_UPPER_NAME ON CONTACT (UPPER_NAME ASC)");
 	}
 	
@@ -51,11 +52,14 @@ if(dbVersion == 0) {
 	}
 	
 	if(dbVersion < 33) {
-		sql.executeUpdate("INSERT INTO BLASONS VALUES (11, STRINGDECODE('60cm R\u00e9dduit (8-10)'), 0.5, 0.5, 1, 58, 'targetface_fita_60_reducted.png')");
-		sql.executeUpdate("INSERT INTO ANCRAGES_BLASONS VALUES (11, 0, 0, 0)");
-		sql.executeUpdate("INSERT INTO ANCRAGES_BLASONS VALUES (11, 1, 0.5, 0)");
-		sql.executeUpdate("INSERT INTO ANCRAGES_BLASONS VALUES (11, 2, 0, 0.5)");
-		sql.executeUpdate("INSERT INTO ANCRAGES_BLASONS VALUES (11, 3, 0.5, 0.5)");
+		sql.executeUpdate("MERGE INTO BLASONS VALUES (10, STRINGDECODE('80cm R\u00e9duit (5-10)'), 0.5, 0.5, 1, 79, 'targetface_fita_80_reducted.png');");
+		sql.executeUpdate("MERGE INTO BLASONS VALUES (11, STRINGDECODE('60cm R\u00e9duit (8-10)'), 0.5, 0.5, 1, 58, 'targetface_fita_60_reducted.png')");
+		sql.executeUpdate("MERGE INTO ANCRAGES_BLASONS VALUES (11, 0, 0, 0)");
+		sql.executeUpdate("MERGE INTO ANCRAGES_BLASONS VALUES (11, 1, 0.5, 0)");
+		sql.executeUpdate("MERGE INTO ANCRAGES_BLASONS VALUES (11, 2, 0, 0.5)");
+		sql.executeUpdate("MERGE INTO ANCRAGES_BLASONS VALUES (11, 3, 0.5, 0.5)");
+		
+		updateReglements();
 	}
 }
 

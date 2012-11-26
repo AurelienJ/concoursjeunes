@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS PARAM (
 		DEFAULT_LANG VARCHAR(5) NOT NULL DEFAULT 'fr',
 		DBUUID UUID NOT NULL DEFAULT RANDOM_UUID()
 	);
-INSERT INTO PARAM (DBVERSION, APPREVISION, DEFAULT_LANG) VALUES (30, 1, 'fr');
+INSERT INTO PARAM (DBVERSION, APPREVISION, DEFAULT_LANG) VALUES (33, 1, 'fr');
 
 CREATE TABLE IF NOT EXISTS LIBELLE (
 		ID_LIBELLE UUID NOT NULL DEFAULT RANDOM_UUID(),
@@ -304,8 +304,8 @@ INSERT INTO BLASONS VALUES (6, 'Tri Spot Vertical', 0.25, 1, 1, 24, 'targetface_
 INSERT INTO BLASONS VALUES (7, 'Tri Spot 60 Vertical', 0.25, 1, 1, 59, 'targetface_fita_trispot_60.png');
 INSERT INTO BLASONS VALUES (8, 'Carte Beursault (Championnats)', 1, 1, 4, 23, 'targetface_ffta_beursault.gif');
 INSERT INTO BLASONS VALUES (9, 'Carte Beursault (Bouquet)', 1, 1, 4, 23, 'targetface_ffta_beursault_bouquet.png');
-INSERT INTO BLASONS VALUES (10, STRINGDECODE('80cm R\u00e9dduit (5-10)'), 0.5, 0.5, 1, 79, 'targetface_fita_80_reducted.png');
-INSERT INTO BLASONS VALUES (11, STRINGDECODE('60cm R\u00e9dduit (8-10)'), 0.5, 0.5, 1, 58, 'targetface_fita_60_reducted.png');
+INSERT INTO BLASONS VALUES (10, STRINGDECODE('80cm R\u00e9duit (5-10)'), 0.5, 0.5, 1, 79, 'targetface_fita_80_reducted.png');
+INSERT INTO BLASONS VALUES (11, STRINGDECODE('60cm R\u00e9duit (8-10)'), 0.5, 0.5, 1, 58, 'targetface_fita_60_reducted.png');
 
 CREATE TABLE ANCRAGES_BLASONS (
 		NUMBLASON INTEGER NOT NULL,
