@@ -524,7 +524,7 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 	private void saveScript(File scriptFile, String content) {
 		BufferedWriter writer = null;
 		try {
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(scriptFile)));
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(scriptFile), "UTF-8")); //$NON-NLS-1$
 			
 			writer.write(content);
 		} catch (FileNotFoundException e) {

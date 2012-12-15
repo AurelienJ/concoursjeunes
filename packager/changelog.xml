@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.7.0_09-icedtea" class="java.beans.XMLDecoder">
+<java version="1.7.0_09" class="java.beans.XMLDecoder">
  <object class="java.util.ArrayList">
   <void method="add">
    <object class="org.ajdeveloppement.updater.Version">
@@ -819,6 +819,27 @@
     </void>
     <void property="version">
      <string>2.30.12</string>
+    </void>
+   </object>
+  </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Correction de problèmes si aucune fédération n&apos;est saisi au premier démarrage de l&apos;application: On force désormais le choix d&apos;une fédération </string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1355593619896</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.13</string>
     </void>
    </object>
   </void>

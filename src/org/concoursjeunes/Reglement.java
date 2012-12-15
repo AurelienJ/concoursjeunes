@@ -927,7 +927,7 @@ public class Reglement implements ObjectPersistence {
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
 		if(session == null || !session.contains(this)) {
-			if(federation.getNumFederation() == 0)
+			if(federation != null &&federation.getNumFederation() == 0)
 				federation.save(session);
 			
 			//si le numéro de règlement est à 0, regarde si il n'existe pas malgré tous

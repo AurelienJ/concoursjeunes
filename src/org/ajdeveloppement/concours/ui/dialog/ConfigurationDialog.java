@@ -155,6 +155,7 @@ import com.lowagie.text.Rectangle;
  * @author Aurélien Jeoffray
  * @version 2.2
  */
+@SuppressWarnings("rawtypes")
 @Localizable(textMethod="setTitle",value="configuration.title")
 public class ConfigurationDialog extends JDialog implements ActionListener, AutoCompleteDocumentListener {
 
@@ -293,6 +294,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 
 	public ConfigurationDialog(JFrame parentframe, Profile profile) {
 		super(parentframe, true);
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		
 		this.parentframe = parentframe;
 		this.localisation = profile.getLocalisation();
@@ -616,7 +618,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 		completeConcoursPanel(workConfiguration);
 		completeEtiquettePanel(workConfiguration);
 		completeAdvancedPanel(workConfiguration);
-		jbAnnuler.setEnabled(!workAppConfiguration.isFirstboot());
+		jbAnnuler.setEnabled(!workAppConfiguration.isFirstboot() && workConfiguration.getFederation() != null);
 	}
 
 	private void completeGeneralPanel(Configuration configuration) {
@@ -887,6 +889,14 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 			JOptionPane.showMessageDialog(this, 
 					localisation.getResourceString("configuration.ecran.general.errornameclub"), //$NON-NLS-1$
 					localisation.getResourceString("configuration.ecran.general.errornameclub.title"),  //$NON-NLS-1$
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if(jcbFederation.getSelectedItem() == null) {
+			JOptionPane.showMessageDialog(this, 
+					localisation.getResourceString("configuration.ecran.general.errorselectfederation"), //$NON-NLS-1$
+					localisation.getResourceString("configuration.ecran.general.errorselectfederation.title"),  //$NON-NLS-1$
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
