@@ -21,6 +21,8 @@
 		<revisionscreator 
 				revisionpath="${projet.pack.dir}/plugins/BackupRestorePlugin/revision.xml.gz"
 				reposname="BackupRestorePlugin"
+				changelogXML="packager/changelog-BackupRestorePlugin.xml"
+				changelogTXT="${projet.pack.dir}/changelog-BackupRestorePlugin.txt"
 				keystorepath="${projet.keystorepath}"
 				keystorepassword="${projet.keystorepassword}"
 				signkeysalias="${projet.signkeyalias}"

@@ -402,60 +402,59 @@ public class ShootingLine implements FicheConcoursListener {
 					nbConcurrentReel -= 1;
 				}
 			}
+
+			//calcul le nombre et la position des cibles qui vont être occupé pour la distance
+			int startCible = curCible;
+			int endCible = curCible + (int)Math.ceil((double)nbConcurrent / (double)nbTireurParCible) - 1;
 			
-			//if(nbConcurrent != 0) {
-				//calcul le nombre et la position des cibles qui vont être occupé pour la distance
-				int startCible = curCible;
-				int endCible = curCible + (int)Math.ceil((double)nbConcurrent / (double)nbTireurParCible) - 1;
+			if(startCible < 1)
+				startCible = 1;
+			
+			//calcul le nombre de slot à occuper sur la dernière cible
+			int nbArcherOnFirstTarget = (currentTargetsTable.get(startCible - 1).getNbArcher() + currentTargetsTable.get(startCible - 1).getNbHandicap());
+			if(nbArcherOnFirstTarget > 0) {
+				int nbArcherOnLastTarget = nbConcurrent % nbTireurParCible;
+				int maxAvailableFreeTarget = nbTireurParCible - nbArcherOnFirstTarget;
+				int availableFreeTarget = currentTargetsTable.get(startCible - 1).getNbAvailableSlotsFor(distancesEtBlason);
+				if(availableFreeTarget > maxAvailableFreeTarget)
+					availableFreeTarget = maxAvailableFreeTarget;
+				nbArcherOnLastTarget = ((nbArcherOnLastTarget==0) ? nbTireurParCible : nbArcherOnLastTarget) - availableFreeTarget;
+				if(nbArcherOnLastTarget > 0)
+					endCible += 1;
+			}
+			
+			if(endCible > ficheConcours.getParametre().getNbCible())
+				return false;
+			
+			if(endCible < startCible)
+				endCible = startCible;
+			
+			if(nbConcurrent > nbConcurrentReel) { //si on a des archers handicapé dans le groupe
+				//extraire les archers handicapé pour les placer en premier
+				//afin d'éviter d'avoir des problèmes pour les placer
+				ArrayList<Concurrent> concurrentsHandicape = new ArrayList<Concurrent>();
+				for(Concurrent concurrent : concurrents) {
+					if(concurrent.isHandicape()) {
+						concurrentsHandicape.add(concurrent);
+					}
+				}
 				
-				if(startCible < 1)
-					startCible = 1;
-				
-					//calcul le nombre de slot à occuper sur la dernière cible
-					int nbArcherOnFirstTarget = (currentTargetsTable.get(startCible - 1).getNbArcher() + currentTargetsTable.get(startCible - 1).getNbHandicap());
-					if(nbArcherOnFirstTarget > 0) {
-						int nbArcherOnLastTarget = nbConcurrent % nbTireurParCible;
-						int maxAvailableFreeTarget = nbTireurParCible - nbArcherOnFirstTarget;
-						int availableFreeTarget = currentTargetsTable.get(startCible - 1).getNbAvailableSlotsFor(distancesEtBlason);
-						if(availableFreeTarget > maxAvailableFreeTarget)
-							availableFreeTarget = maxAvailableFreeTarget;
-						nbArcherOnLastTarget = ((nbArcherOnLastTarget==0) ? nbTireurParCible : nbArcherOnLastTarget) - availableFreeTarget;
-						if(nbArcherOnLastTarget > 0)
-							endCible += 1;
-					}
-					
-					if(endCible > ficheConcours.getParametre().getNbCible())
-						return false;
-					
-					if(nbConcurrent > nbConcurrentReel) { //si on a des archers handicapé dans le groupe
-						//extraire les archers handicapé pour les placer en premier
-						//afin d'éviter d'avoir des problèmes pour les placer
-						ArrayList<Concurrent> concurrentsHandicape = new ArrayList<Concurrent>();
-						for(Concurrent concurrent : concurrents) {
-							if(concurrent.isHandicape()) {
-								concurrentsHandicape.add(concurrent);
-							}
-						}
-						
-						//place les archers handicapé
-						for(Concurrent concurrent : concurrentsHandicape) {
-							curCible = placementConcurrent(concurrent, startCible, curCible, endCible, nbTireurParCible, simulationMode);
-						}
-					}
-					
-					//place les archers valide
-					for(Concurrent concurrent : concurrents) {
-						if(!concurrent.isHandicape()) {
-							curCible = placementConcurrent(concurrent, startCible, curCible, endCible, nbTireurParCible, simulationMode);
-						}
-					}
-		
-					//int occupation = targets.get(endCible - 1).getNbArcher() + targets.get(endCible - 1).getNbHandicap();
-					
-					//passe au bloc suivant
-					curCible = endCible;
-				//}
-			//}
+				//place les archers handicapé
+				for(Concurrent concurrent : concurrentsHandicape) {
+					curCible = placementConcurrent(concurrent, startCible, curCible, endCible, nbTireurParCible, simulationMode);
+				}
+			}
+			
+			//place les archers valide
+			for(Concurrent concurrent : concurrents) {
+				if(!concurrent.isHandicape()) {
+					curCible = placementConcurrent(concurrent, startCible, curCible, endCible, nbTireurParCible, simulationMode);
+				}
+			}
+
+
+			//passe au bloc suivant
+			curCible = endCible;
 		}
 		
 		firePasDeTirChanged();

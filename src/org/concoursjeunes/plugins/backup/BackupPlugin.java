@@ -146,7 +146,7 @@ public class BackupPlugin {
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 	    	JarOutputStream jos = null;
 			try {
-				List<File> concoursFiles = FileUtils.listAllFiles(concoursPath, ".*\\.cta", false); //$NON-NLS-1$
+				List<File> concoursFiles = FileUtils.listAllFiles(concoursPath, ".*\\.ctax?", false); //$NON-NLS-1$
 				
 				File backupFile = chooser.getSelectedFile();
 				if(!backupFile.getName().endsWith(".backup")) //$NON-NLS-1$
