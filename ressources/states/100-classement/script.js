@@ -79,8 +79,13 @@ function printState(ficheConcours, template, document, writer, options) {
 				tplClassement.parse("categories.NB_TIREURS", "" + sortList.size());
 
 				for (var j = 0; j < nbSerie; j++) {
-					tplClassement.parse("categories.distances.DISTANCE",
-							ficheConcours.getParametre().getReglement().getDistancesEtBlasonFor(scnaUse.get(i).getFilteredCriteriaSet(ficheConcours.getParametre().getReglement().getPlacementFilter())).get(0).getDistance()[j] + "m"); //$NON-NLS-1$
+					var distancesEtBlasons = ficheConcours.getParametre().getReglement().getDistancesEtBlasonFor(
+						scnaUse.get(i).getFilteredCriteriaSet(ficheConcours.getParametre().getReglement().getPlacementFilter()));
+
+					if (distancesEtBlasons != null && distancesEtBlasons.size() > 0)
+						tplClassement.parse("categories.distances.DISTANCE", distancesEtBlasons.get(0).getDistance()[j] + "m"); //$NON-NLS-1$
+					else
+						tplClassement.parse("categories.distances.DISTANCE", "non définit"); //$NON-NLS-1$
 					tplClassement.loopBloc("categories.distances");
 				}
 				

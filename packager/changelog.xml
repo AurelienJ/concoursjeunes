@@ -864,5 +864,26 @@
     </void>
    </object>
   </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Correction d&apos;un plantage si aucun element de critère n&apos;est définit sous un critère de reglement</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1362819010647</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.15</string>
+    </void>
+   </object>
+  </void>
  </object>
 </java>

@@ -685,8 +685,10 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 				CriterionElement element = concurrent.getCriteriaSet().getCriterionElement(key);
 				if(element != null)
 					jcbCategorieTable.get(key).setSelectedItem(element);
-				else
-					jcbCategorieTable.get(key).setSelectedIndex(0);
+				else {
+					if(jcbCategorieTable.get(key).getModel().getSize() > 0) 
+						jcbCategorieTable.get(key).setSelectedIndex(0);
+				}
 			}
 		}
 		jcbSurclassement.setSelected(concurrent.isSurclassement());
@@ -1009,7 +1011,8 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 		differentiationCriteria.setReglement(ficheConcours.getParametre().getReglement());
 		for (Criterion key : ficheConcours.getParametre().getReglement().getListCriteria()) {
 			CriterionElement criterionElement = (CriterionElement)jcbCategorieTable.get(key).getSelectedItem();
-			differentiationCriteria.addCriterionElement(criterionElement);
+			if(criterionElement != null)
+				differentiationCriteria.addCriterionElement(criterionElement);
 		}
 
 		return differentiationCriteria;
@@ -1300,8 +1303,10 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 							CriterionElement element = surclassement.getCriterionElement(key);
 							if(element != null)
 								jcbCategorieTable.get(key).setSelectedItem(element);
-							else
-								jcbCategorieTable.get(key).setSelectedIndex(0);
+							else {
+								if(jcbCategorieTable.get(key).getModel().getSize() > 0) 
+									jcbCategorieTable.get(key).setSelectedIndex(0);
+							}
 						}
 						jcbSurclassement.setSelected(true);
 					}

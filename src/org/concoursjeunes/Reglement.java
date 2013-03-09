@@ -414,7 +414,14 @@ public class Reglement implements ObjectPersistence {
 	 * @return la liste des critères de distinction utilisé pour le règlement
 	 */
 	public List<Criterion> getListCriteria() {
-		return listCriteria;
+		List<Criterion> criteria = new ArrayList<Criterion>();
+		
+		for(Criterion criterion : listCriteria) {
+			if(criterion.getCriterionElements() != null && criterion.getCriterionElements().size() > 0)
+				criteria.add(criterion);
+		}
+		
+		return criteria;
 	}
 
 	/**
@@ -543,7 +550,8 @@ public class Reglement implements ObjectPersistence {
 	public Map<Criterion, Boolean> getPlacementFilter() {
 		Hashtable<Criterion, Boolean> filterCriteria = new Hashtable<Criterion, Boolean>();
 		for (Criterion criterion : listCriteria) {
-			filterCriteria.put(criterion, criterion.isPlacement());
+			if(criterion.getCriterionElements() != null && criterion.getCriterionElements().size() > 0)
+				filterCriteria.put(criterion, criterion.isPlacement());
 		}
 
 		return filterCriteria;
@@ -558,7 +566,8 @@ public class Reglement implements ObjectPersistence {
 	public Map<Criterion, Boolean> getClassementFilter() {
 		Hashtable<Criterion, Boolean> filterCriteria = new Hashtable<Criterion, Boolean>();
 		for (Criterion criterion : listCriteria) {
-			filterCriteria.put(criterion, criterion.isClassement());
+			if(criterion.getCriterionElements() != null && criterion.getCriterionElements().size() > 0)
+				filterCriteria.put(criterion, criterion.isClassement());
 		}
 
 		return filterCriteria;
