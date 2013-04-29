@@ -97,6 +97,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBException;
 
 import org.ajdeveloppement.commons.io.XMLSerializer;
@@ -183,6 +184,14 @@ public class ConfigurationManager {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+		
+		try {
+			ImageIcon testLogoPath = new ImageIcon(configuration.getLogoPath());
+			if(testLogoPath.getIconWidth() < 0)
+				configuration.setLogoPath("ressources/logos/default.jpg"); //$NON-NLS-1$
+		} catch(Exception e) {
+			configuration.setLogoPath("ressources/logos/default.jpg"); //$NON-NLS-1$
 		}
 		
 		return configuration;

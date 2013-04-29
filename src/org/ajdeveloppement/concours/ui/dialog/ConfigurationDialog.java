@@ -765,8 +765,8 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 	private void changeLogoPath() {
 		File f;
 		JFileChooser fileDialog = new JFileChooser(workConfiguration.getLogoPath());
-		FileNameExtensionFilter filtreimg = new FileNameExtensionFilter(localisation.getResourceString("filter.gifjpeg"), "jpg", "gif"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		fileDialog.addChoosableFileFilter(filtreimg);
+		FileNameExtensionFilter filtreimg = new FileNameExtensionFilter(localisation.getResourceString("filter.gifjpeg"), "jpg", "gif","png"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		fileDialog.setFileFilter(filtreimg);
 		fileDialog.setDialogType(JFileChooser.OPEN_DIALOG);
 		fileDialog.setAccessory(new ImagePreview(fileDialog));
 		fileDialog.showOpenDialog(this);
@@ -774,11 +774,14 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 		if (f == null) {
 			return;
 		}
+		
 		ImageIcon logo = new ImageIcon(f.getPath());
-		logo = new ImageIcon(logo.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-		jbLogoPath.setIcon(logo);
-		//jbLogoPath.setText("<html><img src=\"file:" + f.getPath() + "\" width=90 height=100></html>"); 
-		workConfiguration.setLogoPath(f.getPath());
+		if(logo.getIconWidth() > -1) {
+			logo = new ImageIcon(logo.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+			jbLogoPath.setIcon(logo);
+			//jbLogoPath.setText("<html><img src=\"file:" + f.getPath() + "\" width=90 height=100></html>"); 
+			workConfiguration.setLogoPath(f.getPath());
+		}
 	}
 
 	public Configuration showConfigurationDialog(AppConfiguration appConfiguration, Configuration configuration) {
