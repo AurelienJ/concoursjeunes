@@ -100,8 +100,8 @@ import org.concoursjeunes.Ancrage;
 import org.concoursjeunes.ApplicationCore;
 import org.concoursjeunes.Concurrent;
 import org.concoursjeunes.DistancesEtBlason;
-import org.concoursjeunes.ShootingLine;
 import org.concoursjeunes.Profile;
+import org.concoursjeunes.ShootingLine;
 import org.concoursjeunes.Target;
 
 import com.lowagie.text.BadElementException;
@@ -296,18 +296,20 @@ public class ShootingLineState {
 			DistancesEtBlason db = DistancesEtBlason.getDistancesEtBlasonForConcurrent(
 					pasDeTir.getFicheConcours().getParametre().getReglement(),
 					concurrent);
-			Ancrage ancrage = db.getTargetFace().getAncrage(concurrent.getPosition());
-			double hr = db.getTargetFace().getHorizontalRatio();
-			double vr = db.getTargetFace().getVerticalRatio();
-			
-			Image image = Image.getInstance(
-					ApplicationCore.staticParameters.getResourceString("path.ressources")  //$NON-NLS-1$
-					+ File.separator + db.getTargetFace().getTargetFaceImage());
-			
-			image.setAbsolutePosition(Converters.centimeterToDpi(startCol + 0.135 + ancrage.getX() * 2.6),
-					pageHeight - Converters.centimeterToDpi(2.6 * vr) - Converters.centimeterToDpi(topMargin + targetPos + ancrage.getY() * 2.6));
-			image.scaleAbsolute(Converters.centimeterToDpi(2.6 * hr), Converters.centimeterToDpi(2.6 * vr));
-			cb.addImage(image);
+			if(db != null) {
+				Ancrage ancrage = db.getTargetFace().getAncrage(concurrent.getPosition());
+				double hr = db.getTargetFace().getHorizontalRatio();
+				double vr = db.getTargetFace().getVerticalRatio();
+				
+				Image image = Image.getInstance(
+						ApplicationCore.staticParameters.getResourceString("path.ressources")  //$NON-NLS-1$
+						+ File.separator + db.getTargetFace().getTargetFaceImage());
+				
+				image.setAbsolutePosition(Converters.centimeterToDpi(startCol + 0.135 + ancrage.getX() * 2.6),
+						pageHeight - Converters.centimeterToDpi(2.6 * vr) - Converters.centimeterToDpi(topMargin + targetPos + ancrage.getY() * 2.6));
+				image.scaleAbsolute(Converters.centimeterToDpi(2.6 * hr), Converters.centimeterToDpi(2.6 * vr));
+				cb.addImage(image);
+			}
 		}
 	}
 	

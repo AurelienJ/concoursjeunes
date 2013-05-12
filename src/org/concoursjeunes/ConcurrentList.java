@@ -323,10 +323,12 @@ public class ConcurrentList {
 			if(depart == -1 || concurrent.getDepart() == depart) {
 				DistancesEtBlason db = DistancesEtBlason.getDistancesEtBlasonForConcurrent(parametre.getReglement(), concurrent);
 
-				if(distancesEtBlason == null || db.haveSameDistancesAndTargetFace(distancesEtBlason)) {
-					sel.add(concurrent);
-					if(handicap && concurrent.isHandicape())
+				if(db != null) {
+					if(distancesEtBlason == null || db.haveSameDistancesAndTargetFace(distancesEtBlason)) {
 						sel.add(concurrent);
+						if(handicap && concurrent.isHandicape())
+							sel.add(concurrent);
+					}
 				}
 			}
 		}

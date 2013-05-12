@@ -435,7 +435,15 @@ public class PhoenixPlugin implements ProfileListener, ApplicationCoreListener {
 	 */
 	@Override
 	public void ficheConcoursRestored(ProfileEvent concoursJeunesEvent) {
-		
+		//Supprime du concours tous les concurrents ne pouvant être placé
+		Reglement reglement = concoursJeunesEvent.getFicheConcours().getParametre().getReglement();
+		ConcurrentList concurrentList = concoursJeunesEvent.getFicheConcours().getConcurrentList();
+		List<Concurrent> concurrents = concurrentList.list();
+		for(Concurrent concurrent : concurrents) {
+			DistancesEtBlason distancesEtBlason = DistancesEtBlason.getDistancesEtBlasonForConcurrent(reglement, concurrent);
+			if(distancesEtBlason == null)
+				concurrentList.remove(concurrent);
+		}
 	}
 
 	@Override
