@@ -155,9 +155,9 @@ public class DistancesEtBlasonBuilder {
 	
 	/**
 	 * 
-	 * @param reglement
-	 * @param rs
-	 * @return
+	 * @param reglement Reglement associate
+	 * @param rs the DistancesEtBlason data
+	 * @return the DistancesEtBlason corresponding to ResultSet
 	 * @throws ObjectPersistenceException
 	 */
 	public static DistancesEtBlason getDistancesEtBlason(Reglement reglement, ResultSet rs) throws ObjectPersistenceException {
@@ -170,7 +170,7 @@ public class DistancesEtBlasonBuilder {
 	 * @param reglement
 	 * @param rs
 	 * @param doNotUseCache ne pas utiliser le cache
-	 * @return
+	 * @the DistancesEtBlason corresponding to ResultSet
 	 * @throws ObjectPersistenceException
 	 */
 	public static DistancesEtBlason getDistancesEtBlason(Reglement reglement, ResultSet rs, boolean doNotUseCache) throws ObjectPersistenceException {

@@ -197,7 +197,7 @@ public class AppConfiguration implements Cloneable {
 
 	/**
 	 * Détermine si c'est le premier lancement de l'application
-	 * @return <code>true</code> si l'application est lancé pour la première fois, <code><false</code> sinon
+	 * @return <code>true</code> si l'application est lancé pour la première fois, <code>false</code> sinon
 	 */
 	public boolean isFirstboot() {
 		return firstboot;
@@ -205,7 +205,6 @@ public class AppConfiguration implements Cloneable {
 
 	/**
 	 * Place l'application sur premier lancement
-	 * @param firstboot <code>true</code> si l'application est lancé pour la première fois, <code><false</code> sinon
 	 */
 	public void setFirstboot(boolean firstboot) {
 		this.firstboot = firstboot;

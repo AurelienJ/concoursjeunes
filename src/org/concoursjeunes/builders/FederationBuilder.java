@@ -147,7 +147,7 @@ public class FederationBuilder {
 	 * 
 	 * @param numFederation
 	 * @param rs
-	 * @return
+	 * @return the Federation corresponding to ResultSet
 	 * @throws ObjectPersistenceException
 	 */
 	@SuppressWarnings("nls")

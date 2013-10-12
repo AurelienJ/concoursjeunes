@@ -423,7 +423,7 @@ public class Concurrent extends Archer implements Cloneable {
 	/**
 	 * informe sur la présentation ou non de l'archer au greffe
 	 * 
-	 * @return presence <i>true</i> si l'archer est coché comme présenté au greffe, <i><false</i> sinon
+	 * @return presence <i>true</i> si l'archer est coché comme présenté au greffe, <i>false</i> sinon
 	 */
 	public boolean isPresence() {
 		return presence;

@@ -444,10 +444,11 @@ public class FicheConcoursFinalsPane extends JPanel implements ActionListener, M
 	}
 	
 	/**
+	 * Make image of final graph for a category
 	 * 
-	 * @param criteriaSet
-	 * @param page
-	 * @return
+	 * @param criteriaSet the final category to print
+	 * @param page the page number to print
+	 * @return Image of finals graph for printing
 	 */
 	private BufferedImage drawPrintableGraph(CriteriaSet criteriaSet, int page) {
 		mxGraph printableGraph = new mxGraph();
