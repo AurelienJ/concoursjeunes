@@ -9,7 +9,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/jgraphx.jar"/>
 	<classpathentry kind="lib" path="lib/beansbinding-1.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/ajcommons-ext.jar"/>
 	<classpathentry kind="lib" path="lib/ajcommons-swingx-ext.jar" sourcepath="/ajcommons-swingx-ext/src"/>
 	<classpathentry kind="lib" path="lib/ajcommons.jar" sourcepath="/ajcommons/src"/>
 	<classpathentry kind="lib" path="lib/swingx-1.6.1.jar"/>
@@ -21,5 +20,6 @@
 	<classpathentry kind="lib" path="plugins/autocomplete.jar"/>
 	<classpathentry kind="lib" path="plugins/language_support.jar"/>
 	<classpathentry kind="lib" path="plugins/js-14.jar"/>
+	<classpathentry kind="lib" path="lib/ajcommons-ext.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
