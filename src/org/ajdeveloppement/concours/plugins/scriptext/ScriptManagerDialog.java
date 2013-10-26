@@ -150,6 +150,7 @@ import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
+import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -181,12 +182,17 @@ import org.concoursjeunes.plugins.Plugin;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.rsta.ac.java.buildpath.JarLibraryInfo;
 import org.fife.rsta.ac.js.JavaScriptLanguageSupport;
+import org.fife.rsta.ui.search.AbstractSearchDialog;
+import org.fife.rsta.ui.search.FindDialog;
+import org.fife.rsta.ui.search.ReplaceDialog;
+import org.fife.rsta.ui.search.SearchDialogSearchContext;
 import org.fife.ui.rsyntaxtextarea.ErrorStrip;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.parser.ParserNotice;
 import org.fife.ui.rtextarea.Gutter;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.fife.ui.rtextarea.SearchEngine;
 import org.mozilla.javascript.Context;
 
 /**
@@ -524,7 +530,7 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 	private void saveScript(File scriptFile, String content) {
 		BufferedWriter writer = null;
 		try {
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(scriptFile), "UTF-8")); //$NON-NLS-1$
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(scriptFile),"UTF-8")); //$NON-NLS-1$
 			
 			writer.write(content);
 		} catch (FileNotFoundException e) {
@@ -710,10 +716,13 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount() == 2) {
-//					jtNotice.getSelectedRow().
-//					jepScript.getDocument()  
-//                    	.getDefaultRootElement().getElement(index-2)  
-//                    	.getStartOffset()
+					try {
+						int numLigne = (Integer)jtNotice.getValueAt(jtNotice.getSelectedRow(), 0);
+
+						jepScript.setCaretPosition(jepScript.getLineStartOffset(numLigne-1));
+					} catch (BadLocationException ble) {
+						ble.printStackTrace(); // Never happens
+					}
 				}
 			}
 		});
@@ -758,7 +767,7 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 		}
 		
 		final JButton jbSauvegarder = new JButton(localisation.getResourceString("scriptmanager.script.save"), //$NON-NLS-1$
-				getIcon("file.icon.save")); //$NON-NLS-1$
+				getIcon("file.icon.save", 16, 16)); //$NON-NLS-1$
 		jbSauvegarder.setEnabled(false);
 		jbSauvegarder.addActionListener(new ActionListener() {
 			
@@ -816,7 +825,55 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 			jtbAction.add(jbExecuter);
 		}
 		
-		//jtbAction.ad
+		ActionListener searchAction = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String command = e.getActionCommand();
+				SearchDialogSearchContext context = ((AbstractSearchDialog)e.getSource()).getSearchContext();
+
+				if (FindDialog.ACTION_FIND.equals(command)) {
+					if (!SearchEngine.find(jepScript, context)) {
+						UIManager.getLookAndFeel().provideErrorFeedback(jepScript);
+					}
+				}
+				else if (ReplaceDialog.ACTION_REPLACE.equals(command)) {
+					if (!SearchEngine.replace(jepScript, context)) {
+						UIManager.getLookAndFeel().provideErrorFeedback(jepScript);
+					}
+				}
+				else if (ReplaceDialog.ACTION_REPLACE_ALL.equals(command)) {
+					int count = SearchEngine.replaceAll(jepScript, context);
+					JOptionPane.showMessageDialog(null, count
+							+ " occurrences replaced.");
+				}
+			}
+		};
+		
+		final ReplaceDialog replaceDialog = new ReplaceDialog(this, searchAction);
+		
+		JButton jbReplace = new JButton(localisation.getResourceString("scriptmanager.search"), //$NON-NLS-1$
+				getIcon("file.icon.script.search")); //$NON-NLS-1$
+		jbReplace.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				replaceDialog.setVisible(true);
+			}
+		});
+		
+		jtbAction.add(jbReplace);
+		
+		jepScript.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) {
+					saveScript(new File(scriptPath), jepScript.getText());
+					jbSauvegarder.setEnabled(false);
+				} else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_F) {
+					replaceDialog.setVisible(true);
+				}
+			}
+		});
 		
 		jepScript.getDocument().addDocumentListener(new DocumentListener() {
 			
@@ -922,11 +979,17 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 	}
 	
 	private ImageIcon getIcon(String propertyKey) {
+		return getIcon(propertyKey, -1, -1);
+	}
+	
+	private ImageIcon getIcon(String propertyKey, int width, int height) {
 		ImageIcon icon = iconsCache.get(propertyKey);
 		if(icon == null) {
 			URL urlIcon = ScriptManagerDialog.class.getResource(iconsResources.getResourceString(propertyKey));
 			if(urlIcon != null) {
 				icon = new ImageIcon(urlIcon);
+				if(width > -1 && height > -1)
+					icon = new ImageIcon(icon.getImage().getScaledInstance(width, height,  java.awt.Image.SCALE_SMOOTH));
 				iconsCache.put(propertyKey, icon);
 			}
 		}

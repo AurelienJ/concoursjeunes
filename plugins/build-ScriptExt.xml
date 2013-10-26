@@ -35,6 +35,12 @@
 				
 				<exclude name="*-filelist.txt"/>
 			</fileset>
+			<system name="macosx">
+				<fileset dir="${projet.pack.dir}/plugins/ScriptExt">
+					<!-- Inutile car inclus dans le classpath de base -->
+					<exclude name="plugins/js.jar"/>
+				</fileset>
+			</system>
 		</revisionscreator>
 	</target>
 </project>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.7.0_21" class="java.beans.XMLDecoder">
+<java version="1.7.0_25" class="java.beans.XMLDecoder">
  <object class="java.util.ArrayList">
   <void method="add">
    <object class="org.ajdeveloppement.updater.Version">
@@ -924,6 +924,27 @@
     </void>
     <void property="version">
      <string>2.30.17</string>
+    </void>
+   </object>
+  </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Correction d&apos;un plantage à l&apos;importation à partir de Result&apos;Arc si 2 archers ont le même numéro de licence dans la base</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1382804855064</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.18</string>
     </void>
    </object>
   </void>

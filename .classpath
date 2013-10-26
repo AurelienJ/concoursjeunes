@@ -15,11 +15,12 @@
 	<classpathentry kind="lib" path="lib/iText-2.1.7.jar"/>
 	<classpathentry kind="lib" path="lib/h2mig_pagestore_addon.jar"/>
 	<classpathentry kind="lib" path="lib/debug.jar"/>
-	<classpathentry kind="lib" path="lib/h2-1.3.160.jar"/>
 	<classpathentry kind="lib" path="plugins/rsyntaxtextarea.jar" sourcepath="/RSyntaxTextArea/src"/>
 	<classpathentry kind="lib" path="plugins/autocomplete.jar"/>
 	<classpathentry kind="lib" path="plugins/language_support.jar"/>
-	<classpathentry kind="lib" path="plugins/js-14.jar"/>
 	<classpathentry kind="lib" path="lib/ajcommons-ext.jar"/>
+	<classpathentry kind="lib" path="lib/h2-1.3.174.jar"/>
+	<classpathentry kind="lib" path="plugins/js.jar"/>
+	<classpathentry kind="lib" path="plugins/rstaui.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
