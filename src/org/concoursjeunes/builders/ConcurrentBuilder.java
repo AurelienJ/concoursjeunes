@@ -189,12 +189,24 @@ public class ConcurrentBuilder {
 				if(pstmtCategoriesContact == null)
 					pstmtCategoriesContact = ApplicationCore.dbConnection.prepareStatement("select NUM_CATEGORIE_CONTACT from ASSOCIER_CATEGORIE_CONTACT where ID_CONTACT = ?"); //$NON-NLS-1$
 				
-				pstmtCategoriesContact.setObject(1, concurrent.getIdContact());
-				
-				ResultSet rsCategoriesContact = pstmtCategoriesContact.executeQuery();
-				while(rsCategoriesContact.next()) {
-					concurrent.getCategories().add(CategoryContactBuilder.getCategoryContact(rsCategoriesContact.getInt("NUM_CATEGORIE_CONTACT"))); //$NON-NLS-1$
+				synchronized (pstmtCategoriesContact) {
+					if(!pstmtCategoriesContact.isClosed()) {
+						pstmtCategoriesContact.setObject(1, concurrent.getIdContact());
+						
+						ResultSet rsCategoriesContact = pstmtCategoriesContact.executeQuery();
+						if(rsCategoriesContact != null) {
+							try {
+								while(!rsCategoriesContact.isClosed() && rsCategoriesContact.next()) {
+									int numCategorieContact = rsCategoriesContact.getInt("NUM_CATEGORIE_CONTACT");//$NON-NLS-1$
+									concurrent.getCategories().add(CategoryContactBuilder.getCategoryContact(numCategorieContact)); 
+								}
+							} finally {
+								rsCategoriesContact.close();
+							}
+						}
+					}
 				}
+				
 				
 			} catch(SQLException e) {
 				throw new ObjectPersistenceException(e);
@@ -278,6 +290,7 @@ public class ConcurrentBuilder {
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
+			
 		} catch (ObjectPersistenceException e) {
 			e.printStackTrace();
 		} catch (Exception e) {

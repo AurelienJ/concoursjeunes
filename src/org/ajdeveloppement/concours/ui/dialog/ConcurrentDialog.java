@@ -191,6 +191,8 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 	private Entite entiteConcurrent;
 	private Archer filter = null;
 	
+	private boolean disableSyncCriteriaSet = false;
+	
 	private static Reglement lastActiveReglement;
 	private static ConcurrentListDialog concurrentListDialog;
 
@@ -681,15 +683,18 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 			jtfAgrement.setText(entiteConcurrent.getAgrement());
 		}
 		if (concurrent.getCriteriaSet() != null) {
+			disableSyncCriteriaSet = true;
 			for (Criterion key : ficheConcours.getParametre().getReglement().getListCriteria()) {
 				CriterionElement element = concurrent.getCriteriaSet().getCriterionElement(key);
-				if(element != null)
+				if(element != null) {
 					jcbCategorieTable.get(key).setSelectedItem(element);
-				else {
+				} else {
 					if(jcbCategorieTable.get(key).getModel().getSize() > 0) 
 						jcbCategorieTable.get(key).setSelectedIndex(0);
 				}
 			}
+			syncCriteriaSet();
+			disableSyncCriteriaSet = false;
 		}
 		jcbSurclassement.setSelected(concurrent.isSurclassement());
 		
@@ -1027,6 +1032,51 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 		
 		return validClassementCS.contains(classementCS);
 	}
+	
+	private void syncCriteriaSet() {
+		Reglement reglement = ficheConcours.getParametre().getReglement();
+		
+		CriteriaSet currentCS = readCriteriaSet();
+		CriteriaSet classementCS = currentCS.getFilteredCriteriaSet(reglement.getClassementFilter());
+		if(!verifyCriteriaSet()) {
+			CriteriaSet surclassement = reglement.getSurclassement().get(classementCS);
+			if(surclassement == null) {
+				jlDescription.setText(localisation.getResourceString("concurrent.invalidcriteriaset")); //$NON-NLS-1$
+				jlDescription.setBackground(Color.ORANGE);
+			} else {
+				for (Criterion key : reglement.getListCriteria()) {
+					CriterionElement element = surclassement.getCriterionElement(key);
+					if(element != null)
+						jcbCategorieTable.get(key).setSelectedItem(element);
+					else {
+						if(jcbCategorieTable.get(key).getModel().getSize() > 0) 
+							jcbCategorieTable.get(key).setSelectedIndex(0);
+					}
+				}
+				jcbSurclassement.setSelected(true);
+			}
+		} else {
+			jlDescription.setText(localisation.getResourceString("concurrent.description")); //$NON-NLS-1$
+			jlDescription.setBackground(new Color(255, 255, 225));
+		}
+		
+		jcbBlason.removeAllItems();
+
+		List<DistancesEtBlason> tmpDB = reglement.getDistancesEtBlasonFor(
+				currentCS.getFilteredCriteriaSet(reglement.getPlacementFilter()));
+		for(DistancesEtBlason db : tmpDB) {
+			jcbBlason.addItem(db.getTargetFace());
+		}
+		jcbBlason.setEnabled(jcbBlason.getItemCount() > 1);
+		if(concurrent != null && concurrent.getCriteriaSet() != null) {
+			DistancesEtBlason distancesEtBlason = DistancesEtBlason.getDistancesEtBlasonForConcurrent(
+					reglement, concurrent);
+			if(distancesEtBlason != null)
+				jcbBlason.setSelectedItem(distancesEtBlason.getTargetFace());
+		}
+		
+		checkPhasesFinalPane(classementCS);
+	}
 
 	/**
 	 * @see org.concoursjeunes.event.AutoCompleteDocumentListener#concurrentFinded(org.concoursjeunes.event.AutoCompleteDocumentEvent)
@@ -1289,48 +1339,8 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 	public void itemStateChanged(ItemEvent e) {
 		if(e.getSource() instanceof JComboBox) {
 			if(e.getStateChange() == ItemEvent.SELECTED) {
-				Reglement reglement = ficheConcours.getParametre().getReglement();
-				
-				CriteriaSet currentCS = readCriteriaSet();
-				CriteriaSet classementCS = currentCS.getFilteredCriteriaSet(reglement.getClassementFilter());
-				if(!verifyCriteriaSet()) {
-					CriteriaSet surclassement = reglement.getSurclassement().get(classementCS);
-					if(surclassement == null) {
-						jlDescription.setText(localisation.getResourceString("concurrent.invalidcriteriaset")); //$NON-NLS-1$
-						jlDescription.setBackground(Color.ORANGE);
-					} else {
-						for (Criterion key : reglement.getListCriteria()) {
-							CriterionElement element = surclassement.getCriterionElement(key);
-							if(element != null)
-								jcbCategorieTable.get(key).setSelectedItem(element);
-							else {
-								if(jcbCategorieTable.get(key).getModel().getSize() > 0) 
-									jcbCategorieTable.get(key).setSelectedIndex(0);
-							}
-						}
-						jcbSurclassement.setSelected(true);
-					}
-				} else {
-					jlDescription.setText(localisation.getResourceString("concurrent.description")); //$NON-NLS-1$
-					jlDescription.setBackground(new Color(255, 255, 225));
-				}
-				
-				jcbBlason.removeAllItems();
-
-				List<DistancesEtBlason> tmpDB = reglement.getDistancesEtBlasonFor(
-						currentCS.getFilteredCriteriaSet(reglement.getPlacementFilter()));
-				for(DistancesEtBlason db : tmpDB) {
-					jcbBlason.addItem(db.getTargetFace());
-				}
-				jcbBlason.setEnabled(jcbBlason.getItemCount() > 1);
-				if(concurrent != null && concurrent.getCriteriaSet() != null) {
-					DistancesEtBlason distancesEtBlason = DistancesEtBlason.getDistancesEtBlasonForConcurrent(
-							reglement, concurrent);
-					if(distancesEtBlason != null)
-						jcbBlason.setSelectedItem(distancesEtBlason.getTargetFace());
-				}
-				
-				checkPhasesFinalPane(classementCS);
+				if(!disableSyncCriteriaSet)
+					syncCriteriaSet();
 			}
 		}
 	}

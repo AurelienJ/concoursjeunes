@@ -114,18 +114,25 @@ public class CoordinateManager {
 			if(pstmtContactCoordinates == null)
 				pstmtContactCoordinates = ApplicationCore.dbConnection.prepareStatement("select * from COORDINATE where ID_CONTACT = ?"); //$NON-NLS-1$
 			
-			pstmtContactCoordinates.setObject(1, contact.getIdContact());
-			
-			ResultSet rs = pstmtContactCoordinates.executeQuery();
-			try {
-				while(rs.next()) {
-					Coordinate coordinate = CoordinateBuilder.getCoordinate(rs);
-					coordinate.setContact(contact);
+			if(contact.getIdContact() != null && !pstmtContactCoordinates.isClosed()) {
+				synchronized (pstmtContactCoordinates) {
+					if(!pstmtContactCoordinates.isClosed()) {
+						pstmtContactCoordinates.setObject(1, contact.getIdContact());
 					
-					coordinates.add(coordinate);
+						ResultSet rs = pstmtContactCoordinates.executeQuery();
+						try {
+						
+							while(!pstmtContactCoordinates.isClosed() && rs != null && !rs.isClosed() && rs.next()) {
+								Coordinate coordinate = CoordinateBuilder.getCoordinate(rs);
+								coordinate.setContact(contact);
+								
+								coordinates.add(coordinate);
+							}
+						} finally {
+							rs.close();
+						}
+					}
 				}
-			} finally {
-				rs.close();
 			}
 		} catch (SQLException e) {
 			throw new ObjectPersistenceException(e);

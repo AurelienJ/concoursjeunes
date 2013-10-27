@@ -234,7 +234,7 @@ public class CriterionDialog extends JDialog implements ActionListener, ChangeLi
         
         jcbWinFFTACode.addItem(""); //$NON-NLS-1$
         for(String critere : Criterion.CRITERES_TABLE_ARCHERS) {
-            jcbWinFFTACode.addItem(critere);
+            jcbWinFFTACode.addItem(critere.toLowerCase());
         }
         
         jcbPlacementCriterion.setEnabled(false);
