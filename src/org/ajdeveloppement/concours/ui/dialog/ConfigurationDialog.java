@@ -126,6 +126,7 @@ import javax.xml.bind.JAXBException;
 import org.ajdeveloppement.apps.localisation.Localizable;
 import org.ajdeveloppement.apps.localisation.Localizator;
 import org.ajdeveloppement.commons.AjResourcesReader;
+import org.ajdeveloppement.commons.io.FileUtils;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.commons.ui.NumberDocument;
 import org.ajdeveloppement.concours.ui.ImagePreview;
@@ -986,13 +987,19 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 				} else if (jcbProfil.getSelectedIndex() == jcbProfil.getItemCount() - 1) {
 					String strP = JOptionPane.showInputDialog(this, localisation.getResourceString("configuration.ecran.general.newprofile")); //$NON-NLS-1$
 					if (strP != null && !strP.equals("")) {  //$NON-NLS-1$
-
-						workConfiguration.setCurProfil(strP);
-						workConfiguration.getMetaDataFichesConcours().removeAll();
-
-						completePanel();
-						jcbProfil.insertItemAt(strP, 0);
-						jcbProfil.setSelectedItem(strP);
+						if(FileUtils.isValidFilename(strP)) {
+							workConfiguration.setCurProfil(strP);
+							workConfiguration.getMetaDataFichesConcours().removeAll();
+	
+							completePanel();
+							jcbProfil.insertItemAt(strP, 0);
+							jcbProfil.setSelectedItem(strP);
+						} else {
+							JOptionPane.showMessageDialog(this, 
+									localisation.getResourceString("configuration.profile.name.fail"), //$NON-NLS-1$
+									localisation.getResourceString("configuration.profile.name.fail.title"), //$NON-NLS-1$
+									JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				}
 			}
@@ -1006,7 +1013,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 				
 				renamedProfile = profile.renameProfile(strP);
 				
-				if(renamedProfile) {
+				if(renamedProfile && FileUtils.isValidFilename(strP)) {
 					jcbProfil.removeItem(workConfiguration.getCurProfil());
 	
 					workConfiguration.setCurProfil(strP);

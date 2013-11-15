@@ -948,5 +948,26 @@
     </void>
    </object>
   </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * AJout d&apos;un contrôle sur le nom du profile pour éviter un plantage si un nom invalide est saisi</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1384542151545</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.19</string>
+    </void>
+   </object>
+  </void>
  </object>
 </java>
