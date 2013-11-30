@@ -277,7 +277,11 @@ public class ShootingLine implements FicheConcoursListener {
 		if(distancesEtBlason == null)
 			return false;
 		
-		place = getTargetsOccupation(ficheConcours.getParametre().getNbTireur(),conc2).get(distancesEtBlason);
+		Map<DistancesEtBlason, TargetsOccupation> targetsOccupation = getTargetsOccupation(ficheConcours.getParametre().getNbTireur(),conc2);
+		if(targetsOccupation == null)
+			return false;
+		
+		place = targetsOccupation.get(distancesEtBlason);
 
 		return place.getPlaceLibre() > (concurrent.isHandicape()?1:0) || getNbFreeTargets(ficheConcours.getParametre().getNbTireur()) > 0;
 		
