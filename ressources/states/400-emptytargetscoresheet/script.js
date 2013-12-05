@@ -16,6 +16,7 @@ function printState(ficheConcours, template, document, writer, options) {
 	var serie = options.getSerie();
 	var depart = options.getDepart();
 	var profile = options.getProfile();
+	var nbSerie = ficheConcours.getParametre().getReglement().getNbSerie();
 	
 	with(contexte) {
 		var templateXML = new AJTemplate();
@@ -35,15 +36,17 @@ function printState(ficheConcours, template, document, writer, options) {
 			
 			var nbPositions = ficheConcours.getParametre().getNbTireur();
 			var percentPositions = "";
+			
 			templateXML.parse("scoresheet.NB_POSITIONS", nbPositions);
+			
 			for(var j = 0; j < nbPositions; j++) {
 				percentPositions += ";" + ((100.0/nbPositions)-1) + ";1";
 			}
+			
 			percentPositions = percentPositions.substring(1);
 			templateXML.parse("scoresheet.PERCENT_POSITIONS", percentPositions);
 			
 			for(var j = 0; j < nbPositions; j++) {
-				
 				templateXML.parse("scoresheet.positions.cid", "");
 				templateXML.parse("scoresheet.positions.cclub", "");
 				templateXML.parse("scoresheet.positions.clicence", "");
@@ -54,11 +57,14 @@ function printState(ficheConcours, template, document, writer, options) {
 				templateXML.parse("scoresheet.positions.SERIE_NB_COL", 3 + nbFlecheParVolee);
 				//templateXML.parse("scoresheet.positions.INTITULE_SERIE", strDistance);
 				var colsSize = "";
+				
 				for(var k = 0; k < 3 + nbFlecheParVolee; k++)
 					colsSize += ";" + (100.0 / (3 + nbFlecheParVolee));
+				
 				colsSize = colsSize.substring(1);
 				templateXML.parse("scoresheet.positions.COLS_SIZE", colsSize);
 				templateXML.parse("scoresheet.positions.NB_FLECHE_PAR_VOLEE", nbFlecheParVolee);
+				
 				for(var k = 1; k <= nbFlecheParVolee; k++) {
 					templateXML.parse("scoresheet.positions.fleches.NUM_FLECHE", k);
 					
@@ -74,10 +80,18 @@ function printState(ficheConcours, template, document, writer, options) {
 					
 					templateXML.loopBloc("scoresheet.positions.volees");
 				}
+				
 				templateXML.parse("scoresheet.positions.NB_COL_TOTAL", 2 + nbFlecheParVolee);
 				//templateXML.parse("scoresheet.positions.NUM_DISTANCE", getPosition(j+1));
+				
+				for(var k = 1; k < nbSerie; k++) {
+					templateXML.parse("scoresheet.repport.distance.NumDistance", k);
+					
+					templateXML.loopBloc("scoresheet.repport.distance");
+				}
 
 				templateXML.loopBloc("scoresheet.positions");
+				templateXML.loopBloc("scoresheet.repport");
 				templateXML.loopBloc("scoresheet.complement");
 			}
 			

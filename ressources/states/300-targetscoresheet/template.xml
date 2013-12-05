@@ -6,6 +6,8 @@
 	orientation="landscape"
 	author="{author}"
 	title="Feuille de marque"
+	top="14"
+	bottom="14"
 	>
 	<bloc::scoresheet>
 	<!-- entete -->
@@ -14,7 +16,7 @@
 			<!-- Logo du club -->
 			<cell verticalalign="Middle" rowspan="2">
 				<paragraph leading="18.0" align="Default">
-					<image url="{LOGO_CLUB_URI}" plainwidth="65.0" plainheight="65.0"></image>
+					<image url="{LOGO_CLUB_URI}" plainwidth="60." plainheight="60.0"></image>
 				</paragraph>
 			</cell>
 			<!-- Information club -->
@@ -30,7 +32,7 @@
 			</cell>
 		</row>
 	</table>
-	<newline />
+
 	<!-- tableau point -->
 	<table columns="{NB_POSITIONS}" width="100.0\%" widths="{PERCENT_POSITIONS}" cellpadding="2.0">
 		<row>
@@ -40,15 +42,15 @@
 					<row>
 						<cell colspan="{SERIE_NB_COL}">
 							<!-- Etiquette concurrent -->
-							<paragraph>
-								<chunk size="10">{cid}</chunk>
+							<paragraph size="8">
+								{cid}
 								<newline/>
-								<chunk size="10">{cclub}</chunk>
+								{cclub}
 								<newline/>
-								<chunk size="10">{clicence}</chunk>
+								{clicence}
 							</paragraph>
 							<paragraph>
-								<chunk size="10">{emplacement}</chunk>
+								<chunk size="8">{emplacement}</chunk>
 							</paragraph>
 						</cell>
 					</row>
@@ -88,6 +90,22 @@
 			</bloc::positions>
 		</row>
 		<row>
+			<bloc::repport>
+			<cell leading="2.0">
+				<table width="100.0\%" columns="6" widths="16.66;16.66;16.66;16.66;16.66;16.70">
+					<bloc::distance>
+					<row>
+						<cell colspan="5" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8">%template.reportdistance% {NumDistance}</phrase></cell>
+						<cell colspan="1" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8"> </phrase></cell>
+					</row>
+					</bloc::distance>
+				</table>
+			</cell>
+			<cell>
+			</cell>
+			</bloc::repport>
+		</row>
+		<row>
 			<bloc::complement>
 			<cell>
 				<table width="100.0\%" columns="6" widths="16.66;16.66;16.66;16.66;16.66;16.70">
@@ -96,7 +114,7 @@
 						<cell colspan="3" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8">9</phrase></cell>
 					</row>
 					<row>
-						<cell colspan="3" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8"> </phrase></cell>
+						<cell colspan="3" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8" color="#FFFFFF">. </phrase></cell>
 						<cell colspan="3" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8"> </phrase></cell>
 					</row>
 					<row>
@@ -108,7 +126,7 @@
 						<cell colspan="2" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8">3</phrase></cell>
 					</row>
 					<row>
-						<cell colspan="2" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8"> </phrase></cell>
+						<cell colspan="2" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8" color="#FFFFFF">. </phrase></cell>
 						<cell colspan="2" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8"> </phrase></cell>
 						<cell colspan="2" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8"> </phrase></cell>
 					</row>

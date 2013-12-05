@@ -19,6 +19,7 @@ function printState(ficheConcours, template, document, writer, options) {
 		templateXML.parse("producer", org.concoursjeunes.AppInfos.NOM + " " + org.concoursjeunes.AppInfos.VERSION);
 		templateXML.parse("author", profile.getConfiguration().getClub().getNom());
 		
+		var nbSerie = ficheConcours.getParametre().getReglement().getNbSerie();
 		var nbVoleeParSerie = ficheConcours.getParametre().getReglement().getNbVoleeParSerie();
 		var nbFlecheParVolee = ficheConcours.getParametre().getReglement().getNbFlecheParVolee();
 		var targets = ficheConcours.getPasDeTir(depart).getTargets();
@@ -86,8 +87,15 @@ function printState(ficheConcours, template, document, writer, options) {
 				}
 				templateXML.parse("scoresheet.positions.NB_COL_TOTAL", 2 + nbFlecheParVolee);
 				//templateXML.parse("scoresheet.positions.NUM_DISTANCE", getPosition(j+1));
+				
+				for(var k = 1; k < nbSerie; k++) {
+					templateXML.parse("scoresheet.repport.distance.NumDistance", k);
+					
+					templateXML.loopBloc("scoresheet.repport.distance");
+				}
 
 				templateXML.loopBloc("scoresheet.positions");
+				templateXML.loopBloc("scoresheet.repport");
 				templateXML.loopBloc("scoresheet.complement");
 			}
 			templateXML.loopBloc("scoresheet");

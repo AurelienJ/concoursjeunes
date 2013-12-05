@@ -88,6 +88,22 @@
 			</bloc::positions>
 		</row>
 		<row>
+			<bloc::repport>
+			<cell>
+				<table width="100.0\%" columns="6" widths="16.66;16.66;16.66;16.66;16.66;16.70">
+					<bloc::distance>
+					<row>
+						<cell colspan="5" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8">%template.reportdistance% {NumDistance}</phrase></cell>
+						<cell colspan="1" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8"> </phrase></cell>
+					</row>
+					</bloc::distance>
+				</table>
+			</cell>
+			<cell>
+			</cell>
+			</bloc::repport>
+		</row>
+		<row>
 			<bloc::complement>
 			<cell>
 				<table width="100.0\%" columns="6" widths="16.66;16.66;16.66;16.66;16.66;16.70">
@@ -96,7 +112,7 @@
 						<cell colspan="3" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8">9</phrase></cell>
 					</row>
 					<row>
-						<cell colspan="3" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8"> </phrase></cell>
+						<cell colspan="3" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8" color="#FFFFFF">. </phrase></cell>
 						<cell colspan="3" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8"> </phrase></cell>
 					</row>
 					<row>
@@ -108,7 +124,7 @@
 						<cell colspan="2" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8">3</phrase></cell>
 					</row>
 					<row>
-						<cell colspan="2" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8"> </phrase></cell>
+						<cell colspan="2" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8" color="#FFFFFF">. </phrase></cell>
 						<cell colspan="2" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8"> </phrase></cell>
 						<cell colspan="2" leading="8.0" horizontalalign="Center" top="true" bottom="true" right="true" left="true"><phrase size="8"> </phrase></cell>
 					</row>

@@ -990,5 +990,28 @@
     </void>
    </object>
   </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Edition: Ajout d&apos;une zone report distance(s) précedente sur les contremarques
+  * Edition: Correction taille de certaines zones trop petite sur les contremarques
+  * Edition: Amélioration édition classement en 4 distances (agrandissement de la taille des zones de scores)</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1386282758346</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.21</string>
+    </void>
+   </object>
+  </void>
  </object>
 </java>

@@ -145,7 +145,7 @@
 					<cell horizontalalign="Center" leading="10" top="true" bottom="true" right="true" left="true" backgroundcolor="#aaaaaa"><phrase size="10" fontstyle="bold">%template.archer%</phrase></cell>
 				</row>
 				<row>
-					<cell rowspan="{SIGNATURE_SIZE}" leading="64" top="true" bottom="true" right="true" left="true"><chunk>.</chunk></cell>
+					<cell rowspan="{SIGNATURE_SIZE}" leading="64" top="true" bottom="true" right="true" left="true"><chunk color="#FFFFFF">.</chunk></cell>
 					<cell rowspan="{SIGNATURE_SIZE}" top="true" bottom="true" right="true" left="true"></cell>
 				</row>
 				</table>

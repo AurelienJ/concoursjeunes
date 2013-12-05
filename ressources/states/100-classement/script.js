@@ -56,7 +56,7 @@ function printState(ficheConcours, template, document, writer, options) {
 		
 		var nbSerie = ficheConcours.getParametre().getReglement().getNbSerie();
 		
-		var tailleChampDistance = 10.5262 / nbSerie;
+		var tailleChampDistance = 17.1572 / nbSerie;
 		var strTailleChampsDistance = "";
 		for (var j = 0; j < nbSerie; j++) {
 			strTailleChampsDistance += tailleChampDistance + ";";
