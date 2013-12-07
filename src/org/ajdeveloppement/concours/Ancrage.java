@@ -93,12 +93,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -112,10 +107,10 @@ import org.ajdeveloppement.concours.builders.AncrageBuilder;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="ANCRAGES_BLASONS", loadBuilder=AncrageBuilder.class)
+@SqlTable(name="ANCRAGES_BLASONS", loadBuilder=AncrageBuilder.class, disableCache=true)
 @SqlPrimaryKey(fields={"NUMBLASON","EMPLACEMENT"})
-public class Ancrage implements ObjectPersistence {
-	private static StoreHelper<Ancrage> helper = SqlStoreHelperFactory.getStoreHelper(Ancrage.class);
+public class Ancrage implements SqlObjectPersistence {
+	//private static StoreHelper<Ancrage> helper = SqlStoreHelperFactory.getStoreHelper(Ancrage.class);
 	
 	/**
 	 * Emplacement de la cible pour la position A
@@ -279,7 +274,7 @@ public class Ancrage implements ObjectPersistence {
     	this.y = y;
     }
 	
-	@Override
+	/*@Override
 	public void save() throws ObjectPersistenceException {
 		SessionHelper.startSaveSession(this);
 	}
@@ -305,8 +300,8 @@ public class Ancrage implements ObjectPersistence {
 			
 			Session.addProcessedObject(session, this);
 		}
-	}
-
+	}*/
+	
 	/**
 	 * Used by JAXB API only
 	 * 

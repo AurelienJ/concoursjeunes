@@ -631,6 +631,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 		this.contacts = entite.getContacts();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == jbAnnuler) {

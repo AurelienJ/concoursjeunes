@@ -384,6 +384,7 @@ public class CriterionDialog extends JDialog implements ActionListener, ChangeLi
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+	@SuppressWarnings("unchecked")
     @Override
 	public void actionPerformed(ActionEvent e) {
         if(e.getSource() == jbValider) {

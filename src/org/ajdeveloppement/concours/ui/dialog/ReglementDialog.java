@@ -765,6 +765,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 	/**
 	 * Valide, enregistre et ferme la boite de dialogue
 	 */
+	@SuppressWarnings("unchecked")
 	private void validateAndCloseDialog() {
 		if(reglementBinding != null) {
         	for(Binding<Reglement, ?, ?, ?> binding : reglementBinding.getBindings()) { 

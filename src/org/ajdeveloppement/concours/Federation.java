@@ -105,7 +105,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.StringUtils;
 import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
@@ -366,7 +365,7 @@ public class Federation implements ObjectPersistence {
 						T_CompetitionLevel.NUMFEDERATION.getFieldName(),
 						numFederation,
 						T_CompetitionLevel.CODENIVEAU.getFieldName(),
-						StringUtils.join(",", idsCompetitionLevel)); //$NON-NLS-1$
+						String.join(",", idsCompetitionLevel)); //$NON-NLS-1$
 				Statement stmt = ApplicationCore.dbConnection.createStatement();
 				stmt.executeUpdate(sql);
 

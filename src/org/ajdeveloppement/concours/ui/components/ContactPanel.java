@@ -789,6 +789,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 		return saveOnlyInMemoryBean;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == jxhNewContact) {
