@@ -10,7 +10,12 @@
 			<fileset dir="." >
 				<include name="plugins/properties/ScriptExtPluginStartup.properties" />
 				<include name="plugins/properties/ScriptExtPluginUIStartup.properties" />
+				<include name="plugins/rsyntaxtextarea.jar"/>
+				<include name="plugins/autocomplete.jar"/>
+				<include name="plugins/language_support.jar"/>
+				<include name="plugins/js-14.jar"/>
 				<include name="ressources/repositories/ScriptExt.xml"/>
+				<include name="ressources/templates/scriptext/**"/>
 			</fileset>
 		</copy>
 		

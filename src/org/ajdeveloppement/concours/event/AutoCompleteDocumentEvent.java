@@ -88,9 +88,9 @@
  */
 package org.ajdeveloppement.concours.event;
 
-import org.ajdeveloppement.concours.Archer;
-import org.ajdeveloppement.concours.Concurrent;
-import org.ajdeveloppement.concours.Entite;
+import org.ajdeveloppement.concours.data.Archer;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.Entite;
 
 /**
  * L'événement de réponse à l'action de l'AutoCompleteDocument

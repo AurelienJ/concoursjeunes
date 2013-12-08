@@ -99,9 +99,9 @@ import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
-import org.ajdeveloppement.concours.Criterion;
-import org.ajdeveloppement.concours.Reglement;
-import org.ajdeveloppement.concours.T_Criterion;
+import org.ajdeveloppement.concours.data.Criterion;
+import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.T_Criterion;
 import org.ajdeveloppement.concours.managers.CriterionElementManager;
 
 /**
@@ -192,7 +192,7 @@ public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, R
 		Criterion criterion = null;
 		
 		if(!doNotUseCache)
-			criterion = Cache.get(Criterion.class, codeCritere, reglement.getNumReglement());
+			criterion = Cache.get(Criterion.class, codeCritere, reglement.getIdReglement());
 		
 		if(criterion == null) {
 			criterion = new Criterion();

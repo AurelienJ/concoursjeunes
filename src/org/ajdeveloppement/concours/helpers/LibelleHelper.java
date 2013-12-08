@@ -95,9 +95,9 @@ import java.util.UUID;
 import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.Libelle;
-import org.ajdeveloppement.concours.T_Libelle;
 import org.ajdeveloppement.concours.builders.LibelleBuilder;
+import org.ajdeveloppement.concours.data.Libelle;
+import org.ajdeveloppement.concours.data.T_Libelle;
 
 /**
  * Utilitaire permettant la récupération des libellés localisé en base

@@ -114,9 +114,9 @@ import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.commons.ui.NumberDocument;
 import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.Blason;
-import org.ajdeveloppement.concours.DistancesEtBlason;
-import org.ajdeveloppement.concours.localisable.CriteriaSetLibelle;
+import org.ajdeveloppement.concours.data.Blason;
+import org.ajdeveloppement.concours.data.Distance;
+import org.ajdeveloppement.concours.data.DistancesEtBlason;
 import org.ajdeveloppement.concours.managers.BlasonManager;
 import org.jdesktop.swingx.JXHeader;
 import org.jdesktop.swingx.painter.GlossPainter;
@@ -160,6 +160,11 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 	@Localizable("bouton.annuler")
 	private JButton jbAnnuler = new JButton();
 	
+	/**
+	 * 
+	 * @param parentframe
+	 * @param localisation
+	 */
 	public DistancesBlasonsDialog(Window parentframe, AjResourcesReader localisation) {
 		super(parentframe, ModalityType.TOOLKIT_MODAL);
 		
@@ -257,7 +262,7 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 	}
 	
 	private void completePanel() {
-		jlCriteriaSet.setTitle(new CriteriaSetLibelle(distancesblasons.get(0).getCriteriaSet(), localisation).toString());
+		jlCriteriaSet.setTitle(""); //$NON-NLS-1$
 		
 		GridbagComposer gbc = new GridbagComposer();
 		GridBagConstraints c = new GridBagConstraints();
@@ -269,11 +274,11 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 		c.ipadx = 10;
 		//
 		int i = 1;
-		for(int d : distancesblasons.get(0).getDistance()) {
+		for(Distance d : distancesblasons.get(0).getDistances()) {
 			c.gridy++;
 			c.fill = GridBagConstraints.HORIZONTAL;
 			gbc.addComponentIntoGrid(new JLabel(localisation.getResourceString("distancesblasons.distance") + " " + (i++) + ":"), c); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			JTextField jtfDistance = new JTextField(new NumberDocument(false, false), Integer.toString(d), 4);
+			JTextField jtfDistance = new JTextField(new NumberDocument(false, false), Integer.toString(d.getDistance()), 4);
 			ljtfDistances.add(jtfDistance);
 			c.fill = GridBagConstraints.NONE;
 			gbc.addComponentIntoGrid(jtfDistance, c);
@@ -299,6 +304,11 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param distancesblasons
+	 * @return
+	 */
 	public List<DistancesEtBlason> showDistancesBlasonsDialog(List<DistancesEtBlason> distancesblasons) {
 		if(distancesblasons != null)
 			this.distancesblasons = distancesblasons;
@@ -347,15 +357,14 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == jbValider) {
 			
-			int[] distances = new int[distancesblasons.get(0).getDistance().length];
-			for(int i = 0; i < distances.length; i++) {
+			int index = 0;
+			for(Distance distance : distancesblasons.get(0).getDistances()) {
 				try {
-					distances[i] = Integer.parseInt(ljtfDistances.get(i).getText());
+					distance.setDistance(Integer.parseInt(ljtfDistances.get(index++).getText()));
 				} catch (NumberFormatException e1) {
-					distances[i] = 0;
+					distance.setDistance(0);
 				}
 			}
-			distancesblasons.get(0).setDistance(distances);
 			distancesblasons.get(0).setTargetFace((Blason)jcbBlason.getSelectedItem());
 			
 			if(distancesblasons.size() > lcbBlasonsAlt.size()+1) {
@@ -367,10 +376,8 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 			for(int i = 0; i < lcbBlasonsAlt.size(); i++) {
 				if(i+1 > distancesblasons.size()-1)
 					distancesblasons.add(new DistancesEtBlason());
-				distancesblasons.get(i+1).setDistance(distances);
+				distancesblasons.get(i+1).setDistances(distancesblasons.get(0).getDistances());
 				distancesblasons.get(i+1).setTargetFace((Blason)lcbBlasonsAlt.get(i).getSelectedItem());
-				distancesblasons.get(i+1).setCriteriaSet(distancesblasons.get(0).getCriteriaSet());
-				distancesblasons.get(i+1).setDefaultTargetFace(false);
 			}
 			
 			setVisible(false);

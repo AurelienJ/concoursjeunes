@@ -91,11 +91,11 @@ package org.ajdeveloppement.concours;
 import junit.framework.TestCase;
 
 import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.Concurrent;
-import org.ajdeveloppement.concours.Reglement;
 import org.ajdeveloppement.concours.Target;
 import org.ajdeveloppement.concours.Target.Repartition;
 import org.ajdeveloppement.concours.builders.ConcurrentBuilder;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.Reglement;
 import org.ajdeveloppement.concours.exceptions.PlacementException;
 import org.ajdeveloppement.concours.managers.ReglementManager;
 import org.junit.After;
@@ -203,7 +203,7 @@ public class TargetTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.ajdeveloppement.concours.Target#insertConcurrent(org.ajdeveloppement.concours.Concurrent, org.ajdeveloppement.concours.Target.Repartition)}.
+	 * Test method for {@link org.ajdeveloppement.concours.Target#insertConcurrent(org.ajdeveloppement.concours.data.Concurrent, org.ajdeveloppement.concours.Target.Repartition)}.
 	 */
 	@Test
 	public void testInsertConcurrentConcurrentRepartition() {
@@ -211,7 +211,7 @@ public class TargetTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.ajdeveloppement.concours.Target#insertConcurrent(org.ajdeveloppement.concours.Concurrent, org.ajdeveloppement.concours.Target.Repartition, boolean)}.
+	 * Test method for {@link org.ajdeveloppement.concours.Target#insertConcurrent(org.ajdeveloppement.concours.data.Concurrent, org.ajdeveloppement.concours.Target.Repartition, boolean)}.
 	 */
 	@Test
 	public void testInsertConcurrentConcurrentRepartitionBoolean() {
@@ -244,7 +244,7 @@ public class TargetTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.ajdeveloppement.concours.Target#indexOf(org.ajdeveloppement.concours.Concurrent)}.
+	 * Test method for {@link org.ajdeveloppement.concours.Target#indexOf(org.ajdeveloppement.concours.data.Concurrent)}.
 	 */
 	@Test
 	public void testIndexOf() {
@@ -264,7 +264,7 @@ public class TargetTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.ajdeveloppement.concours.Target#contains(org.ajdeveloppement.concours.Concurrent)}.
+	 * Test method for {@link org.ajdeveloppement.concours.Target#contains(org.ajdeveloppement.concours.data.Concurrent)}.
 	 */
 	@Test
 	public void testContains() {
@@ -274,7 +274,7 @@ public class TargetTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.ajdeveloppement.concours.Target#setConcurrentAt(org.ajdeveloppement.concours.Concurrent, int)}.
+	 * Test method for {@link org.ajdeveloppement.concours.Target#setConcurrentAt(org.ajdeveloppement.concours.data.Concurrent, int)}.
 	 */
 	@Test
 	public void testSetConcurrentAt() {
@@ -304,7 +304,7 @@ public class TargetTest extends TestCase {
 	}
 
 	/**
-	 * Test method for {@link org.ajdeveloppement.concours.Target#removeConcurrent(org.ajdeveloppement.concours.Concurrent)}.
+	 * Test method for {@link org.ajdeveloppement.concours.Target#removeConcurrent(org.ajdeveloppement.concours.data.Concurrent)}.
 	 */
 	@Test
 	public void testRemoveConcurrent() {

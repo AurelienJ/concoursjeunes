@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane id="background" fx:id="parametersPane" center="$null" xmlns:fx="http://javafx.com/fxml" fx:controller="org.ajdeveloppement.concours.ui.fx.ParametersController">
+  <bottom>
+    <AnchorPane prefHeight="-1.0" prefWidth="-1.0">
+      <children>
+        <Button disable="true" mnemonicParsing="false" text="Annuler" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="14.0" />
+        <Button mnemonicParsing="false" text="Valider" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="89.0" />
+      </children>
+    </AnchorPane>
+  </bottom>
+  <stylesheets>
+    <URL value="@tabFrameStyle.css" />
+  </stylesheets>
+  <top>
+    <ToolBar>
+      <items>
+        <Region prefHeight="-1.0" prefWidth="-1.0" styleClass="spacer"><HBox.hgrow>ALWAYS</HBox.hgrow></Region>
+        <HBox prefHeight="-1.0" prefWidth="-1.0" styleClass="segmented-button-bar">
+          <children>
+            <Button id="buttonGeneral" mnemonicParsing="false" onAction="#displayGeneralPane" styleClass="first" text="General" />
+            <Button mnemonicParsing="false" onAction="#displayDisplayPane" text="Affichage" />
+            <Button mnemonicParsing="false" text="Tarifs" />
+            <Button mnemonicParsing="false" styleClass="last" text="Editions" />
+          </children>
+        </HBox>
+      </items>
+    </ToolBar>
+  </top>
+</BorderPane>

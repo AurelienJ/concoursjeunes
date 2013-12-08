@@ -86,7 +86,7 @@
  */
 package org.ajdeveloppement.concours.event;
 
-import org.ajdeveloppement.concours.Concurrent;
+import org.ajdeveloppement.concours.data.Concurrent;
 
 /**
  * Objet Evenements survenue sur la fiche concours

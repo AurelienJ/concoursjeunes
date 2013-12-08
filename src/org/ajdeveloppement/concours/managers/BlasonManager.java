@@ -89,12 +89,12 @@
 package org.ajdeveloppement.concours.managers;
 
 
-import static org.ajdeveloppement.concours.T_Blason.*;
+import static org.ajdeveloppement.concours.data.T_Blason.*;
 
 import java.util.List;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.Blason;
+import org.ajdeveloppement.concours.data.Blason;
 
 /**
  * Gére la construction des blasons à partir des données trouvé en base

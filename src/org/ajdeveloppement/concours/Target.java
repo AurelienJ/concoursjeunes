@@ -91,11 +91,14 @@ package org.ajdeveloppement.concours;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
+import org.ajdeveloppement.concours.data.Blason;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.DistancesEtBlason;
+import org.ajdeveloppement.concours.data.Reglement;
 import org.ajdeveloppement.concours.event.TargetEvent;
 import org.ajdeveloppement.concours.event.TargetListener;
 import org.ajdeveloppement.concours.exceptions.PlacementException;
@@ -232,7 +235,7 @@ public class Target implements PropertyChangeListener {
 	 */
 	public int getNbAvailableSlotsFor(DistancesEtBlason distancesEtBlason) {
 		if(nbArcher > 0) {
-			if(Arrays.equals(getDistancesEtBlason().get(0).getDistance(), distancesEtBlason.getDistance())) {
+			if(getDistancesEtBlason().get(0).getDistances().equals(distancesEtBlason.getDistances())) {
 				int availableSlots = 0;
 				for(int i = 0; i < concurrents.length; i++) {
 					if(concurrents[i] == null && !isReservedPosition(i) && isSlotAvailable(distancesEtBlason.getTargetFace(), i)) {
@@ -305,7 +308,7 @@ public class Target implements PropertyChangeListener {
 				List<DistancesEtBlason> targetDbs = getDistancesEtBlason();
 				
 				//vérifie que la distance est bonne
-				if(targetDbs.size() > 0 && !Arrays.equals(concurrentDb.getDistance(), targetDbs.get(0).getDistance()))
+				if(targetDbs.size() > 0 && !concurrentDb.getDistances().equals(targetDbs.get(0).getDistances()))
 					throw new PlacementException(PlacementException.Nature.BAD_DISTANCES);
 				
 				//si l'archer est handicapé, vérifié que les condition spécifique sont remplis
@@ -517,7 +520,7 @@ public class Target implements PropertyChangeListener {
 				assert dbConcurrent != null : "un concururrent doit toujours avoir un DistancesEtBlason associé"; //$NON-NLS-1$
 				
 				//regarde si les distances de la cible sont compatible avec les distances de l'archer
-				if(getDistancesEtBlason().size() > 0 && !Arrays.equals(dbConcurrent.getDistance(), getDistancesEtBlason().get(0).getDistance()))
+				if(getDistancesEtBlason().size() > 0 && !dbConcurrent.getDistances().equals(getDistancesEtBlason().get(0).getDistances()))
 					throw new PlacementException(PlacementException.Nature.BAD_DISTANCES);
 				
 				//vérifie que la place est disponible en fonction du blason

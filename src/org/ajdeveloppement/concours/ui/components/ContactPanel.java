@@ -140,13 +140,14 @@ import org.ajdeveloppement.commons.ui.AJSuggestTextField;
 import org.ajdeveloppement.commons.ui.GenericListModel;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.CategoryContact;
-import org.ajdeveloppement.concours.Civility;
-import org.ajdeveloppement.concours.Contact;
-import org.ajdeveloppement.concours.Coordinate;
-import org.ajdeveloppement.concours.Coordinate.Type;
-import org.ajdeveloppement.concours.Entite;
 import org.ajdeveloppement.concours.Profile;
+import org.ajdeveloppement.concours.data.CategoryContact;
+import org.ajdeveloppement.concours.data.CategoryContactContact;
+import org.ajdeveloppement.concours.data.Civility;
+import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.Coordinate;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Coordinate.Type;
 import org.ajdeveloppement.concours.managers.CategoryContactManager;
 import org.ajdeveloppement.concours.managers.CivilityManager;
 import org.ajdeveloppement.concours.ui.components.CountryComboBox.Country;
@@ -180,7 +181,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 	
 	private BindingGroup contactBinding = null;
 	
-	private List<CategoryContact> categoriesContact = new ArrayList<CategoryContact>();
+	private List<CategoryContactContact> categoriesContact = new ArrayList<CategoryContactContact>();
 	
 	private GenericListModel<Coordinate> coordinatesModel = new GenericListModel<Coordinate>();
 	
@@ -655,20 +656,20 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 			String categories = ""; //$NON-NLS-1$
 			dropDownMenu.add(dropDownRemoveSeparator);
 			
-			Collections.sort(categoriesContact, new Comparator<CategoryContact>() {
+			Collections.sort(categoriesContact, new Comparator<CategoryContactContact>() {
 
 				@Override
-				public int compare(CategoryContact o1, CategoryContact o2) {
-					return o1.getLibelle(profile.getConfiguration().getLangue()).compareToIgnoreCase(o2.getLibelle(profile.getConfiguration().getLangue()));
+				public int compare(CategoryContactContact o1, CategoryContactContact o2) {
+					return o1.getCategoryContact().getLibelle(profile.getConfiguration().getLangue()).compareToIgnoreCase(o2.getCategoryContact().getLibelle(profile.getConfiguration().getLangue()));
 				}
 			});		
 			
-			for(final CategoryContact category : categoriesContact) {
+			for(final CategoryContactContact category : categoriesContact) {
 				if(!categories.isEmpty())
 					categories += ", "; //$NON-NLS-1$
-				categories += category.getLibelle(profile.getConfiguration().getLangue());
+				categories += category.getCategoryContact().getLibelle(profile.getConfiguration().getLangue());
 				
-				JMenuItem menuItem = new JMenuItem(category.getLibelle(profile.getConfiguration().getLangue()));
+				JMenuItem menuItem = new JMenuItem(category.getCategoryContact().getLibelle(profile.getConfiguration().getLangue()));
 				menuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -680,7 +681,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 				
 				dropDownMenu.add(menuItem);
 				
-				allCategories.remove(category);
+				allCategories.remove(category.getCategoryContact());
 			}
 			jlCategories.setText("<html><span style=\"font-family: " + getFont().getName() + "; font-size:" + getFont().getSize() //$NON-NLS-1$ //$NON-NLS-2$
 				+ "pt; font-weight:bold;\">" + categories + "</span><html>"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -693,7 +694,7 @@ public class ContactPanel extends JPanel implements ActionListener, MouseListene
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					categoriesContact.add(categoryContact);
+					categoriesContact.add(new CategoryContactContact(contact, categoryContact));
 					
 					populateCategoriesPanel();
 				}

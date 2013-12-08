@@ -94,9 +94,9 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.Concurrent;
 import org.ajdeveloppement.concours.Target;
 import org.ajdeveloppement.concours.TargetPosition;
+import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.localisable.TargetLibelle;
 
 /**

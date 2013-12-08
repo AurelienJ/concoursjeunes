@@ -88,6 +88,9 @@
  */
 package org.ajdeveloppement.concours;
 
+import org.ajdeveloppement.concours.data.Blason;
+import org.ajdeveloppement.concours.data.Reglement;
+
 
 /**
  * Utilisé pour les Tirs campagne, 3D et Nature, les pelotons se comporte comme des cibles

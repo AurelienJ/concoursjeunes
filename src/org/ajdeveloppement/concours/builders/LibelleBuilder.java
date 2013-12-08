@@ -100,8 +100,8 @@ import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
-import org.ajdeveloppement.concours.Libelle;
-import org.ajdeveloppement.concours.T_Libelle;
+import org.ajdeveloppement.concours.data.Libelle;
+import org.ajdeveloppement.concours.data.T_Libelle;
 
 /**
  * @author Aurélien JEOFFRAY

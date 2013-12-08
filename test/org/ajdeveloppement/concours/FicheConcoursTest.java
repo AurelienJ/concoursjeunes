@@ -93,6 +93,7 @@ import javax.xml.bind.JAXBException;
 import junit.framework.TestCase;
 
 import org.ajdeveloppement.concours.builders.ConcurrentBuilder;
+import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.event.ProfileEvent;
 import org.ajdeveloppement.concours.event.ProfileListener;
 import org.ajdeveloppement.concours.exceptions.FicheConcoursException;
@@ -153,7 +154,7 @@ public class FicheConcoursTest extends TestCase {
 	}
 
 	/**
-	 * Méthode de test pour {@link org.ajdeveloppement.concours.FicheConcours#addConcurrent(org.ajdeveloppement.concours.Concurrent, int)}.
+	 * Méthode de test pour {@link org.ajdeveloppement.concours.FicheConcours#addConcurrent(org.ajdeveloppement.concours.data.Concurrent, int)}.
 	 */
 	@Test
 	public void testAddConcurrent() {
@@ -168,7 +169,7 @@ public class FicheConcoursTest extends TestCase {
 	}
 
 	/**
-	 * Méthode de test pour {@link org.ajdeveloppement.concours.FicheConcours#removeConcurrent(org.ajdeveloppement.concours.Concurrent)}.
+	 * Méthode de test pour {@link org.ajdeveloppement.concours.FicheConcours#removeConcurrent(org.ajdeveloppement.concours.data.Concurrent)}.
 	 */
 	@Test
 	public void testRemoveConcurrent() {

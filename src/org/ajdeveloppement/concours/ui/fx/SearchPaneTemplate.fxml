@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="532.0" prefWidth="696.0" xmlns:fx="http://javafx.com/fxml">
+  <center>
+    <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+  </center>
+  <left>
+    <AnchorPane prefHeight="532.0" prefWidth="696.0">
+      <children>
+        <TitledPane animated="false" collapsible="false" expanded="true" layoutX="14.0" layoutY="14.0" minWidth="168.0" prefHeight="70.0" prefWidth="261.0" text="Recherche...">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <TextField layoutX="14.0" layoutY="11.0" prefWidth="182.0" />
+                <Button layoutX="206.0" layoutY="12.0" minWidth="30.0" mnemonicParsing="false" prefWidth="43.0" text="GO" />
+              </children>
+            </AnchorPane>
+          </content>
+        </TitledPane>
+        <TitledPane animated="false" collapsible="false" layoutX="14.0" layoutY="105.0" minWidth="168.0" prefHeight="95.0" prefWidth="261.0" text="Filtres">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="165.0" prefWidth="257.0">
+              <children>
+                <Label layoutX="14.0" layoutY="14.0" text="Fédération:" />
+                <ChoiceBox layoutX="14.0" layoutY="30.0" prefWidth="235.0">
+                  <items>
+                    <FXCollections fx:factory="observableArrayList">
+                      <String fx:value="Item 1" />
+                      <String fx:value="Item 2" />
+                      <String fx:value="Item 3" />
+                    </FXCollections>
+                  </items>
+                </ChoiceBox>
+              </children>
+            </AnchorPane>
+          </content>
+        </TitledPane>
+        <Button layoutX="450.0" layoutY="17.0" mnemonicParsing="false" text="Ajouter" />
+        <Button layoutX="520.0" layoutY="17.0" mnemonicParsing="false" text="Editer" />
+        <Button layoutX="581.0" layoutY="17.0" mnemonicParsing="false" text="Supprimer" />
+        <TableView layoutX="289.0" layoutY="43.0" prefHeight="461.0" prefWidth="382.0">
+          <columns>
+            <TableColumn prefWidth="75.0" text="Column X" />
+            <TableColumn prefWidth="75.0" text="Column X" />
+          </columns>
+        </TableView>
+      </children>
+    </AnchorPane>
+  </left>
+</BorderPane>

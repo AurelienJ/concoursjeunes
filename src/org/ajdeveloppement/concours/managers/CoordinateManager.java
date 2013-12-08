@@ -91,9 +91,9 @@ package org.ajdeveloppement.concours.managers;
 import java.util.List;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.Contact;
-import org.ajdeveloppement.concours.Coordinate;
-import org.ajdeveloppement.concours.T_Coordinate;
+import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.Coordinate;
+import org.ajdeveloppement.concours.data.T_Coordinate;
 
 /**
  * @author Aurélien JEOFFRAY

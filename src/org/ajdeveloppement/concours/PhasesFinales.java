@@ -106,6 +106,9 @@ import java.util.Set;
 
 import org.ajdeveloppement.commons.AJTemplate;
 import org.ajdeveloppement.commons.UncheckedException;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.CriteriaSet;
+import org.ajdeveloppement.concours.data.RepartitionFinals;
 import org.ajdeveloppement.concours.event.FicheConcoursEvent;
 import org.ajdeveloppement.concours.event.FicheConcoursListener;
 import org.ajdeveloppement.concours.localisable.CriteriaSetLibelle;

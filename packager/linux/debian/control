@@ -7,7 +7,7 @@ Standards-Version: 3.9.2
 
 Package: arccompetition
 Architecture: all
-Depends: ${misc:Depends}, sun-java6-jre | openjdk-6-jre (>= 6b20) | openjdk-7-jre
+Depends: ${misc:Depends}, openjdk-7-jre
 Description: Logiciel de Gestion des compétitions de Tir à l'Arc
  Auteur: Aurélien Jeoffray.
  http://arccompetition.ajdeveloppement.org.

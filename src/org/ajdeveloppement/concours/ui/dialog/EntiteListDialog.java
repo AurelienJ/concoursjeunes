@@ -132,12 +132,12 @@ import org.ajdeveloppement.apps.localisation.Localizable;
 import org.ajdeveloppement.apps.localisation.LocalizationHandler;
 import org.ajdeveloppement.apps.localisation.Localizator;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.Entite;
-import org.ajdeveloppement.concours.Federation;
 import org.ajdeveloppement.concours.Profile;
-import org.ajdeveloppement.concours.builders.EntiteBuilder;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Federation;
 import org.ajdeveloppement.concours.managers.FederationManager;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
 import org.ajdeveloppement.swingxext.localisation.JXHeaderLocalisationHandler;
@@ -662,7 +662,8 @@ public class EntiteListDialog extends JDialog implements ActionListener, MouseLi
 			Entite entite = null;
 			try {
 				if(rs.absolute(index + 1)) {
-					entite = EntiteBuilder.getEntite(rs);
+					DefaultSqlBuilder<Entite, Void> sqlBuilder = new DefaultSqlBuilder<>(Entite.class);
+					entite = sqlBuilder.get(rs, null, null);;
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();

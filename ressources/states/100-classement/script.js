@@ -62,7 +62,7 @@ function printState(ficheConcours, template, document, writer, options) {
 			strTailleChampsDistance += tailleChampDistance + ";";
 		}
 		
-		org.ajdeveloppement.concours.CriteriaSet.sortCriteriaSet(scnaUse, ficheConcours.getParametre().getReglement().getListCriteria());
+		org.ajdeveloppement.concours.data.CriteriaSet.sortCriteriaSet(scnaUse, ficheConcours.getParametre().getReglement().getListCriteria());
 
 		for (var i = 0; i < scnaUse.size(); i++) {
 

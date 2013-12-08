@@ -91,6 +91,8 @@ package org.ajdeveloppement.concours;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.ajdeveloppement.concours.data.Archer;
+
 /**
  * Représente un arbitre sur un concours
  * 

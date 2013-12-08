@@ -109,6 +109,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.commons.net.Proxy;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Federation;
+import org.ajdeveloppement.concours.data.Rate;
 
 /**
  * paramètre de configuration du profile utilisateur
@@ -137,7 +140,7 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	@XmlAttribute
 	private String version			= "2"; //$NON-NLS-1$
 	private String langue           = "fr";               //$NON-NLS-1$
-	private String logoPath         = "ressources/logos/default.jpg";   //$NON-NLS-1$
+	private String logoPath         = "ressources/graphics/logos/default.png";   //$NON-NLS-1$
 	
 	@XmlElementWrapper(name="federations")
 	@XmlElement(name="federation")

@@ -96,7 +96,7 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
 import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.Concurrent;
+import org.ajdeveloppement.concours.data.Concurrent;
 
 /**
  * Applique des icones à la liste des archers

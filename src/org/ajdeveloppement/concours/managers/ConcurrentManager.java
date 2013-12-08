@@ -94,14 +94,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.ajdeveloppement.commons.persistence.sql.QField;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.Archer;
-import org.ajdeveloppement.concours.Concurrent;
-import org.ajdeveloppement.concours.Contact;
-import org.ajdeveloppement.concours.Entite;
-import org.ajdeveloppement.concours.Reglement;
-import org.ajdeveloppement.concours.T_Archer;
-import org.ajdeveloppement.concours.T_Contact;
-import org.ajdeveloppement.concours.T_Entite;
+import org.ajdeveloppement.concours.data.Archer;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.T_Archer;
+import org.ajdeveloppement.concours.data.T_Contact;
+import org.ajdeveloppement.concours.data.T_Entite;
 
 /**
  * Gére le chargement en mémoire des Concurrents

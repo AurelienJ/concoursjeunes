@@ -91,6 +91,9 @@ package org.ajdeveloppement.concours;
 import java.util.List;
 import java.util.Map;
 
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.CriteriaSet;
+
 /**
  * Représente un classement sur un concours
  * 

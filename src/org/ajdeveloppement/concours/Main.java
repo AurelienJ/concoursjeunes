@@ -118,6 +118,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+//import javafx.application.Application;
+//import javafx.stage.Stage;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.net.ssl.HostnameVerifier;
@@ -125,7 +130,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 import javax.swing.JOptionPane;
 import javax.swing.RepaintManager;
-import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 
 import org.ajdeveloppement.apps.AppUtilities;
@@ -141,7 +145,7 @@ import org.ajdeveloppement.concours.plugins.Plugin.Type;
 import org.ajdeveloppement.concours.plugins.PluginEntry;
 import org.ajdeveloppement.concours.plugins.PluginLoader;
 import org.ajdeveloppement.concours.plugins.PluginMetadata;
-import org.ajdeveloppement.concours.ui.ArcCompetitionFrame;
+import org.ajdeveloppement.concours.ui.fx.ArcCompetitionFrame;
 import org.ajdeveloppement.swingxext.error.WebErrorReporter;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
 import org.h2.tools.DeleteDbFiles;
@@ -154,16 +158,14 @@ import org.jdesktop.swingx.error.ErrorInfo;
  * @version 2.3
  * 
  */
-public class Main {
+public class Main extends Application {
 	private static SplashScreen splash = null;
 	private static AjResourcesReader localisation = new AjResourcesReader("libelle");  //$NON-NLS-1$
 	
 	private static ApplicationCore core;
 	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+	@Override
+	public void start(Stage primaryStage) throws Exception {
 		showSplashScreen();
 		initErrorManaging();
 		initNetworkManaging();
@@ -177,7 +179,14 @@ public class Main {
 		
 		System.out.println("core loaded");  //$NON-NLS-1$
 		
-		showUserInterface();
+		showUserInterface(primaryStage);
+	}
+	
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		launch(args);
 	}
 
 	/**
@@ -477,7 +486,8 @@ public class Main {
 	 * 
 	 * @param core la couche métier sous jacente
 	 */
-	private static void showUserInterface() {
+	@SuppressWarnings("unused")
+	private static void showUserInterface(Stage primaryStage) {
 		//Pour débugage de l'EDT
 		//on charge dynamiquement pour ne pas avoir de dépendance dans le byte code et pouvoir livrer
 		//les versions sans le jar associé
@@ -493,16 +503,11 @@ public class Main {
 		} catch (IllegalAccessException e) {;
 		} catch (InvocationTargetException e) {
 		}
-		SwingUtilities.invokeLater(new Runnable() {
-			@SuppressWarnings("unused")
-			@Override
-			public void run() {
-				Profile profile = new Profile();
-				core.addProfile(profile);
 
-				new ArcCompetitionFrame(profile);
-			}
-		});
+		Profile profile = new Profile();
+		core.addProfile(profile);
+
+		new ArcCompetitionFrame(primaryStage, profile);
 	}
 	
 	private static void updateStartProgressStatus(int percent, String message) {

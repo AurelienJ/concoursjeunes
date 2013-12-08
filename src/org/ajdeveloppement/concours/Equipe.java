@@ -95,6 +95,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlIDREF;
 
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.CriteriaSet;
+
 /**
  * Class représentant une équipe d'archer pour le concours
  * 

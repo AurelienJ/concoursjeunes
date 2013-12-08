@@ -97,11 +97,12 @@ import java.util.List;
 import org.ajdeveloppement.commons.AJTemplate;
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.concours.AppInfos;
-import org.ajdeveloppement.concours.Concurrent;
 import org.ajdeveloppement.concours.ConcurrentList;
 import org.ajdeveloppement.concours.FicheConcours;
 import org.ajdeveloppement.concours.Profile;
 import org.ajdeveloppement.concours.TargetPosition;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.CriteriaSet;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfWriter;
@@ -173,7 +174,9 @@ public class IndividualScoreSheetState {
 				
 				int nbFlecheParVolee = ficheConcours.getParametre().getReglement().getNbFlecheParVolee();
 				for(int j = 0; j < nbSerie; j++) {
-					String strDistance = getPosition(j+1) + " distance, " + ficheConcours.getParametre().getReglement().getDistancesEtBlasonFor(concurrents.get(i).getCriteriaSet().getFilteredCriteriaSet(ficheConcours.getParametre().getReglement().getPlacementFilter())).get(0).getDistance()[j]+"m";
+					CriteriaSet placementCriteriaSet = concurrents.get(i).getCriteriaSet().getFilteredCriteriaSet(ficheConcours.getParametre().getReglement().getPlacementFilter());
+					
+					String strDistance = getPosition(j+1) + " distance, " + placementCriteriaSet.getDistancesEtBlason().getDistances().get(j).getDistance()+"m";
 					templateXML.parse("scoresheet.series.SERIE_NB_COL", Integer.toString(5 + nbFlecheParVolee));
 					templateXML.parse("scoresheet.series.INTITULE_SERIE", strDistance);
 					String colsSize = "";

@@ -99,9 +99,9 @@ import javax.xml.bind.JAXBException;
 import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.Federation;
-import org.ajdeveloppement.concours.Reglement;
-import org.ajdeveloppement.concours.T_Reglement;
+import org.ajdeveloppement.concours.data.Federation;
+import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.T_Reglement;
 
 /**
  * Permet la gestion listage, sélection, ajout et suppression des

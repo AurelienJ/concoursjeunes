@@ -90,7 +90,7 @@ package org.ajdeveloppement.concours.xml.bind;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.ajdeveloppement.concours.Blason;
+import org.ajdeveloppement.concours.data.Blason;
 import org.ajdeveloppement.concours.managers.BlasonManager;
 
 /**

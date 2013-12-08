@@ -95,9 +95,9 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import org.ajdeveloppement.concours.Concurrent;
 import org.ajdeveloppement.concours.Target;
 import org.ajdeveloppement.concours.TargetPosition;
+import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.event.TargetEvent;
 import org.ajdeveloppement.concours.event.TargetListener;
 

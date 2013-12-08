@@ -100,10 +100,10 @@ import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
-import org.ajdeveloppement.concours.CompetitionLevel;
-import org.ajdeveloppement.concours.Federation;
-import org.ajdeveloppement.concours.T_CompetitionLevel;
-import org.ajdeveloppement.concours.T_Federation;
+import org.ajdeveloppement.concours.data.CompetitionLevel;
+import org.ajdeveloppement.concours.data.Federation;
+import org.ajdeveloppement.concours.data.T_CompetitionLevel;
+import org.ajdeveloppement.concours.data.T_Federation;
 
 /**
  * @author Aurélien JEOFFRAY

@@ -93,10 +93,10 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.ajdeveloppement.commons.AjResourcesReader;
-import org.ajdeveloppement.concours.Concurrent;
-import org.ajdeveloppement.concours.DistancesEtBlason;
-import org.ajdeveloppement.concours.Entite;
 import org.ajdeveloppement.concours.Target;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.DistancesEtBlason;
+import org.ajdeveloppement.concours.data.Entite;
 
 /**
  * Wrapper de cible permettant d'offrir un libellé formaté pour celle ci
@@ -144,11 +144,11 @@ public class TargetLibelle {
 			List<DistancesEtBlason> dbs = target.getDistancesEtBlason();
 			if (dbs != null && dbs.size() > 0) {
 				//Sur une cible, les distances des differents objets sont réputées être identique
-				for (int i = 0; i < dbs.get(0).getDistance().length; i++) {
-					if (i == 0 || (i > 0 && dbs.get(0).getDistance()[i] != dbs.get(0).getDistance()[i - 1])) {
+				for (int i = 0; i < dbs.get(0).getDistances().size(); i++) {
+					if (i == 0 || (i > 0 && dbs.get(0).getDistances().get(i) != dbs.get(0).getDistances().get(i - 1))) {
 						if (i > 0)
 							strCibleLibelle += "/"; //$NON-NLS-1$
-						strCibleLibelle += dbs.get(0).getDistance()[i] + "m"; //$NON-NLS-1$
+						strCibleLibelle += dbs.get(0).getDistances().get(i) + "m"; //$NON-NLS-1$
 					}
 				}
 				strCibleLibelle += ", "; //$NON-NLS-1$

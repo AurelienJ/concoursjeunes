@@ -96,6 +96,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.ajdeveloppement.commons.ArraysUtils;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.CriteriaSet;
 
 /**
  * Représente la liste des équipes constitué sur un concours

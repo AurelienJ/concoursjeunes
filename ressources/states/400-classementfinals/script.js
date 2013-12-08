@@ -55,7 +55,7 @@ function printState(ficheConcours, template, document, writer, options) {
 		
 		var scnalst = concurrentsClasse.keySet();
 		var scnaUse = new java.util.ArrayList(scnalst);
-		org.ajdeveloppement.concours.CriteriaSet.sortCriteriaSet(scnaUse, ficheConcours.getParametre().getReglement().getListCriteria());
+		org.ajdeveloppement.concours.data.CriteriaSet.sortCriteriaSet(scnaUse, ficheConcours.getParametre().getReglement().getListCriteria());
 		
 		var concurrentInserted = false;
 		for (var i = 0; i < scnaUse.size(); i++) {

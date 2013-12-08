@@ -86,12 +86,9 @@
  */
 package org.ajdeveloppement.concours.localisable;
 
-import java.util.Map;
-
 import org.ajdeveloppement.commons.AjResourcesReader;
-import org.ajdeveloppement.concours.CriteriaSet;
-import org.ajdeveloppement.concours.Criterion;
-import org.ajdeveloppement.concours.CriterionElement;
+import org.ajdeveloppement.concours.data.CriteriaSet;
+import org.ajdeveloppement.concours.data.Criterion;
 
 /**
  * Permet la génération du libellé représentant un jeux de critères
@@ -116,11 +113,9 @@ public class CriteriaSetLibelle {
         String strSCNA = ""; //$NON-NLS-1$
         
         if(criteriaSet != null) {
-	        Map<Criterion, CriterionElement> criteria = criteriaSet.getCriteria();
-	        
 	        for (Criterion critere : criteriaSet.getReglement().getListCriteria()) {
-	        	if(criteria.containsKey(critere) && criteriaSet.getCriterionElement(critere) != null) {
-	        		strSCNA += criteria.get(critere).getLibelle() + " "; //$NON-NLS-1$
+	        	if(criteriaSet.getCriterionElement(critere) != null) {
+	        		strSCNA += criteriaSet.getCriterionElement(critere).getLibelle() + " "; //$NON-NLS-1$
 	        	}
 	        }
 	        

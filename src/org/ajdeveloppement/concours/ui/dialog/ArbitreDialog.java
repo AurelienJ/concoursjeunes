@@ -114,12 +114,12 @@ import org.ajdeveloppement.apps.localisation.Localizator;
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.Archer;
 import org.ajdeveloppement.concours.AutoCompleteDocument;
 import org.ajdeveloppement.concours.AutoCompleteDocumentContext;
-import org.ajdeveloppement.concours.Concurrent;
 import org.ajdeveloppement.concours.Judge;
 import org.ajdeveloppement.concours.Profile;
+import org.ajdeveloppement.concours.data.Archer;
+import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.event.AutoCompleteDocumentEvent;
 import org.ajdeveloppement.concours.event.AutoCompleteDocumentListener;
 
@@ -131,7 +131,13 @@ import org.ajdeveloppement.concours.event.AutoCompleteDocumentListener;
  */
 @Localizable(textMethod="setTitle", value="arbitredialog.title")
 public class ArbitreDialog extends JDialog implements AutoCompleteDocumentListener, ActionListener, FocusListener {
+	/**
+	 * Action de confirmation
+	 */
 	public static final int CONFIRM = 0;
+	/**
+	 * Action d'annulation
+	 */
 	public static final int CANCEL = 1;
 	
 	private AjResourcesReader localisation;
@@ -164,6 +170,12 @@ public class ArbitreDialog extends JDialog implements AutoCompleteDocumentListen
 	
 	private int returnVal = CONFIRM;
 	
+	/**
+	 * Intialisation de la boite de dilaogue de selection des arbitres
+	 * 
+	 * @param parentframe
+	 * @param profile
+	 */
 	public ArbitreDialog(JFrame parentframe, Profile profile) {
 		super(parentframe, true);
 		

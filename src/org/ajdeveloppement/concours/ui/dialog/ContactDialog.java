@@ -99,8 +99,8 @@ import javax.swing.JPanel;
 
 import org.ajdeveloppement.apps.localisation.Localizable;
 import org.ajdeveloppement.apps.localisation.Localizator;
-import org.ajdeveloppement.concours.Contact;
 import org.ajdeveloppement.concours.Profile;
+import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.ui.components.ContactPanel;
 
 /**

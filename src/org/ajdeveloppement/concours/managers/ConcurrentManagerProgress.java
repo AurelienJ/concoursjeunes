@@ -88,7 +88,7 @@
  */
 package org.ajdeveloppement.concours.managers;
 
-import org.ajdeveloppement.concours.Concurrent;
+import org.ajdeveloppement.concours.data.Concurrent;
 
 /**
  * Permet à la classe implémentant cet interface de suivre la progression du chargement en mémoire

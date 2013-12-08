@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="389.0" prefWidth="558.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.ajdeveloppement.concours.ui.fx.ParametersDisplayController">
+  <children>
+    <Label layoutX="58.0" layoutY="61.0" text="Langue de l'application:">
+      <font>
+        <Font name="System Bold" size="14.0" fx:id="x1" />
+      </font>
+    </Label>
+    <Label font="$x1" layoutX="58.0" layoutY="124.0" text="Saisi des scores / Affichage des résultats:" />
+    <Label layoutX="22.0" layoutY="20.0" text="Affichage et Langue" textFill="#990000" textOverrun="ELLIPSIS">
+      <font>
+        <Font size="22.0" />
+      </font>
+    </Label>
+    <ChoiceBox layoutX="81.0" layoutY="89.0" prefWidth="144.98480224609375">
+      <items>
+        <FXCollections fx:factory="observableArrayList">
+          <String fx:value="Item 1" />
+          <String fx:value="Item 2" />
+          <String fx:value="Item 3" />
+        </FXCollections>
+      </items>
+    </ChoiceBox>
+    <CheckBox layoutX="81.0" layoutY="152.0" mnemonicParsing="false" text="Permettre la saisie non cumulée sur une série complète" />
+    <CheckBox layoutX="81.0" layoutY="179.0" mnemonicParsing="false" text="Mettre en surbrillance les Ex-Aequo" />
+  </children>
+</AnchorPane>

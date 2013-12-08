@@ -100,9 +100,9 @@ import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
-import org.ajdeveloppement.concours.Ancrage;
-import org.ajdeveloppement.concours.Blason;
-import org.ajdeveloppement.concours.T_Blason;
+import org.ajdeveloppement.concours.data.Ancrage;
+import org.ajdeveloppement.concours.data.Blason;
+import org.ajdeveloppement.concours.data.T_Blason;
 
 /**
  * Construit un objet blason à partir des données en base

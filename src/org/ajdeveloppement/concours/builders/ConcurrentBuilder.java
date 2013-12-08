@@ -95,20 +95,23 @@ import java.util.UUID;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.Archer;
-import org.ajdeveloppement.concours.Concurrent;
-import org.ajdeveloppement.concours.Contact;
-import org.ajdeveloppement.concours.CriteriaSet;
-import org.ajdeveloppement.concours.Criterion;
-import org.ajdeveloppement.concours.CriterionElement;
-import org.ajdeveloppement.concours.Reglement;
-import org.ajdeveloppement.concours.T_Contact;
-import org.ajdeveloppement.concours.managers.CoordinateManager;
+import org.ajdeveloppement.concours.data.Archer;
+import org.ajdeveloppement.concours.data.Civility;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.CriteriaSet;
+import org.ajdeveloppement.concours.data.Criterion;
+import org.ajdeveloppement.concours.data.CriterionElement;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Surclassement;
+import org.ajdeveloppement.concours.data.T_Contact;
 
 /**
  * Initialise un concurrent
@@ -120,8 +123,6 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 
 	private static LoadHelper<Archer,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Archer.class);
 	private static LoadHelper<Archer,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Archer.class);
-	
-	private static PreparedStatement pstmtCategoriesContact;
 	
 	/**
 	 * Construit un concurrent à partir de l'enregistrement SQL fournit en paramètre. Le ResultSet doit contenir
@@ -167,32 +168,25 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 				foreignKeyValue = resultSetLoadHelper.load(concurrent, resultSet);
 			}
 			
-			if(foreignKeyValue.get(Contact.class).get(T_Contact.ID_CIVILITY.getFieldName()) != null)
-				concurrent.setCivility(CivilityBuilder.getCivility((UUID)foreignKeyValue.get(Contact.class).get(T_Contact.ID_CIVILITY.getFieldName())));
-			
-			UUID idEntite = (UUID)foreignKeyValue.get(Contact.class).get(T_Contact.ID_ENTITE.getFieldName());
-			if(idEntite != null)
-				concurrent.setEntite(EntiteBuilder.getEntite(idEntite));
-			
-			if(pstmtCategoriesContact == null)
-				pstmtCategoriesContact = ApplicationCore.dbConnection.prepareStatement("select NUM_CATEGORIE_CONTACT from ASSOCIER_CATEGORIE_CONTACT where ID_CONTACT = ?"); //$NON-NLS-1$
-			
-			pstmtCategoriesContact.setObject(1, concurrent.getIdContact());
-			
-			ResultSet rsCategoriesContact = pstmtCategoriesContact.executeQuery();
-			while(rsCategoriesContact.next()) {
-				concurrent.getCategories().add(CategoryContactBuilder.getCategoryContact(rsCategoriesContact.getInt("NUM_CATEGORIE_CONTACT"))); //$NON-NLS-1$
+			UUID idCivility = (UUID)foreignKeyValue.get(Contact.class).get(T_Contact.ID_CIVILITY.getFieldName());
+			if(idCivility != null) {
+				DefaultSqlBuilder<Civility, Void> sqlBuilder = new DefaultSqlBuilder<>(Civility.class);
+				concurrent.setCivility(sqlBuilder.get(null, null, idCivility));
 			}
 			
-			concurrent.setCoordinates(CoordinateManager.getContactCoordinates(concurrent));
+			UUID idEntite = (UUID)foreignKeyValue.get(Contact.class).get(T_Contact.ID_ENTITE.getFieldName());
+			if(idEntite != null) {
+				DefaultSqlBuilder<Entite, Void> sqlBuilder = new DefaultSqlBuilder<>(Entite.class);
+				concurrent.setEntite(sqlBuilder.get(null, null, idEntite));
+			}
 
 			if(reglement != null) {
 				CriteriaSet differentiationCriteria = null;
-				String sql = "select NUMCRITERIASET from DISTINGUER where ID_CONTACT=? and NUMREGLEMENT=?"; //$NON-NLS-1$
+				String sql = "select NUMCRITERIASET from DISTINGUER where ID_CONTACT=? and ID_REGLEMENT=?"; //$NON-NLS-1$
 				if(!ApplicationCore.dbConnection.isClosed()) {
 					try (PreparedStatement pstmt = ApplicationCore.dbConnection.prepareStatement(sql)) {
 						pstmt.setString(1, concurrent.getIdContact().toString());
-						pstmt.setInt(2, reglement.getNumReglement());
+						pstmt.setObject(2, reglement.getIdReglement());
 					
 						try (ResultSet rsCriteriaSet = pstmt.executeQuery()) {
 							if(rsCriteriaSet.first()) {
@@ -216,7 +210,7 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 											valindex = 0;
 										
 										if(key.getCriterionElements().get(valindex).isActive())
-											differentiationCriteria.getCriteria().put(key, key.getCriterionElements().get(valindex));
+											differentiationCriteria.addCriterionElement(key.getCriterionElements().get(valindex));
 										else
 											return null;
 										
@@ -229,7 +223,7 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 												&& !key.getCriterionElements().get(valindex).isActive())
 											valindex++;
 										if(valindex < key.getCriterionElements().size())
-											differentiationCriteria.getCriteria().put(key, key.getCriterionElements().get(valindex));
+											differentiationCriteria.addCriterionElement(key.getCriterionElements().get(valindex));
 										else
 											return null;
 									}
@@ -240,8 +234,9 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 				}
 				
 				//régle de surclassement de l'archer
-				if(reglement.getSurclassement().containsKey(differentiationCriteria)) {
-					CriteriaSet tmpCS = reglement.getSurclassement().get(differentiationCriteria);
+				Surclassement surclassement = reglement.getSurclassement(differentiationCriteria);
+				if(surclassement != null) {
+					CriteriaSet tmpCS = surclassement.getCriteriaSetSurclasse();
 					
 					if(tmpCS == null) //si la categorie est invalide alors ne pas renvoyer l'archer
 						return null;
@@ -270,7 +265,7 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 		
 		CriteriaSet differentiationCriteria = new CriteriaSet();
 		for(Criterion key : reglement.getListCriteria()) {
-			differentiationCriteria.getCriteria().put(key, key.getCriterionElements().get(0));
+			differentiationCriteria.addCriterionElement(key.getCriterionElements().get(0));
 		}
 		concurrent.setCriteriaSet(differentiationCriteria);
 		

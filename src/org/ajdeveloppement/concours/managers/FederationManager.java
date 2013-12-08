@@ -91,8 +91,8 @@ package org.ajdeveloppement.concours.managers;
 import java.util.List;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.Federation;
-import org.ajdeveloppement.concours.T_Federation;
+import org.ajdeveloppement.concours.data.Federation;
+import org.ajdeveloppement.concours.data.T_Federation;
 
 /**
  * @author Aurélien JEOFFRAY

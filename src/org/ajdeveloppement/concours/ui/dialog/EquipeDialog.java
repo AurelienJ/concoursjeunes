@@ -124,14 +124,14 @@ import org.ajdeveloppement.apps.localisation.Localizator;
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.ui.AJTree;
 import org.ajdeveloppement.commons.ui.GhostGlassPane;
-import org.ajdeveloppement.concours.Concurrent;
 import org.ajdeveloppement.concours.ConcurrentList;
-import org.ajdeveloppement.concours.CriteriaSet;
-import org.ajdeveloppement.concours.Criterion;
-import org.ajdeveloppement.concours.Entite;
 import org.ajdeveloppement.concours.Equipe;
 import org.ajdeveloppement.concours.EquipeList;
 import org.ajdeveloppement.concours.FicheConcours;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.CriteriaSet;
+import org.ajdeveloppement.concours.data.Criterion;
+import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.localisable.CriteriaSetLibelle;
 
 /**

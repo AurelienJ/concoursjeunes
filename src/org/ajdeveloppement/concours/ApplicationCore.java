@@ -102,7 +102,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -302,12 +301,13 @@ public class ApplicationCore {
 				scriptEngine.put("sql", sqlManager);   //$NON-NLS-1$
 				
 				List<File> scripts = FileUtils.listAllFiles(updatePath, ".*\\.js");   //$NON-NLS-1$
-				Collections.sort(scripts, new Comparator<File>() {
+				Collections.sort(scripts, (f1, f2) ->  f2.getName().compareTo(f1.getName())
+						/*new Comparator<File>() {
 					@Override
 					public int compare(File f1, File f2) {
 						return f2.getName().compareTo(f1.getName());
 					}
-				});
+				}*/);
 				boolean updateError = false;
 				for(File script : scripts) {
 					try {		

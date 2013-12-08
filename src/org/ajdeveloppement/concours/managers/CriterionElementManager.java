@@ -88,13 +88,13 @@
  */
 package org.ajdeveloppement.concours.managers;
 
-import static org.ajdeveloppement.concours.T_CriterionElement.*;
+import static org.ajdeveloppement.concours.data.T_CriterionElement.*;
 
 import java.util.List;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.Criterion;
-import org.ajdeveloppement.concours.CriterionElement;
+import org.ajdeveloppement.concours.data.Criterion;
+import org.ajdeveloppement.concours.data.CriterionElement;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -112,7 +112,7 @@ public class CriterionElementManager {
 	public static List<CriterionElement> getAllCriterionElementsFor(Criterion criterion) {
 		return QResults.from(CriterionElement.class, criterion)
 	    		.where(CODECRITERE.equalTo(criterion.getCode())
-	    				.and(NUMREGLEMENT.equalTo(criterion.getReglement().getNumReglement())))
+	    				.and(ID_REGLEMENT.equalTo(criterion.getReglement().getIdReglement())))
 	    		.orderBy(NUMORDRE).asList();
 	}
 

@@ -1,0 +1,109 @@
+@CHARSET "UTF-8";
+
+#ActionBar {
+	-fx-background-color: aqua;
+}
+
+Button {
+	-fx-background-color: beige;
+	-fx-padding: 100px;
+}
+
+TabPane tab tab-label {
+	-fx-rotate: 50;
+}
+
+#toolbar {
+    -fx-border-image-source: url("images/mid-bar-right.png");
+    -fx-border-image-slice: 1 0 1 0 fill;
+    -fx-border-image-width: 1 0 1 0;
+    -fx-border-image-repeat: stretch;
+    -fx-padding: -1px 0px 0px 0px;
+    -fx-spacing: 0;
+}
+#toolbar HBox {
+    -fx-fill-height: true;
+    -fx-alignment: center-left;
+}
+#toolbar .button {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 3px 6px 4px 6px;
+    -fx-border-color: transparent #6e737d transparent rgba(255,255,255,0.3) , transparent rgba(255,255,255,0.3) transparent transparent;
+    -fx-border-insets: 0, 0 1 0 1;
+}
+#toolbar #SettingsButton {
+    -fx-border-color: transparent transparent transparent #6e737d , transparent transparent transparent rgba(255,255,255,0.3);
+    -fx-border-insets: 0, 0 1 0 1;
+}
+#toolbar .button:hover {
+    -fx-background-color: rgba(255,255,255,0.4);
+}
+#toolbar .button:focused, #toolbar #SettingsButton:focused  {
+    -fx-border-color: -fx-focus-color;
+    -fx-border-width: 1.4;
+}
+
+#toolbar #breadcrumbBar {
+    -fx-padding: 0;
+}
+#toolbar #breadcrumbBar .button {
+    -fx-padding: 0 3 0 3;
+    -fx-border-color: null;
+    -fx-border-insets: 0;
+    -fx-border-image-source: url("images/crumb.png");
+    -fx-border-image-slice: 1 10 1 10 fill;
+    -fx-border-image-width: 1 10 1 10;
+    -fx-border-image-repeat: stretch;
+}
+#toolbar #breadcrumbBar .button:focused {
+    -fx-border-image-source: url("images/crumb-focused.png");
+}
+#toolbar #breadcrumbBar .button:hover {
+    -fx-background-color: null;
+    -fx-border-image-source: url("images/crumb-hover.png");
+}
+#toolbar #breadcrumbBar .only-button {
+    -fx-border-image-width: 0 0 0 0;
+    -fx-border-image-repeat: stretch;
+    -fx-border-image-source: url("images/crumb-selected.png");
+    -fx-border-color: transparent #6e737d transparent rgba(255,255,255,0.3) , transparent rgba(255,255,255,0.3) transparent transparent;
+    -fx-border-insets: 0 0 1 0, 1;
+}
+#toolbar #breadcrumbBar .only-button:hover {
+    -fx-border-image-source: url("images/crumb-selected.png");
+    -fx-border-image-insets: 0 0 1 0;
+}
+#toolbar #breadcrumbBar .only-button:focused {
+    -fx-border-color: -fx-focus-color;
+    -fx-border-width: 1.4;
+}
+#toolbar #breadcrumbBar .first-button {
+    -fx-border-image-insets: 0 -5 1 0;
+    -fx-border-image-width: 0 10 0 0;
+    -fx-border-image-repeat: stretch;
+    -fx-padding: 0 3 0 6;
+}
+#toolbar #breadcrumbBar .first-button:focused {
+    -fx-border-color: transparent transparent transparent -fx-focus-color;
+    -fx-border-width: 1.4;
+}
+#toolbar #breadcrumbBar .middle-button {
+    -fx-border-image-insets: 0 -5 1 -4;
+}
+#toolbar #breadcrumbBar .last-button {
+    -fx-border-image-insets: 0 0 0 -4;
+    -fx-border-image-width: 0 0 0 10;
+    -fx-border-image-repeat: stretch;
+    -fx-border-image-source: url("images/crumb-selected.png");
+    -fx-border-color: transparent #6e737d transparent transparent , transparent rgba(255,255,255,0.2) transparent transparent;
+    -fx-border-insets: 0 0 1 0, 1;
+}
+#toolbar #breadcrumbBar .last-button:hover {
+    -fx-border-image-source: url("images/crumb-selected.png");
+}
+#toolbar #breadcrumbBar .last-button:focused {
+    -fx-border-color: transparent -fx-focus-color transparent transparent;
+    -fx-border-width: 1.4;
+}

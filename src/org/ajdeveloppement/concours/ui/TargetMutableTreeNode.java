@@ -93,9 +93,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import org.ajdeveloppement.concours.Concurrent;
 import org.ajdeveloppement.concours.Target;
 import org.ajdeveloppement.concours.TargetPosition;
+import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.event.TargetEvent;
 import org.ajdeveloppement.concours.event.TargetListener;
 

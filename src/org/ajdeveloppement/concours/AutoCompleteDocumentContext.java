@@ -88,6 +88,10 @@
  */
 package org.ajdeveloppement.concours;
 
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Reglement;
+
 /**
  * Le Contexte d'autocomplement stock les instances et propriétés commune à tous les
  * documents d'autocomplement devant travaillé de concert.

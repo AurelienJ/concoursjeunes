@@ -1,0 +1,70 @@
+body {
+	margin: 0px;
+	padding: 0px;
+	font-family: Tahoma, Arial, Verdana, sans-serif;
+}
+pre {
+   white-space: pre-wrap;             /* CSS3 */
+}
+
+#tabspane > section {
+	display: inline;
+}
+
+#tabspane > section > a {
+	position: relative;
+    margin: 2px -3px;
+    padding: 5px 5px;
+    display: inline-block;
+    
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    /*background: none repeat scroll 0% 0% white;*/
+    
+    
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(204, 204, 204) rgb(204, 204, 204) white;
+}
+
+#tabspane > section:not(:target) > a {
+	border-bottom: 0px none; 
+	background: -webkit-gradient(linear, center top , white, rgb(238, 238, 238)) repeat scroll 0% 0% transparent;
+}
+
+#tabspane > section:target > a {
+    /*background: none repeat scroll 0% 0% white;*/
+}
+
+#tabspane > section > article {
+    /*background: none repeat scroll 0% 0% white;*/
+    z-index: -2;
+    left: 0px;
+    top: 30px;
+    bottom: 0px;
+    right: 0px;
+    padding-left: 20px;
+    border: 1px solid rgb(204, 204, 204);
+}
+
+#tabspane > section:not(:target) > article {
+    position: absolute;
+    display: none;
+}
+
+#tabspane > section:target > article {
+    position: absolute;
+    display: block;
+    z-index: -1;
+}
+
+#applogo {
+	float:left;
+	margin: 30px;
+}
+
+#appName {
+	font-size: 115%;
+	font-weight: bold;
+}

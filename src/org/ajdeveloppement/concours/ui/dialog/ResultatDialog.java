@@ -116,11 +116,11 @@ import org.ajdeveloppement.apps.localisation.Localizator;
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.commons.ui.NumberDocument;
-import org.ajdeveloppement.concours.Concurrent;
 import org.ajdeveloppement.concours.ConcurrentList;
+import org.ajdeveloppement.concours.ConcurrentList.SortCriteria;
+import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.Parametre;
 import org.ajdeveloppement.concours.Profile;
-import org.ajdeveloppement.concours.ConcurrentList.SortCriteria;
 
 /**
  * Boite de dialogue de saisie des résultats pour une cible
@@ -130,10 +130,22 @@ import org.ajdeveloppement.concours.ConcurrentList.SortCriteria;
  */
 @Localizable(textMethod="setTitle",value="resultats.titre")
 public class ResultatDialog extends JDialog implements ActionListener, KeyListener, FocusListener {
-	//static
+	
+	/**
+	 * Previous target action
+	 */
 	public static final int PREVIOUS_TARGET = 0;
+	/**
+	 * Next target action
+	 */
 	public static final int NEXT_TARGET = 1;
+	/**
+	 * Save and quit action
+	 */
 	public static final int SAVE_AND_QUIT = 2;
+	/**
+	 * Cancel action
+	 */
 	public static final int CANCEL = 3;
 
 	private AjResourcesReader localisation;
@@ -168,8 +180,10 @@ public class ResultatDialog extends JDialog implements ActionListener, KeyListen
 	 * Ouverture de la boite de dialogue de saisie des résultats.
 	 * 
 	 * @param parentframe la fenetre parentes dont dépent la boite de dialogue
-	 * @param concurrents les concurrents à editer
+	 * @param localisation
+	 * @param profile
 	 * @param parametres les parametre specifique du concours regissant la saisie
+	 * @param concurrents les concurrents à editer
 	 */
 	public ResultatDialog(
 			JFrame parentframe, AjResourcesReader localisation, Profile profile, Parametre parametres, List<Concurrent> concurrents) {
@@ -372,9 +386,14 @@ public class ResultatDialog extends JDialog implements ActionListener, KeyListen
 					: (i+1) + localisation.getResourceString("resultats.distancen") + " "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		for(int i = 0 ; i < jlDepartages.length; i++)
-			jlDepartages[i].setText(parametres.getReglement().getTie().get(i));
+			jlDepartages[i].setText(parametres.getReglement().getTie().get(i).getFieldName());
 	}
 	
+	/**
+	 * Show the resultat dialog
+	 * 
+	 * @return the close action
+	 */
 	public int showResultatDialog() {
 		// affichage de la boite de dialogue
 		pack();
@@ -490,7 +509,7 @@ public class ResultatDialog extends JDialog implements ActionListener, KeyListen
 
 	}
 
-	public class ResultatDialogFocusTraversalPolicy extends FocusTraversalPolicy {
+	class ResultatDialogFocusTraversalPolicy extends FocusTraversalPolicy {
 		private int getIndexConcurrentAtPosition(int position) {
 			for(int i = 0; i < concurrents.size(); i++)
 				if(concurrents.get(i).getPosition() == position)

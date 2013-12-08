@@ -88,7 +88,7 @@
  */
 package org.ajdeveloppement.concours.ui.components;
 
-import org.ajdeveloppement.concours.Concurrent;
+import org.ajdeveloppement.concours.data.Concurrent;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;

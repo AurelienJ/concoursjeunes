@@ -91,8 +91,8 @@ package org.ajdeveloppement.concours.managers;
 import java.util.List;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.RepartitionFinals;
-import org.ajdeveloppement.concours.T_RepartitionFinals;
+import org.ajdeveloppement.concours.data.RepartitionFinals;
+import org.ajdeveloppement.concours.data.T_RepartitionFinals;
 
 /**
  * @author Aurélien JEOFFRAY

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	
+	<link href="file:{BASE_URI}/styleActionPane.css" rel="stylesheet" type="text/css" />
+	
+	<script type="text/javascript" src="file:{BASE_URI}/actionPane.js"></script>
+	
+	<base href="file:{BASE_URI}/">
+</head>
+<body>
+	<img src="images/blackbackground.png" id="bg" />
+	
+	<div class="tabs" id="parameters">
+		<span id="date">{PARAM_DATE}</span><br />
+		<img src="{PARAM_LOGO}" width="100"/><br />
+		<span id="intituleClub">{PARAM_CLUB}</span>
+	</div>
+	<div class="separator"></div>
+	<bloc::tab><div class="tabs" id="{TAB_ID}"><img src="{TAB_IMG}"/> {TAB_ENTRY}</div>
+	</bloc::tab>
+</body>
+</html>

@@ -86,8 +86,8 @@
  */
 package org.ajdeveloppement.concours.event;
 
-import org.ajdeveloppement.concours.Concurrent;
 import org.ajdeveloppement.concours.Target;
+import org.ajdeveloppement.concours.data.Concurrent;
 
 /**
  * Evenement transmit par l'objet Cible lorsqu'un concurrent la rejoint

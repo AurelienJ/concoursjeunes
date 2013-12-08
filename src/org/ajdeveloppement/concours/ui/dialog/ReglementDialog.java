@@ -144,12 +144,14 @@ import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.commons.ui.NumberDocument;
 import org.ajdeveloppement.commons.ui.ToolTipHeader;
 import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.Blason;
-import org.ajdeveloppement.concours.CriteriaSet;
-import org.ajdeveloppement.concours.Criterion;
-import org.ajdeveloppement.concours.CriterionElement;
-import org.ajdeveloppement.concours.DistancesEtBlason;
-import org.ajdeveloppement.concours.Reglement;
+import org.ajdeveloppement.concours.data.Blason;
+import org.ajdeveloppement.concours.data.CriteriaSet;
+import org.ajdeveloppement.concours.data.Criterion;
+import org.ajdeveloppement.concours.data.CriterionElement;
+import org.ajdeveloppement.concours.data.Distance;
+import org.ajdeveloppement.concours.data.DistancesEtBlason;
+import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Surclassement;
 import org.ajdeveloppement.concours.localisable.CriteriaSetLibelle;
 import org.ajdeveloppement.concours.managers.BlasonManager;
 import org.ajdeveloppement.swingxext.localisation.JXHeaderLocalisationHandler;
@@ -325,53 +327,6 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 
 		JPanel panel = new JPanel();
 		
-		ajlDistancesBlasons.setCellRenderer(new DefaultListCellRenderer() {
-			@Override
-			public Component getListCellRendererComponent(JList<?> list,
-					Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				if(value instanceof DistancesBlasonsSet) {
-					DistancesBlasonsSet dbSet = (DistancesBlasonsSet)value;
-					
-					String formattedString = "<html>"; //$NON-NLS-1$
-					
-					DistancesEtBlason fisrtDB = dbSet.get().get(0);
-					formattedString += new CriteriaSetLibelle(fisrtDB.getCriteriaSet(),localisation).toString();
-					String distances = ""; //$NON-NLS-1$
-					for(int dist : fisrtDB.getDistance()) {
-						if(!distances.isEmpty())
-							distances += ", "; //$NON-NLS-1$
-						distances += dist + "m"; //$NON-NLS-1$
-					}
-					formattedString += "<br><span style=\"font-weight: normal;\">"; //$NON-NLS-1$
-					formattedString += "&nbsp;&nbsp;&nbsp;" + localisation.getResourceString("reglement.distance") + ": <span style=\"font-style: italic; color: #777777;\">" + distances + "</span><br>";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-					formattedString += "&nbsp;&nbsp;&nbsp;" + localisation.getResourceString("reglement.blason") + ": <span style=\"font-style: italic; color: #777777;\">" + fisrtDB.getTargetFace().getName() + "</span><br>";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-					if(dbSet.get().size() > 1) {
-						String blasonsalt = ""; //$NON-NLS-1$
-						boolean first = true;
-						for(DistancesEtBlason db : dbSet.get()) {
-							if(first) {
-								first = false;
-								continue;
-							}
-							if(!blasonsalt.isEmpty())
-								blasonsalt += ", "; //$NON-NLS-1$
-							blasonsalt += db.getTargetFace().getName();
-						}
-						formattedString += "&nbsp;&nbsp;&nbsp;" + localisation.getResourceString("reglement.blasonsalt") + " <span style=\"font-style: italic; color: #777777;\">" + blasonsalt + "</span>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-					} else {
-						formattedString += "&nbsp;&nbsp;&nbsp;" + localisation.getResourceString("reglement.blasonsaltnull"); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					formattedString += "</span></html>";  //$NON-NLS-1$
-					
-					value = formattedString;
-				}
-
-				return super.getListCellRendererComponent(list, value, index, isSelected,
-						cellHasFocus);
-			}
-		});
-		
 		gridbagComposer.setParentPanel(panel);
 
 		c.gridy = 0;
@@ -542,6 +497,52 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 
 		jspDistanceBlason.setPreferredSize(new Dimension(400, 250));
 		ajlDistancesBlasons.addMouseListener(this);
+		ajlDistancesBlasons.setCellRenderer(new DefaultListCellRenderer() {
+			@Override
+			public Component getListCellRendererComponent(JList<?> list,
+					Object value, int index, boolean isSelected,
+					boolean cellHasFocus) {
+				if(value instanceof DistancesBlasonsSet) {
+					DistancesBlasonsSet dbSet = (DistancesBlasonsSet)value;
+					
+					String formattedString = "<html>"; //$NON-NLS-1$
+					
+					DistancesEtBlason fisrtDB = dbSet.get().get(0);
+					formattedString += ""; //new CriteriaSetLibelle(fisrtDB.getCriteriaSet(),localisation).toString(); //$NON-NLS-1$
+					String distances = ""; //$NON-NLS-1$
+					for(Distance dist : fisrtDB.getDistances()) {
+						if(!distances.isEmpty())
+							distances += ", "; //$NON-NLS-1$
+						distances += dist.getDistance() + "m"; //$NON-NLS-1$
+					}
+					formattedString += "<br><span style=\"font-weight: normal;\">"; //$NON-NLS-1$
+					formattedString += "&nbsp;&nbsp;&nbsp;" + localisation.getResourceString("reglement.distance") + ": <span style=\"font-style: italic; color: #777777;\">" + distances + "</span><br>";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					formattedString += "&nbsp;&nbsp;&nbsp;" + localisation.getResourceString("reglement.blason") + ": <span style=\"font-style: italic; color: #777777;\">" + fisrtDB.getTargetFace().getName() + "</span><br>";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					if(dbSet.get().size() > 1) {
+						String blasonsalt = ""; //$NON-NLS-1$
+						boolean first = true;
+						for(DistancesEtBlason db : dbSet.get()) {
+							if(first) {
+								first = false;
+								continue;
+							}
+							if(!blasonsalt.isEmpty())
+								blasonsalt += ", "; //$NON-NLS-1$
+							blasonsalt += db.getTargetFace().getName();
+						}
+						formattedString += "&nbsp;&nbsp;&nbsp;" + localisation.getResourceString("reglement.blasonsalt") + " <span style=\"font-style: italic; color: #777777;\">" + blasonsalt + "</span>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					} else {
+						formattedString += "&nbsp;&nbsp;&nbsp;" + localisation.getResourceString("reglement.blasonsaltnull"); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					formattedString += "</span></html>";  //$NON-NLS-1$
+					
+					value = formattedString;
+				}
+
+				return super.getListCellRendererComponent(list, value, index, isSelected,
+						cellHasFocus);
+			}
+		});
 
 		jpConcours.setLayout(new BorderLayout());
 		jpConcours.add(BorderLayout.NORTH, jlNbDB);
@@ -671,9 +672,15 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 						jcbCriteriaSet.addItem(" "); //$NON-NLS-1$
 						CriteriaSet tmpCs = (CriteriaSet)table.getValueAt(row, 1);
 						
-						if(!reglement.getSurclassement().containsValue(tmpCs)) {
+						List<CriteriaSet> activeSurclassement = new ArrayList<CriteriaSet>();
+						for(Surclassement surclassement : reglement.getSurclassements()) {
+							if(surclassement.getCriteriaSetSurclasse() != null)
+								activeSurclassement.add(surclassement.getCriteriaSetSurclasse());
+						}
+							
+						if(!activeSurclassement.contains(tmpCs)) {
 							for(CriteriaSet cs : CriteriaSet.listCriteriaSet(reglement, reglement.getClassementFilter())) {
-								if(!tmpCs.equals(cs) && !reglement.getSurclassement().containsKey(cs))
+								if(!tmpCs.equals(cs) && !reglement.isSurclasseOrDisable(cs))
 									jcbCriteriaSet.addItem(cs);
 							}
 						}
@@ -698,12 +705,10 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 		
 		ajlDistancesBlasons.clear();
 		for (CriteriaSet plCS : differentiationCriteria) {
-			if (reglement.getDistancesEtBlasonFor(plCS).size() > 0) {
-				ajlDistancesBlasons.add(new DistancesBlasonsSet(reglement.getDistancesEtBlasonFor(plCS)));
+			if (plCS.getDistancesEtBlasonAlternatifs() != null && plCS.getDistancesEtBlasonAlternatifs().size() > 0) {
+				ajlDistancesBlasons.add(new DistancesBlasonsSet(Collections.singletonList(plCS.getDistancesEtBlason())));
 			} else {
 				DistancesEtBlason newDb = new DistancesEtBlason();
-				newDb.setCriteriaSet(plCS);
-				newDb.setDistance(new int[reglement.getNbSerie()]);
 				Blason defaultBlason = new Blason();
 
 				List<Blason> availableTargetFace = BlasonManager.listAvailableTargetFace();
@@ -739,9 +744,13 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 		//on liste toutes les catégorie de classement
 		CriteriaSet[] differentiationCriteria = CriteriaSet.listCriteriaSet(reglement, reglement.getClassementFilter());
 		for (int i = 0; i < differentiationCriteria.length; i++) {
-			CriteriaSet criteriaSet = reglement.getSurclassement().get(differentiationCriteria[i]);
+			CriteriaSet criteriaSet = null;
+			Surclassement surclassement = reglement.getSurclassement(differentiationCriteria[i]);
+			if(surclassement != null)
+				criteriaSet = surclassement.getCriteriaSetSurclasse();
+			
 			boolean enable = true;
-			if(criteriaSet == null && reglement.getSurclassement().containsKey(differentiationCriteria[i]))
+			if(criteriaSet == null && reglement.isSurclasseOrDisable(differentiationCriteria[i]))
 				enable = false;
 			dtm.addRow(new Object[] {
 					enable,
@@ -1136,12 +1145,13 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 		boolean active = (Boolean)dtm.getValueAt(e.getFirstRow(), 0);
 		Object oSurclasse = dtm.getValueAt(e.getFirstRow(), 2);
 		
-		if(active && oSurclasse instanceof CriteriaSet)
-			reglement.getSurclassement().put(criteriaSet, (CriteriaSet)oSurclasse);
-		else if(!active)
-			reglement.getSurclassement().put(criteriaSet, null);
-		else
-			reglement.getSurclassement().remove(criteriaSet);
+		if(active && oSurclasse instanceof CriteriaSet) {
+			reglement.addSurclassement(criteriaSet, (CriteriaSet)oSurclasse);
+		} else if(!active) {
+			reglement.addSurclassement(criteriaSet, null);
+		} else {
+			reglement.removeSurclassement(criteriaSet);
+		}
 		
 		completeDistancesEtBlasons();
 	}

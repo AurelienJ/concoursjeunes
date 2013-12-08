@@ -96,6 +96,8 @@ import java.util.Map;
 import javax.swing.event.EventListenerList;
 
 import org.ajdeveloppement.concours.Target.Repartition;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.DistancesEtBlason;
 import org.ajdeveloppement.concours.event.FicheConcoursEvent;
 import org.ajdeveloppement.concours.event.FicheConcoursListener;
 import org.ajdeveloppement.concours.event.PasDeTirListener;

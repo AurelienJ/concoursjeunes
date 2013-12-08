@@ -91,7 +91,7 @@ package org.ajdeveloppement.concours.managers;
 import java.util.List;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.CategoryContact;
+import org.ajdeveloppement.concours.data.CategoryContact;
 
 /**
  * Gestionnaire de categories de contact

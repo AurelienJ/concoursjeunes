@@ -87,7 +87,7 @@
 
 package org.ajdeveloppement.concours;
 
-import static org.ajdeveloppement.concours.ApplicationCore.staticParameters;
+import static org.ajdeveloppement.concours.ApplicationCore.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -100,6 +100,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlIDREF;
 
+import org.ajdeveloppement.concours.data.CompetitionLevel;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Reglement;
 import org.ajdeveloppement.concours.managers.ReglementManager;
 
 /**
@@ -119,9 +122,6 @@ public class Parametre extends DefaultParameters {
 	private Date dateFinConcours	= new Date();
 	private boolean open			= true;
 	private boolean duel			= false;
-	@XmlElementWrapper(name="arbitres",required=false)
-	@XmlElement(name="arbitre")
-	private List<String> arbitres;
 	@XmlElementWrapper(name="judges",required=false)
 	@XmlElement(name="judge")
 	private List<Judge> judges		= new ArrayList<Judge>();
@@ -336,32 +336,6 @@ public class Parametre extends DefaultParameters {
 		this.duel = duel;
 		
 		pcs.firePropertyChange("duel", oldValue, duel); //$NON-NLS-1$
-	}
-
-	/**
-	 * Donne la liste des arbitres
-	 * 
-	 * @deprecated replacé par {@link #getJudges()}
-	 * 
-	 * @return la liste des arbitres
-	 */
-	@Deprecated
-	public List<String> getArbitres() {
-		if(arbitres == null)
-			return new ArrayList<String>();
-		return arbitres;
-	}
-
-	/**
-	 * Spécifie la liste des arbitres
-	 * 
-	 * @deprecated remplacé par [{@link #setJudges(List)}
-	 * 
-	 * @param arbitres
-	 */
-	@Deprecated
-	public void setArbitres(List<String> arbitres) {
-		this.arbitres = arbitres;
 	}
 
 	/**

@@ -111,6 +111,9 @@ public class ApplicationCoreTest extends TestCase {
 		arcCompetition = ApplicationCore.getInstance();
 	}
 
+	/**
+	 * JUnit ApplicationCore test 
+	 */
 	@Test
 	public void testApplicationCore() {
 		//test que ArcCompetition accédent correctement aux fichiers
@@ -138,6 +141,9 @@ public class ApplicationCoreTest extends TestCase {
 		}
 	}
 	
+	/**
+	 * Test Add and remove profile action
+	 */
 	@Test
 	public void testAddRemoveProfile() {
 		arcCompetition.addApplicationCoreListener(new ApplicationCoreListener() {

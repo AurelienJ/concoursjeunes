@@ -91,9 +91,9 @@ package org.ajdeveloppement.concours.debug;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ajdeveloppement.concours.Concurrent;
 import org.ajdeveloppement.concours.ConcurrentList;
 import org.ajdeveloppement.concours.FicheConcours;
+import org.ajdeveloppement.concours.data.Concurrent;
 
 
 /**

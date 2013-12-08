@@ -99,11 +99,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.ajdeveloppement.concours.DefaultParameters;
-import org.ajdeveloppement.concours.Entite;
-import org.ajdeveloppement.concours.Federation;
 import org.ajdeveloppement.concours.Margin;
 import org.ajdeveloppement.concours.MetaDataFichesConcours;
-import org.ajdeveloppement.concours.Rate;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Federation;
+import org.ajdeveloppement.concours.data.Rate;
 /**
  * paramètre de configuration du profile utilisateur
  * 

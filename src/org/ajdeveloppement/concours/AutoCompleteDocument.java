@@ -98,6 +98,13 @@ import javax.swing.text.PlainDocument;
 
 import org.ajdeveloppement.commons.persistence.sql.QField;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.concours.data.Archer;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.T_Archer;
+import org.ajdeveloppement.concours.data.T_Contact;
+import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.event.AutoCompleteDocumentEvent;
 import org.ajdeveloppement.concours.event.AutoCompleteDocumentListener;
 import org.ajdeveloppement.concours.managers.ConcurrentManager;

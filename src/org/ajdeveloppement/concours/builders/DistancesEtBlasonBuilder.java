@@ -88,22 +88,23 @@
  */
 package org.ajdeveloppement.concours.builders;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
-import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.DistancesEtBlason;
-import org.ajdeveloppement.concours.T_DistancesEtBlason;
+import org.ajdeveloppement.concours.data.Distance;
+import org.ajdeveloppement.concours.data.DistancesEtBlason;
+import org.ajdeveloppement.concours.data.T_Distance;
+import org.ajdeveloppement.concours.data.T_DistancesEtBlason;
+
 
 /**
  * @author Aurélien JEOFFRAY
@@ -114,21 +115,18 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 	private static LoadHelper<DistancesEtBlason,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(DistancesEtBlason.class);
 	private static LoadHelper<DistancesEtBlason,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(DistancesEtBlason.class);
 	
-	private static PreparedStatement pstmtDistances = null;
-	
 	/**
 	 * Construit un objet DistancesEtBlason en se basan sur le numero de sa reference
 	 * en base ainsi que le numero de réglement.<br>
 	 * Associe à l'objet DistancesEtBlason l'objet Reglement lié
 	 * 
-	 * @param numdistancesblason Le numero de la ligne en base
-	 * @param numReglement numéro du réglement lié
+	 * @param idDistancesblason Le numero de la ligne en base
 	 * 
 	 * @return l'objet DistancesEtBlason généré
 	 * @throws ObjectPersistenceException 
 	 */
-	public static DistancesEtBlason getDistancesEtBlason(int numdistancesblason, int numReglement) throws ObjectPersistenceException {
-		return getDistancesEtBlason(numdistancesblason, numReglement, null, false, null);
+	public static DistancesEtBlason getDistancesEtBlason(UUID idDistancesblason) throws ObjectPersistenceException {
+		return getDistancesEtBlason(idDistancesblason, null, false, null);
 	}
 	
 	/**
@@ -136,15 +134,14 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 	 * en base ainsi que le numero de réglement.<br>
 	 * Associe à l'objet DistancesEtBlason l'objet Reglement lié
 	 * 
-	 * @param numdistancesblason Le numero de la ligne en base
-	 * @param numReglement numéro du réglement lié
+	 * @param idDistancesblason Le numero de la ligne en base
 	 * @param doNotUseCache ne pas utiliser le cache
 	 * 
 	 * @return l'objet DistancesEtBlason généré
 	 * @throws ObjectPersistenceException 
 	 */
-	public static DistancesEtBlason getDistancesEtBlason(int numdistancesblason, int numReglement, boolean doNotUseCache) throws ObjectPersistenceException {
-		return getDistancesEtBlason(numdistancesblason, numReglement, null, doNotUseCache, null);
+	public static DistancesEtBlason getDistancesEtBlason(UUID idDistancesblason, boolean doNotUseCache) throws ObjectPersistenceException {
+		return getDistancesEtBlason(idDistancesblason, null, doNotUseCache, null);
 	}
 	
 	/**
@@ -159,7 +156,7 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 	 * @throws ObjectPersistenceException
 	 */
 	public static DistancesEtBlason getDistancesEtBlason(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		return getDistancesEtBlason(-1, -1, rs, false, sessionCache);
+		return getDistancesEtBlason(null, rs, false, sessionCache);
 	}
 	
 	/**
@@ -172,7 +169,7 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 	 * @throws ObjectPersistenceException
 	 */
 	public static DistancesEtBlason getDistancesEtBlason(ResultSet rs, boolean doNotUseCache) throws ObjectPersistenceException {
-		return getDistancesEtBlason(-1, -1, rs, doNotUseCache, null);
+		return getDistancesEtBlason(null, rs, doNotUseCache, null);
 	}
 	
 	/**
@@ -188,7 +185,7 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 	 * @throws ObjectPersistenceException
 	 */
 	public static DistancesEtBlason getDistancesEtBlason(ResultSet rs, boolean doNotUseCache, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		return getDistancesEtBlason(-1, -1, rs, doNotUseCache, sessionCache);
+		return getDistancesEtBlason(null, rs, doNotUseCache, sessionCache);
 	}
 	
 	/**
@@ -196,46 +193,24 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 	 * en base ainsi que le numero de réglement.<br>
 	 * Associe à l'objet DistancesEtBlason l'objet Reglement lié
 	 * 
-	 * @param numdistancesblason Le numero de la ligne en base
+	 * @param idDistancesBlason Le numero de la ligne en base
 	 * @param reglement Le réglement à lié
 	 * @param doNotUseCache le pas utiliser le cache
 	 * 
 	 * @return l'objet DistancesEtBlason généré
 	 * @throws ObjectPersistenceException 
 	 */
-	private static DistancesEtBlason getDistancesEtBlason(int numdistancesblason, int numReglement, ResultSet rs, 
+	private static DistancesEtBlason getDistancesEtBlason(UUID idDistancesBlason, ResultSet rs, 
 			boolean doNotUseCache, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		DistancesEtBlason distancesEtBlason = new DistancesEtBlason();
 		
 		try {
 			if(rs == null) {
-				distancesEtBlason.setReglement(ReglementBuilder.getReglement(numReglement, doNotUseCache, sessionCache));
-				distancesEtBlason.setNumdistancesblason(numdistancesblason);
+				distancesEtBlason.setIdDistancesBlason(idDistancesBlason);
 			} else {
-				numdistancesblason = T_DistancesEtBlason.NUMDISTANCESBLASONS.getValue(rs);
-				numReglement = T_DistancesEtBlason.NUMREGLEMENT.getValue(rs);
+				idDistancesBlason = T_DistancesEtBlason.ID_DISTANCESBLASONS.getValue(rs);
 			}
-			
-			if(pstmtDistances == null) {
-				String sql = "select DISTANCE from DISTANCES where " + //$NON-NLS-1$
-					"NUMDISTANCESBLASONS=? and NUMREGLEMENT=? order by NUMDISTANCES"; //$NON-NLS-1$
-				pstmtDistances = ApplicationCore.dbConnection.prepareStatement(sql);
-			}
-			
-			pstmtDistances.setInt(1, numdistancesblason);
-			pstmtDistances.setInt(2, numReglement);
-			
-			try(ResultSet rs2 = pstmtDistances.executeQuery()) {
-				List<Integer> distances = new ArrayList<Integer>();
-				while(rs2.next()) {
-					distances.add(rs2.getInt("DISTANCE")); //$NON-NLS-1$
-				}
-				int[] iDist = new int[distances.size()];
-				for(int i = 0; i < iDist.length; i++)
-					iDist[i] = distances.get(i);
-				distancesEtBlason.setDistance(iDist);
-			}
-			
+
 			Map<Class<?>, Map<String,Object>> foreignKeys = null;
 			
 			if(rs == null) {
@@ -244,11 +219,15 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 				foreignKeys = resultSetLoadHelper.load(distancesEtBlason, rs);
 			}
 			
+			distancesEtBlason.setDistances(
+					QResults.from(Distance.class, sessionCache)
+						.where(T_Distance.ID_DISTANCESBLASONS.equalTo(idDistancesBlason))
+						.orderBy(T_Distance.NUMORDRE)
+						.asList());
+			
 			if(foreignKeys != null) {
-				if(rs != null)
-					distancesEtBlason.setReglement(ReglementBuilder.getReglement((Integer)foreignKeys.get(DistancesEtBlason.class).get("NUMREGLEMENT"), doNotUseCache, sessionCache)); //$NON-NLS-1$
-				distancesEtBlason.setCriteriaSet(CriteriaSetBuilder.getCriteriaSet((Integer)foreignKeys.get(DistancesEtBlason.class).get("NUMCRITERIASET"), doNotUseCache, sessionCache)); //$NON-NLS-1$
-				distancesEtBlason.setTargetFace(BlasonBuilder.getBlason((Integer)foreignKeys.get(DistancesEtBlason.class).get("NUMBLASON"))); //$NON-NLS-1$
+				distancesEtBlason.setTargetFace(BlasonBuilder.getBlason((Integer)foreignKeys.get(DistancesEtBlason.class)
+						.get(T_DistancesEtBlason.NUMBLASON.getFieldName())));
 			}
 		} catch (SQLException e) {
 			throw new ObjectPersistenceException(e);

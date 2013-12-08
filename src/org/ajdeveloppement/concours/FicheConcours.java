@@ -118,6 +118,12 @@ import org.ajdeveloppement.commons.AJTemplate;
 import org.ajdeveloppement.commons.XmlUtils;
 import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.concours.builders.EquipeListBuilder;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.CriteriaSet;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Federation;
+import org.ajdeveloppement.concours.data.Tie;
 import org.ajdeveloppement.concours.event.FicheConcoursEvent;
 import org.ajdeveloppement.concours.event.FicheConcoursListener;
 import org.ajdeveloppement.concours.event.PasDeTirListener;
@@ -606,16 +612,18 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 					tplClassement.parse("categories.CATEGORIE", strSCNA); //$NON-NLS-1$
 
 					for (int j = 0; j < parametre.getReglement().getNbSerie(); j++) {
+						CriteriaSet placementCriteriaSet = scna.getFilteredCriteriaSet(parametre.getReglement().getPlacementFilter());
+						
 						tplClassement.parse("categories.distances.DISTANCE", //$NON-NLS-1$
-								parametre.getReglement().getDistancesEtBlasonFor(scna.getFilteredCriteriaSet(parametre.getReglement().getPlacementFilter())).get(0).getDistance()[j] + "m"); //$NON-NLS-1$
+								placementCriteriaSet.getDistancesEtBlason().getDistances().get(j).getDistance() + "m"); //$NON-NLS-1$
 						tplClassement.loopBloc("categories.distances"); //$NON-NLS-1$
 					}
 					
 					String departages = ""; //$NON-NLS-1$
-					for (String departage : parametre.getReglement().getTie()) {
+					for (Tie departage : parametre.getReglement().getTie()) {
 						if(!departages.isEmpty())
 							departages += "-"; //$NON-NLS-1$
-						departages += departage;
+						departages += departage.getFieldName();
 					}
 					tplClassement.parse("categories.DEPARTAGE", departages); //$NON-NLS-1$
 

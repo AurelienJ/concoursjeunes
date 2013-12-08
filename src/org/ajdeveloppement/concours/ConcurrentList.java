@@ -100,6 +100,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.CriteriaSet;
+import org.ajdeveloppement.concours.data.Criterion;
+import org.ajdeveloppement.concours.data.DistancesEtBlason;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Reglement;
+
 /**
  * Collection des concurrents présent sur le concours
  * 
@@ -635,14 +642,14 @@ public class ConcurrentList {
 		if(sort) {
 			for(int i = 0; i < alDB.size() - 1; i++) {
 				for(int j = i + 1; j < alDB.size(); j++) {
-					if(alDB.get(i).getDistance()[0] < alDB.get(j).getDistance()[0]) {
+					if(alDB.get(i).getDistances().get(0).getDistance() < alDB.get(j).getDistances().get(0).getDistance()) {
 						Collections.swap(alDB, i, j);
 					}
 				}
 			}
 			for(int i = 0; i < alDB.size() - 1; i++) {
 				for(int j = i + 1; j < alDB.size(); j++) {
-					if(alDB.get(i).getTargetFace().getNumordre() > alDB.get(j).getTargetFace().getNumordre() && alDB.get(i).getDistance()[0] == alDB.get(j).getDistance()[0]) {
+					if(alDB.get(i).getTargetFace().getNumordre() > alDB.get(j).getTargetFace().getNumordre() && alDB.get(i).getDistances().get(0).getDistance() == alDB.get(j).getDistances().get(0).getDistance()) {
 						Collections.swap(alDB, i, j);
 					}
 				}

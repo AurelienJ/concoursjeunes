@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	
+	<link href="file:{BASE_URI}/about.css" rel="stylesheet" type="text/css" />
+	<script>
+		window.onload = function() {
+			document.location = "#about";
+		}
+	</script>
+</head>
+<body>
+	<div id="tabspane">
+		<section id="about">
+			<a href="#about">%webui.about.about%</a>
+			<article>
+				<img src="file:{BASE_URI}/../../../graphics/about.jpg" id="applogo" />
+				<p id="appName">{APP_NAME}</p>
+				<p id="description">%webui.about.description%</p>
+				<p id="appInfos">
+					%webui.about.version%: {APP_VERSION}<br />
+					%webui.about.codename%: {APP_CODENAME}<br />
+					{APP_COPYRIGHT}<br />
+					<br />
+					%webui.about.databaseversion%: {APP_DBVERSION}
+				</p>
+				<p id="memoryUsage">
+					%webui.about.usedMemory%: {APP_USEDMEMORY}<br />
+					%webui.about.reservedMemory%: {APP_RESERVEDMEMORY}
+				</p>
+				<a href="http://arccompetition.ajdeveloppement.org">http://arccompetition.ajdeveloppement.org</a>
+			</article>
+		</section>
+		<section id="licence">
+			<a href="#licence">%webui.about.licence%</a>
+			<article>
+			<pre>{LICENCE_CONTENT}</pre>
+			</article>
+		</section>
+		<section id="releaseNote">
+			<a href="#releaseNote">%webui.about.releaseNote%</a>
+			<article>
+			<pre>{RELEASE_NOTE_CONTENT}</pre>
+			</article>
+		</section>
+	</div>
+</body>
+</html>

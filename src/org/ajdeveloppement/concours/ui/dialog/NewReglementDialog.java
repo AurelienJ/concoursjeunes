@@ -96,7 +96,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
-import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -108,15 +107,12 @@ import javax.swing.JTextField;
 import org.ajdeveloppement.apps.localisation.Localizable;
 import org.ajdeveloppement.apps.localisation.Localizator;
 import org.ajdeveloppement.commons.AjResourcesReader;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.ui.DefaultDialogReturn;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
-import org.ajdeveloppement.concours.CriteriaSet;
-import org.ajdeveloppement.concours.DistancesEtBlason;
-import org.ajdeveloppement.concours.Federation;
 import org.ajdeveloppement.concours.Profile;
-import org.ajdeveloppement.concours.Reglement;
 import org.ajdeveloppement.concours.builders.ReglementBuilder;
+import org.ajdeveloppement.concours.data.Federation;
+import org.ajdeveloppement.concours.data.Reglement;
 import org.ajdeveloppement.concours.managers.FederationManager;
 import org.ajdeveloppement.concours.managers.ReglementManager;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
@@ -264,21 +260,11 @@ public class NewReglementDialog extends JDialog implements ActionListener {
 			if(jcbReference.getSelectedItem() instanceof Reglement) {
 				Reglement reference = (Reglement)jcbReference.getSelectedItem();
 				try {
-					reglement = ReglementBuilder.getReglement(reference.getNumReglement(), true);
+					reglement =reference.clone();
 					reglement.setName("C"+(new Date().getTime())); //$NON-NLS-1$
-					reglement.setNumReglement(0);
 					reglement.setRemovable(true);
 					reglement.setOfficialReglement(false);
-					for(DistancesEtBlason db : reglement.getListDistancesEtBlason()) {
-						db.getCriteriaSet().setNumCriteriaSet(0);
-					}
-					
-					for(Map.Entry<CriteriaSet, CriteriaSet> surclassement : reglement.getSurclassement().entrySet()) {
-						surclassement.getKey().setNumCriteriaSet(0);
-						if(surclassement.getValue() != null)
-							surclassement.getValue().setNumCriteriaSet(0);
-					}
-				} catch (ObjectPersistenceException e1) {
+				} catch (CloneNotSupportedException e1) {
 					DisplayableErrorHelper.displayException(e1);
 				}
 			}

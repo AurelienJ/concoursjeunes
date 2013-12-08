@@ -89,9 +89,9 @@
 package org.ajdeveloppement.concours.managers;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.Contact;
-import org.ajdeveloppement.concours.Entite;
-import org.ajdeveloppement.concours.T_Contact;
+import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.T_Contact;
 
 /**
  * @author Aurélien JEOFFRAY

@@ -92,9 +92,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.Ancrage;
-import org.ajdeveloppement.concours.Blason;
-import org.ajdeveloppement.concours.T_Ancrage;
+import org.ajdeveloppement.concours.data.Ancrage;
+import org.ajdeveloppement.concours.data.Blason;
+import org.ajdeveloppement.concours.data.T_Ancrage;
 
 /**
  * Construit la table des ancrages possible d'un blason sur une cible 

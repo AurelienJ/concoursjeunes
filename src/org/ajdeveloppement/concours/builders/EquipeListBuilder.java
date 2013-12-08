@@ -88,11 +88,11 @@ package org.ajdeveloppement.concours.builders;
 
 import java.util.List;
 
-import org.ajdeveloppement.concours.Concurrent;
 import org.ajdeveloppement.concours.ConcurrentList;
-import org.ajdeveloppement.concours.Entite;
 import org.ajdeveloppement.concours.Equipe;
 import org.ajdeveloppement.concours.EquipeList;
+import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.Entite;
 
 /**
  * @author Aurélien JEOFFRAY

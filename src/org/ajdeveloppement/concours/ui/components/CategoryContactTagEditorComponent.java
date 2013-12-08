@@ -105,7 +105,7 @@ import javax.swing.JComboBox;
 import org.ajdeveloppement.apps.localisation.Localizable;
 import org.ajdeveloppement.commons.ui.DefaultTagsModel;
 import org.ajdeveloppement.commons.ui.TagComponent;
-import org.ajdeveloppement.concours.CategoryContact;
+import org.ajdeveloppement.concours.data.CategoryContact;
 
 /**
  * @author Aurélien JEOFFRAY

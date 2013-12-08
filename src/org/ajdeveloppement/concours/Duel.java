@@ -88,6 +88,8 @@
  */
 package org.ajdeveloppement.concours;
 
+import org.ajdeveloppement.concours.data.Concurrent;
+
 
 /**
  * @author Aurélien JEOFFRAY

@@ -92,8 +92,8 @@ import java.util.List;
 
 import org.ajdeveloppement.commons.persistence.sql.QField;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.Entite;
-import org.ajdeveloppement.concours.T_Entite;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.T_Entite;
 
 /**
  * Gére le chargement des Entités à partir de la base de données
