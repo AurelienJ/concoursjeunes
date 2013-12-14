@@ -1,0 +1,10 @@
+<nav>
+			<a href="index.htm" id="homeNav">
+				<img src="images/fnd.jpg" alt="ArcCompetion" width="140"/><br />
+				Gestion des competitions de Tir à l'Arc
+			</a>
+			<a href="competitions.html" {selectedCompetition}>Inscriptions</a>
+			<a href="logiciel.html" {selectedLogiciel}>Suivi et Scores</a>
+			<a href="#" {selectedDocumentation}>Entrainement</a>
+			<a href="admin/global.html" {selectedAdmin}>Administration</a>
+		</nav>

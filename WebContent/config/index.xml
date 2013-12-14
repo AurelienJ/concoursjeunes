@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webpage>
+	<uri>/index.html</uri>
+	<uri>/</uri>
+	<mimeType>text/html</mimeType>
+	<!-- <script>scripts/common/ScriptLoader.js</script> -->
+	<script>scripts/index.js</script>
+</webpage>

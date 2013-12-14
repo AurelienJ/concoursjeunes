@@ -1,0 +1,37 @@
+<menu class="mainMenu">
+			<li class="selected">Ma Région</li> 
+			<li><a href="">Mes compétitions</a></li>
+			<li><a href="">Organiser</a></li> 
+		</menu>
+		
+		<section>
+			<h1>Les compétitions à venir</h1>
+			
+			<div id="filterEvenement"><input type="search" placeholder="rechercher...">
+			Trier par: 
+			<select id="natureTri" >
+			   <option>Date competitions</option>
+			   <option>Date d'annonce</option>
+			</select>
+			Filtrer: 
+			<select id="natureTri" >
+			   <option>Special Jeunes</option>
+			   <option>2 x 18m</option>
+			</select>
+			</div>
+			<table class="annonceCompetition">
+				<tr><td class="titreEvenement"><a href=""><img src="images/competitions.png" />Concours spécial jeunes Aix les Bains</a></td><td class="reglementEvenement">Spécial Jeunes</td></tr>
+				<tr><td colspan="2">Aix les Bains (28/12/2013 - 29/12/2013)</td></tr>
+				<tr><td colspan="2" class="participantsEvenement">15 participants</td></tr>
+			</table>
+			
+			<table class="annonceCompetition">
+				<tr><td class="titreEvenement"><a href=""><img src="images/competitions.png" />Tir en salle Aix les Bains</a></td><td class="reglementEvenement">2 x 18m</td></tr>
+				<tr><td colspan="2">Aix les Bains (28/12/2013 - 29/12/2013)</td></tr>
+				<tr><td colspan="2" class="participantsEvenement">80 participants</td></tr>
+			</table>
+		</section>
+		
+		<section>
+			<h1>Les derniers résultats</h1>
+		</section>

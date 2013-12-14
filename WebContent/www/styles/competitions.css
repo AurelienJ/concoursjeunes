@@ -1,0 +1,82 @@
+@CHARSET "UTF-8";
+
+input[type=search] {
+	-webkit-border-radius:2px;
+	-moz-border-radius:2px;
+	-o-border-radius:2px;
+	-ms-border-radius:2px;
+	border-radius:2px;
+	border-style: solid;
+}
+
+.annonceCompetition {
+	max-width: 1000px;
+	min-width: 600px;
+	width: 100%;
+	
+	/*border-style: solid;
+	border-width: 1px;
+	border-color: black;*/
+	
+	font-size: 10pt;
+	
+	margin: 0px;
+	margin-top: -1px; 
+	
+	background-image: linear-gradient(to bottom, rgb(250, 250, 250) 0px, rgb(240, 240, 240) 100%); 
+}
+
+.annonceCompetition:hover {
+	background-image: linear-gradient(to bottom, rgb(240, 240, 240) 0px, rgb(230, 230, 230) 100%); 
+}
+
+.annonceCompetition .titreEvenement {
+	font-weight: bold;
+}
+.annonceCompetition .titreEvenement img {
+	vertical-align: middle;
+	margin-right: 5px;
+}
+
+.annonceCompetition .reglementEvenement {
+	text-align: right;
+}
+
+.annonceCompetition .participantsEvenement {
+	text-align: right;
+	
+	font-style: italic;
+	font-size: 8pt;
+}
+
+.inscriptionEvenement a {
+	display: block;
+	-webkit-border-radius:2px;
+	-moz-border-radius:2px;
+	-o-border-radius:2px;
+	-ms-border-radius:2px;
+	
+	width:150px;
+	padding: 1em 0em 0.6875em 0em;
+	margin: auto;
+	margin-bottom: 7px;
+	margin-right: 7px;
+	
+	text-align: center;
+	/*text-shadow: 0px -1px 0px rgb(114, 148, 42);*/
+	color: white;
+	
+	background-color: rgb(136, 189, 50);
+	background-image: linear-gradient(to bottom, rgb(66, 178, 219) 0px, rgb(50, 136, 189) 100%);
+	background-repeat: repeat-x;
+	border-radius: 4px 4px 4px 4px;
+	
+	padding: 1em 0em 0.6875em 0em;
+}
+
+#filterEvenement {
+	text-align: right;
+	max-width:1000px;
+	
+	margin-bottom: 10px;
+}

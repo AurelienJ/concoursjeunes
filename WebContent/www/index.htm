@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	
+	<link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Kite+One' rel='stylesheet' type='text/css'>
+	<link href="styles/screen.css" media="screen" rel="stylesheet" type="text/css" />
+	<link href="styles/phone.css" media="screen and (max-width: 800px)" rel="stylesheet" type="text/css" />
+	<link href="styles/openid.css" media="all" rel="stylesheet" type="text/css" />
+	
+	<script type="text/javascript" src="scripts/jquery-1.10.2.min.js"></script>
+	
+	<style type="text/css">
+	body {
+		background-color: rgb(51, 51, 51);
+	}
+	.apps {
+		display: inline-block;
+		
+		margin-left: 5%;
+		margin-right: 5%;
+		padding: 25px;
+		
+		font-size: 1.4em;
+		
+		width: 250px;
+	}
+	
+	.apps:HOVER {
+		background-color: rgb(230, 230, 230);
+	}
+	
+	.arccompetition {
+		color: black;
+		font-weight: bold;
+	}
+	
+	#logo {
+		right: 0px;
+		left:0px;
+		
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 30px;
+		
+		padding: 25px;
+		
+		text-align: center;
+		font-size: 1.3em;
+		
+		background-color: white;
+	}
+	#description {
+		height: 80px;
+		color: white;
+		
+		vertical-align: middle;
+		padding: 40px;
+	}
+	
+	#applications {
+		width: 100%;
+		
+		margin-left: auto;
+		margin-right: auto;
+		/*margin-top: 120px;*/
+		
+		text-align: center;
+		
+		background-color: white;
+	}
+	
+	#entrainement .miseEnValeurTitre {
+		color: #782121;
+		
+		font-weight: bold;
+	}
+	
+	#inscriptions .miseEnValeurTitre {
+		color: #164450;
+		
+		font-weight: bold;
+	}
+	
+	#suivi .miseEnValeurTitre {
+		color: rgb(51, 51, 51);
+		
+		font-weight: bold;
+	}
+	</style>
+	
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$("#inscriptions").hover(
+				function() { 
+						$("body, footer").css("background-color", $("#inscriptions .miseEnValeurTitre").css("color"));
+						$("#description").css("text-align", "left");
+						$("#description").html("Inscrivez vous à une compétition de tir à l'arc");
+					},
+				function() {}
+			);
+		
+		$("#suivi").hover(
+				function() {
+						$("body, footer").css("background-color", $("#suivi .miseEnValeurTitre").css("color"));
+						$("#description").css("text-align", "center");
+						$("#description").html("Gérer votre compétition de tir à l'arc");
+					},
+				function() {}
+			);
+		
+		$("#entrainement").hover(
+				function() {
+						$("body, footer").css("background-color", $("#entrainement .miseEnValeurTitre").css("color"));
+						$("#description").css("text-align", "right");
+						$("#description").html("Suivez votre progression");
+					},
+				function() {}
+			);
+	});
+	
+	</script>
+	
+	<title>ArcCompetition, Suivi des compétitions de tir à l'arc</title>
+</head>
+<body>
+	<header>
+		<div id="pagetitle"><img src="images/home.png" id="homeAnchor"/></div>
+		<div id="login"><a href="#">
+		Connexion
+		<span>
+		E-Mail<br />
+		<input type="text" /><br />
+		Mot de Passe<br />
+		<input type="password" /><br />
+		<input type="button" value="Valider" />
+		</span>
+		</a>
+		</div>
+	</header>
+	<div id="logo">
+		<img src="images/fnd.jpg" alt="ArcCompetion" width="140"/><br />
+		<span class="arccompetition">ArcCompetition</span><br />
+		Gestion des competitions de Tir à l'Arc
+	</div>
+	<div id="description">
+	</div>
+	<div id="applications">
+		<div id="inscriptions" class="apps">
+			<a href="competitions.html">
+			<span class="arccompetition">ArcCompetition</span><br />
+			<span class="miseEnValeurTitre">Gestion des Inscriptions</span>
+			</a>
+		</div>
+		
+		<div id="suivi" class="apps">
+			<a href="logiciel.html">
+			<span class="arccompetition">ArcCompetition</span><br />
+			<span class="miseEnValeurTitre">Suivi et Scores</span>
+			</a>
+		</div>
+		
+		<div id="entrainement" class="apps">
+			<a href="entrainement.html">
+			<span class="arccompetition">ArcCompetition</span><br />
+			<span class="miseEnValeurTitre">Entrainements</span>
+			</a>
+		</div>
+	</div>
+	
+	<footer>
+		Réalisé par AjDeveloppement - <a href="#">Mention légale</a> - <a href="#">Contact</a>
+	</footer>
+</body>
+</html>

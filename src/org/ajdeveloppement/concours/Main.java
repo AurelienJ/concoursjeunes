@@ -114,15 +114,20 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
-//import javafx.application.Application;
-//import javafx.stage.Stage;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.net.ssl.HostnameVerifier;
@@ -130,6 +135,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 import javax.swing.JOptionPane;
 import javax.swing.RepaintManager;
+import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 
 import org.ajdeveloppement.apps.AppUtilities;
@@ -145,9 +151,15 @@ import org.ajdeveloppement.concours.plugins.Plugin.Type;
 import org.ajdeveloppement.concours.plugins.PluginEntry;
 import org.ajdeveloppement.concours.plugins.PluginLoader;
 import org.ajdeveloppement.concours.plugins.PluginMetadata;
-import org.ajdeveloppement.concours.ui.fx.ArcCompetitionFrame;
+import org.ajdeveloppement.concours.ui.ArcCompetitionFrame;
 import org.ajdeveloppement.swingxext.error.WebErrorReporter;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
+import org.ajdeveloppement.webserver.HttpServer;
+import org.ajdeveloppement.webserver.HttpSession;
+import org.ajdeveloppement.webserver.RewriteUrlRules;
+import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
+import org.ajdeveloppement.webserver.services.files.FilesService;
+import org.ajdeveloppement.webserver.services.js.JsService;
 import org.h2.tools.DeleteDbFiles;
 import org.jdesktop.swingx.error.ErrorInfo;
 
@@ -164,29 +176,87 @@ public class Main extends Application {
 	
 	private static ApplicationCore core;
 	
-	@Override
-	public void start(Stage primaryStage) throws Exception {
-		showSplashScreen();
-		initErrorManaging();
-		initNetworkManaging();
-		initCore();
-		initSecureContext();
-		if(System.getProperty("noplugin") == null)//$NON-NLS-1$
-			loadStartupPlugin();
+	private static final String WEBSERVER_CONFIG = "webserver"; //$NON-NLS-1$
 
-		initShutdownHook();
-		hideSplashScreen();
-		
-		System.out.println("core loaded");  //$NON-NLS-1$
-		
-		showUserInterface(primaryStage);
-	}
+	private static final String WEBSERVER_LISTEN_PORT = "webserver.listen.port"; //$NON-NLS-1$
+	private static final String WEBSERVER_REWRITERULES_FILE = "webserver.rewriterules.file"; //$NON-NLS-1$
+	private static final String WEBSERVER_DYNAMIC_PATH_CONFIG = "webserver.dynamic.path.config"; //$NON-NLS-1$
+	private static final String WEBSERVER_DYNAMIC_PATH_RESSOURCES = "webserver.dynamic.path.ressources"; //$NON-NLS-1$
+	private static final String WEBSERVER_STATIC_PATH = "webserver.static.path"; //$NON-NLS-1$
+	private static final String WEBSERVER_STATIC_ALLOWEDGZIPEXT = "webserver.static.allowedgzipext"; //$NON-NLS-1$
+	private static final String WEBSERVER_STATIC_GZIPCACHE = "webserver.static.gzipcache"; //$NON-NLS-1$
+	private static final String WEBSERVER_SERVICE_ORDER = "webserver.service.order"; //$NON-NLS-1$
+
+	private static AjResourcesReader staticParameters = new AjResourcesReader(WEBSERVER_CONFIG);
 	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
+		JsService.setConfigPath(new File(staticParameters.getResourceString(WEBSERVER_DYNAMIC_PATH_CONFIG)));
+		JsService.setContentPath(new File(staticParameters.getResourceString(WEBSERVER_DYNAMIC_PATH_RESSOURCES)));
+		FilesService.setBasePath(new File(staticParameters.getResourceString(WEBSERVER_STATIC_PATH)));
+		FilesService.setAllowedGzipExt(Arrays.asList(staticParameters.getResourceString(WEBSERVER_STATIC_ALLOWEDGZIPEXT).split(","))); //$NON-NLS-1$
+		FilesService.setGzipCachePath(new File(staticParameters.getResourceString(WEBSERVER_STATIC_GZIPCACHE)));
+		
+		String[] servicesOrder = staticParameters.getResourceString(WEBSERVER_SERVICE_ORDER).split(","); //$NON-NLS-1$
+		ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor = new ExtensibleHttpRequestProcessor(servicesOrder);
+		HttpSession.setRequestProcessor(extensibleHttpRequestProcessor);
+		
+		String rewriteRulesFilePath = staticParameters.getResourceString(WEBSERVER_REWRITERULES_FILE);
+		if(rewriteRulesFilePath != null && !rewriteRulesFilePath.isEmpty()) {
+			File rewriteRulesFileFile = new File(rewriteRulesFilePath);
+			
+			if(rewriteRulesFileFile.exists()) {
+				try {
+					HttpSession.setRewriteUrlRules(XMLSerializer.loadMarshallStructure(rewriteRulesFileFile, RewriteUrlRules.class));
+				} catch (JAXBException | IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		HttpServer httpServer = new HttpServer(staticParameters.getResourceInteger(WEBSERVER_LISTEN_PORT));
+		httpServer.start();
+		
 		launch(args);
+//		
+//		showSplashScreen();
+//		initErrorManaging();
+//		initNetworkManaging();
+//		initCore();
+//		initSecureContext();
+//		if(System.getProperty("noplugin") == null)//$NON-NLS-1$
+//			loadStartupPlugin();
+//
+//		initShutdownHook();
+//		hideSplashScreen();
+//		
+//		System.out.println("core loaded");  //$NON-NLS-1$
+//		
+//		showUserInterface();
+	}
+	
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		primaryStage.setTitle("Hello World!");
+		WebView webView = new WebView();
+		
+		StackPane root = new StackPane();
+		root.getChildren().add(webView);
+		primaryStage.setScene(new Scene(root, 1024, 768));
+		primaryStage.show();
+		Thread.sleep(5000);
+		
+		Worker<Void> worker = webView.getEngine().getLoadWorker();
+		worker.exceptionProperty().addListener(new ChangeListener<Throwable>() {
+		  @Override public void changed(ObservableValue<? extends Throwable> observableValue, Throwable oldThrowable, Throwable newThrowable) {
+			  newThrowable.printStackTrace();
+		  }
+		});
+		webView.getEngine().load("http://localhost:8081");
+		//webView.getEngine().load("http://arccompetition.ajdeveloppement.org/WebContent/www/index.htm");
 	}
 
 	/**
@@ -486,8 +556,7 @@ public class Main extends Application {
 	 * 
 	 * @param core la couche métier sous jacente
 	 */
-	@SuppressWarnings("unused")
-	private static void showUserInterface(Stage primaryStage) {
+	private static void showUserInterface() {
 		//Pour débugage de l'EDT
 		//on charge dynamiquement pour ne pas avoir de dépendance dans le byte code et pouvoir livrer
 		//les versions sans le jar associé
@@ -503,11 +572,16 @@ public class Main extends Application {
 		} catch (IllegalAccessException e) {;
 		} catch (InvocationTargetException e) {
 		}
+		SwingUtilities.invokeLater(new Runnable() {
+			@SuppressWarnings("unused")
+			@Override
+			public void run() {
+				Profile profile = new Profile();
+				core.addProfile(profile);
 
-		Profile profile = new Profile();
-		core.addProfile(profile);
-
-		new ArcCompetitionFrame(primaryStage, profile);
+				new ArcCompetitionFrame(profile);
+			}
+		});
 	}
 	
 	private static void updateStartProgressStatus(int percent, String message) {

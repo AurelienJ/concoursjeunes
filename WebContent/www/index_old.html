@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>ArcCompetition, Gestion des Compétition de Tir à l'Arc</title>
+	
+	<link href="styles/screen.css" media="screen" rel="stylesheet" type="text/css" />
+	<link href="styles/openid.css" media="all" rel="stylesheet" type="text/css" />
+	
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/jsapi"></script>
+<script type="text/javascript" src="https://www.accountchooser.com/client.js"></script>
+<script type="text/javascript">
+  /*function load() {
+    google.load("identitytoolkit", "2", {packages: ["ac"], language: 'fr', callback: callback});
+  }
+  function callback() {
+    window.google.identitytoolkit.setConfig({
+        developerKey: "AIzaSyAps5nxLpmTDQmR6uB8Nss0DBYWQwp3JNo",
+        callbackUrl: "https://www.ajdeveloppement.org/callback", // must be a full URL
+        userStatusUrl: "/userStatus", // these can just be partial paths
+        loginUrl: "/login",
+        signupUrl: "/signup",
+        homeUrl: "/home",
+        logoutUrl: "/logout",
+        realm: "",  // optional
+        language: "fr",
+        idps: ["Gmail", "AOL", "Hotmail", "Yahoo"],
+        tryFederatedFirst: true,
+        useContextParam: true
+    });
+    window.google.identitytoolkit.init();
+  }*/
+</script>
+<script type="text/javascript" src="https://apis.google.com/js/client.js?onload=load"></script>
+</head>
+<body>
+	<header id="filarianne">
+	&gt; <a href="#">Accueil</a>
+	</header>
+	<nav>
+		<a href="#" id="homeNav">
+			<img src="images/fnd.jpg" alt="ArcCompetion" width="140"/><br />
+			Gestion des competitions de Tir à l'Arc
+		</a>
+		<a href="#">Compétitions</a>
+		<a href="logiciel.html">Logiciel</a>
+		<a href="#">Documentation</a>
+	</nav>
+	<div id="home">
+		<section id="authenticate">
+			<article>
+				<div id="logon">
+					<h1>Mon Compte ArcCompetition</h1>
+					<input type="email" required="required" placeholder="Adresse E-Mail"/>
+					<input type="password" required="required" placeholder="Mot de passe"/>
+					<input type="submit" value="Se connecter" />
+					Je n'est pas de compte, <a href="#">je m'inscrit</a>
+				</div>
+				<div id="option">ou</div>
+				<div id="OAuth">
+					<h1>Mon Compte OpenID</h1>
+					<form action="examples/consumer/try_auth.php" method="get" id="openid_form">
+						<input type="hidden" name="action" value="verify" />
+						<div id="openid_choice">
+							<p>Selectionnez votre fournisseur OpenID:</p>
+							<div id="openid_btns"></div>
+						</div>
+						<div id="openid_input_area">
+							<input id="openid_identifier" name="openid_identifier" type="text" value="http://" />
+							<input id="openid_submit" type="submit" value="Sign-In"/>
+						</div>
+					</form>
+				</div>
+			</article>
+		</section>
+		<section id="introduction">
+			<article id="organisator">
+				<h1>Organisateurs</h1>
+				<ul>
+				<li>Organiser vos compétition simplement.</li>
+				<li>Laisser le site se charger tous seul du remplissage de votre compétion et de
+				la place libre restante. Vous pouvez consacrer votre temps à d'autres points de
+				l'organisation de votre concours</li>
+				<li>Eviter la resaisie des informations d'inscription source d'erreur</li>
+				</ul>
+			</article>
+			<article id="competitor">
+				<h1>Compétiteurs</h1>
+				<ul>
+				<li>Après l'inscription initial au site, inscrivez vous sur la ou les compétitions
+				de votre choix en quelque-clic</li>
+				<li>Incrivez vous sur une compétition directement depuis votre Ordinateur, Tablette ou Mobile</li>
+				</ul>
+			</article>
+		</section>
+	</div>
+	<footer>
+		Réalisé par AjDeveloppement - <a href="#">Mention légale</a> - <a href="#">Contact</a>
+	</footer>
+</body>
+</html>

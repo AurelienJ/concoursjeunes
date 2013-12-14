@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webpage>
+	<uri>/actualites-logiciel.html</uri>
+	<mimeType>text/html</mimeType>
+	<script>scripts/common/ResponseFormatter.js</script>
+	<script>scripts/common/database/database.js</script>
+	<script>scripts/actualites-logiciel.js</script>
+</webpage>

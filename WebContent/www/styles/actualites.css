@@ -1,0 +1,25 @@
+#articles > footer {
+	position: relative;
+	text-align: right;
+	
+	background-color: inherit;
+	color: inherit;
+}
+
+#articles > article {
+	font-size: 10pt;
+}
+
+#articles > article h1 {
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: black;
+}
+
+#articles > article > footer {
+	position: relative;
+	text-align: right;
+	
+	background-color: inherit;
+	color: inherit;
+}

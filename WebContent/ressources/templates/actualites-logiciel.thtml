@@ -1,0 +1,21 @@
+		<menu class="mainMenu">
+			<li ><a href="logiciel.html">Présentation</a></li> 
+			<li class="selected">Actualitées</li>
+			<li><a href="">Téléchargement</a></li> 
+			<li><a href="">Contribuer</a></li>
+		</menu>
+		
+		<section id="articles">
+			<bloc::article>
+			<article>
+				<h1>{TitreArticle}</h1>
+				{ContenuArticle}
+				<footer>{commentaire} {auteur} - Le {date}</footer>
+			</article>
+			</bloc::article>
+			
+			<footer>
+			<bloc::suivant><a href="actualites-logiciel.html?index={index}">Suivant</a></bloc::suivant>
+			<bloc::precedent><a href="actualites-logiciel.html?index={index}">Precedent</a></bloc::precedent>
+			</footer>
+		</section>

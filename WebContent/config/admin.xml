@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webpage>
+	<uri>/admin/global.html</uri>
+	<mimeType>text/html</mimeType>
+	<script>scripts/admin/admin.js</script>
+</webpage>
