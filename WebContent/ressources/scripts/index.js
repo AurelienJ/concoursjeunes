@@ -1,9 +1,6 @@
 loadScript("scripts/common/ResponseFormatter.js");
 loadScript("scripts/common/Sessions.js");
 loadScript("scripts/common/database/database.js");
-//load("WebContent/ressources/scripts/common/ResponseFormatter.js");
-//load("WebContent/ressources/scripts/common/Sessions.js");
-//load("WebContent/ressources/scripts/common/database/database.js");
 
 function openDatabase(basePath) {
 	var database = new Database();
@@ -23,7 +20,7 @@ function loadNavigationContent(basePath, template) {
 }
 
 function loadMainContent(basePath, template) {
-	template.loadTemplate(basePath + "/templates/index.thtml");
+	template.loadTemplate(basePath + "/templates/parameters.thtml");
 }
 
 var mainTemplate = null;

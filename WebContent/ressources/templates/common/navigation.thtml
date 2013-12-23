@@ -1,10 +1,12 @@
 <nav>
-			<a href="index.htm" id="homeNav">
+			<a href="#" id="homeNav">
 				<img src="images/fnd.jpg" alt="ArcCompetion" width="140"/><br />
 				Gestion des competitions de Tir à l'Arc
 			</a>
-			<a href="competitions.html" {selectedCompetition}>Inscriptions</a>
-			<a href="logiciel.html" {selectedLogiciel}>Suivi et Scores</a>
-			<a href="#" {selectedDocumentation}>Entrainement</a>
-			<a href="admin/global.html" {selectedAdmin}>Administration</a>
+			<a href="#"><img src="images/award_fill_24x24.png"/> Compétitions</a>
+			<a href="#"><img src="images/group.png"/> Personnes</a>
+			<a href="#"><img src="images/home.png" /> Entités</a>
+			<a href="#"><img src="images/ruler.png" /> Réglements</a>
+			<a href="#"><img src="images/loop_alt4_24x18.png" /> Import/Export</a>
+			<a href="#"><img src="images/tool_box.png" /> Outils</a>
 		</nav>

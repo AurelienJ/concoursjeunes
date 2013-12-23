@@ -1,36 +1,4 @@
-		<section>
-			<h1>ArcComptetion <span class="miseEnValeurTitre">Gestion des Inscriptions</span></h1>
-			
-			<h2>Organisateurs</h2>
-			
-			<p>Annoncer votre comptétion et laisser les archers s'inscrire seul.</p>
-			
-			<p>Plus besoin de resaisir les concurrents ayant envoyé leurs inscriptions sur papier, beaucoup 
-			moins d'appel téléphonique à gérer, gestion de la place libre restante calculé automatiquement.</p>
-			
-			<p>Dans le club, la gestion des inscriptions peu enfin être réparti sur plusieurs membre</p>
-			
-			<h2>Concurrents / Entraineur</h2>
-			
-			<p>Inscription en quelque clic directement sur votre PC / Tablette / Smartphone</p>
-
-			<p>Validation immediate de l'inscription, plus de risque d'annulation faute de place</p>
-			
-			<p><a href="competitions.html" class="lienImportant">Gérez votre compétion / Inscrivez vous à une compétition</a></p>
-		</section>
-		
-		<section>
-			<h1>ArcComptetion <span class="miseEnValeurTitre">Suivi et Scores</span></h1>
-			
-			<p>Géré facilement votre compétition du passage au greffe à la publication des résultats</p>
-			
-			<p>Placer les concurrents sur le pas de tir, suivez les recettes des inscriptions</p>
-			
-			<p><a href="logiciel.html" class="lienImportant">Plus d'info / Télécharger</a></p>
-		</section>
-		
-		<section>
-			<h1>ArcComptetion <span class="miseEnValeurTitre">Communauté</span></h1>
-			
-			<p>Partager votre expérience sur les compétitions de tir à l'arc</p>
-		</section>
+<menu class="mainMenu">
+			<li class="selected">Mes compétitions</li>
+			<li><a href="">Organiser</a></li> 
+		</menu>

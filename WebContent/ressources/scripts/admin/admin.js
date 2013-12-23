@@ -73,14 +73,22 @@ function getPage(session) {
 	mainBloc.parse("StaticGzipCache", FilesService.getGzipCachePath().getPath());
 	
 	var rewriteRules = HttpSession.getRewriteUrlRules();
-	for(var i = 0; i < rewriteRules.getRewriteUrlPatterns().size(); i++) {
-		var urlPattern = rewriteRules.getRewriteUrlPatterns().get(i);
-		var replacement = urlPattern.getReplacement();
-		
-		mainBloc.parse("rule.pattern", urlPattern.getPattern());
-		mainBloc.parse("rule.replacement",replacement);
-		
-		mainBloc.loopBloc("rule");
+	if(rewriteRules != null) {
+		if(rewriteRules.getRewriteUrlPatterns() != null) {
+			for(var i = 0; i < rewriteRules.getRewriteUrlPatterns().size(); i++) {
+				var urlPattern = rewriteRules.getRewriteUrlPatterns().get(i);
+				var replacement = urlPattern.getReplacement();
+				
+				mainBloc.parse("rule.pattern", urlPattern.getPattern());
+				mainBloc.parse("rule.replacement",replacement);
+				
+				mainBloc.loopBloc("rule");
+			}
+		} else {
+			mainBloc.parseBloc("rule", "");
+		}
+	} else {
+		mainBloc.parseBloc("rule", "");
 	}
 	
 	return ResponseFormatter.getGzipedResponseForOutputTemplate(session, template.output());
