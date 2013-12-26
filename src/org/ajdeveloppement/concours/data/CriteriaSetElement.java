@@ -98,7 +98,6 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
@@ -110,7 +109,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="POSSEDE",loadBuilder=DefaultSqlBuilder.class)
+@SqlTable(name="POSSEDE")
 @SqlPrimaryKey(fields={"NUMCRITERIASET", "CODECRITEREELEMENT", "CODECRITERE", "ID_REGLEMENT"})
 public class CriteriaSetElement implements ObjectPersistence,Cloneable {
 	private static StoreHelper<CriteriaSetElement> helper = SqlStoreHelperFactory.getStoreHelper(CriteriaSetElement.class);

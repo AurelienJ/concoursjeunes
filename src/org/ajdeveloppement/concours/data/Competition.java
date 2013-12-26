@@ -96,7 +96,6 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
@@ -109,7 +108,7 @@ import org.ajdeveloppement.concours.Judge;
  * @author Aurélien JEOFFRAY
  *
  */
-@SqlTable(name="COMPETITION",loadBuilder=DefaultSqlBuilder.class)
+@SqlTable(name="COMPETITION")
 @SqlPrimaryKey(fields="ID_COMPETITION")
 public class Competition implements ObjectPersistence {
 	

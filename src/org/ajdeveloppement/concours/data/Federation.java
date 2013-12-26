@@ -89,37 +89,30 @@
 package org.ajdeveloppement.concours.data;
 
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.StringUtils;
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
-import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.builders.FederationBuilder;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
 
 /**
  * Représente une fédération de tir à l'arc
@@ -127,27 +120,21 @@ import org.ajdeveloppement.concours.builders.FederationBuilder;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="FEDERATION",loadBuilder=FederationBuilder.class)
-@SqlPrimaryKey(fields={"NUMFEDERATION"},generatedidField=@SqlGeneratedIdField(name="NUMFEDERATION",type=Types.INTEGER))
-public class Federation implements ObjectPersistence {
+@SqlTable(name="FEDERATION")
+@SqlPrimaryKey(fields="ID_ENTITE")
+@SqlUnmappedFields(fields="ID_ENTITE")
+public class Federation extends Entite implements SqlObjectPersistence {
 	private static StoreHelper<Federation> helper = SqlStoreHelperFactory.getStoreHelper(Federation.class);
-	
-	@XmlID
-	@XmlAttribute(name="id")
-	private String xmlId;
-	
-	@SqlField(name="NUMFEDERATION")
-	@XmlTransient
-	private int numFederation = 0;
-	@SqlField(name="SIGLEFEDERATION")
+
+	@SqlField(name="SIGLE")
 	@XmlElement(name="sigle")
 	private String sigleFederation = ""; //$NON-NLS-1$
-	@SqlField(name="NOMFEDERATION")
+	
+	@SqlField(name="NOM")
 	@XmlElement(name="nom")
 	private String nomFederation = ""; //$NON-NLS-1$
-	@SqlField(name="PAYS")
-	@XmlElement(name="pays")
-	private String codeCountry = "fr"; //$NON-NLS-1$
+	
+	@SqlChildCollection(foreignFields="ID_ENTITE",type=CompetitionLevel.class)
 	@XmlElementWrapper(name="niveaux",required=true)
 	@XmlElement(name="niveau")
 	private List<CompetitionLevel> competitionLevels = new ArrayList<CompetitionLevel>();
@@ -156,52 +143,17 @@ public class Federation implements ObjectPersistence {
 	 * Construit une nouvelle fédération
 	 */
 	public Federation() {
-		//xmlId = UUID.randomUUID().toString();
 	}
 	
 	/**
-	 * initialise une nouvelle fédération avec sont nom et son sigle
+	 * initialise une nouvelle fédération avec sont nom, son sigle
 	 * 
 	 * @param nomFederation le nom de la fédération à initialiser
 	 * @param sigleFederation le sigle de la fédération à initialiser
 	 */
-	public Federation(String nomFederation, String sigleFederation) {
-		this(nomFederation, 0, sigleFederation);
-	}
-	
-	/**
-	 * initialise une nouvelle fédération avec sont nom, son sigle ainsi que 
-	 * son numéro en base de données.
-	 * 
-	 * @param nomFederation le nom de la fédération à initialiser
-	 * @param numFederation le numéro en base de la fédération
-	 * @param sigleFederation le sigle de la fédération à initialiser
-	 */
-	public Federation(String nomFederation, int numFederation,
-			String sigleFederation) {
+	public Federation(String nomFederation,	String sigleFederation) {
 		this.nomFederation = nomFederation;
-		this.numFederation = numFederation;
 		this.sigleFederation = sigleFederation;
-		
-		//xmlId = UUID.randomUUID().toString();
-	}
-
-	/**
-	 * Retourne le numéro en base de la fédération
-	 * 
-	 * @return numFederation le numéro en base de la fédération
-	 */
-	public int getNumFederation() {
-		return numFederation;
-	}
-
-	/**
-	 * Définit le numéro de la fédération en base
-	 * 
-	 * @param numFederation le numéro en base de la fédération
-	 */
-	public void setNumFederation(int numFederation) {
-		this.numFederation = numFederation;
 	}
 
 	/**
@@ -241,20 +193,7 @@ public class Federation implements ObjectPersistence {
 	public void setNomFederation(String nomFederation) {
 		this.nomFederation = nomFederation;
 	}
-	
-	/**
-	 * @return codeCountry
-	 */
-	public String getCodeCountry() {
-		return codeCountry;
-	}
 
-	/**
-	 * @param codeCountry codeCountry à définir
-	 */
-	public void setCodeCountry(String codeCountry) {
-		this.codeCountry = codeCountry;
-	}
 
 	/**
 	 * <p>Définit la liste des niveaux de compétition disponible.</p>
@@ -311,13 +250,13 @@ public class Federation implements ObjectPersistence {
 
 	private void checkAlreadyExists() throws ObjectPersistenceException {
 		try {
-			Integer nullableNumFederation = QResults.from(Federation.class).where(
-					T_Federation.SIGLEFEDERATION.equalTo(sigleFederation)
-							.and(T_Federation.NOMFEDERATION.equalTo(nomFederation))
-					).singleValue(T_Federation.NUMFEDERATION);
+			UUID nullableIdFederation = QResults.from(Federation.class).where(
+					T_Federation.SIGLE.equalTo(sigleFederation)
+							.and(T_Federation.NOM.equalTo(nomFederation))
+					).singleValue(T_Entite.ID_ENTITE);
 			
-			if(nullableNumFederation != null) {
-				numFederation = nullableNumFederation;
+			if(nullableIdFederation != null) {
+				setIdEntite(nullableIdFederation);
 				
 				Cache.put(this);
 			}
@@ -342,38 +281,16 @@ public class Federation implements ObjectPersistence {
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
 		if(Session.canExecute(session, this)) {
-			try {
-				checkAlreadyExists();
-				
-				helper.save(this);
-				
-				Session.addProcessedObject(session,this);
-				
-				Cache.put(this);
 
-				int i = 1;
-				String[] idsCompetitionLevel = new String[competitionLevels.size()];
-				for(CompetitionLevel cl : competitionLevels) {
-					idsCompetitionLevel[i-1] = String.valueOf(i);
-					
-					cl.setNumLevel(i++);
-					cl.setFederation(this);
-					cl.save(session);
-					
-				}
-				String sql = String.format(
-						"delete from %s where %s=%s and %s not in (%s)", //$NON-NLS-1$
-						T_CompetitionLevel.TABLE_NAME,
-						T_CompetitionLevel.NUMFEDERATION.getFieldName(),
-						numFederation,
-						T_CompetitionLevel.CODENIVEAU.getFieldName(),
-						StringUtils.join(",", idsCompetitionLevel)); //$NON-NLS-1$
-				Statement stmt = ApplicationCore.dbConnection.createStatement();
-				stmt.executeUpdate(sql);
+			checkAlreadyExists();
+			
+			helper.save(this);
+			
+			Session.addProcessedObject(session,this);
+			
+			Cache.put(this);
 
-			} catch (SQLException e) {
-				throw new ObjectPersistenceException(e);
-			}
+			PersitentCollection.save(competitionLevels, session, Collections.<String, Object>singletonMap("ID_ENTITE", getIdEntite()));
 		}
 	}
 
@@ -390,35 +307,6 @@ public class Federation implements ObjectPersistence {
 			Session.addProcessedObject(session,this);
 			
 			Cache.remove(this);
-		}
-	}
-	
-	/**
-	 * For JAXB Usage only. Do not use.
-	 * 
-	 * @param marshaller
-	 */
-	protected void beforeMarshal(Marshaller marshaller) {
-		if(xmlId == null)
-			xmlId = UUID.randomUUID().toString();
-	}
-	
-	/**
-	 * 
-	 * @param unmarshaller
-	 * @param parent
-	 */
-	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		try {
-			checkAlreadyExists();
-		} catch (ObjectPersistenceException e) {
-			e.printStackTrace();
-		}
-		
-		int i = 1;
-		for(CompetitionLevel competitionLevel : competitionLevels) {
-			competitionLevel.setFederation(this);
-			competitionLevel.setNumLevel(i++);
 		}
 	}
 	

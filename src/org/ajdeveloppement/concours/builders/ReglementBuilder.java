@@ -291,7 +291,7 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Reglement,Vo
 				
 				reglement.setFederation(
 						FederationBuilder.getFederation(
-								(Integer)foreignKeys.get(Reglement.class).get(T_Reglement.NUMFEDERATION.getFieldName())));
+								(UUID)foreignKeys.get(Reglement.class).get(T_Reglement.ID_ENTITE.getFieldName())));
 				
 				Statement stmt = ApplicationCore.dbConnection.createStatement();
 				try {

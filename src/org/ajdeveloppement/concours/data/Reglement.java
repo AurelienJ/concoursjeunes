@@ -121,7 +121,6 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
-import org.ajdeveloppement.concours.builders.ReglementBuilder;
 
 
 /**
@@ -149,7 +148,7 @@ import org.ajdeveloppement.concours.builders.ReglementBuilder;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="REGLEMENT",loadBuilder=ReglementBuilder.class)
+@SqlTable(name="REGLEMENT")
 @SqlPrimaryKey(fields="ID_REGLEMENT")
 public class Reglement implements SqlObjectPersistence, Cloneable {
 	private static StoreHelper<Reglement> helper = SqlStoreHelperFactory.getStoreHelper(Reglement.class);
@@ -973,7 +972,7 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
 		if(Session.canExecute(session, this)) {
-			if(federation.getNumFederation() == 0)
+			if(federation.getIdEntite() == null)
 				federation.save(session);
 	
 			if(idReglement == null) {

@@ -88,13 +88,7 @@
  */
 package org.ajdeveloppement.concours.data;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
@@ -104,12 +98,9 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  * @author Aurélien JEOFFRAY
  *
  */
-@SqlTable(name="ASSOCIER_CATEGORIE_CONTACT",loadBuilder=DefaultSqlBuilder.class)
+@SqlTable(name="ASSOCIER_CATEGORIE_CONTACT")
 @SqlPrimaryKey(fields={"ID_CONTACT", "NUM_CATEGORIE_CONTACT"})
-public class CategoryContactContact implements ObjectPersistence {
-	
-	private static StoreHelper<CategoryContactContact> helper = SqlStoreHelperFactory.getStoreHelper(CategoryContactContact.class);;
-
+public class CategoryContactContact implements SqlObjectPersistence {
 	@SqlForeignKey(mappedTo="ID_CONTACT")
 	private Contact contact;
 	
@@ -159,47 +150,4 @@ public class CategoryContactContact implements ObjectPersistence {
 	public void setCategoryContact(CategoryContact categoryContact) {
 		this.categoryContact = categoryContact;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save()
-	 */
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			
-			helper.save(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete()
-	 */
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-
 }

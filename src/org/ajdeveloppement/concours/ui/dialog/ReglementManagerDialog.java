@@ -399,7 +399,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 	
 	private void completePanel() {
 		ajlFederations.clear();
-		ajlFederations.add(new Federation("", 0, localisation.getResourceString("reglementmanager.federation.all"))); //$NON-NLS-1$ //$NON-NLS-2$
+		ajlFederations.add(new Federation("", localisation.getResourceString("reglementmanager.federation.all"))); //$NON-NLS-1$ //$NON-NLS-2$
 		for(Federation federation : FederationManager.getAvailableFederations()) {
 			ajlFederations.add(federation);
 		}

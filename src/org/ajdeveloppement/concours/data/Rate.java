@@ -86,8 +86,6 @@
  */
 package org.ajdeveloppement.concours.data;
 
-import java.sql.SQLException;
-import java.util.List;
 import java.util.UUID;
 
 import javax.xml.bind.Marshaller;
@@ -98,20 +96,16 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
-import org.ajdeveloppement.commons.sql.SqlManager;
-import org.ajdeveloppement.concours.ApplicationCore;
 
 /**
  * 
@@ -119,12 +113,10 @@ import org.ajdeveloppement.concours.ApplicationCore;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="TARIF",loadBuilder=DefaultSqlBuilder.class)
+@SqlTable(name="TARIF")
 @SqlPrimaryKey(fields="ID_TARIF")
-public class Rate implements ObjectPersistence {
-	// [start] Helper persistence
+public class Rate implements SqlObjectPersistence {
 	private static StoreHelper<Rate> helper = SqlStoreHelperFactory.getStoreHelper(Rate.class);
-	// [end]
 	
 	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
 	@XmlID
@@ -135,14 +127,17 @@ public class Rate implements ObjectPersistence {
 	@SqlField(name="ID_TARIF")
 	private UUID idTarif = null;
 	
+	@SqlForeignKey(mappedTo="ID_ENTITE")
+	private Entite entite;
+	
 	@SqlField(name="INTITULE")
 	private String intituleTarif = ""; //$NON-NLS-1$
 	
 	@SqlField(name="TARIF")
 	private double tarif = 0.0;
 	
-	@XmlTransient
-	private List<RateCategory> categoriesTarif = null;
+	//@XmlTransient
+	//private List<RateCategory> categoriesTarif = null;
 	
 	/**
 	 * 
@@ -190,32 +185,22 @@ public class Rate implements ObjectPersistence {
 		this.tarif = tarif;
 	}
 
-	/**
-	 * @return categoriesTarif
-	 */
-	public List<RateCategory> getCategoriesTarif() {
-		if(categoriesTarif == null)
-			categoriesTarif = QResults.from(RateCategory.class)
-					.where(T_RateCategory.ID_TARIF.equalTo(idTarif)).asList();
-		return categoriesTarif;
-	}
+//	/**
+//	 * @return categoriesTarif
+//	 */
+//	public List<RateCategory> getCategoriesTarif() {
+//		if(categoriesTarif == null)
+//			categoriesTarif = QResults.from(RateCategory.class)
+//					.where(T_RateCategory.ID_TARIF.equalTo(idTarif)).asList();
+//		return categoriesTarif;
+//	}
 
-	/**
-	 * @param categoriesTarif categoriesTarif à définir
-	 */
-	public void setCategoriesTarif(List<RateCategory> categoriesTarif) {
-		this.categoriesTarif = categoriesTarif;
-	}
-	
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
+//	/**
+//	 * @param categoriesTarif categoriesTarif à définir
+//	 */
+//	public void setCategoriesTarif(List<RateCategory> categoriesTarif) {
+//		this.categoriesTarif = categoriesTarif;
+//	}
 	
 	/**
 	 * Save contact in database
@@ -228,20 +213,20 @@ public class Rate implements ObjectPersistence {
 			
 			helper.save(this);
 			
-			SqlManager sqlManager = new SqlManager(ApplicationCore.dbConnection, null);
+//			SqlManager sqlManager = new SqlManager(ApplicationCore.dbConnection, null);
 			
-			try {
-				String savedCriteriaSetIds = ""; //$NON-NLS-1$
-				for(RateCategory rateCategory : categoriesTarif) {
-					rateCategory.save(session);
-					
-					savedCriteriaSetIds += (!savedCriteriaSetIds.isEmpty() ? ",": "")  //$NON-NLS-1$ //$NON-NLS-2$
-						+ rateCategory.getCategory().getNumCriteriaSet();
-				}
-				sqlManager.executeUpdate("delete from CATEGORIE_TARIF where ID_TARIF='" + idTarif.toString() + "' and NUMCRITERIASET not in (" + savedCriteriaSetIds +")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			} catch(SQLException e) {
-				throw new ObjectPersistenceException(e);
-			}
+//			try {
+//				String savedCriteriaSetIds = ""; //$NON-NLS-1$
+//				for(RateCategory rateCategory : categoriesTarif) {
+//					rateCategory.save(session);
+//					
+//					savedCriteriaSetIds += (!savedCriteriaSetIds.isEmpty() ? ",": "")  //$NON-NLS-1$ //$NON-NLS-2$
+//						+ rateCategory.getCategory().getNumCriteriaSet();
+//				}
+//				sqlManager.executeUpdate("delete from CATEGORIE_TARIF where ID_TARIF='" + idTarif.toString() + "' and NUMCRITERIASET not in (" + savedCriteriaSetIds +")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//			} catch(SQLException e) {
+//				throw new ObjectPersistenceException(e);
+//			}
 			
 			Cache.put(this);
 			

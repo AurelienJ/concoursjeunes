@@ -3,6 +3,9 @@
 	<name>ArcCompetition</name>
 	<comment></comment>
 	<projects>
+		<project>ajcommons</project>
+		<project>ajcommons-ext</project>
+		<project>ajcommons-webserver</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

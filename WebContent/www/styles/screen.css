@@ -63,7 +63,7 @@ main {
 	right:			0px;
 	
 	margin-left:	220px;
-	padding-bottom:	50px;
+	/*padding-bottom:	50px;*/
 	min-height:		100%;
 	
 	z-index: -1;
@@ -139,7 +139,20 @@ main {
 .mainMenu > .selected {
 	border-bottom-width: 4px;
 	font-weight: bold;
-} 
+}
+
+.centrer {
+	text-align: center;
+}
+
+.tableDemiLargeur {
+	border-collapse:collapse;
+	width: 50%;
+}
+
+.tableDemiLargeur tr:hover :not(th) {
+	background-color: rgb(200,200,200);
+}
 
 [required] {
    border: 1px solid orange;
@@ -247,6 +260,7 @@ main {
 
 #filarianne {
 	/*background-color: #eeeeee;*/
+	position: relative;
 	padding:		7px;
 	margin-top:		30px;
 	margin-left:	200px;

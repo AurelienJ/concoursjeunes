@@ -21,11 +21,6 @@
 	<classpathentry kind="lib" path="lib/swingx-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/iText-2.1.7.jar"/>
 	<classpathentry kind="lib" path="lib/debug.jar"/>
-	<classpathentry kind="src" path=".apt_generated">
-		<attributes>
-			<attribute name="optional" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/ajcommons"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ajcommons-swingx-ext"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ajcommons-ext"/>

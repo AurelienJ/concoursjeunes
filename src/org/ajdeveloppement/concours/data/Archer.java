@@ -321,7 +321,7 @@ public class Archer extends Contact {
 			
 			if(archerCategoryContact == null) {
 				archerCategoryContact = QResults.from(CategoryContact.class)
-					.where(T_CategoryContact.NUM_CATEGORIE_CONTACT.equalTo(IdDefaultCategory.BOWMAN.value()))
+					.where(T_CategoryContact.ID_CATEGORIE_CONTACT.equalTo(IdDefaultCategory.BOWMAN.value()))
 					.first();
 			}
 			if(getCategories().indexOf(archerCategoryContact) == -1)

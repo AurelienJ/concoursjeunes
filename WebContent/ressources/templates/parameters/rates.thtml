@@ -1,0 +1,18 @@
+<menu class="mainMenu">
+	<li><a href="general.html">General</a></li>
+	<li><a href="display.html">Affichage</a></li>
+	<li class="selected">Tarifs</li> 
+	<li><a href="editions.html">Editions</a></li> 
+</menu>
+
+<h1>Tarification des compétitions</h1>
+
+<section>
+	<table class="tableDemiLargeur">
+		<tr><th>Libellé</th><th>Tarif (€)</th></tr>
+		<tr><td>Normal Salle</td><td>8</td></tr>
+		<tr><td>Jeunes Salle</td><td>5</td></tr>
+		<tr><td>Normal Exterieur</td><td>12</td></tr>
+		<tr><td>Jeunes Exterieur</td><td>8</td></tr>
+	</table>
+</section>

@@ -1,0 +1,21 @@
+<menu class="mainMenu">
+	<li class="selected">General</li>
+	<li><a href="display.html">Affichage</a></li>
+	<li><a href="rates.html">Tarifs</a></li> 
+	<li><a href="editions.html">Editions</a></li> 
+</menu>
+
+<h1>Personnalisation de l'Application</h1>
+
+<section>
+	<h2>Nom du club:</h2>
+	<p>Aucun club selectionné<span  style="float: right;"><a href="#">Choisir...</a></span></p>
+</section>
+<section>
+	<h2>Logo du club:</h2>
+	<p>
+	<img id="logo" src="images/logos/1ere Cie Aix les Bains (3373001).gif" style="width: 200px;" />
+	<span style="float: right;"><a href="#" onclick="browseLogoClub(); return false;">Choisir...</a></span>
+	</p>
+<input id="upload" type="file" name="myPhoto" style="display: none;"/>
+</section>

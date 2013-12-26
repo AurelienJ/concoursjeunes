@@ -118,15 +118,15 @@ public class EntiteManager {
 	public static List<Entite> getEntitesInDatabase(Entite eGeneric, QField<?>... orderfields) {
 
 		QResults<Entite, Void> entites = QResults.from(Entite.class);
-		if(eGeneric != null && (!eGeneric.getNom().isEmpty() || !eGeneric.getAgrement().isEmpty() || !eGeneric.getVille().isEmpty()) ) {
+		if(eGeneric != null && (!eGeneric.getNom().isEmpty() || !eGeneric.getReference().isEmpty() || !eGeneric.getVille().isEmpty()) ) {
 			if(eGeneric.getNom().length() > 0) {
-				entites = entites.where(T_Entite.NOMENTITE.upper().like(eGeneric.getNom().toUpperCase()));
+				entites = entites.where(T_Entite.NOM.upper().like(eGeneric.getNom().toUpperCase()));
 			}
-			if(eGeneric.getAgrement().length() > 0) {
-				entites = entites.where(T_Entite.AGREMENTENTITE.upper().like(eGeneric.getAgrement().toUpperCase()));
+			if(eGeneric.getReference().length() > 0) {
+				entites = entites.where(T_Entite.REFERENCE.upper().like(eGeneric.getReference().toUpperCase()));
 			}
 			if(eGeneric.getVille().length() > 0) {
-				entites = entites.where(T_Entite.VILLEENTITE.upper().like(eGeneric.getVille().toUpperCase()));
+				entites = entites.where(T_Entite.VILLE.upper().like(eGeneric.getVille().toUpperCase()));
 			}
 		}
 

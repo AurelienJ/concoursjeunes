@@ -217,13 +217,13 @@ public class ConcurrentManager {
 					//filters.add("UPPER(FIRSTNAME) like '" + aGeneric.getFirstName().toUpperCase().replaceAll("'", "''").replaceAll("%", "%%") + "'");
 					archers = archers.where(T_Contact.FIRSTNAME.upper().like(aGeneric.getFirstName().toUpperCase()));
 				}
-				if(!aGeneric.getEntite().getAgrement().isEmpty()) {
+				if(!aGeneric.getEntite().getReference().isEmpty()) {
 					//filters.add("ID_ENTITE in (select ID_ENTITE from ENTITE where AGREMENTENTITE like '" + aGeneric.getEntite().getAgrement().replaceAll("'", "''").replaceAll("%", "%%") + "')");
 //					archers = archers.innerJoin(Entite.class, T_Contact.ID_ENTITE.equalTo(T_Entite.ID_ENTITE))
 //							.where(T_Entite.AGREMENTENTITE.like(aGeneric.getEntite().getAgrement()));
 					
 					archers = archers.where(T_Contact.ID_ENTITE.in(
-							QResults.from(Entite.class).where(T_Entite.AGREMENTENTITE.like(aGeneric.getEntite().getAgrement())).asSubQuery(T_Entite.ID_ENTITE)));
+							QResults.from(Entite.class).where(T_Entite.REFERENCE.like(aGeneric.getEntite().getReference())).asSubQuery(T_Entite.ID_ENTITE)));
 				}
 
 //				for(String filter : filters) {

@@ -88,6 +88,7 @@
  */
 package org.ajdeveloppement.concours.data;
 
+import java.sql.Types;
 import java.util.UUID;
 
 import javax.xml.bind.Marshaller;
@@ -98,15 +99,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 
@@ -117,11 +112,9 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CIVILITY",loadBuilder=DefaultSqlBuilder.class)
-@SqlPrimaryKey(fields="ID_CIVILITY")
-public class Civility implements ObjectPersistence {
-	private static StoreHelper<Civility> helper = SqlStoreHelperFactory.getStoreHelper(Civility.class);
-	
+@SqlTable(name="CIVILITY")
+@SqlPrimaryKey(fields="ID_CIVILITY",generatedidField=@SqlGeneratedIdField(name="ID_CIVILITY",type=Types.JAVA_OBJECT))
+public class Civility implements SqlObjectPersistence {
 	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
 	@XmlID
 	@XmlAttribute(name="id", required=true)
@@ -229,49 +222,6 @@ public class Civility implements ObjectPersistence {
 	 */
 	public void setMorale(boolean morale) {
 		this.morale = morale;
-	}
-
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-	
-	/**
-	 * Save civility in database
-	 * 
-	 * @param session save session
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			if(idCivility == null)
-				idCivility = UUID.randomUUID();
-			
-			helper.save(this);
-			
-			Session.addProcessedObject(session, this);
-			Cache.put(this);
-		}
-	}
-	
-	/**
-	 * Delete civility in database
-	 * 
-	 * @param session delete session
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(idCivility != null && Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-			Cache.remove(this);
-		}
 	}
 	
 	/**

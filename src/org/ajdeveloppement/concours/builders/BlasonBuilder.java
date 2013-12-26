@@ -92,6 +92,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
@@ -119,12 +120,12 @@ public class BlasonBuilder implements ResultSetRowToObjectBinder<Blason,Void> {
 	/**
 	 * Construit un blason à partir de son identifiant en base.
 	 * 
-	 * @param numblason l'id du blason à charger
+	 * @param idBlason l'id du blason à charger
 	 * @return le blason construit à partir du jeux de résultat
 	 * @throws ObjectPersistenceException
 	 */
-	public static Blason getBlason(int numblason) throws ObjectPersistenceException {
-		return getBlason(numblason, null, null);
+	public static Blason getBlason(UUID idBlason) throws ObjectPersistenceException {
+		return getBlason(idBlason, null, null);
 	}
 	
 	/**
@@ -141,22 +142,22 @@ public class BlasonBuilder implements ResultSetRowToObjectBinder<Blason,Void> {
 		if(rs == null)
 			return null;
 		
-		return getBlason(-1, rs, sessionCache);
+		return getBlason(null, rs, sessionCache);
 	}
 	
-	private static Blason getBlason(int numblason, ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+	private static Blason getBlason(UUID idBlason, ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		try {
 			if(rs != null)
-				numblason = T_Blason.NUMBLASON.getValue(rs);
+				idBlason = T_Blason.ID_BLASON.getValue(rs);
 			
-			Blason blason = Cache.get(Blason.class, numblason);
+			Blason blason = Cache.get(Blason.class, idBlason);
 			if(blason == null) {
 				blason = new Blason();
 				
 				if(rs != null)
 					resultSetLoadHelper.load(blason, rs);
 				else {
-					blason.setNumblason(numblason); 
+					blason.setIdBlason(idBlason); 
 					
 					loadHelper.load(blason);
 				}
@@ -223,6 +224,6 @@ public class BlasonBuilder implements ResultSetRowToObjectBinder<Blason,Void> {
 	public Blason get(SqlLoadingSessionCache sessionCache,
 			Void binderRessourcesMap, Object... primaryKeyValues)
 			throws ObjectPersistenceException {
-		return getBlason((int)primaryKeyValues[0]);
+		return getBlason((UUID)primaryKeyValues[0]);
 	}
 }

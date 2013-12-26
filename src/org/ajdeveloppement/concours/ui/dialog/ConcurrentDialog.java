@@ -684,10 +684,10 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 				jcbHandicape.setSelected(concurrent.isHandicape());
 				if (jtfClub.getDocument() instanceof AutoCompleteDocument) {
 					((AutoCompleteDocument) jtfClub.getDocument()).setText(entiteConcurrent.getVille());
-					((AutoCompleteDocument) jtfAgrement.getDocument()).setText(entiteConcurrent.getAgrement());
+					((AutoCompleteDocument) jtfAgrement.getDocument()).setText(entiteConcurrent.getReference());
 				} else {
 					jtfClub.setText(entiteConcurrent.getVille());
-					jtfAgrement.setText(entiteConcurrent.getAgrement());
+					jtfAgrement.setText(entiteConcurrent.getReference());
 				}
 				if (concurrent.getCriteriaSet() != null) {
 					for (Criterion key : ficheConcours.getParametre().getReglement().getListCriteria()) {
@@ -1140,7 +1140,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 			newEntite.setVille(jtfClub.getText());
 		} else if (e.getSource() == jtfAgrement) {
 			newEntite.setVille(jtfClub.getText());
-			newEntite.setAgrement(jtfAgrement.getText());
+			newEntite.setReference(jtfAgrement.getText());
 		}
 
 		//concurrent.setClub(newEntite);
@@ -1242,7 +1242,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 			concurrent.setNumLicenceArcher(jtfLicence.getText());
 			concurrent.setEntite(entiteConcurrent);
 			concurrent.getEntite().setVille(jtfClub.getText());
-			concurrent.getEntite().setAgrement(jtfAgrement.getText());
+			concurrent.getEntite().setReference(jtfAgrement.getText());
 			concurrent.setInscription(jcbInscription.getSelectedIndex());
 			
 			if(jcbBlason.getSelectedIndex() > 0)
@@ -1292,7 +1292,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 				entiteListDialog.setAction(EntiteListDialog.ANNULER);
 				if(entiteListDialog.getSelectedEntite() != null) {
 					jtfClub.setText(entiteListDialog.getSelectedEntite().getVille());
-					jtfAgrement.setText(entiteListDialog.getSelectedEntite().getAgrement());
+					jtfAgrement.setText(entiteListDialog.getSelectedEntite().getReference());
 				}
 			}
 		} else if (ae.getSource() == jbEditerArcher) {

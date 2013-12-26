@@ -7,15 +7,45 @@
 	<base href="/">
 	
 	<link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Kite+One' rel='stylesheet' type='text/css'>
+	<link href="styles/FontKiteOne.css" rel='stylesheet' type='text/css'>
 	<link href="styles/screen.css" media="screen" rel="stylesheet" type="text/css" />
 	<link href="styles/phone.css" media="screen and (max-width: 800px)" rel="stylesheet" type="text/css" />
 	<link href="styles/openid.css" media="all" rel="stylesheet" type="text/css" />
+	
+	<meta name="viewport" content="user-scalable=no, initial-scale = 1, minimum-scale = 1, maximum-scale = 1, width=device-width">
+	
 	<bloc::head></bloc::head>
 	
 	<script type="text/javascript" src="scripts/jquery-1.10.2.min.js"></script>
-	<!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>-->
-	<script type="text/javascript" src="https://ajax.googleapis.com/jsapi"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		var startPoint = {
+			X: -1,
+			Y: -1
+		};
+		
+		document.getElementsByTagName("nav")[0].addEventListener("touchstart", function(e) {
+			var touches = e.changedTouches;
+			
+			startPoint = { X:touches[0].pageX, Y:touches[0].pageY };
+			//alert(startPoint.X);
+		}, false);
+		
+		document.getElementsByTagName("nav")[0].addEventListener("touchend", function(e) {
+			//alert(startPoint.X);
+			if(startPoint != null && startPoint.X > -1) {
+				var touches = e.changedTouches;
+				if(startPoint.X + 100 < touches[0].pageX) {
+			   		$("#home > nav").css("width", '220px');
+			    	$("#home > nav:hover .masquable").show();
+			    } else if(startPoint.X - 100 > touches[0].pageX) {
+			    	$("#home > nav").css("width", '40px');
+			    	$("#home > nav:hover .masquable").hide();
+			    }
+		    }
+		}, false);
+	});
+	</script>
 	<bloc::script></bloc::script>
 </head>
 <body>

@@ -97,13 +97,11 @@ import java.util.UUID;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
@@ -117,9 +115,9 @@ import org.ajdeveloppement.concours.helpers.LibelleHelper;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CATEGORIE_CONTACT",loadBuilder=DefaultSqlBuilder.class)
-@SqlPrimaryKey(fields="NUM_CATEGORIE_CONTACT",generatedidField=@SqlGeneratedIdField(name="NUM_CATEGORIE_CONTACT",type=Types.INTEGER))
-public class CategoryContact implements ObjectPersistence{
+@SqlTable(name="CATEGORIE_CONTACT")
+@SqlPrimaryKey(fields="ID_CATEGORIE_CONTACT",generatedidField=@SqlGeneratedIdField(name="ID_CATEGORIE_CONTACT",type=Types.JAVA_OBJECT))
+public class CategoryContact implements SqlObjectPersistence {
 	/**
 	 * Liste des catégorie par défaut
 	 * 
@@ -130,11 +128,11 @@ public class CategoryContact implements ObjectPersistence{
 		/**
 		 * Catégorie Archer
 		 */
-		BOWMAN(1);
+		BOWMAN(UUID.fromString("00000000-0000-0000-0000-000000000001")); //$NON-NLS-1$
 		
-		private int value;
+		private UUID value;
 		
-		private IdDefaultCategory(int value) {
+		private IdDefaultCategory(UUID value) {
 			this.value = value;
 		}
 		
@@ -143,15 +141,16 @@ public class CategoryContact implements ObjectPersistence{
 		 * 
 		 * @return l'id de la catégorie
 		 */
-		public int value() {
+		public UUID value() {
 			return value;
 		}
 	}
 	
 	private static StoreHelper<CategoryContact> helper = SqlStoreHelperFactory.getStoreHelper(CategoryContact.class);;
 	
-	@SqlField(name="NUM_CATEGORIE_CONTACT")
-	private int numCategoryContact = 0;
+	@SqlField(name="ID_CATEGORIE_CONTACT")
+	private UUID idCategoryContact;
+	
 	@SqlField(name="ID_LIBELLE")
 	private UUID idLibelle;
 	
@@ -169,17 +168,17 @@ public class CategoryContact implements ObjectPersistence{
 	 * 
 	 * @return database id of category contact
 	 */
-	public int getNumCategoryContact() {
-		return numCategoryContact;
+	public UUID getIdCategoryContact() {
+		return idCategoryContact;
 	}
 
 	/**
 	 * Set database id of category contact
 	 * 
-	 * @param numCategoryContact the database id of category contact
+	 * @param idCategoryContact the database id of category contact
 	 */
-	public void setNumCategoryContact(int numCategoryContact) {
-		this.numCategoryContact = numCategoryContact;
+	public void setIdCategoryContact(UUID idCategoryContact) {
+		this.idCategoryContact = idCategoryContact;
 	}
 	
 	/**
@@ -216,16 +215,6 @@ public class CategoryContact implements ObjectPersistence{
 		localizedLibelle.put(lang, libelle);
 	}
 
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-	
 	/**
 	 * Save Category in database
 	 */
@@ -268,7 +257,7 @@ public class CategoryContact implements ObjectPersistence{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + numCategoryContact;
+		result = prime * result + (idCategoryContact == null ? 0 : idCategoryContact.hashCode());
 		return result;
 	}
 
@@ -284,7 +273,7 @@ public class CategoryContact implements ObjectPersistence{
 		if (getClass() != obj.getClass())
 			return false;
 		CategoryContact other = (CategoryContact) obj;
-		if (numCategoryContact != other.numCategoryContact)
+		if (!idCategoryContact.equals(other.idCategoryContact))
 			return false;
 		return true;
 	}

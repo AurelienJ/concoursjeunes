@@ -86,6 +86,7 @@
  */
 package org.ajdeveloppement.concours.data;
 
+import java.sql.Types;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -98,18 +99,14 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
 import org.ajdeveloppement.concours.managers.ContactManager;
 
 /**
@@ -125,9 +122,10 @@ import org.ajdeveloppement.concours.managers.ContactManager;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name = "ENTITE",loadBuilder=DefaultSqlBuilder.class)
-@SqlPrimaryKey(fields = { "ID_ENTITE" })
-public class Entite implements ObjectPersistence {
+@SqlTable(name = "ENTITE")
+@SqlPrimaryKey(fields = { "ID_ENTITE" },generatedidField=@SqlGeneratedIdField(name="ID_ENTITE",type=Types.JAVA_OBJECT))
+@SqlUnmappedFields(fields={ "DATEMODIF", "UPPER_VILLE"})
+public class Entite implements SqlObjectPersistence {
 
 	/**
 	 * Type d'entité: Fédération
@@ -157,31 +155,35 @@ public class Entite implements ObjectPersistence {
 	@XmlTransient
 	@SqlField(name = "ID_ENTITE")
 	private UUID idEntite;
-	@SqlField(name = "NOMENTITE")
+	@SqlField(name = "NOM")
 	private String nom;
-	@SqlField(name = "AGREMENTENTITE")
-	private String agrement;
-	@XmlIDREF
-	@SqlForeignKey(mappedTo="NUMFEDERATION")
-	private Federation federation;
-	@SqlField(name = "ADRESSEENTITE")
+	@SqlField(name = "REFERENCE")
+	private String reference;
+	
+	//@XmlIDREF
+	//@SqlForeignKey(mappedTo="NUMFEDERATION")
+	//private Federation federation;
+	@SqlField(name = "ADRESSE")
 	private String adresse;
-	@SqlField(name = "CODEPOSTALENTITE")
+	@SqlField(name = "CODEPOSTAL")
 	private String codePostal;
-	@SqlField(name = "VILLEENTITE")
+	@SqlField(name = "VILLE")
 	private String ville;
 	@SqlField(name = "PAYS")
 	private String pays = "fr"; //$NON-NLS-1$
-	@SqlField(name = "NOTEENTITE")
+	@SqlField(name = "NOTE")
 	private String note;
+	
 	@SqlField(name = "TYPEENTITE")
 	private int type = CLUB;
 
 	@XmlAttribute
 	@SqlField(name = "REMOVABLE")
 	private boolean removable = true;
-
-	private static StoreHelper<Entite> helper = SqlStoreHelperFactory.getStoreHelper(Entite.class);
+	
+	@XmlIDREF
+	@SqlForeignKey(mappedTo="ID_ENTITE_PARENT")
+	private Entite entiteParent;
 
 	/**
 	 * 
@@ -234,14 +236,14 @@ public class Entite implements ObjectPersistence {
 	}
 
 	/**
-	 * Retourne le numéro d'agrement de l'association
+	 * Retourne le numéro d'reference de l'association
 	 * 
-	 * @return le numéro d'agrement
+	 * @return le numéro d'reference
 	 */
-	public String getAgrement() {
-		if (agrement == null)
+	public String getReference() {
+		if (reference == null)
 			return ""; //$NON-NLS-1$
-		return agrement;
+		return reference;
 	}
 
 	/**
@@ -298,27 +300,13 @@ public class Entite implements ObjectPersistence {
 	}
 
 	/**
-	 * Définit le numéro d'agrement identifiant de manière unique l'entite
+	 * Définit le numéro de reference identifiant de manière unique l'entite
 	 * 
-	 * @param agrement
-	 *            le numéro d'agrement
+	 * @param reference
+	 *            le numéro de reference
 	 */
-	public void setAgrement(String agrement) {
-		this.agrement = agrement;
-	}
-
-	/**
-	 * @param federation federation à définir
-	 */
-	public void setFederation(Federation federation) {
-		this.federation = federation;
-	}
-
-	/**
-	 * @return federation
-	 */
-	public Federation getFederation() {
-		return federation;
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 
 	/**
@@ -410,12 +398,36 @@ public class Entite implements ObjectPersistence {
 		return removable;
 	}
 
-	// /**
-	// * @param contacts contacts à définir
-	// */
-	// public void setContacts(List<Contact> contacts) {
-	// this.contacts = contacts;
-	// }
+	/**
+	 * @return entiteParent
+	 */
+	public Entite getEntiteParent() {
+		return entiteParent;
+	}
+
+	/**
+	 * @param entiteParent entiteParent à définir
+	 */
+	public void setEntiteParent(Entite entiteParent) {
+		this.entiteParent = entiteParent;
+	}
+	
+	/**
+	 * Retourne la fédération associé à l'entité. Si l'entité est une fédération
+	 * renvoi son objet Federation correspondant
+	 * 
+	 * @return la federation associé à l'entité
+	 */
+	public Federation getFederation() {
+		if(type == FEDERATION)
+			return QResults.from(Federation.class).where(T_Federation.ID_ENTITE.equalTo(idEntite)).first();
+		
+		if(entiteParent != null) {
+			return entiteParent.getFederation();
+		}
+		
+		return null;
+	}
 
 	/**
 	 * @return contacts
@@ -426,48 +438,10 @@ public class Entite implements ObjectPersistence {
 		
 		return Collections.emptyList();
 	}
-
+	
 	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-
-	/**
-	 * Sauvegarde l'entite dans la base de donnée
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if (Session.canExecute(session, this)) {
-			if (idEntite == null)
-				idEntite = UUID.randomUUID();
-
-			if (nom == null || nom.isEmpty())
-				return;
-
-			if(federation != null)
-				federation.save(session);
-
-			helper.save(this);
-
-			Session.addProcessedObject(session, this);
-
-			Cache.put(this);
-		}
-	}
-
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if (Session.canExecute(session, this)) {
-			helper.delete(this);
-
-			Session.addProcessedObject(session, this);
-			Cache.remove(this);
-		}
+	public boolean validateBeforeSave() {
+		return nom != null && !nom.isEmpty();
 	}
 
 	/**
@@ -509,7 +483,7 @@ public class Entite implements ObjectPersistence {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((agrement == null) ? 0 : agrement.hashCode());
+				+ ((reference == null) ? 0 : reference.hashCode());
 		result = prime * result + ((nom == null) ? 0 : nom.hashCode());
 		result = prime * result + type;
 		result = prime * result + ((ville == null) ? 0 : ville.hashCode());
@@ -530,10 +504,10 @@ public class Entite implements ObjectPersistence {
 		if (getClass() != obj.getClass())
 			return false;
 		Entite other = (Entite) obj;
-		if (agrement == null) {
-			if (other.agrement != null)
+		if (reference == null) {
+			if (other.reference != null)
 				return false;
-		} else if (!agrement.equals(other.agrement))
+		} else if (!reference.equals(other.reference))
 			return false;
 		if (nom == null) {
 			if (other.nom != null)

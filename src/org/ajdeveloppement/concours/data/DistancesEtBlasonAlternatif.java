@@ -97,7 +97,6 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
@@ -109,7 +108,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="DISTANCESBLASONALTERNATIF",loadBuilder=DefaultSqlBuilder.class)
+@SqlTable(name="DISTANCESBLASONALTERNATIF")
 @SqlPrimaryKey(fields={"NUMCRITERIASET","ID_DISTANCESBLASONS"})
 public class DistancesEtBlasonAlternatif implements ObjectPersistence,Cloneable {
 	private static StoreHelper<DistancesEtBlasonAlternatif> helper = SqlStoreHelperFactory.getStoreHelper(DistancesEtBlasonAlternatif.class);

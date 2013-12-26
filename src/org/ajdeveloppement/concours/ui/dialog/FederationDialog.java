@@ -312,7 +312,7 @@ public class FederationDialog extends JDialog implements ActionListener {
 		
 		jtfFederatonSigle.setText(federation.getSigleFederation());
 		jtfFederatonName.setText(federation.getNomFederation());
-		ccbCountryFederation.setSelectedCountry(federation.getCodeCountry());
+		ccbCountryFederation.setSelectedCountry(federation.getPays());
 		
 		List<String> langs = null;
 
@@ -396,7 +396,7 @@ public class FederationDialog extends JDialog implements ActionListener {
 				federation.setNomFederation(jtfFederatonName.getText());
 				federation.setSigleFederation(jtfFederatonSigle.getText());
 			}
-			federation.setCodeCountry(((Country)ccbCountryFederation.getSelectedItem()).getCode().toLowerCase());
+			federation.setPays(((Country)ccbCountryFederation.getSelectedItem()).getCode().toLowerCase());
 			federation.getCompetitionLevels().clear();
 			
 			List<String> langs = new ArrayList<>();

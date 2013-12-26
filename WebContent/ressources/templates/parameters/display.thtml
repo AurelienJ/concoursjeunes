@@ -1,0 +1,24 @@
+<menu class="mainMenu">
+	<li><a href="general.html">General</a></li>
+	<li class="selected">Affichage</li>
+	<li><a href="rates.html">Tarifs</a></li> 
+	<li><a href="editions.html">Editions</a></li> 
+</menu>
+
+<h1>Options d'affichage</h1>
+
+<section>
+	<h2>Langue de l'application:</h2>
+	<p>
+		<select id="localisation" >
+			<bloc::locale><option value="{langCode}">{langLabel}</option></bloc::locale>
+		</select>
+	</p>
+</section>
+<section>
+	<h2>Saisi des scores / Affichage des résultats:</h2>
+	<p>
+	<input type="checkbox" />Permettre la saisie non cumulée sur une série complète<br />
+	<input type="checkbox" />Mettre en surbrillance les Ex-Eequo
+	</p>
+</section>

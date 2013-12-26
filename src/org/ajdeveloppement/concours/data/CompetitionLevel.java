@@ -104,13 +104,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.ajdeveloppement.commons.UncheckedException;
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
@@ -124,9 +122,9 @@ import org.ajdeveloppement.concours.helpers.LibelleHelper;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="NIVEAU_COMPETITION",loadBuilder=DefaultSqlBuilder.class)
-@SqlPrimaryKey(fields={"CODENIVEAU","NUMFEDERATION"})
-public class CompetitionLevel implements ObjectPersistence {
+@SqlTable(name="NIVEAU_COMPETITION")
+@SqlPrimaryKey(fields={"CODENIVEAU","ID_ENTITE"})
+public class CompetitionLevel implements SqlObjectPersistence {
 	@XmlTransient
 	@SqlField(name="CODENIVEAU")
 	private int numlevel = 0;
@@ -139,7 +137,7 @@ public class CompetitionLevel implements ObjectPersistence {
 	private boolean defaut = false;
 	
 	@XmlTransient
-	@SqlForeignKey(mappedTo="NUMFEDERATION")
+	@SqlForeignKey(mappedTo="ID_ENTITE")
 	private Federation federation;
 	
 	//Pour mise à jour ancienne version
@@ -198,7 +196,7 @@ public class CompetitionLevel implements ObjectPersistence {
 				if(libelle != null && !libelle.isEmpty()) {
 					idLibelle = QResults.from(Libelle.class)
 						.where(T_Libelle.ID_LIBELLE.in(QResults.from(CompetitionLevel.class)
-									.where(T_CompetitionLevel.NUMFEDERATION.equalTo(federation.getNumFederation()))
+									//.where(T_CompetitionLevel.ID.equalTo(federation.getIdEntite()))
 									.asSubQuery(T_CompetitionLevel.ID_LIBELLE))
 								.and(T_Libelle.LANG.equalTo(lang))
 								.and(T_Libelle.LIBELLE.equalTo(libelle)))
@@ -267,16 +265,6 @@ public class CompetitionLevel implements ObjectPersistence {
 	 */
 	public boolean isDefaut() {
 		return defaut;
-	}
-	
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
 	}
 
 	/** 

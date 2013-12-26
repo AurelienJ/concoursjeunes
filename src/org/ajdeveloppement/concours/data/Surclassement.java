@@ -97,7 +97,6 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
@@ -109,7 +108,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="SURCLASSEMENT", loadBuilder=DefaultSqlBuilder.class)
+@SqlTable(name="SURCLASSEMENT")
 @SqlPrimaryKey(fields={"NUMCRITERIASET", "ID_REGLEMENT"})
 public class Surclassement implements ObjectPersistence, Cloneable {
 	private static StoreHelper<Surclassement> helper = SqlStoreHelperFactory.getStoreHelper(Surclassement.class);

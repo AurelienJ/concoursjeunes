@@ -88,6 +88,7 @@
  */
 package org.ajdeveloppement.concours.data;
 
+import java.sql.Types;
 import java.util.UUID;
 
 import javax.xml.bind.Marshaller;
@@ -97,15 +98,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 
@@ -117,9 +113,9 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="COORDINATE",loadBuilder=DefaultSqlBuilder.class)
-@SqlPrimaryKey(fields="ID_COORDINATE")
-public class Coordinate implements ObjectPersistence, Cloneable {
+@SqlTable(name="COORDINATE")
+@SqlPrimaryKey(fields="ID_COORDINATE",generatedidField=@SqlGeneratedIdField(name="ID_COORDINATE", type=Types.JAVA_OBJECT))
+public class Coordinate implements SqlObjectPersistence, Cloneable {
 	
 	/**
 	 * Type off coordinate (different type of phone number or mail address)
@@ -162,8 +158,6 @@ public class Coordinate implements ObjectPersistence, Cloneable {
 
 	}
 	
-	private static StoreHelper<Coordinate> helper = SqlStoreHelperFactory.getStoreHelper(Coordinate.class);
-	
 	@XmlAttribute(name="id",required=true)
 	@SqlField(name="ID_COORDINATE")
 	private UUID idCoordinate = null;
@@ -177,7 +171,6 @@ public class Coordinate implements ObjectPersistence, Cloneable {
 	@XmlTransient
 	@SqlForeignKey(mappedTo="ID_CONTACT")
 	private Contact contact;
-	
 	
 	/**
 	 * Construct a coordinate of contact
@@ -267,43 +260,6 @@ public class Coordinate implements ObjectPersistence, Cloneable {
 	 */
 	public void setContact(Contact contact) {
 		this.contact = contact;
-	}
-	
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-
-	/**
-	 * Save Coordinate in database
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			if(idCoordinate == null)
-				idCoordinate = UUID.randomUUID();
-			
-			helper.save(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-	
-	/**
-	 * Delete coordinate from database
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(idCoordinate != null && Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-		}
 	}
 	
 	/**

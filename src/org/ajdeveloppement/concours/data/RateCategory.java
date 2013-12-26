@@ -93,13 +93,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlIDREF;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
@@ -108,12 +102,9 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CATEGORIE_TARIF",loadBuilder=DefaultSqlBuilder.class)
+@SqlTable(name="CATEGORIE_TARIF",disableCache=true)
 @SqlPrimaryKey(fields={"ID_TARIF","NUMCRITERIASET"})
-public class RateCategory implements ObjectPersistence {
-	
-	private static StoreHelper<RateCategory> helper = SqlStoreHelperFactory.getStoreHelper(RateCategory.class);
-	
+public class RateCategory implements SqlObjectPersistence {
 	@SqlForeignKey(mappedTo="ID_TARIF")
 	@XmlIDREF
 	private Rate tarif = null;
@@ -141,46 +132,6 @@ public class RateCategory implements ObjectPersistence {
 		this.category = category;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save()
-	 */
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.save(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete()
-	 */
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-
 	/**
 	 * Use only by JAXB. Do not use.
 	 * 
@@ -188,7 +139,7 @@ public class RateCategory implements ObjectPersistence {
 	 * @param parent
 	 */
 	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		tarif.getCategoriesTarif().add(this);
+		//tarif.getCategoriesTarif().add(this);
 		category.getTarifsCategorie().add(this);
 	}
 }

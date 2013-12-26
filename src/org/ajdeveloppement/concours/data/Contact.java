@@ -90,6 +90,7 @@ package org.ajdeveloppement.concours.data;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -104,17 +105,17 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
 import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
@@ -128,10 +129,10 @@ import org.ajdeveloppement.concours.managers.EntiteManager;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CONTACT",loadBuilder=DefaultSqlBuilder.class)
-@SqlPrimaryKey(fields="ID_CONTACT")
+@SqlTable(name="CONTACT",disableCache=true)
+@SqlPrimaryKey(fields="ID_CONTACT",generatedidField=@SqlGeneratedIdField(name="ID_CONTACT",type=Types.JAVA_OBJECT))
 @SqlUnmappedFields(fields={"UPPER_NAME"})
-public class Contact implements ObjectPersistence, Cloneable {
+public class Contact implements SqlObjectPersistence, Cloneable {
 	
 	// [start] Helper persistence
 	private static StoreHelper<Contact> helper = SqlStoreHelperFactory.getStoreHelper(Contact.class);
@@ -175,8 +176,19 @@ public class Contact implements ObjectPersistence, Cloneable {
 	@SqlForeignKey(mappedTo="ID_ENTITE")
 	private Entite entite = new Entite();
 	
+	@SqlField(name="IDENTIFIANT")
+	private String login;
+	
+	@SqlField(name="MOT_DE_PASSE")
+	private String passwordHash;
+	
+	@SqlField(name="TOKEN_IDP_EXTERNE")
+	private String idpToken;
+	
+	@SqlChildCollection(foreignFields="ID_CONTACT",type=Coordinate.class)
 	private List<Coordinate> coordinates;
 	
+	@SqlChildCollection(foreignFields="ID_CONTACT",type=CategoryContactContact.class)
 	private List<CategoryContactContact> categories;
 
 	protected transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -406,6 +418,48 @@ public class Contact implements ObjectPersistence, Cloneable {
 	}
 
 	/**
+	 * @return login
+	 */
+	public String getLogin() {
+		return login;
+	}
+
+	/**
+	 * @param login login à définir
+	 */
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
+	/**
+	 * @return passwordHash
+	 */
+	public String getPasswordHash() {
+		return passwordHash;
+	}
+
+	/**
+	 * @param passwordHash passwordHash à définir
+	 */
+	public void setPasswordHash(String passwordHash) {
+		this.passwordHash = passwordHash;
+	}
+
+	/**
+	 * @return idpToken
+	 */
+	public String getIdpToken() {
+		return idpToken;
+	}
+
+	/**
+	 * @param idpToken idpToken à définir
+	 */
+	public void setIdpToken(String idpToken) {
+		this.idpToken = idpToken;
+	}
+
+	/**
 	 * Get coordinates of contact (phone, fax, mail)
 	 * 
 	 * @return coordinates of contact
@@ -512,16 +566,6 @@ public class Contact implements ObjectPersistence, Cloneable {
 	public Entite getEntite() {
 		return entite;
 	}
-
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
 	
 	/**
 	 * Save contact in database
@@ -529,9 +573,6 @@ public class Contact implements ObjectPersistence, Cloneable {
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
 		if(Session.canExecute(session, this)) {
-			if(idContact == null)
-				idContact = UUID.randomUUID();
-			
 			if(entite != null) {
 				if(!entite.getNom().isEmpty()) {
 					entite.save(session);

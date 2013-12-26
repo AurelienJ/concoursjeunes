@@ -391,7 +391,7 @@ public class EntiteListDialog extends JDialog implements ActionListener, MouseLi
 			setVisible(false);
 		} else if(ae.getSource() == jbAdd) {
 			Entite newEntite = new Entite();
-			newEntite.setFederation((Federation)jcbFederation.getSelectedItem());
+			//newEntite.setFederation((Federation)jcbFederation.getSelectedItem());
 			newEntite.setPays(null);
 			
 			EntiteDialog ed = new EntiteDialog(parentframe, profile);
@@ -592,7 +592,7 @@ public class EntiteListDialog extends JDialog implements ActionListener, MouseLi
 					case 0:
 						return curEntite.getNom();
 					case 1:
-						return curEntite.getAgrement();
+						return curEntite.getReference();
 					case 2:
 						return curEntite.getAdresse();
 					case 3:
@@ -677,7 +677,7 @@ public class EntiteListDialog extends JDialog implements ActionListener, MouseLi
 			try {
 				String condition = ""; //$NON-NLS-1$
 				if(federation != null)
-					condition = "where NUMFEDERATION=" + federation.getNumFederation(); //$NON-NLS-1$
+					condition = "where ID_ENTITE='" + federation.getIdEntite().toString() + "'"; //$NON-NLS-1$ //$NON-NLS-2$
 				
 				pstmt = ApplicationCore.dbConnection.prepareStatement(
 						String.format("select * from Entite %s order by VilleEntite", condition), //$NON-NLS-1$

@@ -112,7 +112,7 @@ public class BlasonManager {
 	 * @return l'objet Blason trouvé ou null si inexistant
 	 */
 	public static Blason findBlasonByName(String name) {	
-		return QResults.from(Blason.class).where(NOMBLASON.equalTo(name)).first();
+		return QResults.from(Blason.class).where(NOM.equalTo(name)).first();
 	}
 
 	/**
@@ -121,6 +121,6 @@ public class BlasonManager {
 	 * @return la liste des blasons existant
 	 */
 	public static List<Blason> listAvailableTargetFace() {
-		return QResults.from(Blason.class).orderBy(NUMORDRE).asList();
+		return QResults.from(Blason.class).orderBy(ORDRE).asList();
 	}
 }

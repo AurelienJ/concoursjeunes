@@ -469,8 +469,8 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 			//On vérifie qu'on ai concordance sur les instances, sinon on corrige
 			for(Entite entite : entitesConcours) {
 				Federation federationCache = federations.get(federations.indexOf(entite.getFederation()));
-				if(entite.getFederation() != federationCache)
-					entite.setFederation(federationCache);
+				//if(entite.getFederation() != federationCache)
+				//	entite.setFederation(federationCache);
 			}
 		}
 	}

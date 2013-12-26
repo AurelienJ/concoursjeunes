@@ -120,12 +120,11 @@ import java.util.List;
 import java.util.logging.Level;
 
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.crypto.NoSuchPaddingException;
@@ -141,6 +140,7 @@ import javax.xml.bind.JAXBException;
 import org.ajdeveloppement.apps.AppUtilities;
 import org.ajdeveloppement.apps.ApplicationContext;
 import org.ajdeveloppement.commons.AjResourcesReader;
+import org.ajdeveloppement.commons.io.FileUtils;
 import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.commons.security.SSLUtils;
 import org.ajdeveloppement.commons.security.SecureSiteAuthenticationStore;
@@ -171,6 +171,26 @@ import org.jdesktop.swingx.error.ErrorInfo;
  * 
  */
 public class Main extends Application {
+	public static class Bridge {
+		public String SelectFile() {
+			FileChooser chooser = new FileChooser();
+			File file = chooser.showOpenDialog(null);
+			if(file != null) {
+				File uploadPath = new File(FilesService.getBasePath(), "images/upload");
+				if(!uploadPath.exists())
+					uploadPath.mkdirs();
+				try {
+					FileUtils.copyFile(file, new File(uploadPath, file.getName()));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return "images/upload/" + file.getName();
+			}
+			
+			return null;
+		}
+	}
+	
 	private static SplashScreen splash = null;
 	private static AjResourcesReader localisation = new AjResourcesReader("libelle");  //$NON-NLS-1$
 	
@@ -188,6 +208,8 @@ public class Main extends Application {
 	private static final String WEBSERVER_SERVICE_ORDER = "webserver.service.order"; //$NON-NLS-1$
 
 	private static AjResourcesReader staticParameters = new AjResourcesReader(WEBSERVER_CONFIG);
+	
+	
 	
 	/**
 	 * @param args
@@ -218,20 +240,24 @@ public class Main extends Application {
 		}
 
 		HttpServer httpServer = new HttpServer(staticParameters.getResourceInteger(WEBSERVER_LISTEN_PORT));
-		httpServer.start();
+		httpServer.start(true);
 		
-		launch(args);
-//		
-//		showSplashScreen();
-//		initErrorManaging();
-//		initNetworkManaging();
-//		initCore();
-//		initSecureContext();
+		
+		
+		showSplashScreen();
+		initErrorManaging();
+		initNetworkManaging();
+		initCore();
+		initSecureContext();
 //		if(System.getProperty("noplugin") == null)//$NON-NLS-1$
 //			loadStartupPlugin();
 //
-//		initShutdownHook();
-//		hideSplashScreen();
+		initShutdownHook();
+		
+		launch(args);
+		
+		hideSplashScreen();
+		
 //		
 //		System.out.println("core loaded");  //$NON-NLS-1$
 //		
@@ -240,23 +266,33 @@ public class Main extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("Hello World!");
+		primaryStage.setTitle("ArcCompetition");
 		WebView webView = new WebView();
 		
 		StackPane root = new StackPane();
 		root.getChildren().add(webView);
 		primaryStage.setScene(new Scene(root, 1024, 768));
 		primaryStage.show();
-		Thread.sleep(5000);
+		//Thread.sleep(5000);
 		
 		Worker<Void> worker = webView.getEngine().getLoadWorker();
-		worker.exceptionProperty().addListener(new ChangeListener<Throwable>() {
-		  @Override public void changed(ObservableValue<? extends Throwable> observableValue, Throwable oldThrowable, Throwable newThrowable) {
-			  newThrowable.printStackTrace();
-		  }
-		});
+		worker.exceptionProperty().addListener((observableValue, oldThrowable, newThrowable) -> newThrowable.printStackTrace());
+		webView.getEngine().setOnError(event ->	event.getException().getStackTrace());
+		webView.getEngine().setOnAlert(event -> System.out.println(event.getData()));
+		
 		webView.getEngine().load("http://localhost:8081");
-		//webView.getEngine().load("http://arccompetition.ajdeveloppement.org/WebContent/www/index.htm");
+		netscape.javascript.JSObject win = 
+                (netscape.javascript.JSObject) webView.getEngine().executeScript("window");
+        win.setMember("app", new Bridge());
+		
+		//webView.getEngine().load("http://html5demos.com/");
+		//Object jsobj = webView.getEngine().executeScript("window");
+		//System.out.println(jsobj);
+		
+		Profile profile = new Profile();
+		core.addProfile(profile);
+		
+		//new org.ajdeveloppement.concours.ui.fx.ArcCompetitionFrame(primaryStage, profile);
 	}
 
 	/**

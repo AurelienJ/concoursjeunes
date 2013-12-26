@@ -1,5 +1,11 @@
+@viewport {
+    width: device-width;
+    zoom: 1;
+    max-zoom: 1;
+}
+
 main {
-	margin-left:	0px;
+	margin-left:	40px;
 	font-size: 80%;
 	
 	padding: 10px;
@@ -12,44 +18,48 @@ main {
 	.mainMenu > li {
 		display: block;
 	}
+	
 }
 
 #home > nav {
+	position:		absolute;
+	top:			0px;
+	left:			-40px;
+	width:			40px;
+	bottom:			0px;
+	
+	padding-top:	30px;
+
+	background-color: rgb(51, 51, 51);
+	
+	z-index: 1;
+}
+
+#home > nav .masquable {
 	display: none;
 }
 
-#filarianne {
-	margin-left:	5px;
-}
-
-/*#home > nav > a {
-	display: block;
-	text-decoration: none;
-	font-weight: bold;
-	color: white;
-	padding-top: 0.75em;
-	padding-bottom: 0.75em;
-	padding-left: 0.5em;
-}
-
-#home > nav > a:hover {
-	background-color:white;
-	color: black;
-}
-
-#home > nav > a#homeNav {
-	background-color: white;
-	color: black;
-	text-align:		center;
-	font-size: 0.8em;
-
-	padding-top: 15px;
-	padding-left: 0em;
-}
-
-#home > nav > a.selected {
-	/*
-	background-color:white;
-	color: black;*/
-	/*font-size: 1.2em;
+/*#home > nav:hover {
+	width:220px;
+	
+	
+	/*transition:0.2s width,1s opacity;*/
 }*/
+
+#home > nav:hover .masquable {
+	display: inline;
+}
+
+#homeNav img {
+	width: 36px;
+}
+
+#pagetitle {
+	font-size: 70%;
+	padding-bottom:	15px;
+}
+
+#filarianne {
+	z-index: -2;
+	margin-left:	45px;
+}

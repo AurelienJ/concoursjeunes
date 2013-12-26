@@ -91,12 +91,10 @@ package org.ajdeveloppement.concours.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -106,9 +104,9 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  * @author Aurélien JEOFFRAY
  *
  */
-@SqlTable(name="REPARTITION_PHASE_FINALE",loadBuilder=DefaultSqlBuilder.class)
+@SqlTable(name="REPARTITION_PHASE_FINALE",disableCache=true)
 @SqlPrimaryKey(fields={"NUM_REPARTITION_PHASE_FINALE", "NUM_TYPE_REPARTITION"})
-public class RepartitionFinals implements ObjectPersistence {
+public class RepartitionFinals implements SqlObjectPersistence {
 	private static StoreHelper<RepartitionFinals> helper = SqlStoreHelperFactory.getStoreHelper(RepartitionFinals.class);
 	
 	/**
@@ -186,16 +184,6 @@ public class RepartitionFinals implements ObjectPersistence {
 		}
 		
 		return repartitionsFinalsPhase;
-	}
-
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
 	}
 
 	@Override

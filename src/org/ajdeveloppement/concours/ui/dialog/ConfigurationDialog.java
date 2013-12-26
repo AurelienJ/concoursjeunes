@@ -638,7 +638,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 		String[] libelleLangues = Configuration.getAvailableLanguages();
 
 		jtfNomClub.setText(configuration.getClub().getNom());
-		((AutoCompleteDocument) jtfAgrClub.getDocument()).setText(configuration.getClub().getAgrement());
+		((AutoCompleteDocument) jtfAgrClub.getDocument()).setText(configuration.getClub().getReference());
 		//jtfIntConc.setText(configuration.getIntituleConcours());
 
 		jcbProfil.removeActionListener(this);
@@ -908,7 +908,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 		
 		workConfiguration.setFederation((Federation)jcbFederation.getSelectedItem());
 		workConfiguration.getClub().setNom(jtfNomClub.getText());
-		workConfiguration.getClub().setAgrement(jtfAgrClub.getText());
+		workConfiguration.getClub().setReference(jtfAgrClub.getText());
 		//workConfiguration.setIntituleConcours(jtfIntConc.getText());
 		workConfiguration.setLangue(Configuration.listLangue()[jcbLangue.getSelectedIndex()]);
 		if(jcbPathPdf.getSelectedItem() != null)
@@ -971,7 +971,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 			if (eld.getAction() == EntiteListDialog.VALIDER) {
 				workConfiguration.setClub(eld.getSelectedEntite());
 				
-				jtfAgrClub.setText(eld.getSelectedEntite().getAgrement());
+				jtfAgrClub.setText(eld.getSelectedEntite().getReference());
 				jtfNomClub.setText(eld.getSelectedEntite().getNom());
 			}
 			profile.getConfiguration().setFederation(baseFederation);
@@ -1087,7 +1087,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 		Entite newEntite = new Entite();
 		if (e.getSource() == jtfAgrClub) {
 			newEntite.setVille(jtfNomClub.getText());
-			newEntite.setAgrement(jtfAgrClub.getText());
+			newEntite.setReference(jtfAgrClub.getText());
 
 			jtfNomClub.setEditable(true);
 		}

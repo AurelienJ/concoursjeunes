@@ -91,6 +91,7 @@ package org.ajdeveloppement.concours.builders;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.UUID;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
@@ -117,24 +118,24 @@ public class FederationBuilder implements ResultSetRowToObjectBinder<Federation,
 	/**
 	 * Retourne la fédération qualifié par son identifiant en base
 	 * 
-	 * @param numFederation l'id de la fédération
+	 * @param idFederation l'id de la fédération
 	 * @return la fédération a retourner
 	 * @throws ObjectPersistenceException
 	 */
-	public static Federation getFederation(int numFederation) throws ObjectPersistenceException {
-		return getFederation(numFederation, null, null);
+	public static Federation getFederation(UUID idFederation) throws ObjectPersistenceException {
+		return getFederation(idFederation, null, null);
 	}
 	
 	/**
 	 * Retourne la fédération qualifié par son identifiant en base
 	 * 
-	 * @param numFederation l'id de la fédération
+	 * @param idFederation l'id de la fédération
 	 * @param sessionCache cache de session
 	 * @return la fédération a retourner
 	 * @throws ObjectPersistenceException
 	 */
-	public static Federation getFederation(int numFederation, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		return getFederation(numFederation, null, sessionCache);
+	public static Federation getFederation(UUID idFederation, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		return getFederation(idFederation, null, sessionCache);
 	}
 	
 	/**
@@ -146,33 +147,33 @@ public class FederationBuilder implements ResultSetRowToObjectBinder<Federation,
 	 * @throws ObjectPersistenceException
 	 */
 	public static Federation getFederation(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		return getFederation(0, rs, sessionCache);
+		return getFederation(null, rs, sessionCache);
 	}
 	
 	/**
 	 * 
-	 * @param numFederation
+	 * @param idFederation
 	 * @param rs
 	 * @return
 	 * @throws ObjectPersistenceException
 	 */
-	private static Federation getFederation(int numFederation, ResultSet resultSet, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+	private static Federation getFederation(UUID idFederation, ResultSet resultSet, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		if(sessionCache == null)
 			sessionCache = new SqlLoadingSessionCache();
 		
 		if(resultSet != null) {
 			try {
-				numFederation =  T_Federation.NUMFEDERATION.getValue(resultSet);
+				idFederation =  (UUID)T_Federation.ID_ENTITE.getValue(resultSet);
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}
 		}
 			
-		Federation federation = Cache.get(Federation.class, numFederation);
+		Federation federation = Cache.get(Federation.class, idFederation);
 		if(federation == null) {
 			federation = new Federation();
 			if(resultSet == null) {
-				federation.setNumFederation(numFederation);
+				federation.setIdEntite(idFederation);
 				
 				loadHelper.load(federation);
 			} else {
@@ -183,7 +184,7 @@ public class FederationBuilder implements ResultSetRowToObjectBinder<Federation,
 
 			federation.setCompetitionLevels(
 					QResults.from(CompetitionLevel.class, sessionCache)
-						.where(T_CompetitionLevel.NUMFEDERATION.equalTo(numFederation))
+						.where(T_CompetitionLevel.ID_ENTITE.equalTo(idFederation))
 						.orderBy(T_CompetitionLevel.CODENIVEAU)
 						.asList());
 		}

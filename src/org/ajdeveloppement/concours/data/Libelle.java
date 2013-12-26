@@ -95,8 +95,8 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
@@ -109,9 +109,7 @@ import org.ajdeveloppement.concours.builders.LibelleBuilder;
  */
 @SqlTable(name="LIBELLE",loadBuilder=LibelleBuilder.class)
 @SqlPrimaryKey(fields={"ID_LIBELLE","LANG"})
-public class Libelle implements ObjectPersistence {
-	private static StoreHelper<Libelle> helper = SqlStoreHelperFactory.getStoreHelper(Libelle.class);
-	
+public class Libelle implements SqlObjectPersistence {
 	@SqlField(name="ID_LIBELLE")
 	private UUID idLibelle;
 	@SqlField(name="LANG")
@@ -198,16 +196,6 @@ public class Libelle implements ObjectPersistence {
 		this.libelle = libelle;
 	}
 	
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-	
 	/**
 	 * Enregistre le libellé en base. Si besoin ajoute l'instance au cache d'objet
 	 * 
@@ -216,33 +204,16 @@ public class Libelle implements ObjectPersistence {
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
 		if((idLibelle == null || updated) && Session.canExecute(session, this)) {
-			if(idLibelle == null) {
-				idLibelle = UUID.randomUUID();
+			StoreHelper<Libelle> helper = SqlStoreHelperCache.getHelper(Libelle.class);
+			if(helper != null) {
+				helper.save(this);
+				
+				Cache.put(this);
+				
+				Session.addProcessedObject(session, this);
+				
+				updated = false;
 			}
-			
-			helper.save(this);
-			
-			Cache.put(this);
-			
-			Session.addProcessedObject(session, this);
-			
-			updated = false;
-		}
-	}
-	
-	/**
-	 * Supprime le libellé de la base. Supprime l'instance du cache.
-	 * 
-	 * @see ObjectPersistence#delete()
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-			
-			Cache.remove(this);
 		}
 	}
 }

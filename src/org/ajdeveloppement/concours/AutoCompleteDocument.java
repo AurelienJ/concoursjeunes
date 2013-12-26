@@ -582,8 +582,8 @@ public class AutoCompleteDocument extends PlainDocument {
 		if(getLength() > 0) {
 			//List<Entite> entites = EntiteManager.getEntitesInDatabase(searchEntite, T_Entite.VILLEENTITE);
 			Entite entite = QResults.from(Entite.class)
-					.where(T_Entite.VILLEENTITE.upper().like(searchEntite.getVille()))
-					.orderBy(T_Entite.VILLEENTITE)
+					.where(T_Entite.VILLE.upper().like(searchEntite.getVille()))
+					.orderBy(T_Entite.VILLE)
 					.first();
 			if(!Thread.currentThread().isInterrupted()) {
 				if(entite != null)
@@ -652,11 +652,11 @@ public class AutoCompleteDocument extends PlainDocument {
 		
 		String searchString = getText(0, getLength());
 		Entite searchEntite = new Entite();
-		searchEntite.setAgrement(searchString.toUpperCase() + "%"); //$NON-NLS-1$
+		searchEntite.setReference(searchString.toUpperCase() + "%"); //$NON-NLS-1$
 		if(getLength() > 0) {
 			Entite entite = QResults.from(Entite.class)
-					.where(T_Entite.AGREMENTENTITE.like(searchEntite.getAgrement()))
-					.orderBy(T_Entite.AGREMENTENTITE)
+					.where(T_Entite.REFERENCE.like(searchEntite.getReference()))
+					.orderBy(T_Entite.REFERENCE)
 					.first();
 			//List<Entite> entites = EntiteManager.getEntitesInDatabase(searchEntite, T_Entite.AGREMENTENTITE);
 			if(!Thread.currentThread().isInterrupted()) {
@@ -670,7 +670,7 @@ public class AutoCompleteDocument extends PlainDocument {
 		}
 		
 		if(!Thread.currentThread().isInterrupted()) {
-			if(context.getEntite() == null || (strict && !context.getEntite().getAgrement().equals(getText(0, getLength())))) {
+			if(context.getEntite() == null || (strict && !context.getEntite().getReference().equals(getText(0, getLength())))) {
 				if(strict && context.getEntite() != null)
 					context.setEntite(null);
 				
@@ -689,8 +689,8 @@ public class AutoCompleteDocument extends PlainDocument {
 						public void run() {
 							try {
 								AutoCompleteDocument.super.remove(0, getLength());
-								AutoCompleteDocument.super.insertString(0, context.getEntite().getAgrement(), null);
-								textField.setCaretPosition(context.getEntite().getAgrement().length());
+								AutoCompleteDocument.super.insertString(0, context.getEntite().getReference(), null);
+								textField.setCaretPosition(context.getEntite().getReference().length());
 								textField.moveCaretPosition(caretPosition);
 							} catch (BadLocationException e) {
 								e.printStackTrace();

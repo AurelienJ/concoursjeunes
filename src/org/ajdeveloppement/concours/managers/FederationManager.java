@@ -106,6 +106,6 @@ public class FederationManager {
 	 * @return la liste des fédérations disponible
 	 */
 	public static List<Federation> getAvailableFederations() {
-		return QResults.from(Federation.class).orderBy(T_Federation.SIGLEFEDERATION).asList();
+		return QResults.from(Federation.class).orderBy(T_Federation.SIGLE).asList();
 	}
 }

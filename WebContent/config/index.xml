@@ -2,6 +2,10 @@
 <webpage>
 	<uri>/index.html</uri>
 	<uri>/</uri>
+	<uri>/general.html</uri>
+	<uri>/display.html</uri>
+	<uri>/rates.html</uri>
+	<uri>/editions.html</uri>
 	<mimeType>text/html</mimeType>
 	<!-- <script>scripts/common/ScriptLoader.js</script> -->
 	<script>scripts/index.js</script>

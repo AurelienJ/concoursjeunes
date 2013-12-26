@@ -91,18 +91,18 @@ package org.ajdeveloppement.concours.data;
 import java.sql.Types;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -118,15 +118,15 @@ import org.ajdeveloppement.concours.builders.BlasonBuilder;
  *
  */
 @SqlTable(name="BLASONS",loadBuilder=BlasonBuilder.class)
-@SqlPrimaryKey(fields={"NUMBLASON"},generatedidField=@SqlGeneratedIdField(name="NUMBLASON",type=Types.INTEGER))
+@SqlPrimaryKey(fields={"ID_BLASON"},generatedidField=@SqlGeneratedIdField(name="ID_BLASON",type=Types.JAVA_OBJECT))
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Blason implements ObjectPersistence {
+public class Blason implements SqlObjectPersistence {
 	
 	@XmlAttribute
-	@SqlField(name="NUMBLASON")
-	private int numblason = 0;
+	@SqlField(name="ID_BLASON")
+	private UUID idBlason;
 	
-	@SqlField(name="NOMBLASON")
+	@SqlField(name="NOM")
 	private String name = ""; //$NON-NLS-1$
 	@SqlField(name="HORIZONTAL_RATIO")
 	private double horizontalRatio = 1;
@@ -134,14 +134,12 @@ public class Blason implements ObjectPersistence {
 	private double verticalRatio = 1;
 	@SqlField(name="NBARCHER")
 	private int nbArcher = 4;
-	@SqlField(name="NUMORDRE")
+	@SqlField(name="ORDRE")
 	private int numordre = 0;
 	@SqlField(name="IMAGE")
 	private String targetFaceImage = ""; //$NON-NLS-1$
 	//@XmlJavaTypeAdapter(JAXBMapAdapter.class)
 	private Map<Integer, Ancrage> ancrages;
-	
-	private static StoreHelper<Blason> helper = SqlStoreHelperFactory.getStoreHelper(Blason.class);
 	
 	/**
 	 * Construit un nouveau blason
@@ -317,8 +315,8 @@ public class Blason implements ObjectPersistence {
 	 * 
 	 * @return le numéro de reference du blason dans la base ou 0 si non définit 
 	 */
-	public int getNumblason() {
-		return numblason;
+	public UUID getIdBlason() {
+		return idBlason;
 	}
 
 	/**
@@ -328,8 +326,8 @@ public class Blason implements ObjectPersistence {
 	 * 
 	 * @param numblason le numéro de reference du blason dans la base ou 0 si non définit
 	 */
-	public void setNumblason(int numblason) {
-		this.numblason = numblason;
+	public void setIdBlason(UUID numblason) {
+		this.idBlason = numblason;
 	}
 
 	/**
@@ -420,16 +418,6 @@ public class Blason implements ObjectPersistence {
 		return !axeX && !axeY;
 	}
 	
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-	
 	/**
 	 * Sauvegarde l'objet dans la base en créant une nouvelle ligne si le numero de blason est à 0
 	 * ou en mettant à jour la ligne existante dans la base et identifié par le numero de blason
@@ -439,29 +427,18 @@ public class Blason implements ObjectPersistence {
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
 		if(Session.canExecute(session, this)) {
-			helper.save(this);
-			
-			for(Entry<Integer, Ancrage> entry : ancrages.entrySet()) {
-				entry.getValue().save(session);
-			}
+			StoreHelper<Blason> helper = SqlStoreHelperCache.getHelper(Blason.class);
+			if(helper != null) {
+				helper.save(this);
 
-			Cache.put(this);
-			Session.addProcessedObject(session, this);
-		}
-	}
-	
-	/**
-	 * Supprime la persistance de l'objet
-	 * 
-	 * @throws ObjectPersistenceException
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			Cache.remove(this);
-			
-			Session.addProcessedObject(session, this);
+				Cache.put(this);
+				
+				Session.addProcessedObject(session, this);
+				
+				for(Entry<Integer, Ancrage> entry : ancrages.entrySet()) {
+					entry.getValue().save(session);
+				}
+			}
 		}
 	}
 

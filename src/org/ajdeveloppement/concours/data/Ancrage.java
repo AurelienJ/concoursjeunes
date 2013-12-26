@@ -93,12 +93,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -111,11 +106,9 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="ANCRAGES_BLASONS", loadBuilder=DefaultSqlBuilder.class)
-@SqlPrimaryKey(fields={"NUMBLASON","EMPLACEMENT"})
+@SqlTable(name="ANCRAGE_BLASON", disableCache=true)
+@SqlPrimaryKey(fields={"ID_BLASON","EMPLACEMENT"})
 public class Ancrage implements SqlObjectPersistence {
-	private static StoreHelper<Ancrage> helper = SqlStoreHelperFactory.getStoreHelper(Ancrage.class);
-	
 	/**
 	 * Emplacement de la cible pour la position A
 	 */
@@ -152,16 +145,16 @@ public class Ancrage implements SqlObjectPersistence {
 	 */
 	public static final int POSITION_BD = 6;
 	
-	@SqlField(name="EMPLACEMENT")
+	@SqlField(name="EMPLACEMENT",nullable=false,sqlType="INTEGER")
 	protected int emplacement = POSITION_A;
 	
-	@SqlField(name="ANCRAGEX")
+	@SqlField(name="ANCRAGEX",sqlType="DOUBLE")
 	private double x = 0;
-	@SqlField(name="ANCRAGEY")
+	@SqlField(name="ANCRAGEY",sqlType="DOUBLE")
 	private double y = 0;
 	
 	@XmlTransient
-	@SqlForeignKey(mappedTo="NUMBLASON")
+	@SqlForeignKey(mappedTo="ID_BLASON")
 	private Blason blason;
 	
 	/**
@@ -277,24 +270,6 @@ public class Ancrage implements SqlObjectPersistence {
 	public void setY(double y) {
     	this.y = y;
     }
-	
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.save(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-	
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
 
 	/**
 	 * Used by JAXB API only

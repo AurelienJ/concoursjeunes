@@ -114,7 +114,7 @@ public class AncragesMapBuilder {
 	public static Map<Integer, Ancrage> getAncragesMap(Blason blason) {
 		Map<Integer, Ancrage> ancrages = new ConcurrentHashMap<Integer, Ancrage>();
 		
-		for(Ancrage ancrage : QResults.from(Ancrage.class).where(T_Ancrage.NUMBLASON.equalTo(blason.getNumblason()))) {
+		for(Ancrage ancrage : QResults.from(Ancrage.class).where(T_Ancrage.ID_BLASON.equalTo(blason.getIdBlason()))) {
 			ancrages.put(ancrage.getEmplacement(), ancrage);
 		}
 		

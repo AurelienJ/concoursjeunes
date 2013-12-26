@@ -564,8 +564,6 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	protected void beforeMarshal(Marshaller marshaller) {
 		federations = new ArrayList<Federation>();
 		federations.add(federation);
-		if(club != null && club.getFederation() != null && club.getFederation() != federation)
-			federations.add(club.getFederation());
 	}
 	
 	/**

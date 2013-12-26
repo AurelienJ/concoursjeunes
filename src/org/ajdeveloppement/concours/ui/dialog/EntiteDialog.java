@@ -543,9 +543,9 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 	private void completePanel() {
 		if(entite != null) {
 			
-			if(entite.getPays() == null) {
-	    		jcbCountry.setSelectedCountry(entite.getFederation().getCodeCountry());
-	    		((CityAutoCompleteDocument)jtfVille.getDocument()).setCodeCountry(entite.getFederation().getCodeCountry());
+			if(entite.getPays() == null && entite.getEntiteParent() != null && entite.getEntiteParent().getPays() != null) {
+	    		jcbCountry.setSelectedCountry(entite.getEntiteParent().getPays());
+	    		((CityAutoCompleteDocument)jtfVille.getDocument()).setCodeCountry(entite.getEntiteParent().getPays());
 	    	} else {
 	    		jcbCountry.setSelectedCountry(entite.getPays());
 	    		((CityAutoCompleteDocument)jtfVille.getDocument()).setCodeCountry(entite.getPays());
@@ -570,7 +570,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 	    	
 	    	jcbFederation.setSelectedItem(entite.getFederation());
 			
-			jtfNom.setEditable(fullEditable || entite.getAgrement() == null || entite.getAgrement().isEmpty());
+			jtfNom.setEditable(fullEditable || entite.getReference() == null || entite.getReference().isEmpty());
 			jtfVille.setEditable(fullEditable);
 			jcbType.setSelectedIndex(entite.getType());
 			jftfAgrement.setEditable(fullEditable);
@@ -642,7 +642,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
             		binding.save();
             	}
         	}
-			entite.setFederation((Federation)jcbFederation.getSelectedItem());
+			//entite.setFederation((Federation)jcbFederation.getSelectedItem());
 			entite.setType(jcbType.getSelectedIndex());
 			entite.setPays(((Country)jcbCountry.getSelectedItem()).getCode().toLowerCase());
 

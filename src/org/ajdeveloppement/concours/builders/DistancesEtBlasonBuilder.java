@@ -226,7 +226,7 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 						.asList());
 			
 			if(foreignKeys != null) {
-				distancesEtBlason.setTargetFace(BlasonBuilder.getBlason((Integer)foreignKeys.get(DistancesEtBlason.class)
+				distancesEtBlason.setTargetFace(BlasonBuilder.getBlason((UUID)foreignKeys.get(DistancesEtBlason.class)
 						.get(T_DistancesEtBlason.NUMBLASON.getFieldName())));
 			}
 		} catch (SQLException e) {
