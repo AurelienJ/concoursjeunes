@@ -107,12 +107,15 @@ import javax.swing.JTextField;
 import org.ajdeveloppement.apps.localisation.Localizable;
 import org.ajdeveloppement.apps.localisation.Localizator;
 import org.ajdeveloppement.commons.AjResourcesReader;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.ui.DefaultDialogReturn;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.concours.Profile;
 import org.ajdeveloppement.concours.builders.ReglementBuilder;
+import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Federation;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Rule;
+import org.ajdeveloppement.concours.data.RulesCategory;
 import org.ajdeveloppement.concours.managers.FederationManager;
 import org.ajdeveloppement.concours.managers.ReglementManager;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
@@ -142,14 +145,14 @@ public class NewReglementDialog extends JDialog implements ActionListener {
 	private JTextField jtfReglementName = new JTextField(20);
 	private JComboBox<Object> jcbFederation = new JComboBox<>();
 	private JComboBox<Object> jcbReference = new JComboBox<>();
-	private JComboBox<String> jcbCategorie = new JComboBox<>();
+	private JComboBox<RulesCategory> jcbCategorie = new JComboBox<>();
 	
 	@Localizable("bouton.valider")
 	private JButton jbValider = new JButton();
 	@Localizable("bouton.annuler")
 	private JButton jbAnnuler = new JButton();
 	
-	private Reglement reglement = null;
+	private Rule reglement = null;
 
 	/**
 	 * @param parentframe la fenêtre parente
@@ -178,10 +181,10 @@ public class NewReglementDialog extends JDialog implements ActionListener {
 		headerCreateReglement.setBackgroundPainter(gloss);
 		headerCreateReglement.setTitleFont(headerCreateReglement.getTitleFont().deriveFont(18.0f));
 		
-		jcbCategorie.addItem(localisation.getResourceString("reglementmanager.category.young")); //$NON-NLS-1$
-		jcbCategorie.addItem(localisation.getResourceString("reglementmanager.category.indoor")); //$NON-NLS-1$
-		jcbCategorie.addItem(localisation.getResourceString("reglementmanager.category.outdoor")); //$NON-NLS-1$
-		jcbCategorie.addItem(localisation.getResourceString("reglementmanager.category.other")); //$NON-NLS-1$
+//		jcbCategorie.addItem(localisation.getResourceString("reglementmanager.category.young")); //$NON-NLS-1$
+//		jcbCategorie.addItem(localisation.getResourceString("reglementmanager.category.indoor")); //$NON-NLS-1$
+//		jcbCategorie.addItem(localisation.getResourceString("reglementmanager.category.outdoor")); //$NON-NLS-1$
+//		jcbCategorie.addItem(localisation.getResourceString("reglementmanager.category.other")); //$NON-NLS-1$
 		
 		jbValider.addActionListener(this);
 		jbAnnuler.addActionListener(this);
@@ -225,12 +228,14 @@ public class NewReglementDialog extends JDialog implements ActionListener {
 		jcbFederation.addItem(localisation.getResourceString("newreglement.addfederation")); //$NON-NLS-1$
 		
 		jcbFederation.setSelectedItem(profile.getConfiguration().getFederation());
+		for(RulesCategory category : QResults.from(RulesCategory.class))
+			jcbCategorie.addItem(category);
 		
 		ReglementManager reglementManager = ReglementManager.getInstance();
 		
 		jcbReference.removeAllItems();
 		jcbReference.addItem(""); //$NON-NLS-1$
-		for(Reglement reglement : reglementManager.getAvailableReglements()) {
+		for(Rule reglement : reglementManager.getAvailableReglements()) {
 			jcbReference.addItem(reglement);
 		}
 	}
@@ -240,7 +245,7 @@ public class NewReglementDialog extends JDialog implements ActionListener {
 	 * 
 	 * @return le réglement créé ou null si l'opération est annulé.
 	 */
-	public Reglement showNewReglementDialog() {
+	public Rule showNewReglementDialog() {
 		completePanel();
 		
 		pack();
@@ -256,9 +261,9 @@ public class NewReglementDialog extends JDialog implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == jbValider) {
-			Reglement reglement = ReglementBuilder.createReglement();
-			if(jcbReference.getSelectedItem() instanceof Reglement) {
-				Reglement reference = (Reglement)jcbReference.getSelectedItem();
+			Rule reglement = ReglementBuilder.createReglement();
+			if(jcbReference.getSelectedItem() instanceof Rule) {
+				Rule reference = (Rule)jcbReference.getSelectedItem();
 				try {
 					reglement =reference.clone();
 					reglement.setName("C"+(new Date().getTime())); //$NON-NLS-1$
@@ -269,9 +274,9 @@ public class NewReglementDialog extends JDialog implements ActionListener {
 				}
 			}
 			
-			reglement.setDisplayName(jtfReglementName.getText());
-			reglement.setFederation((Federation)jcbFederation.getSelectedItem());
-			reglement.setCategory(jcbCategorie.getSelectedIndex() + 1);
+			reglement.setName(jtfReglementName.getText());
+			reglement.setEntite((Entite)jcbFederation.getSelectedItem());
+			reglement.setCategory((RulesCategory)jcbCategorie.getSelectedItem());
 
 			ReglementDialog reglementDialog = new ReglementDialog(this, reglement, localisation);
 			if(reglementDialog.showReglementDialog() == DefaultDialogReturn.OK) {

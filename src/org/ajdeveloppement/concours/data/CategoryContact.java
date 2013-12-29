@@ -90,6 +90,7 @@ package org.ajdeveloppement.concours.data;
 
 import java.sql.Types;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -101,8 +102,10 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -128,7 +131,7 @@ public class CategoryContact implements SqlObjectPersistence {
 		/**
 		 * Catégorie Archer
 		 */
-		BOWMAN(UUID.fromString("00000000-0000-0000-0000-000000000001")); //$NON-NLS-1$
+		BOWMAN(UUID.nameUUIDFromBytes("BOWMAN".getBytes())); //$NON-NLS-1$
 		
 		private UUID value;
 		
@@ -146,13 +149,16 @@ public class CategoryContact implements SqlObjectPersistence {
 		}
 	}
 	
-	private static StoreHelper<CategoryContact> helper = SqlStoreHelperFactory.getStoreHelper(CategoryContact.class);;
+	private static StoreHelper<CategoryContact> helper = SqlStoreHelperFactory.getStoreHelper(CategoryContact.class);
 	
 	@SqlField(name="ID_CATEGORIE_CONTACT")
-	private UUID idCategoryContact;
+	private UUID id;
 	
 	@SqlField(name="ID_LIBELLE")
 	private UUID idLibelle;
+	
+	@SqlChildCollection(foreignFields="ID_CATEGORIE_CONTACT", type=CategoryContactContact.class)
+	private List<CategoryContactContact> categorysContactContact;
 	
 	private transient Map<String, String> localizedLibelle;
 	
@@ -168,19 +174,39 @@ public class CategoryContact implements SqlObjectPersistence {
 	 * 
 	 * @return database id of category contact
 	 */
-	public UUID getIdCategoryContact() {
-		return idCategoryContact;
+	public UUID getId() {
+		return id;
 	}
 
 	/**
 	 * Set database id of category contact
 	 * 
-	 * @param idCategoryContact the database id of category contact
+	 * @param id the database id of category contact
 	 */
-	public void setIdCategoryContact(UUID idCategoryContact) {
-		this.idCategoryContact = idCategoryContact;
+	public void setId(UUID id) {
+		this.id = id;
 	}
 	
+	/**
+	 * Return all contacts association linked with this category.
+	 * 
+	 * @return all contacts association linked with this category.
+	 */
+	public List<CategoryContactContact> getCategorysContactContact() {
+		if(categorysContactContact == null) {
+			categorysContactContact = QResults.from(CategoryContactContact.class)
+					.where(T_CategoryContactContact.ID_CATEGORIE_CONTACT.equalTo(id)).asList();
+		}
+		return categorysContactContact;
+	}
+
+	/**
+	 * @param categorysContactContact categorysContactContact à définir
+	 */
+	public void setCategorysContactContact(List<CategoryContactContact> categorysContactContact) {
+		this.categorysContactContact = categorysContactContact;
+	}
+
 	/**
 	 * Get the localized label of category contact
 	 * 
@@ -214,7 +240,7 @@ public class CategoryContact implements SqlObjectPersistence {
 		
 		localizedLibelle.put(lang, libelle);
 	}
-
+	
 	/**
 	 * Save Category in database
 	 */
@@ -257,7 +283,7 @@ public class CategoryContact implements SqlObjectPersistence {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (idCategoryContact == null ? 0 : idCategoryContact.hashCode());
+		result = prime * result + (id == null ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -273,7 +299,7 @@ public class CategoryContact implements SqlObjectPersistence {
 		if (getClass() != obj.getClass())
 			return false;
 		CategoryContact other = (CategoryContact) obj;
-		if (!idCategoryContact.equals(other.idCategoryContact))
+		if (!id.equals(other.id))
 			return false;
 		return true;
 	}

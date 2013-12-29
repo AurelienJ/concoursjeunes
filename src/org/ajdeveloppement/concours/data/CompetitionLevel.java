@@ -123,11 +123,11 @@ import org.ajdeveloppement.concours.helpers.LibelleHelper;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="NIVEAU_COMPETITION")
-@SqlPrimaryKey(fields={"CODENIVEAU","ID_ENTITE"})
+@SqlPrimaryKey(fields={"ID_NIVEAU_COMPETITION","ID_ENTITE"})
 public class CompetitionLevel implements SqlObjectPersistence {
 	@XmlTransient
-	@SqlField(name="CODENIVEAU")
-	private int numlevel = 0;
+	@SqlField(name="ID_NIVEAU_COMPETITION")
+	private UUID id;
 	
 	@XmlTransient
 	@SqlField(name="ID_LIBELLE")
@@ -138,7 +138,10 @@ public class CompetitionLevel implements SqlObjectPersistence {
 	
 	@XmlTransient
 	@SqlForeignKey(mappedTo="ID_ENTITE")
-	private Federation federation;
+	private Entite entite;
+	
+	@SqlField(name="ORDRE")
+	private int ordre;
 	
 	//Pour mise à jour ancienne version
 	private String libelle = null;
@@ -156,33 +159,33 @@ public class CompetitionLevel implements SqlObjectPersistence {
 	}
 
 	/**
-	 * @return code
+	 * @return id
 	 */
-	public int getNumLevel() {
-		return numlevel;
+	public UUID getId() {
+		return id;
 	}
 
 	/**
-	 * @param code code à définir
+	 * @param id id à définir
 	 */
-	public void setNumLevel(int code) {
-		this.numlevel = code;
-	}
-	
-	/**
-	 * @return federation
-	 */
-	public Federation getFederation() {
-		return federation;
+	public void setId(UUID id) {
+		this.id = id;
 	}
 
 	/**
-	 * @param federation federation à définir
+	 * @return entite
 	 */
-	public void setFederation(Federation federation) {
-		this.federation = federation;
+	public Entite getEntite() {
+		return entite;
+	}
+
+	/**
+	 * @param entite federation à définir
+	 */
+	public void setEntite(Entite entite) {
+		this.entite = entite;
 		
-		if(idLibelle == null && federation != null) {
+		if(idLibelle == null && entite != null) {
 			try {
 				String lang = null;
 				String libelle = null;
@@ -321,7 +324,7 @@ public class CompetitionLevel implements SqlObjectPersistence {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + numlevel;
+		result = prime * result + id.hashCode();
 		return result;
 	}
 
@@ -337,7 +340,7 @@ public class CompetitionLevel implements SqlObjectPersistence {
 		if (getClass() != obj.getClass())
 			return false;
 		CompetitionLevel other = (CompetitionLevel) obj;
-		if (numlevel != other.numlevel)
+		if (!id.equals(other.id))
 			return false;
 		return true;
 	}

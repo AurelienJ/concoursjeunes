@@ -90,7 +90,7 @@ package org.ajdeveloppement.concours.xml.bind;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.ajdeveloppement.concours.data.Blason;
+import org.ajdeveloppement.concours.data.Face;
 import org.ajdeveloppement.concours.managers.BlasonManager;
 
 /**
@@ -100,13 +100,13 @@ import org.ajdeveloppement.concours.managers.BlasonManager;
  * @author Aurélien JEOFFRAY
  *
  */
-public class BlasonAdapter extends XmlAdapter<String, Blason> {
+public class BlasonAdapter extends XmlAdapter<String, Face> {
 
 	/* (non-Javadoc)
 	 * @see javax.xml.bind.annotation.adapters.XmlAdapter#marshal(java.lang.Object)
 	 */
 	@Override
-	public String marshal(Blason blason) throws Exception {
+	public String marshal(Face blason) throws Exception {
 		return blason.getName();
 	}
 
@@ -114,7 +114,7 @@ public class BlasonAdapter extends XmlAdapter<String, Blason> {
 	 * @see javax.xml.bind.annotation.adapters.XmlAdapter#unmarshal(java.lang.Object)
 	 */
 	@Override
-	public Blason unmarshal(String ref) throws Exception {
+	public Face unmarshal(String ref) throws Exception {
 		return BlasonManager.findBlasonByName(ref);
 	}
 

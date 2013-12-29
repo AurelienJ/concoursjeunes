@@ -89,6 +89,7 @@
 package org.ajdeveloppement.concours.data;
 
 import java.sql.Types;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -101,14 +102,16 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.concours.builders.AncragesMapBuilder;
-import org.ajdeveloppement.concours.builders.BlasonBuilder;
+import org.ajdeveloppement.concours.builders.FaceBuilder;
 
 /**
  * Bean représentant un blason de tir et ses caractéristiques
@@ -117,14 +120,14 @@ import org.ajdeveloppement.concours.builders.BlasonBuilder;
  * @version 1.0
  *
  */
-@SqlTable(name="BLASONS",loadBuilder=BlasonBuilder.class)
+@SqlTable(name="BLASONS",loadBuilder=FaceBuilder.class)
 @SqlPrimaryKey(fields={"ID_BLASON"},generatedidField=@SqlGeneratedIdField(name="ID_BLASON",type=Types.JAVA_OBJECT))
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Blason implements SqlObjectPersistence {
+public class Face implements SqlObjectPersistence {
 	
 	@XmlAttribute
 	@SqlField(name="ID_BLASON")
-	private UUID idBlason;
+	private UUID id;
 	
 	@SqlField(name="NOM")
 	private String name = ""; //$NON-NLS-1$
@@ -138,13 +141,17 @@ public class Blason implements SqlObjectPersistence {
 	private int numordre = 0;
 	@SqlField(name="IMAGE")
 	private String targetFaceImage = ""; //$NON-NLS-1$
+	
 	//@XmlJavaTypeAdapter(JAXBMapAdapter.class)
 	private Map<Integer, Ancrage> ancrages;
+	
+	@SqlChildCollection(foreignFields="ID_BLASON",type=FaceDistanceAndFaces.class)
+	private List<FaceDistanceAndFaces> facesDistanceAndFaces;
 	
 	/**
 	 * Construit un nouveau blason
 	 */
-	public Blason() {
+	public Face() {
 	}
 
 	/**
@@ -152,8 +159,8 @@ public class Blason implements SqlObjectPersistence {
 	 * 
 	 * @param name le nom du blason à construire
 	 */
-	public Blason(String name) {
-		this.name = name;
+	public Face(String name) {
+		this(name, 1, 1, 0, 4);
 	}
 
 	/**
@@ -168,10 +175,8 @@ public class Blason implements SqlObjectPersistence {
 	 * @param horizontalRatio le ratio horizontal exprimé en fraction de cible (valeur entre 0 et 1)
 	 * @param verticalRatio le ratio vertical exprimé en fraction de cible (valeur entre 0 et 1)
 	 */
-	public Blason(String name, double horizontalRatio, double verticalRatio) {
-		this.name = name;
-		this.horizontalRatio = horizontalRatio;
-		this.verticalRatio = verticalRatio;
+	public Face(String name, double horizontalRatio, double verticalRatio) {
+		this(name, horizontalRatio, verticalRatio, 0, 4);
 	}
 	
 	/**
@@ -190,11 +195,12 @@ public class Blason implements SqlObjectPersistence {
 	 * @param numordre le numéro d'ordre de disposition sur le pas de tir
 	 * @param nbArcher le nombre d'archer pouvant tirer sur le blason
 	 */
-	public Blason(String name, double horizontalRatio, double verticalRatio,
+	public Face(String name, double horizontalRatio, double verticalRatio,
 			int numordre, int nbArcher) {
 		this.name = name;
-		this.horizontalRatio = horizontalRatio;
-		this.verticalRatio = verticalRatio;
+		
+		setHorizontalRatio(horizontalRatio);
+		setVerticalRatio(verticalRatio);
 		this.numordre = numordre;
 		this.nbArcher = nbArcher;
 	}
@@ -236,6 +242,8 @@ public class Blason implements SqlObjectPersistence {
 	 * @param horizontalRatio le ratio vertical de la cible
 	 */
 	public void setHorizontalRatio(double horizontalRatio) {
+		if(horizontalRatio > 1) horizontalRatio = 1;
+		else if(horizontalRatio < 0)horizontalRatio = 0;
 		this.horizontalRatio = horizontalRatio;
 	}
 
@@ -315,8 +323,8 @@ public class Blason implements SqlObjectPersistence {
 	 * 
 	 * @return le numéro de reference du blason dans la base ou 0 si non définit 
 	 */
-	public UUID getIdBlason() {
-		return idBlason;
+	public UUID getId() {
+		return id;
 	}
 
 	/**
@@ -326,8 +334,8 @@ public class Blason implements SqlObjectPersistence {
 	 * 
 	 * @param numblason le numéro de reference du blason dans la base ou 0 si non définit
 	 */
-	public void setIdBlason(UUID numblason) {
-		this.idBlason = numblason;
+	public void setId(UUID numblason) {
+		this.id = numblason;
 	}
 
 	/**
@@ -338,6 +346,8 @@ public class Blason implements SqlObjectPersistence {
 	public Map<Integer, Ancrage> getAncrages() {
 		if(ancrages == null)
 			ancrages = AncragesMapBuilder.getAncragesMap(this);
+		if(ancrages == null)
+			ancrages = AncragesMapBuilder.getAncragesMap(nbArcher);
 
     	return ancrages;
     }
@@ -350,9 +360,7 @@ public class Blason implements SqlObjectPersistence {
 	public void setAncrages(Map<Integer, Ancrage> ancrages) {
     	this.ancrages = ancrages;
     	
-    	for(Entry<Integer, Ancrage> entry : ancrages.entrySet()) {
-			entry.getValue().setBlason(this);
-		}
+    	ancrages.forEach((key, value) -> value.setBlason(this));
     }
 	
 	/**
@@ -384,6 +392,41 @@ public class Blason implements SqlObjectPersistence {
 	}
 	
 	/**
+	 * Retourne le nom du fichier image représentant le blason
+	 * 
+	 * @return le nom de l'image du blason
+	 */
+	public String getTargetFaceImage() {
+		return targetFaceImage;
+	}
+
+	/**
+	 * Définit le nom du fichier image représentant le blason
+	 * @param targetFaceImage le nom de l'image du blason
+	 */
+	public void setTargetFaceImage(String targetFaceImage) {
+		this.targetFaceImage = targetFaceImage;
+	}
+	
+	/**
+	 * @return facesDistanceAndFaces
+	 */
+	public List<FaceDistanceAndFaces> getFacesDistanceAndFaces() {
+		if(facesDistanceAndFaces == null) {
+			facesDistanceAndFaces = QResults.from(FaceDistanceAndFaces.class)
+					.where(T_FaceDistanceAndFaces.ID_BLASON.equalTo(id)).asList();
+		}
+		return facesDistanceAndFaces;
+	}
+
+	/**
+	 * @param facesDistanceAndFaces facesDistanceAndFaces à définir
+	 */
+	public void setFacesDistanceAndFaces(List<FaceDistanceAndFaces> facesDistanceAndFaces) {
+		this.facesDistanceAndFaces = facesDistanceAndFaces;
+	}
+
+	/**
 	 * Détermine si blason2 se superpose ou non au blason représenté par l'objet
 	 * 
 	 * @param positionBlason la position logique du blason représenté par l'objet
@@ -391,7 +434,7 @@ public class Blason implements SqlObjectPersistence {
 	 * @param positionBlason2 la position logique de ce blason
 	 * @return <i>true</i> si les 2 blasons se superpose, <i>false</i> sinon
 	 */
-	public boolean isOver(int positionBlason, Blason blason2, int positionBlason2) {
+	public boolean isOver(int positionBlason, Face blason2, int positionBlason2) {
 		Ancrage ancrageBlason = getAncrage(positionBlason);
 		Ancrage ancrageBlason2 = getAncrage(positionBlason2);
 		
@@ -427,7 +470,7 @@ public class Blason implements SqlObjectPersistence {
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
 		if(Session.canExecute(session, this)) {
-			StoreHelper<Blason> helper = SqlStoreHelperCache.getHelper(Blason.class);
+			StoreHelper<Face> helper = SqlStoreHelperCache.getHelper(Face.class);
 			if(helper != null) {
 				helper.save(this);
 
@@ -464,7 +507,7 @@ public class Blason implements SqlObjectPersistence {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final Blason other = (Blason) obj;
+		final Face other = (Face) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -479,22 +522,5 @@ public class Blason implements SqlObjectPersistence {
 	@Override
 	public String toString() {
 		return name;
-	}
-
-	/**
-	 * Retourne le nom du fichier image représentant le blason
-	 * 
-	 * @return le nom de l'image du blason
-	 */
-	public String getTargetFaceImage() {
-		return targetFaceImage;
-	}
-
-	/**
-	 * Définit le nom du fichier image représentant le blason
-	 * @param targetFaceImage le nom de l'image du blason
-	 */
-	public void setTargetFaceImage(String targetFaceImage) {
-		this.targetFaceImage = targetFaceImage;
 	}
 }

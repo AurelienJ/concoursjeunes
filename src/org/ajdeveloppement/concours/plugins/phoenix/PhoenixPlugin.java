@@ -220,12 +220,12 @@ public class PhoenixPlugin implements ProfileListener, ApplicationCoreListener {
 //		ConcurrentList concurrentList = (ConcurrentList)oldSerializedFiche[1];
 //		
 //		if(parametre != null) {
-//			Reglement reglement = parametre.getReglement();
+//			Rule reglement = parametre.getReglement();
 //			
 //			if(reglement.getVersion() == 1) {
 //				reglement.setTie(new ArrayList<String>(Arrays.asList(new String[] { "10","9" }))); //$NON-NLS-1$ //$NON-NLS-2$
 //				reglement.setDisplayName(reglement.getName());
-//				reglement.setVersion(Reglement.CURRENT_VERSION);
+//				reglement.setVersion(Rule.CURRENT_VERSION);
 //				
 //				for(Entry<CriteriaSet, CriteriaSet> entry : reglement.getSurclassement().entrySet()) {
 //					for(Entry<Criterion, CriterionElement> entry2 : entry.getKey().getCriteria().entrySet()) {
@@ -294,7 +294,7 @@ public class PhoenixPlugin implements ProfileListener, ApplicationCoreListener {
 //					distancesEtBlason.getCriteriaSet().setReglement(reglement);
 //				
 //				//si le blason n'est pas initialiser
-//				if(distancesEtBlason.getTargetFace() == null || distancesEtBlason.getTargetFace().equals(new Blason())) {
+//				if(distancesEtBlason.getTargetFace() == null || distancesEtBlason.getTargetFace().equals(new Face())) {
 //					if(distancesEtBlason.getNumdistancesblason() > 0 && reglement.getNumReglement() > 0) { //si le règlement est dans la base
 //						try {
 //							distancesEtBlason.setTargetFace(BlasonManager.findBlasonAssociateToDistancesEtBlason(distancesEtBlason));
@@ -302,14 +302,14 @@ public class PhoenixPlugin implements ProfileListener, ApplicationCoreListener {
 //							e.printStackTrace();
 //						}
 //					} else {
-//						Blason targetFace = null;
+//						Face targetFace = null;
 //						try { //on tente de retrouver une correspondance pour le blason dans la base
 //			                targetFace = BlasonManager.findBlasonByName(distancesEtBlason.getBlason() + "cm"); //$NON-NLS-1$
 //		                } catch (ObjectPersistenceException e) {
 //			                e.printStackTrace(); //on trace l'erreur mais on ne la fait pas remonter dans l'interface
 //		                }
 //		                if(targetFace == null) { //si on a pas retrouvé de blason correspondant dans la base alors créer l'entrée
-//		                	targetFace = BlasonBuilder.getBlasonBySize(distancesEtBlason.getBlason());
+//		                	targetFace = FaceBuilder.getBlasonBySize(distancesEtBlason.getBlason());
 //		                }
 //					}
 //					//remet la valeur par défaut pour supprimer la section du XML de persistance à la prochaine sauvegarde

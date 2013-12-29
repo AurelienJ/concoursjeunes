@@ -130,7 +130,7 @@ public class Tie implements ObjectPersistence,Cloneable {
 	
 	@XmlTransient
 	@SqlForeignKey(mappedTo="ID_REGLEMENT")
-	private Reglement reglement;
+	private Rule reglement;
 	
 	@XmlAttribute(name="field")
 	@SqlField(name="FIELDNAME")
@@ -164,14 +164,14 @@ public class Tie implements ObjectPersistence,Cloneable {
 	/**
 	 * @return reglement
 	 */
-	public Reglement getReglement() {
+	public Rule getReglement() {
 		return reglement;
 	}
 
 	/**
 	 * @param reglement reglement à définir
 	 */
-	public void setReglement(Reglement reglement) {
+	public void setReglement(Rule reglement) {
 		this.reglement = reglement;
 	}
 
@@ -307,8 +307,8 @@ public class Tie implements ObjectPersistence,Cloneable {
 		
 		xmlId = null;
 		
-		if(parent instanceof Reglement)
-			setReglement((Reglement)parent);
+		if(parent instanceof Rule)
+			setReglement((Rule)parent);
 	}
 
 	/* (non-Javadoc)

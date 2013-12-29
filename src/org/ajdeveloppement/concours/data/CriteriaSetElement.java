@@ -100,6 +100,7 @@ import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
@@ -109,18 +110,21 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="POSSEDE")
-@SqlPrimaryKey(fields={"NUMCRITERIASET", "CODECRITEREELEMENT", "CODECRITERE", "ID_REGLEMENT"})
+@SqlTable(name="ELEMENT_JEUX_CRITERES_DISCRIMINANT")
+@SqlPrimaryKey(fields={"ID_JEUX_CRITERES_DISCRIMINANT", "ID_ELEMENT_CRITERE_DISCRIMINANT"})
 public class CriteriaSetElement implements ObjectPersistence,Cloneable {
 	private static StoreHelper<CriteriaSetElement> helper = SqlStoreHelperFactory.getStoreHelper(CriteriaSetElement.class);
 
 	@XmlTransient
-	@SqlForeignKey(mappedTo="NUMCRITERIASET")
+	@SqlForeignKey(mappedTo="ID_JEUX_CRITERES_DISCRIMINANT")
 	private CriteriaSet criteriaSet;
 	
 	@XmlIDREF
-	@SqlForeignKey(mappedTo={"CODECRITEREELEMENT", "CODECRITERE", "ID_REGLEMENT"})
+	@SqlForeignKey(mappedTo={"ID_ELEMENT_CRITERE_DISCRIMINANT"})
 	private CriterionElement criterionElement;
+	
+	@SqlField(name="ORDRE")
+	private int ordre;
 	
 	/**
 	 * 
@@ -165,6 +169,20 @@ public class CriteriaSetElement implements ObjectPersistence,Cloneable {
 	 */
 	public void setCriterionElement(CriterionElement criterionElement) {
 		this.criterionElement = criterionElement;
+	}
+
+	/**
+	 * @return ordre
+	 */
+	public int getOrdre() {
+		return ordre;
+	}
+
+	/**
+	 * @param ordre ordre à définir
+	 */
+	public void setOrdre(int ordre) {
+		this.ordre = ordre;
 	}
 
 	/* (non-Javadoc)

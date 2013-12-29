@@ -332,13 +332,12 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 		c.insets = new Insets(5,0,5,0);
 		composer.addComponentIntoGrid(jlCritClassement, c);
 		for(Criterion criteria : ficheConcours.getParametre().getReglement().getListCriteria()) {
-			JCheckBox checkBox = new JCheckBox(criteria.getLibelle(), criteria.isClassement());
+			JCheckBox checkBox = new JCheckBox(criteria.getLibelle(), true);
 
 			checkBox.addActionListener(this);
 			if(ficheConcours.getParametre().getReglement().isOfficialReglement())
 				checkBox.setEnabled(false);
-			else if(criteria.isPlacement())
-				checkBox.setEnabled(false);
+		
 			composer.addComponentIntoGrid(checkBox, c);
 			
 			classmentCriteriaCB.put(criteria.getCode(), checkBox);
@@ -847,10 +846,6 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 				JOptionPane.showMessageDialog(this, parentframe.profile.getLocalisation().getResourceString("ficheconcours.target.empty")); //$NON-NLS-1$
 			}
 		} else if(source instanceof JCheckBox) {
-			for(Criterion criterion : ficheConcours.getParametre().getReglement().getListCriteria()) {
-				criterion.setClassement(classmentCriteriaCB.get(criterion.getCode()).isSelected());
-			}
-
 			jepClassIndiv.setText(ficheConcours.getClassement());
 		} else if(source == jcbDeparts) {
 			ficheConcours.setCurrentDepart(jcbDeparts.getSelectedIndex());

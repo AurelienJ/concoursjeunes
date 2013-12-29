@@ -102,7 +102,6 @@ import org.ajdeveloppement.concours.FicheConcours;
 import org.ajdeveloppement.concours.Profile;
 import org.ajdeveloppement.concours.TargetPosition;
 import org.ajdeveloppement.concours.data.Concurrent;
-import org.ajdeveloppement.concours.data.CriteriaSet;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfWriter;
@@ -173,38 +172,38 @@ public class IndividualScoreSheetState {
 				templateXML.parse("scoresheet.PERCENT_SERIES", colsSeriesSize); //$NON-NLS-1$
 				
 				int nbFlecheParVolee = ficheConcours.getParametre().getReglement().getNbFlecheParVolee();
-				for(int j = 0; j < nbSerie; j++) {
-					CriteriaSet placementCriteriaSet = concurrents.get(i).getCriteriaSet().getFilteredCriteriaSet(ficheConcours.getParametre().getReglement().getPlacementFilter());
-					
-					String strDistance = getPosition(j+1) + " distance, " + placementCriteriaSet.getDistancesEtBlason().getDistances().get(j).getDistance()+"m";
-					templateXML.parse("scoresheet.series.SERIE_NB_COL", Integer.toString(5 + nbFlecheParVolee));
-					templateXML.parse("scoresheet.series.INTITULE_SERIE", strDistance);
-					String colsSize = "";
-					for(int k = 0; k < 5 + nbFlecheParVolee; k++)
-						colsSize += ";" + (100.0 / (5 + nbFlecheParVolee));
-					colsSize = colsSize.substring(1);
-					templateXML.parse("scoresheet.series.COLS_SIZE", colsSize);
-					templateXML.parse("scoresheet.series.NB_FLECHE_PAR_VOLEE", Integer.toString(nbFlecheParVolee));
-					for(int k = 1; k <= nbFlecheParVolee; k++) {
-						templateXML.parse("scoresheet.series.fleches.NUM_FLECHE", Integer.toString(k));
-						
-						templateXML.loopBloc("scoresheet.series.fleches");
-					}
-					
-					for(int k = 1; k <= ficheConcours.getParametre().getReglement().getNbVoleeParSerie(); k++) {
-						templateXML.parse("scoresheet.series.volees.NUM_VOLEE", Integer.toString(k));
-						
-						for(int l = 0; l < ficheConcours.getParametre().getReglement().getNbFlecheParVolee(); l++) {
-							templateXML.loopBloc("scoresheet.series.volees.pointsparfleche");
-						}
-						
-						templateXML.loopBloc("scoresheet.series.volees");
-					}
-					templateXML.parse("scoresheet.series.NB_COL_TOTAL", Integer.toString(2 + nbFlecheParVolee));
-					templateXML.parse("scoresheet.series.NUM_DISTANCE", getPosition(j+1));
-
-					templateXML.loopBloc("scoresheet.series");
-				}
+//				for(int j = 0; j < nbSerie; j++) {
+//					CriteriaSet placementCriteriaSet = concurrents.get(i).getCriteriaSet().getFilteredCriteriaSet(ficheConcours.getParametre().getReglement().getPlacementFilter());
+//					
+////					String strDistance = getPosition(j+1) + " distance, " + placementCriteriaSet.getDistancesEtBlason().getDistances().get(j).getDistance()+"m";
+//					templateXML.parse("scoresheet.series.SERIE_NB_COL", Integer.toString(5 + nbFlecheParVolee));
+////					templateXML.parse("scoresheet.series.INTITULE_SERIE", strDistance);
+//					String colsSize = "";
+//					for(int k = 0; k < 5 + nbFlecheParVolee; k++)
+//						colsSize += ";" + (100.0 / (5 + nbFlecheParVolee));
+//					colsSize = colsSize.substring(1);
+//					templateXML.parse("scoresheet.series.COLS_SIZE", colsSize);
+//					templateXML.parse("scoresheet.series.NB_FLECHE_PAR_VOLEE", Integer.toString(nbFlecheParVolee));
+//					for(int k = 1; k <= nbFlecheParVolee; k++) {
+//						templateXML.parse("scoresheet.series.fleches.NUM_FLECHE", Integer.toString(k));
+//						
+//						templateXML.loopBloc("scoresheet.series.fleches");
+//					}
+//					
+//					for(int k = 1; k <= ficheConcours.getParametre().getReglement().getNbVoleeParSerie(); k++) {
+//						templateXML.parse("scoresheet.series.volees.NUM_VOLEE", Integer.toString(k));
+//						
+//						for(int l = 0; l < ficheConcours.getParametre().getReglement().getNbFlecheParVolee(); l++) {
+//							templateXML.loopBloc("scoresheet.series.volees.pointsparfleche");
+//						}
+//						
+//						templateXML.loopBloc("scoresheet.series.volees");
+//					}
+//					templateXML.parse("scoresheet.series.NB_COL_TOTAL", Integer.toString(2 + nbFlecheParVolee));
+//					templateXML.parse("scoresheet.series.NUM_DISTANCE", getPosition(j+1));
+//
+//					templateXML.loopBloc("scoresheet.series");
+//				}
 				
 				double colSize = 100.0 / (5 + nbFlecheParVolee);
 				templateXML.parse("scoresheet.COLS_SIZE", (colSize * (nbFlecheParVolee + 2)) + ";" + colSize + ";" + colSize + ";" + colSize);

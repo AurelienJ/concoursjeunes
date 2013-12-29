@@ -102,20 +102,20 @@ import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.data.Ancrage;
-import org.ajdeveloppement.concours.data.Blason;
-import org.ajdeveloppement.concours.data.T_Blason;
+import org.ajdeveloppement.concours.data.Face;
+import org.ajdeveloppement.concours.data.T_Face;
 
 /**
  * Construit un objet blason à partir des données en base
  * 
  * @author Aurélien JEOFFRAY
- * @version 1.0
+ * @version 2.0
  *
  */
-public class BlasonBuilder implements ResultSetRowToObjectBinder<Blason,Void> {
+public class FaceBuilder implements ResultSetRowToObjectBinder<Face,Void> {
 	
-	private static LoadHelper<Blason,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Blason.class);
-	private static LoadHelper<Blason,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Blason.class);
+	private static LoadHelper<Face,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Face.class);
+	private static LoadHelper<Face,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Face.class);
 	
 	/**
 	 * Construit un blason à partir de son identifiant en base.
@@ -124,7 +124,7 @@ public class BlasonBuilder implements ResultSetRowToObjectBinder<Blason,Void> {
 	 * @return le blason construit à partir du jeux de résultat
 	 * @throws ObjectPersistenceException
 	 */
-	public static Blason getBlason(UUID idBlason) throws ObjectPersistenceException {
+	public static Face getBlason(UUID idBlason) throws ObjectPersistenceException {
 		return getBlason(idBlason, null, null);
 	}
 	
@@ -138,33 +138,29 @@ public class BlasonBuilder implements ResultSetRowToObjectBinder<Blason,Void> {
 	 * @throws ObjectPersistenceException retourné si le jeux de résultat ne contient pas l'ensemble<br>
 	 * des champs de la table BLASONS 
 	 */
-	public static Blason getBlason(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+	public static Face getBlason(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		if(rs == null)
 			return null;
 		
 		return getBlason(null, rs, sessionCache);
 	}
 	
-	private static Blason getBlason(UUID idBlason, ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+	private static Face getBlason(UUID idBlason, ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		try {
 			if(rs != null)
-				idBlason = T_Blason.ID_BLASON.getValue(rs);
+				idBlason = T_Face.ID_BLASON.getValue(rs);
 			
-			Blason blason = Cache.get(Blason.class, idBlason);
+			Face blason = Cache.get(Face.class, idBlason);
 			if(blason == null) {
-				blason = new Blason();
+				blason = new Face();
 				
 				if(rs != null)
 					resultSetLoadHelper.load(blason, rs);
 				else {
-					blason.setIdBlason(idBlason); 
+					blason.setId(idBlason); 
 					
 					loadHelper.load(blason);
 				}
-				
-				// les ancrages sont récupéré en Lazy loading directement dans l'instance
-				// de blason. donc on ne le charge pas ici
-				//blason.setAncrages(AncragesMapBuilder.getAncragesMap(blason));
 				
 				Cache.put(blason);
 			}
@@ -183,8 +179,8 @@ public class BlasonBuilder implements ResultSetRowToObjectBinder<Blason,Void> {
 	 * @param size la taille du blason à créer
 	 * @return le blason créer
 	 */
-	public static Blason getBlasonBySize(int size) {
-		Blason blason = null;
+	public static Face getBlasonBySize(int size) {
+		Face blason = null;
 		
 		double hRatio = 1;
 		double vRatio = 1;
@@ -208,7 +204,7 @@ public class BlasonBuilder implements ResultSetRowToObjectBinder<Blason,Void> {
 			ancrages.put(Ancrage.POSITION_D, new Ancrage(Ancrage.POSITION_D, 0.5, 0.5));
 		}
 		
-		blason = new Blason(size + "cm", hRatio, vRatio); //$NON-NLS-1$
+		blason = new Face(size + "cm", hRatio, vRatio); //$NON-NLS-1$
 		blason.setNbArcher(nbArcher);
 		blason.setAncrages(ancrages);
 		
@@ -216,12 +212,12 @@ public class BlasonBuilder implements ResultSetRowToObjectBinder<Blason,Void> {
 	}
 
 	@Override
-	public Blason get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap) throws ObjectPersistenceException {
+	public Face get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap) throws ObjectPersistenceException {
 		return getBlason(rs, sessionCache);
 	}
 
 	@Override
-	public Blason get(SqlLoadingSessionCache sessionCache,
+	public Face get(SqlLoadingSessionCache sessionCache,
 			Void binderRessourcesMap, Object... primaryKeyValues)
 			throws ObjectPersistenceException {
 		return getBlason((UUID)primaryKeyValues[0]);

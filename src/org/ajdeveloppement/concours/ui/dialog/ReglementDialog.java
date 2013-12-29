@@ -144,16 +144,14 @@ import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.commons.ui.NumberDocument;
 import org.ajdeveloppement.commons.ui.ToolTipHeader;
 import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.data.Blason;
 import org.ajdeveloppement.concours.data.CriteriaSet;
 import org.ajdeveloppement.concours.data.Criterion;
 import org.ajdeveloppement.concours.data.CriterionElement;
 import org.ajdeveloppement.concours.data.Distance;
 import org.ajdeveloppement.concours.data.DistancesEtBlason;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.Surclassement;
 import org.ajdeveloppement.concours.localisable.CriteriaSetLibelle;
-import org.ajdeveloppement.concours.managers.BlasonManager;
 import org.ajdeveloppement.swingxext.localisation.JXHeaderLocalisationHandler;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -176,7 +174,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 	private AjResourcesReader localisation;
 	
 
-	private Reglement reglement = new Reglement();
+	private Rule reglement = new Rule();
 	
 	private BindingGroup reglementBinding = new BindingGroup();
 	
@@ -265,7 +263,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 	 * @param reglement le reglement à afficher/manipuler
 	 * @param localisation la source de localisation pour les libellé de la fenêtre
 	 */
-	public ReglementDialog(Window parentframe, Reglement reglement, AjResourcesReader localisation) {
+	public ReglementDialog(Window parentframe, Rule reglement, AjResourcesReader localisation) {
 		super(parentframe, ModalityType.TOOLKIT_MODAL);
 
 		if(reglement != null)
@@ -599,7 +597,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 		reglementBinding.addBinding(Bindings.createAutoBinding(UpdateStrategy.READ, reglement, BeanProperty.create("nbPointsParFleche"), jtfNbPointsParFleche, BeanProperty.create("text"), "nbPointsParFleche")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		reglementBinding.addBinding(Bindings.createAutoBinding(UpdateStrategy.READ, reglement, BeanProperty.create("nbMembresEquipe"), jtfNbMembresEquipe, BeanProperty.create("text"), "nbMembresEquipe")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		reglementBinding.addBinding(Bindings.createAutoBinding(UpdateStrategy.READ, reglement, BeanProperty.create("nbMembresRetenu"), jtfNbMembresRetenu, BeanProperty.create("text"), "nbMembresRetenu")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		Binding<Reglement, List<String>, JTextField, String> departageBinding = Bindings.<Reglement, List<String>, JTextField, String>createAutoBinding(UpdateStrategy.READ, reglement, BeanProperty.<Reglement, List<String>>create("tie"), jtfDepartages, BeanProperty.<JTextField, String>create("text"), "tie"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		Binding<Rule, List<String>, JTextField, String> departageBinding = Bindings.<Rule, List<String>, JTextField, String>createAutoBinding(UpdateStrategy.READ, reglement, BeanProperty.<Rule, List<String>>create("tie"), jtfDepartages, BeanProperty.<JTextField, String>create("text"), "tie"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		departageBinding.setConverter(new Converter<List<String>, String>() {
 			
 			@Override
@@ -679,10 +677,10 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 						}
 							
 						if(!activeSurclassement.contains(tmpCs)) {
-							for(CriteriaSet cs : CriteriaSet.listCriteriaSet(reglement, reglement.getClassementFilter())) {
-								if(!tmpCs.equals(cs) && !reglement.isSurclasseOrDisable(cs))
-									jcbCriteriaSet.addItem(cs);
-							}
+//							for(CriteriaSet cs : CriteriaSet.listCriteriaSet(reglement, reglement.getClassementFilter())) {
+//								if(!tmpCs.equals(cs) && !reglement.isSurclasseOrDisable(cs))
+//									jcbCriteriaSet.addItem(cs);
+//							}
 						}
 	
 						return super.getTableCellEditorComponent(table, value, isSelected, row, column);
@@ -704,22 +702,22 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 		List<CriteriaSet> differentiationCriteria = reglement.getValidPlacementCriteriaSet();
 		
 		ajlDistancesBlasons.clear();
-		for (CriteriaSet plCS : differentiationCriteria) {
-			if (plCS.getDistancesEtBlasonAlternatifs() != null && plCS.getDistancesEtBlasonAlternatifs().size() > 0) {
-				ajlDistancesBlasons.add(new DistancesBlasonsSet(Collections.singletonList(plCS.getDistancesEtBlason())));
-			} else {
-				DistancesEtBlason newDb = new DistancesEtBlason();
-				Blason defaultBlason = new Blason();
-
-				List<Blason> availableTargetFace = BlasonManager.listAvailableTargetFace();
-				if(availableTargetFace.size() > 0)
-					defaultBlason = availableTargetFace.get(0);
-		
-				newDb.setTargetFace(defaultBlason);
-				
-				ajlDistancesBlasons.add(new DistancesBlasonsSet(Collections.singletonList(newDb)));
-			}
-		}
+//		for (CriteriaSet plCS : differentiationCriteria) {
+//			if (plCS.getDistancesEtBlasonAlternatifs() != null && plCS.getDistancesEtBlasonAlternatifs().size() > 0) {
+//				ajlDistancesBlasons.add(new DistancesBlasonsSet(Collections.singletonList(plCS.getDistancesEtBlason())));
+//			} else {
+//				DistancesEtBlason newDb = new DistancesEtBlason();
+//				Face defaultBlason = new Face();
+//
+//				List<Face> availableTargetFace = BlasonManager.listAvailableTargetFace();
+//				if(availableTargetFace.size() > 0)
+//					defaultBlason = availableTargetFace.get(0);
+//		
+//				newDb.setTargetFace(defaultBlason);
+//				
+//				ajlDistancesBlasons.add(new DistancesBlasonsSet(Collections.singletonList(newDb)));
+//			}
+//		}
 	}
 	
 	/**
@@ -742,22 +740,22 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 		dtm.addColumn(localisation.getResourceString("reglement.surclassement.surclassement")); //$NON-NLS-1$
 		
 		//on liste toutes les catégorie de classement
-		CriteriaSet[] differentiationCriteria = CriteriaSet.listCriteriaSet(reglement, reglement.getClassementFilter());
-		for (int i = 0; i < differentiationCriteria.length; i++) {
-			CriteriaSet criteriaSet = null;
-			Surclassement surclassement = reglement.getSurclassement(differentiationCriteria[i]);
-			if(surclassement != null)
-				criteriaSet = surclassement.getCriteriaSetSurclasse();
-			
-			boolean enable = true;
-			if(criteriaSet == null && reglement.isSurclasseOrDisable(differentiationCriteria[i]))
-				enable = false;
-			dtm.addRow(new Object[] {
-					enable,
-					differentiationCriteria[i],
-					criteriaSet
-				});
-		}
+//		CriteriaSet[] differentiationCriteria = CriteriaSet.listCriteriaSet(reglement, reglement.getClassementFilter());
+//		for (int i = 0; i < differentiationCriteria.length; i++) {
+//			CriteriaSet criteriaSet = null;
+//			Surclassement surclassement = reglement.getSurclassement(differentiationCriteria[i]);
+//			if(surclassement != null)
+//				criteriaSet = surclassement.getCriteriaSetSurclasse();
+//			
+//			boolean enable = true;
+//			if(criteriaSet == null && reglement.isSurclasseOrDisable(differentiationCriteria[i]))
+//				enable = false;
+//			dtm.addRow(new Object[] {
+//					enable,
+//					differentiationCriteria[i],
+//					criteriaSet
+//				});
+//		}
 		dtm.addTableModelListener(this);
 		
 		return dtm;
@@ -777,7 +775,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 	@SuppressWarnings("unchecked")
 	private void validateAndCloseDialog() {
 		if(reglementBinding != null) {
-        	for(Binding<Reglement, ?, ?, ?> binding : reglementBinding.getBindings()) { 
+        	for(Binding<Rule, ?, ?, ?> binding : reglementBinding.getBindings()) { 
         		binding.save();
         	}
     	}
@@ -1019,7 +1017,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 	 * 
 	 * @return reglement le réglement associé
 	 */
-	public Reglement getReglement() {
+	public Rule getReglement() {
 		return reglement;
 	}
 
@@ -1028,7 +1026,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 	 * 
 	 * @param reglement le réglement à éditer
 	 */
-	public void setReglement(Reglement reglement) {
+	public void setReglement(Rule reglement) {
 		this.reglement = reglement;
 	}
 

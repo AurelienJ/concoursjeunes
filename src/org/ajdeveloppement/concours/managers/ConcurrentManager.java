@@ -98,7 +98,7 @@ import org.ajdeveloppement.concours.data.Archer;
 import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.Entite;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.T_Archer;
 import org.ajdeveloppement.concours.data.T_Contact;
 import org.ajdeveloppement.concours.data.T_Entite;
@@ -126,7 +126,7 @@ public class ConcurrentManager {
 	 * 
 	 * @return la liste des archers correspondant aux critères de recherche
 	 */
-	public static List<Concurrent> getArchersInDatabase(Archer aGeneric, Reglement reglement, QField<?>[] orderfield) {
+	public static List<Concurrent> getArchersInDatabase(Archer aGeneric, Rule reglement, QField<?>[] orderfield) {
 		return getArchersInDatabase(aGeneric, reglement, orderfield, -1);
 	}
 	
@@ -146,7 +146,7 @@ public class ConcurrentManager {
 	 * 
 	 * @return la liste des archers correspondant aux critères de recherche
 	 */
-	public static List<Concurrent> getArchersInDatabase(Archer aGeneric, Reglement reglement,QField<?>[] orderfield, ConcurrentManagerProgress concurrentManagerProgress) {
+	public static List<Concurrent> getArchersInDatabase(Archer aGeneric, Rule reglement,QField<?>[] orderfield, ConcurrentManagerProgress concurrentManagerProgress) {
 		return getArchersInDatabase(aGeneric, reglement, orderfield, -1, concurrentManagerProgress);
 	}
 	
@@ -167,7 +167,7 @@ public class ConcurrentManager {
 	 * 
 	 * @return la liste des archers correspondant aux critères de recherche
 	 */
-	public static List<Concurrent> getArchersInDatabase(Archer aGeneric, Reglement reglement, QField<?>[] orderfield, int nbmaxenreg) {
+	public static List<Concurrent> getArchersInDatabase(Archer aGeneric, Rule reglement, QField<?>[] orderfield, int nbmaxenreg) {
 		return getArchersInDatabase(aGeneric, reglement, orderfield, nbmaxenreg, null);
 	}
 	
@@ -192,13 +192,13 @@ public class ConcurrentManager {
 	 */
 	//@SuppressWarnings("nls")
 	public static List<Concurrent> getArchersInDatabase(
-			Archer aGeneric, Reglement reglement, QField<?>[] orderfield, int nbmaxenreg, ConcurrentManagerProgress concurrentManagerProgress) {
+			Archer aGeneric, Rule reglement, QField<?>[] orderfield, int nbmaxenreg, ConcurrentManagerProgress concurrentManagerProgress) {
 		List<Concurrent> concurrents = new ArrayList<Concurrent>();
 
 
 		//try (Statement stmt = ApplicationCore.dbConnection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
 		//	String sql = "select %s from ARCHERS inner join CONTACT on ARCHERS.ID_CONTACT=CONTACT.ID_CONTACT";
-			QResults<Concurrent,Reglement> archers = QResults.from(Concurrent.class, reglement)
+			QResults<Concurrent,Rule> archers = QResults.from(Concurrent.class, reglement)
 				.innerJoin(Contact.class, T_Archer.ID_CONTACT.equalTo(T_Contact.ID_CONTACT));
 
 			if(aGeneric != null) {

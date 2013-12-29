@@ -127,10 +127,8 @@ import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.concours.Profile;
 import org.ajdeveloppement.concours.data.Archer;
 import org.ajdeveloppement.concours.data.Concurrent;
-import org.ajdeveloppement.concours.data.Criterion;
-import org.ajdeveloppement.concours.data.CriterionElement;
 import org.ajdeveloppement.concours.data.Entite;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.managers.ConcurrentManager;
 import org.ajdeveloppement.concours.managers.ConcurrentManagerProgress;
 import org.jdesktop.swingx.JXBusyLabel;
@@ -149,7 +147,7 @@ public class ConcurrentListDialog extends JDialog implements ActionListener, Mou
 	private ArchersTableModel dtm = new ArchersTableModel();
 	private TableRowSorter<ArchersTableModel> sorter = new TableRowSorter<ArchersTableModel>(dtm);
 
-	private final Reglement reglement;
+	private final Rule reglement;
 
 	@Localizable("concurrent.nouveau.licence")
 	private JLabel jlFilterLicence = null;
@@ -183,7 +181,7 @@ public class ConcurrentListDialog extends JDialog implements ActionListener, Mou
 	 * @param reglement le réglement permetant de construire le concurrent à partir d'un archer
 	 * @param filter filtre de recherche par défaut
 	 */
-	public ConcurrentListDialog(JDialog parentframe, Profile profile, Reglement reglement, Archer filter) {
+	public ConcurrentListDialog(JDialog parentframe, Profile profile, Rule reglement, Archer filter) {
 		super(parentframe, "", ModalityType.APPLICATION_MODAL); //$NON-NLS-1$
 		this.reglement = reglement;
 		this.localisation = profile.getLocalisation();
@@ -655,11 +653,11 @@ public class ConcurrentListDialog extends JDialog implements ActionListener, Mou
 					if(reglement != null) {
 						if(curConcurrent.isSurclassement())
 							criteres = "<html><font color=red>"; //$NON-NLS-1$
-						for (Criterion key : reglement.getListCriteria()) {
-							CriterionElement criterionElement = curConcurrent.getCriteriaSet().getCriterionElement(key);
-							if (criterionElement != null)
-								criteres += criterionElement.getCode();
-						}
+//						for (Criterion key : reglement.getListCriteria()) {
+//							CriterionElement criterionElement = curConcurrent.getCriteriaSet().getCriterionElement(key);
+//							if (criterionElement != null)
+//								criteres += criterionElement.getCode();
+//						}
 						if(curConcurrent.isSurclassement())
 							criteres += "</font></html>"; //$NON-NLS-1$
 					}

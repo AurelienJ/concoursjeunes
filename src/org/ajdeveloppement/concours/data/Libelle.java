@@ -98,6 +98,7 @@ import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.concours.builders.LibelleBuilder;
@@ -108,7 +109,7 @@ import org.ajdeveloppement.concours.builders.LibelleBuilder;
  * @author Aurélien JEOFFRAY
  */
 @SqlTable(name="LIBELLE",loadBuilder=LibelleBuilder.class)
-@SqlPrimaryKey(fields={"ID_LIBELLE","LANG"})
+@SqlPrimaryKey(fields={"ID_LIBELLE","LANG"},generatedidField=@SqlGeneratedIdField(name="ID_LIBELLE"))
 public class Libelle implements SqlObjectPersistence {
 	@SqlField(name="ID_LIBELLE")
 	private UUID idLibelle;

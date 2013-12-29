@@ -102,7 +102,7 @@ import javax.xml.bind.annotation.XmlIDREF;
 
 import org.ajdeveloppement.concours.data.CompetitionLevel;
 import org.ajdeveloppement.concours.data.Entite;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.managers.ReglementManager;
 
 /**
@@ -125,7 +125,7 @@ public class Parametre extends DefaultParameters {
 	@XmlElementWrapper(name="judges",required=false)
 	@XmlElement(name="judge")
 	private List<Judge> judges		= new ArrayList<Judge>();
-	private Reglement reglement		= new Reglement();
+	private Rule reglement		= new Rule();
 
 	private String saveName         = UUID.randomUUID().toString()
 			+ staticParameters.getResourceString("extention.concours"); //$NON-NLS-1$
@@ -158,7 +158,7 @@ public class Parametre extends DefaultParameters {
 		
 		setReglement(reglementManager.getReglementByName(configuration.getReglementName()));
 		if(reglement != null)
-			setIntituleConcours(reglement.getDisplayName());
+			setIntituleConcours(reglement.getName());
 	}
 	
 	/**
@@ -387,7 +387,7 @@ public class Parametre extends DefaultParameters {
 	 * 
 	 * @return le règlement appliqué 
 	 */
-	public Reglement getReglement() {
+	public Rule getReglement() {
 		return reglement;
 	}
 
@@ -396,8 +396,8 @@ public class Parametre extends DefaultParameters {
 	 * 
 	 * @param reglement le règlement à appliquer
 	 */
-	public void setReglement(Reglement reglement) {
-		Reglement oldValue = this.reglement;
+	public void setReglement(Rule reglement) {
+		Rule oldValue = this.reglement;
 		
 		this.reglement = reglement;
 		

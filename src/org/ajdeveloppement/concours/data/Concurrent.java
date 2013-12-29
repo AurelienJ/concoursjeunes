@@ -101,6 +101,7 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
@@ -117,7 +118,7 @@ import org.ajdeveloppement.concours.builders.ConcurrentBuilder;
  */
 @SqlTable(name="CONCURRENT",loadBuilder=ConcurrentBuilder.class)
 @SqlPrimaryKey(fields={"ID_CONTACT", "ID_COMPETITION"})
-@SqlUnmappedFields(fields={"ID_CONTACT"})
+@SqlUnmappedFields(fields="ID_CONTACT",typeFields=UUID.class)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Concurrent extends Archer implements Cloneable {
 	/**
@@ -133,11 +134,13 @@ public class Concurrent extends Archer implements Cloneable {
 	 */
 	public static final int UNINIT      = 2;
 	
-	@SqlField(name="ID_COMPETITION")
-	private UUID idCompetition;
+	@SqlForeignKey(mappedTo="ID_COMPETITION")
+	private Competition competition;
 
-	private CriteriaSet criteriaSet;
+	@SqlForeignKey(mappedTo="ID_CRITERE_CLASSEMENT")
+	private RankingCriterion rankingCriterion;
 	
+	@SqlField(name="DEPART")
 	private int depart                  = 0;
 	private TargetPosition targetPosition = new TargetPosition();
 
@@ -152,9 +155,12 @@ public class Concurrent extends Archer implements Cloneable {
 	private int[] scoresPhasesFinales		= new int[6];
 
 	private int inscription             = UNINIT;
+	@SqlField(name="PRESENCE")
 	private boolean	presence			= false;
+	@SqlField(name="SURCLASSEMENT")
 	private boolean surclassement		= false;
-	private Blason alternativeTargetFace = null;
+	@SqlForeignKey(mappedTo="ID_BLASONALT")
+	private Face alternativeTargetFace = null;
 
 	/**
 	 * Constructeur vide obligatoire pour java beans
@@ -165,23 +171,23 @@ public class Concurrent extends Archer implements Cloneable {
 	/**
 	 * Retourne les critères distinguant l'archer
 	 * 
-	 * @return criteriaSet le jeux de critères distinguant l'archer
+	 * @return rankingCriterion le jeux de critères distinguant l'archer
 	 */
-	public CriteriaSet getCriteriaSet() {
-		return criteriaSet;
+	public RankingCriterion getRankingCriterion() {
+		return rankingCriterion;
 	}
 
 	/**
 	 * Définit le jeux de critère distinguant l'archer
 	 * 
-	 * @param criteriaSet le jeux de critères de distinction
+	 * @param rankingCriterion le jeux de critères de distinction
 	 */
-	public void setCriteriaSet(CriteriaSet criteriaSet) {
-		Object oldValue = this.criteriaSet;
+	public void setRankingCriterion(RankingCriterion rankingCriterion) {
+		Object oldValue = this.rankingCriterion;
 		
-		this.criteriaSet = criteriaSet;
+		this.rankingCriterion = rankingCriterion;
 		
-		pcs.firePropertyChange("criteriaSet", oldValue, criteriaSet); //$NON-NLS-1$
+		pcs.firePropertyChange("criteriaSet", oldValue, rankingCriterion); //$NON-NLS-1$
 	}
 	
 	/**
@@ -485,7 +491,7 @@ public class Concurrent extends Archer implements Cloneable {
 	 * 
 	 * @return le blason alternatif de l'archer
 	 */
-	public Blason getAlternativeTargetFace() {
+	public Face getAlternativeTargetFace() {
 		return alternativeTargetFace;
 	}
 
@@ -494,7 +500,7 @@ public class Concurrent extends Archer implements Cloneable {
 	 * 
 	 * @param alternativeTargetFace le blason alternatif de l'archer
 	 */
-	public void setAlternativeTargetFace(Blason alternativeTargetFace) {
+	public void setAlternativeTargetFace(Face alternativeTargetFace) {
 		this.alternativeTargetFace = alternativeTargetFace;
 	}
 
@@ -598,18 +604,18 @@ public class Concurrent extends Archer implements Cloneable {
 	private void saveCriteriaSet() throws ObjectPersistenceException {
 		if(!getNumLicenceArcher().equals("")) { //$NON-NLS-1$
 			try {
-				UUID idReglement = QResults.from(Reglement.class)
-						.where(T_Reglement.NOMREGLEMENT.equalTo(criteriaSet.getReglement().getName()))
-						.singleValue(T_Reglement.ID_REGLEMENT);
-				if(idReglement == null)
-					return;
+//				UUID idReglement = QResults.from(Rule.class)
+//						.where(T_Rule.NOM.equalTo(criteriaSet.getReglement().getName()))
+//						.singleValue(T_Rule.ID_REGLEMENT);
+//				if(idReglement == null)
+//					return;
 				
-				if(!criteriaSet.getReglement().getIdReglement().equals(idReglement))
-					criteriaSet.getReglement().setIdReglement(idReglement);
+				//if(!criteriaSet.getReglement().getIdReglement().equals(idReglement))
+				//	criteriaSet.getReglement().setIdReglement(idReglement);
 			
-				criteriaSet.save();
+				rankingCriterion.save();
 				
-				UUID idContact = (UUID)QResults.from(Archer.class)
+				UUID idContact = QResults.from(Archer.class)
 						.where(T_Archer.ID_CONTACT.equalTo(getIdContact()))
 						.singleValue(T_Archer.ID_CONTACT);
 			
@@ -621,8 +627,8 @@ public class Concurrent extends Archer implements Cloneable {
 					PreparedStatement pstmt = ApplicationCore.dbConnection.prepareStatement(sql);
 					
 					pstmt.setString(1, getIdContact().toString());
-					pstmt.setObject(2, criteriaSet.getReglement().getIdReglement());
-					pstmt.setInt(3, criteriaSet.getNumCriteriaSet());
+					//pstmt.setObject(2, criteriaSet.getReglement().getIdReglement());
+					pstmt.setObject(3, rankingCriterion.getId());
 	
 					pstmt.executeUpdate();
 					pstmt.close();

@@ -89,22 +89,16 @@
 package org.ajdeveloppement.concours.builders;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Map;
-import java.util.UUID;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.data.CriteriaSet;
-import org.ajdeveloppement.concours.data.CriteriaSetElement;
-import org.ajdeveloppement.concours.data.T_CriteriaSet;
-import org.ajdeveloppement.concours.data.T_CriteriaSetElement;
 
 /**
  * Construit un jeux de critères à partir des données en base
@@ -156,11 +150,11 @@ public class CriteriaSetBuilder implements ResultSetRowToObjectBinder<CriteriaSe
 	
 	private static CriteriaSet getCriteriaSet(ResultSet rs, int numCriteriaSet, boolean doNotUseCache, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		if(rs != null) {
-			try {
-				numCriteriaSet = T_CriteriaSet.NUMCRITERIASET.getValue(rs);
-			} catch (SQLException e) {
-				throw new ObjectPersistenceException(e);
-			}
+//			try {
+//				numCriteriaSet = T_CriteriaSet.NUMCRITERIASET.getValue(rs);
+//			} catch (SQLException e) {
+//				throw new ObjectPersistenceException(e);
+//			}
 		}
 		
 		CriteriaSet criteriaSet = null;
@@ -175,7 +169,7 @@ public class CriteriaSetBuilder implements ResultSetRowToObjectBinder<CriteriaSe
 			
 		if(criteriaSet == null) {
 			criteriaSet = new CriteriaSet();
-			criteriaSet.setNumCriteriaSet(numCriteriaSet);
+//			criteriaSet.setNumCriteriaSet(numCriteriaSet);
 			
 			Map<Class<?>,Map<String,Object>> foreignKeysValues = null;
 			if(rs == null)
@@ -184,16 +178,16 @@ public class CriteriaSetBuilder implements ResultSetRowToObjectBinder<CriteriaSe
 				foreignKeysValues = resultSetLoadHelper.load(criteriaSet, rs);
 			}
 			
-			criteriaSet.setReglement(ReglementBuilder.getReglement(
-					(UUID)foreignKeysValues.get(CriteriaSet.class).get(T_CriteriaSet.ID_REGLEMENT.getFieldName()),
-					doNotUseCache,
-					sessionCache)
-				);
+//			criteriaSet.setReglement(ReglementBuilder.getReglement(
+//					(UUID)foreignKeysValues.get(CriteriaSet.class).get(T_CriteriaSet.ID_REGLEMENT.getFieldName()),
+//					doNotUseCache,
+//					sessionCache)
+//				);
 			
-			criteriaSet.setElements(
-				QResults.from(CriteriaSetElement.class, sessionCache)
-					.where(T_CriteriaSetElement.NUMCRITERIASET.equalTo(numCriteriaSet))
-					.asList());
+//			criteriaSet.setElements(
+//				QResults.from(CriteriaSetElement.class, sessionCache)
+//					.where(T_CriteriaSetElement.ID_JEUX_CRITERES_DISCRIMINANT.equalTo(numCriteriaSet))
+//					.asList());
 
 			if(!doNotUseCache)
 				Cache.put(criteriaSet);

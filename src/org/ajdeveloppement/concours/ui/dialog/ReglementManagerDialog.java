@@ -119,18 +119,19 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.ajdeveloppement.apps.localisation.Localizable;
-import org.ajdeveloppement.apps.localisation.LocalizableString;
 import org.ajdeveloppement.apps.localisation.LocalizationHandler;
 import org.ajdeveloppement.apps.localisation.Localizator;
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.ui.AJList;
 import org.ajdeveloppement.commons.ui.DefaultDialogReturn;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.Profile;
 import org.ajdeveloppement.concours.data.Federation;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Rule;
+import org.ajdeveloppement.concours.data.RulesCategory;
 import org.ajdeveloppement.concours.managers.FederationManager;
 import org.ajdeveloppement.concours.managers.ReglementManager;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
@@ -161,8 +162,8 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 	@Localizable("reglementmanager.reglements")
 	private JLabel jlReglements		= new JLabel();
 	private AJList<Federation> ajlFederations	= new AJList<Federation>();
-	private AJList<LocalizableString> ajlCategories	= new AJList<LocalizableString>();
-	private AJList<Reglement> ajlReglements	= new AJList<Reglement>();
+	private AJList<RulesCategory> ajlCategories	= new AJList<RulesCategory>();
+	private AJList<Rule> ajlReglements	= new AJList<Rule>();
 	
 	@Localizable(value="",tooltip="reglementmanager.new")
 	private JButton jbNewFederation	= new JButton();
@@ -171,16 +172,16 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 	@Localizable(value="",tooltip="reglementmanager.delete")
 	private JButton jbDeleteFederation = new JButton();
 	
-	@Localizable("reglementmanager.category.all")
-	private final LocalizableString lsAllCategory = new LocalizableString();
-	@Localizable("reglementmanager.category.young")
-	private final LocalizableString lsYoungCategory = new LocalizableString();
-	@Localizable("reglementmanager.category.indoor")
-	private final LocalizableString lsIndoorCategory = new LocalizableString();
-	@Localizable("reglementmanager.category.outdoor")
-	private final LocalizableString lsOutdoorCategory = new LocalizableString();
-	@Localizable("reglementmanager.category.other")
-	private final LocalizableString lsOtherCategory = new LocalizableString();
+//	@Localizable("reglementmanager.category.all")
+//	private final LocalizableString lsAllCategory = new LocalizableString();
+//	@Localizable("reglementmanager.category.young")
+//	private final LocalizableString lsYoungCategory = new LocalizableString();
+//	@Localizable("reglementmanager.category.indoor")
+//	private final LocalizableString lsIndoorCategory = new LocalizableString();
+//	@Localizable("reglementmanager.category.outdoor")
+//	private final LocalizableString lsOutdoorCategory = new LocalizableString();
+//	@Localizable("reglementmanager.category.other")
+//	private final LocalizableString lsOtherCategory = new LocalizableString();
 	
 	@Localizable(value="",tooltip="reglementmanager.new")
 	private JButton jbNew			= new JButton();
@@ -201,7 +202,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 	private JButton jbFermer		= new JButton();
 	
 	private ReglementManager reglementManager;
-	private Reglement selectedReglement;
+	private Rule selectedReglement;
 	private boolean selection		= false;
 	
 	/**
@@ -274,14 +275,14 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 			public Component getListCellRendererComponent(JList<?> list,
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
-				if(value instanceof Reglement) {
-					Reglement reglement = (Reglement)value;
+				if(value instanceof Rule) {
+					Rule reglement = (Rule)value;
 					
 					String description = reglement.getDescription();
 					if(description == null)
 						description = ""; //$NON-NLS-1$
 					
-					value = "<html><b>" + reglement.getDisplayName() + "</b> - " + reglement.getFederation().getSigleFederation() //$NON-NLS-1$ //$NON-NLS-2$
+					value = "<html><b>" + reglement.getName() + "</b> - " + reglement.getEntite().getFederation().getSigleFederation() //$NON-NLS-1$ //$NON-NLS-2$
 							+ "<p style=\"margin-left: 10px;\"><span style=\"font-style: italic; color: #777777;\">" + description.replace("\n", "<br>") + "</span></p> </html>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				
@@ -295,12 +296,8 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 			}
 		});
 		
-		ajlCategories.add(lsAllCategory);
-		ajlCategories.add(lsYoungCategory);
-		ajlCategories.add(lsIndoorCategory);
-		ajlCategories.add(lsOutdoorCategory);
-		ajlCategories.add(lsOtherCategory);
-		
+		QResults.from(RulesCategory.class).forEach(rc -> ajlCategories.add(rc));
+
 		jbNewFederation.setMargin(new Insets(0,0,0,0));
 		jbNewFederation.addActionListener(this);
 		jbEditFederation.setMargin(new Insets(0,0,0,0));
@@ -417,7 +414,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 	 * rien.
 	 * @return si selection=true alors renvoie le réglement selectionné
 	 */
-	public Reglement showReglementManagerDialog(boolean selection) {
+	public Rule showReglementManagerDialog(boolean selection) {
 		this.selection = selection;
 		completePanel();
 		
@@ -431,7 +428,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 	private void showReglementDialog() {
 		ReglementDialog reglementDialog = new ReglementDialog(this, ajlReglements.getSelectedValue(), localisation);
 		if(reglementDialog.showReglementDialog() == DefaultDialogReturn.OK) {
-			Reglement modifiedReglement = reglementDialog.getReglement();
+			Rule modifiedReglement = reglementDialog.getReglement();
 			try {
 				modifiedReglement.save();
 			} catch(ObjectPersistenceException e1) {
@@ -451,35 +448,35 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 				jbEditFederation.setEnabled(false);
 				jbDeleteFederation.setEnabled(false);
 				ajlReglements.clear();
-				for(Reglement reglement : reglementManager.getAvailableReglements()) {
+				for(Rule reglement : reglementManager.getAvailableReglements()) {
 					ajlReglements.add(reglement);
 				}
 			} else if(ajlFederations.getSelectedIndex() == 0) {
 				jbEditFederation.setEnabled(false);
 				jbDeleteFederation.setEnabled(false);
 				ajlReglements.clear();
-				for(Reglement reglement : reglementManager.getReglementsForCategory(ajlCategories.getSelectedIndex())) {
+				for(Rule reglement : reglementManager.getReglementsForCategory(ajlCategories.getSelectedValue())) {
 					ajlReglements.add(reglement);
 				}
 			} else if(ajlCategories.getSelectedIndex() == 0) {
 				jbEditFederation.setEnabled(true);
 				jbDeleteFederation.setEnabled(reglementManager.getReglementsForFederation(ajlFederations.getSelectedValue()).size() == 0);
 				ajlReglements.clear();
-				for(Reglement reglement : reglementManager.getReglementsForFederation(ajlFederations.getSelectedValue())) {
+				for(Rule reglement : reglementManager.getReglementsForFederation(ajlFederations.getSelectedValue())) {
 					ajlReglements.add(reglement);
 				}
 			} else {
 				jbEditFederation.setEnabled(true);
 				jbDeleteFederation.setEnabled(reglementManager.getReglementsForFederation(ajlFederations.getSelectedValue()).size() == 0);
 				ajlReglements.clear();
-				for(Reglement reglement : reglementManager.getReglementsForFederationAndCategory(
+				for(Rule reglement : reglementManager.getReglementsForFederationAndCategory(
 						ajlFederations.getSelectedValue(), 
-						ajlCategories.getSelectedIndex())) {
+						ajlCategories.getSelectedValue())) {
 					ajlReglements.add(reglement);
 				}
 			}
 		} else if(e.getSource() == ajlReglements) {
-			Reglement reglement = ajlReglements.getSelectedValue();
+			Rule reglement = ajlReglements.getSelectedValue();
 			if(reglement != null) {
 				jbEdit.setEnabled(true);
 				jbDelete.setEnabled(reglement.isRemovable());
@@ -542,7 +539,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 			setVisible(false);
 		} else if(e.getSource() == jbNew) {
 			NewReglementDialog newReglementDialog = new NewReglementDialog(this, profile);
-			Reglement reglement = newReglementDialog.showNewReglementDialog();
+			Rule reglement = newReglementDialog.showNewReglementDialog();
 			if(reglement != null) {
 				try {
 					reglementManager.addReglement(reglement);
@@ -557,12 +554,12 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 				showReglementDialog();
 		} else if(e.getSource() == jbDelete) {
 			if(JOptionPane.showConfirmDialog(this, localisation.getResourceString("reglementmanager.delete.confirm"), "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) { //$NON-NLS-1$ //$NON-NLS-2$
-				Reglement reglement = ajlReglements.getSelectedValue(); 
+				Rule reglement = ajlReglements.getSelectedValue(); 
 				try {
 					reglementManager.removeReglement(reglement);
 					ajlReglements.remove(reglement);
 				} catch (ObjectPersistenceException e1) {
-					if(e1.getMessage().equals("delete this Reglement is not authorized because there is official")) { //$NON-NLS-1$
+					if(e1.getMessage().equals("delete this Rule is not authorized because there is official")) { //$NON-NLS-1$
 						JOptionPane.showMessageDialog(this, localisation.getResourceString("reglementmanager.delete.unauhorized"), "", JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
 						e1.printStackTrace();
@@ -571,7 +568,7 @@ public class ReglementManagerDialog extends JDialog implements ListSelectionList
 				}
 			}
 		} else if(e.getSource() == jbExport) {
-			Reglement reglement = ajlReglements.getSelectedValue();
+			Rule reglement = ajlReglements.getSelectedValue();
 			
 			if(reglement != null) {
 				JFileChooser fileChooser = new JFileChooser();

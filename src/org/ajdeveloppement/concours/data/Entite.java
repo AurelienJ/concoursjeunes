@@ -88,6 +88,7 @@ package org.ajdeveloppement.concours.data;
 
 import java.sql.Types;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import javax.xml.bind.Marshaller;
@@ -101,6 +102,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
@@ -160,9 +162,6 @@ public class Entite implements SqlObjectPersistence {
 	@SqlField(name = "REFERENCE")
 	private String reference;
 	
-	//@XmlIDREF
-	//@SqlForeignKey(mappedTo="NUMFEDERATION")
-	//private Federation federation;
 	@SqlField(name = "ADRESSE")
 	private String adresse;
 	@SqlField(name = "CODEPOSTAL")
@@ -184,6 +183,21 @@ public class Entite implements SqlObjectPersistence {
 	@XmlIDREF
 	@SqlForeignKey(mappedTo="ID_ENTITE_PARENT")
 	private Entite entiteParent;
+	
+	@SqlChildCollection(foreignFields="ID_ENTITE_PARENT",type=Entite.class)
+	private List<Entite> entitesEnfant;
+	
+	@SqlChildCollection(foreignFields="ID_ENTITE",type=Rule.class)
+	private List<Rule> rules;
+	
+	@SqlChildCollection(foreignFields="ID_ENTITE",type=CompetitionLevel.class)
+	private List<CompetitionLevel> competitionLevels;
+	
+	@SqlChildCollection(foreignFields="ID_ORGANISATEUR",type=Competition.class)
+	private List<Competition> competitions;
+	
+	@SqlChildCollection(foreignFields="ID_ENTITE",type=Profile.class)
+	private List<Profile> profiles;
 
 	/**
 	 * 
@@ -439,6 +453,129 @@ public class Entite implements SqlObjectPersistence {
 		return Collections.emptyList();
 	}
 	
+	/**
+	 * @return entitesEnfant
+	 */
+	public List<Entite> getEntitesEnfant() {
+		if(entitesEnfant != null) {
+			entitesEnfant = QResults.from(Entite.class).where(T_Entite.ID_ENTITE_PARENT.equalTo(idEntite)).asList();
+		}
+		return entitesEnfant;
+	}
+
+	/**
+	 * @param entitesEnfant entitesEnfant à définir
+	 */
+	public void setEntitesEnfant(List<Entite> entitesEnfant) {
+		this.entitesEnfant = entitesEnfant;
+	}
+
+	/**
+	 * @return rules
+	 */
+	public List<Rule> getRules() {
+		if(rules == null) {
+			rules = QResults.from(Rule.class).where(T_Rule.ID_ENTITE.equalTo(idEntite)).asList();
+		}
+		return rules;
+	}
+
+	/**
+	 * @param rules rules à définir
+	 */
+	public void setRules(List<Rule> rules) {
+		this.rules = rules;
+	}
+
+	/**
+	 * <p>Retourne la liste de tous les niveaux de compétition accessible pour la
+	 * fédération</p>
+	 * 
+	 * @return la liste de tous les niveaux de compétition accessible pour l'entite
+	 */
+	public List<CompetitionLevel> getCompetitionLevels() {
+		if(competitionLevels == null) {
+			competitionLevels = QResults.from(CompetitionLevel.class).where(T_CompetitionLevel.ID_ENTITE.equalTo(idEntite)).asList();
+		}
+		return competitionLevels;
+	}
+
+	/**
+	 * <p>Définit la liste des niveaux de compétition disponible.</p>
+	 * <p>Comme aucune vérification de la présence en base des niveaux n'est réalisé,
+	 * cette méthode est uniquement présente pour une utilisation par les
+	 * fonction de sérialisation XML.</p>
+	 * <p>Utiliser à la place les méthodes {@link #addCompetitionLevel(CompetitionLevel)}
+	 * et {@link #removeCompetitionLevel(CompetitionLevel)} qui assure les fonctions
+	 * de persistance</p>
+	 * 
+	 * @param competitionLevels la liste des niveaux de compétition disponible
+	 */
+	public void setCompetitionLevels(List<CompetitionLevel> competitionLevels) {
+		this.competitionLevels = competitionLevels;
+		
+		for(CompetitionLevel competitionLevel : competitionLevels)
+			competitionLevel.setEntite(this);
+	}
+	
+	/**
+	 * Ajoute un niveau de compétition à la fédération. Lorsqu'un niveau
+	 * de compétition est ajouté à la fédération, celui ci est immédiatement 
+	 * enregistrer dans la base de données.
+	 * 
+	 * @param competitionLevel le niveau de compétition à ajouter à l'entité
+	 */
+	public void addCompetitionLevel(CompetitionLevel competitionLevel) {
+		this.competitionLevels.add(competitionLevel);
+		
+		competitionLevel.setEntite(this);
+	}
+	
+	/**
+	 * Supprime un niveau de compétition de la fédération. Lorsqu'un niveau
+	 * de compétition est supprimé de la fédération, celui ci est immédiatement 
+	 * supprimé dans la base de données.
+	 * 
+	 * @param competitionLevel le niveau de compétition à supprimer de l'entité
+	 */
+	public void removeCompetitionLevel(CompetitionLevel competitionLevel) {
+		this.competitionLevels.remove(competitionLevel);
+	}
+
+	/**
+	 * @return competitions
+	 */
+	public List<Competition> getCompetitions() {
+		if(competitions == null) {
+			competitions = QResults.from(Competition.class).where(T_Competition.ID_ORGANISATEUR.equalTo(idEntite)).asList();
+		}
+		return competitions;
+	}
+
+	/**
+	 * @param competitions competitions à définir
+	 */
+	public void setCompetitions(List<Competition> competitions) {
+		this.competitions = competitions;
+	}
+
+	/**
+	 * @return profiles
+	 */
+	public List<Profile> getProfiles() {
+		if(profiles == null) {
+			profiles = QResults.from(Profile.class).where(T_Profile.ID_ENTITE.equalTo(idEntite)).asList();
+		}
+		return profiles;
+	}
+
+	/**
+	 * @param profiles profiles à définir
+	 */
+	public void setProfiles(List<Profile> profiles) {
+		this.profiles = profiles;
+	}
+
 	@Override
 	public boolean validateBeforeSave() {
 		return nom != null && !nom.isEmpty();

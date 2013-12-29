@@ -91,11 +91,7 @@ package org.ajdeveloppement.concours.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
@@ -107,8 +103,6 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @SqlTable(name="REPARTITION_PHASE_FINALE",disableCache=true)
 @SqlPrimaryKey(fields={"NUM_REPARTITION_PHASE_FINALE", "NUM_TYPE_REPARTITION"})
 public class RepartitionFinals implements SqlObjectPersistence {
-	private static StoreHelper<RepartitionFinals> helper = SqlStoreHelperFactory.getStoreHelper(RepartitionFinals.class);
-	
 	/**
 	 * Répartition selon régle FITA
 	 */
@@ -126,10 +120,7 @@ public class RepartitionFinals implements SqlObjectPersistence {
 	
 	@SqlField(name="NUM_ORDRE")
 	private short numeroOrdre = -1;
-	
-	public RepartitionFinals() {
-	}
-	
+
 	/**
 	 * @return numRepartition
 	 */
@@ -172,6 +163,13 @@ public class RepartitionFinals implements SqlObjectPersistence {
 		this.numeroOrdre = numeroOrdre;
 	}
 	
+	/**
+	 * Reourne un sous ensemble de repartitionsFinals limité au nombre d'archers de la phase
+	 * 
+	 * @param repartitionsFinals le tableau complet de répartition des phases finale
+	 * @param phase la phase pour laquelle retourner le sous ensemble
+	 * @return le sous ensemble du tableau de répartition limité à la phase
+	 */
 	public static List<RepartitionFinals> getRepartitionFinalsPhase(List<RepartitionFinals> repartitionsFinals, int phase) {
 		int nbParticipant = (int)Math.pow(2, phase+1);
 		List<RepartitionFinals> repartitionsFinalsPhase = new ArrayList<RepartitionFinals>();
@@ -185,25 +183,15 @@ public class RepartitionFinals implements SqlObjectPersistence {
 		
 		return repartitionsFinalsPhase;
 	}
-
+	
 	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			if(numRepartition > -1)
-				helper.save(this);
-			
-			Session.addProcessedObject(session, this);
-		}
+	public boolean validateBeforeSave() {
+		return numRepartition > -1;
 	}
-
+	
 	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			if(numRepartition > -1)
-				helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-		}
+	public boolean validateBeforeDelete() {
+		return numRepartition > -1;
 	}
 }
 

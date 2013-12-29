@@ -139,15 +139,14 @@ import org.ajdeveloppement.concours.Profile;
 import org.ajdeveloppement.concours.TargetPosition;
 import org.ajdeveloppement.concours.TargetsOccupation;
 import org.ajdeveloppement.concours.data.Archer;
-import org.ajdeveloppement.concours.data.Blason;
+import org.ajdeveloppement.concours.data.Face;
 import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.data.CriteriaSet;
 import org.ajdeveloppement.concours.data.Criterion;
 import org.ajdeveloppement.concours.data.CriterionElement;
 import org.ajdeveloppement.concours.data.DistancesEtBlason;
-import org.ajdeveloppement.concours.data.DistancesEtBlasonAlternatif;
 import org.ajdeveloppement.concours.data.Entite;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.Surclassement;
 import org.ajdeveloppement.concours.data.Tie;
 import org.ajdeveloppement.concours.event.AutoCompleteDocumentEvent;
@@ -197,7 +196,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 	private Entite entiteConcurrent;
 	private Archer filter = null;
 	
-	private static Reglement lastActiveReglement;
+	private static Rule lastActiveReglement;
 	private static ConcurrentListDialog concurrentListDialog;
 
 	@Localizable("concurrent.description")
@@ -228,7 +227,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 	private Map<Criterion, JComboBox<CriterionElement>> jcbCategorieTable = new HashMap<Criterion, JComboBox<CriterionElement>>();
 	@Localizable("concurrent.blason")
 	private JLabel jlBlason = new JLabel();
-	private JComboBox<Blason> jcbBlason = new JComboBox<Blason>();
+	private JComboBox<Face> jcbBlason = new JComboBox<Face>();
 
 	// Club du tireur
 	@Localizable(value="concurrent.panel.club",textMethod="setTitle")
@@ -621,8 +620,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 			jcbCategorieTable.get(key).removeAllItems();
 			jcbCategorieTable.get(key).removeItemListener(this);
 			for (CriterionElement element : key.getCriterionElements()) {
-				if (element.isActive())
-					jcbCategorieTable.get(key).addItem(element);
+				jcbCategorieTable.get(key).addItem(element);
 			}
 			jcbCategorieTable.get(key).addItemListener(this);
 		}
@@ -689,33 +687,33 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 					jtfClub.setText(entiteConcurrent.getVille());
 					jtfAgrement.setText(entiteConcurrent.getReference());
 				}
-				if (concurrent.getCriteriaSet() != null) {
-					for (Criterion key : ficheConcours.getParametre().getReglement().getListCriteria()) {
-						CriterionElement element = concurrent.getCriteriaSet().getCriterionElement(key);
-						if(element != null)
-							jcbCategorieTable.get(key).setSelectedItem(element);
-						else
-							jcbCategorieTable.get(key).setSelectedIndex(0);
-					}
-				}
+//				if (concurrent.getCriteriaSet() != null) {
+//					for (Criterion key : ficheConcours.getParametre().getReglement().getListCriteria()) {
+//						CriterionElement element = concurrent.getCriteriaSet().getCriterionElement(key);
+//						if(element != null)
+//							jcbCategorieTable.get(key).setSelectedItem(element);
+//						else
+//							jcbCategorieTable.get(key).setSelectedIndex(0);
+//					}
+//				}
 				jcbSurclassement.setSelected(concurrent.isSurclassement());
 				
 				jcbBlason.removeAllItems();
 				CriteriaSet cs = readCriteriaSet();
 				CriteriaSet placementCriteriaSet = cs.getFilteredCriteriaSet(
 						ficheConcours.getParametre().getReglement().getPlacementFilter());
-				DistancesEtBlason distanceEtBlason = placementCriteriaSet.getDistancesEtBlason();
-				if(distanceEtBlason != null) {
-					jcbBlason.addItem(distanceEtBlason.getTargetFace());
-				}
-				for(DistancesEtBlasonAlternatif blasonAlternatif : placementCriteriaSet.getDistancesEtBlasonAlternatifs())
-					jcbBlason.addItem(blasonAlternatif.getDistancesEtBlason().getTargetFace());
-				jcbBlason.setEnabled(!isinit && jcbBlason.getItemCount() > 1);
-				if(concurrent.getCriteriaSet() != null) {
-					DistancesEtBlason distancesEtBlason = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), concurrent);
-					if(distancesEtBlason != null)
-						jcbBlason.setSelectedItem(distancesEtBlason.getTargetFace());
-				}
+//				DistancesEtBlason distanceEtBlason = placementCriteriaSet.getDistancesEtBlason();
+//				if(distanceEtBlason != null) {
+//					jcbBlason.addItem(distanceEtBlason.getTargetFace());
+//				}
+//				for(DistancesEtBlasonAlternatif blasonAlternatif : placementCriteriaSet.getDistancesEtBlasonAlternatifs())
+//					jcbBlason.addItem(blasonAlternatif.getDistancesEtBlason().getTargetFace());
+//				jcbBlason.setEnabled(!isinit && jcbBlason.getItemCount() > 1);
+//				if(concurrent.getCriteriaSet() != null) {
+//					DistancesEtBlason distancesEtBlason = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), concurrent);
+//					if(distancesEtBlason != null)
+//						jcbBlason.setSelectedItem(distancesEtBlason.getTargetFace());
+//				}
 
 				jlValCible.setText("<html><span style=\"font-size: 14pt;\">"  //$NON-NLS-1$
 						+ TargetPosition.toString(concurrent.getCible(), concurrent.getPosition())
@@ -742,7 +740,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 						tfDepartages[i].setText("0"); //$NON-NLS-1$
 				}
 				
-				checkPhasesFinalPane(concurrent.getCriteriaSet());
+//				checkPhasesFinalPane(concurrent.getCriteriaSet());
 
 				if (concurrent.getInscription() == Concurrent.UNINIT)
 					jcbInscription.setSelectedIndex(0);
@@ -982,13 +980,13 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 		for (CriteriaSet differentiationCriteria : criteriaSetPlacement) {
 			// établit la correspondance entre un jeux de placement et son d/b
 			List<DistancesEtBlason> ldistAndBlas = new ArrayList<DistancesEtBlason>();
-			DistancesEtBlason distancesEtBlason = differentiationCriteria.getDistancesEtBlason();
-			if(distancesEtBlason != null) {
-				ldistAndBlas.add(distancesEtBlason);
-				for(DistancesEtBlasonAlternatif distancesEtBlasonAlternatif : differentiationCriteria.getDistancesEtBlasonAlternatifs()) {
-					ldistAndBlas.add(distancesEtBlasonAlternatif.getDistancesEtBlason());
-				}
-			}
+//			DistancesEtBlason distancesEtBlason = differentiationCriteria.getDistancesEtBlason();
+//			if(distancesEtBlason != null) {
+//				ldistAndBlas.add(distancesEtBlason);
+//				for(DistancesEtBlasonAlternatif distancesEtBlasonAlternatif : differentiationCriteria.getDistancesEtBlasonAlternatifs()) {
+//					ldistAndBlas.add(distancesEtBlasonAlternatif.getDistancesEtBlason());
+//				}
+//			}
 
 			boolean principal = true;
 			for(DistancesEtBlason distAndBlas : ldistAndBlas) {
@@ -1040,17 +1038,17 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 
 	private CriteriaSet readCriteriaSet() {
 		CriteriaSet differentiationCriteria = new CriteriaSet();
-		differentiationCriteria.setReglement(ficheConcours.getParametre().getReglement());
-		for (Criterion key : ficheConcours.getParametre().getReglement().getListCriteria()) {
-			CriterionElement criterionElement = (CriterionElement)jcbCategorieTable.get(key).getSelectedItem();
-			differentiationCriteria.addCriterionElement(criterionElement);
-		}
+//		differentiationCriteria.setReglement(ficheConcours.getParametre().getReglement());
+//		for (Criterion key : ficheConcours.getParametre().getReglement().getListCriteria()) {
+//			CriterionElement criterionElement = (CriterionElement)jcbCategorieTable.get(key).getSelectedItem();
+//			differentiationCriteria.addCriterionElement(criterionElement);
+//		}
 
 		return differentiationCriteria;
 	}
 	
 	private boolean verifyCriteriaSet() {
-		Reglement reglement = ficheConcours.getParametre().getReglement();
+		Rule reglement = ficheConcours.getParametre().getReglement();
 		
 		CriteriaSet currentCS = readCriteriaSet();
 		CriteriaSet classementCS = currentCS.getFilteredCriteriaSet(reglement.getClassementFilter());
@@ -1158,12 +1156,12 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 			//évite de modifier l'objet concurrent avant d'avoir
 			//validé les paramètres
 			Concurrent tempConcurrent = concurrent.clone(true);
-			DistancesEtBlason db1 = null;
-			if(tempConcurrent.getCriteriaSet() != null)
-				db1 = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), tempConcurrent);
+//			DistancesEtBlason db1 = null;
+//			if(tempConcurrent.getCriteriaSet() != null)
+//				db1 = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), tempConcurrent);
 			
 			// fixe le jeux de critères définissant le concurrent
-			tempConcurrent.setCriteriaSet(readCriteriaSet());
+//			tempConcurrent.setCriteriaSet(readCriteriaSet());
 			//vérifie la validité du jeux
 			if(!verifyCriteriaSet()) {
 				JOptionPane.showMessageDialog(this, 
@@ -1217,11 +1215,11 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 				return;
 			}
 			
-			if(db1 != null && !db1.haveSameDistancesAndTargetFace(db2)) {
-				ficheConcours.getPasDeTir(tempConcurrent.getDepart()).retraitConcurrent(concurrent);
-			}
+//			if(db1 != null && !db1.haveSameDistancesAndTargetFace(db2)) {
+//				ficheConcours.getPasDeTir(tempConcurrent.getDepart()).retraitConcurrent(concurrent);
+//			}
 			
-			concurrent.setCriteriaSet(tempConcurrent.getCriteriaSet());
+//			concurrent.setCriteriaSet(tempConcurrent.getCriteriaSet());
 			concurrent.setHandicape(tempConcurrent.isHandicape());
 			concurrent.setSurclassement(tempConcurrent.isSurclassement());
 			try {
@@ -1246,7 +1244,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 			concurrent.setInscription(jcbInscription.getSelectedIndex());
 			
 			if(jcbBlason.getSelectedIndex() > 0)
-				concurrent.setAlternativeTargetFace((Blason)jcbBlason.getSelectedItem());
+				concurrent.setAlternativeTargetFace((Face)jcbBlason.getSelectedItem());
 			else
 				concurrent.setAlternativeTargetFace(null);
 
@@ -1330,7 +1328,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 	public void itemStateChanged(ItemEvent e) {
 		if(e.getSource() instanceof JComboBox) {
 			if(e.getStateChange() == ItemEvent.SELECTED) {
-				Reglement reglement = ficheConcours.getParametre().getReglement();
+				Rule reglement = ficheConcours.getParametre().getReglement();
 				
 				CriteriaSet currentCS = readCriteriaSet();
 				CriteriaSet classementCS = currentCS.getFilteredCriteriaSet(reglement.getClassementFilter());
@@ -1358,20 +1356,20 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 
 				CriteriaSet placementCriteriaSet = currentCS.getFilteredCriteriaSet(reglement.getPlacementFilter());
 				if(placementCriteriaSet != null) {
-					List<DistancesEtBlason> tmpDB = new ArrayList<DistancesEtBlason>();
-					tmpDB.add(placementCriteriaSet.getDistancesEtBlason());
-					
-					for(DistancesEtBlason db : tmpDB) {
-						jcbBlason.addItem(db.getTargetFace());
-					}
+//					List<DistancesEtBlason> tmpDB = new ArrayList<DistancesEtBlason>();
+//					tmpDB.add(placementCriteriaSet.getDistancesEtBlason());
+//					
+//					for(DistancesEtBlason db : tmpDB) {
+//						jcbBlason.addItem(db.getTargetFace());
+//					}
 				}
 				jcbBlason.setEnabled(jcbBlason.getItemCount() > 1);
-				if(concurrent != null && concurrent.getCriteriaSet() != null) {
-					DistancesEtBlason distancesEtBlason = DistancesEtBlason.getDistancesEtBlasonForConcurrent(
-							reglement, concurrent);
-					if(distancesEtBlason != null)
-						jcbBlason.setSelectedItem(distancesEtBlason.getTargetFace());
-				}
+//				if(concurrent != null && concurrent.getCriteriaSet() != null) {
+//					DistancesEtBlason distancesEtBlason = DistancesEtBlason.getDistancesEtBlasonForConcurrent(
+//							reglement, concurrent);
+//					if(distancesEtBlason != null)
+//						jcbBlason.setSelectedItem(distancesEtBlason.getTargetFace());
+//				}
 				
 				checkPhasesFinalPane(classementCS);
 			}

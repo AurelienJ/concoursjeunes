@@ -95,10 +95,10 @@ import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
-import org.ajdeveloppement.concours.data.Blason;
+import org.ajdeveloppement.concours.data.Face;
 import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.data.DistancesEtBlason;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.event.TargetEvent;
 import org.ajdeveloppement.concours.event.TargetListener;
 import org.ajdeveloppement.concours.exceptions.PlacementException;
@@ -132,7 +132,7 @@ public class Target implements PropertyChangeListener {
 	private int nbArcher = 0; // le nombre d'archer sur la cible
 	private int nbHandicap = 0;
 	
-	private Reglement reglement;
+	private Rule reglement;
 
 	private final EventListenerList listeners = new EventListenerList();
 
@@ -144,7 +144,7 @@ public class Target implements PropertyChangeListener {
 	 * @param reglement le règlement régissant la cible
 	 * @param nbTireurMaxparCible le nombre de tireur maximum pouvant être présent sur la cible
 	 */
-	public Target(int numCible, Reglement reglement, int nbTireurMaxparCible) {
+	public Target(int numCible, Rule reglement, int nbTireurMaxparCible) {
 		this.numCible = numCible;
 		this.reglement = reglement;
 		
@@ -393,7 +393,7 @@ public class Target implements PropertyChangeListener {
 	 * @param position la position ou placer ce blason
 	 * @return <i>true</i> si l'on arrive à placer le blason sur la position, <i>false</i> sinon
 	 */
-	public boolean isSlotAvailable(Blason blason, int position) {
+	public boolean isSlotAvailable(Face blason, int position) {
 		boolean placable = true;
 		
 		if(concurrents[position] != null)
@@ -405,7 +405,7 @@ public class Target implements PropertyChangeListener {
 		for(int i = 0; i < concurrents.length; i++) {
 			if(concurrents[i] != null) {
 				DistancesEtBlason db = DistancesEtBlason.getDistancesEtBlasonForConcurrent(reglement, concurrents[i]);
-				Blason otherBlason = db.getTargetFace();
+				Face otherBlason = db.getTargetFace();
 				
 				if(blason.getNbArcher() > 2 || (otherBlason != null && otherBlason.getNbArcher() > 2)) {
 					if(otherBlason == null || !otherBlason.equals(blason)) {

@@ -86,30 +86,31 @@
  */
 package org.ajdeveloppement.concours.data;
 
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.concours.builders.CriterionBuilder;
@@ -120,9 +121,9 @@ import org.ajdeveloppement.concours.builders.CriterionBuilder;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CRITERE",loadBuilder=CriterionBuilder.class)
-@SqlPrimaryKey(fields={"CODECRITERE","ID_REGLEMENT"})
-public class Criterion implements ObjectPersistence, Cloneable {
+@SqlTable(name="CRITERE_DISCRIMINANT",loadBuilder=CriterionBuilder.class)
+@SqlPrimaryKey(fields="ID_CRITERE_DISCRIMINANT",generatedidField=@SqlGeneratedIdField(name="ID_CRITERE_DISCRIMINANT",type=Types.JAVA_OBJECT))
+public class Criterion implements SqlObjectPersistence, Cloneable {
 	/**
 	 * Tri des éléments du critères croissant
 	 */
@@ -142,32 +143,28 @@ public class Criterion implements ObjectPersistence, Cloneable {
     	T_Archer.NIVEAU.getFieldName(),
     	T_Archer.ARC.getFieldName()
     };
-    
-    @XmlID
-    @XmlAttribute
-    @SqlField(name="CODECRITERE")
+    @SqlField(name="ID_CRITERE_DISCRIMINANT")
+    private UUID id;
+    @SqlField(name="CODE")
     private String code = ""; //$NON-NLS-1$
-    @SqlField(name="LIBELLECRITERE")
+    @SqlField(name="NOM")
     private String libelle = ""; //$NON-NLS-1$
-    @SqlField(name="SORTORDERCRITERE")
-    private int sortOrder = SORT_ASC;
-    @SqlField(name="CLASSEMENT")
-    private boolean classement = false;
-    @SqlField(name="CLASSEMENTEQUIPE")
-    private boolean classementEquipe = false;
-    @SqlField(name="PLACEMENT")
-    private boolean placement = false;
-    @SqlField(name="CODEFFTA")
-    private String champsTableArchers = ""; //$NON-NLS-1$
-    @SqlField(name="NUMORDRE")
+    @SqlField(name="ORDRE")
     private int numordre = 0;
+    
     @XmlElementWrapper(name="criterionelements",required=true)
     @XmlElement(name="element")
     private List<CriterionElement> criterionElements = new ArrayList<CriterionElement>();
     
     @XmlTransient
     @SqlForeignKey(mappedTo="ID_REGLEMENT")
-    private Reglement reglement;
+    private Rule reglement;
+    
+    @SqlForeignKey(mappedTo="ID_FEDERATION")
+    private Federation federation;
+    
+    @SqlForeignKey(mappedTo="ID_CRITERE_DISCRIMINANT_REFERENCE")
+    private Criterion critereReference;
     
     private static StoreHelper<Criterion> helper = SqlStoreHelperFactory.getStoreHelper(Criterion.class);
     
@@ -188,6 +185,20 @@ public class Criterion implements ObjectPersistence, Cloneable {
     }
 
     /**
+	 * @return id
+	 */
+	public UUID getId() {
+		return id;
+	}
+
+	/**
+	 * @param id id à définir
+	 */
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+	/**
 	 * Renvoi le code du critère
 	 * @return le code du critère
 	 */
@@ -209,7 +220,7 @@ public class Criterion implements ObjectPersistence, Cloneable {
      * 
 	 * @return le règlement associé au critère
 	 */
-	public Reglement getReglement() {
+	public Rule getReglement() {
 		return reglement;
 	}
 
@@ -218,7 +229,7 @@ public class Criterion implements ObjectPersistence, Cloneable {
 	 * 
 	 * @param reglement le règlement associé au critère
 	 */
-	public void setReglement(Reglement reglement) {
+	public void setReglement(Rule reglement) {
 		if(this.reglement != null && !this.reglement.equals(reglement))
 			this.reglement.removeCriterion(this);
 		
@@ -228,12 +239,12 @@ public class Criterion implements ObjectPersistence, Cloneable {
 	/**
 	 * Associe un règlement au critère
 	 * 
-	 * @deprecated Remplacé par {@link #setReglement(Reglement)}
+	 * @deprecated Remplacé par {@link #setReglement(Rule)}
 	 * 
 	 * @param reglement le règlement associé au critère
 	 */
 	@Deprecated
-	public void setReglementParent(Reglement reglement) {
+	public void setReglementParent(Rule reglement) {
 		setReglement(reglement);
 	}
 
@@ -253,24 +264,6 @@ public class Criterion implements ObjectPersistence, Cloneable {
 	 */
     public void setLibelle(String libelle) {
         this.libelle = libelle;
-    }
-    
-    /**
-	 * Renvoie l'ordre de tri du critère
-	 * 
-	 * @return l'ordre de tri du critère
-	 */
-    public int getSortOrder() {
-        return sortOrder;
-    }
-
-    /**
-	 * Définit l'ordre de tri du critère
-	 * 
-	 * @param sortOrder  Ordre de tri à appliquer pour le critère.
-	 */
-    public void setSortOrder(int sortOrder) {
-        this.sortOrder = sortOrder;
     }
 
     /**
@@ -347,81 +340,6 @@ public class Criterion implements ObjectPersistence, Cloneable {
         return code;
     }
 
-    /**
-	 * Est ce que c'est un critère de classement?
-	 * 
-	 * @return <code>true</code> si c'est un critère de classement, <code>false</code> sinon
-	 */
-    public boolean isClassement() {
-        return classement;
-    }
-
-    /**
-	 * Définit si c'est un critère de classement
-	 * 
-	 * @param classement <code>true</code> si c'est un critère de classement, <code>false</code> sinon
-	 */
-    public void setClassement(boolean classement) {
-        this.classement = classement;
-    }
-
-    /**
-     * Donne si le critère est utilisé ou non à des fins de classement
-     * par équipe
-     * 
-     * @return <i>true</i> si utilisé pour le classement par équipe, <i>false</i> sinon
-     */
-    public boolean isClassementEquipe() {
-		return classementEquipe;
-	}
-
-    /**
-     * Définit si le critère est utilisé ou non à des fins de classement
-     * 
-     * @param classementEquipe <i>true</i> si utilisé pour le classement par équipe, <i>false</i> sinon
-     */
-	public void setClassementEquipe(boolean classementEquipe) {
-		this.classementEquipe = classementEquipe;
-	}
-
-	/**
-	 * Est ce que c'est un critère de placement?
-	 * 
-	 * @return <code>true</code> si c'est un critère de placement, <code>false</code> sinon
-	 */
-    public boolean isPlacement() {
-        return placement;
-    }
-
-    /**
-	 * Définit si c'est un critère de placement
-	 * 
-	 * @param placement <code>true</code> si c'est un critère de placement, <code>false</code> sinon
-	 */
-    public void setPlacement(boolean placement) {
-        this.placement = placement;
-    }
-
-    /**
-     * Retourne, si associé, le champ de la table Archers correspondant au critère
-     * 
-	 * @return  Renvoie le champ de la table Archer du critère.
-	 */
-    public String getChampsTableArchers() {
-        return champsTableArchers;
-    }
-
-    /**
-     * Définit, si il existe une correspondance, le champ de la table Archer associé
-     * 
-	 * @param champTableArchers le champ de la table Archer du critère
-	 */
-    public void setChampsTableArchers(String champTableArchers) {
-    	if(champTableArchers.equals("arme")) //$NON-NLS-1$
-    		champTableArchers = "ARC"; //$NON-NLS-1$
-        this.champsTableArchers = champTableArchers;
-    }
-
 	/**
 	 * Retourne la liste des éléments lié au critère
 	 * 
@@ -481,8 +399,7 @@ public class Criterion implements ObjectPersistence, Cloneable {
 			Cache.put(this);
 	
 			Map<String, Object> fkMap = new HashMap<String, Object>();
-			fkMap.put(T_CriterionElement.CODECRITERE.getFieldName(), code);
-			fkMap.put(T_CriterionElement.ID_REGLEMENT.getFieldName(), reglement.getIdReglement());
+			fkMap.put("ID_CRITERE_DISCRIMINANT", getId());
 			
 			int numordre = 1;
 			for(CriterionElement criterionElement : criterionElements) {
@@ -515,8 +432,8 @@ public class Criterion implements ObjectPersistence, Cloneable {
 	 * @param parent
 	 */
 	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		if(parent instanceof Reglement)
-			reglement = (Reglement)parent;
+		if(parent instanceof Rule)
+			reglement = (Rule)parent;
 	}
 
 	/* (non-Javadoc)

@@ -88,7 +88,6 @@ package org.ajdeveloppement.concours.localisable;
 
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.concours.data.CriteriaSet;
-import org.ajdeveloppement.concours.data.Criterion;
 
 /**
  * Permet la génération du libellé représentant un jeux de critères
@@ -113,11 +112,11 @@ public class CriteriaSetLibelle {
         String strSCNA = ""; //$NON-NLS-1$
         
         if(criteriaSet != null) {
-	        for (Criterion critere : criteriaSet.getReglement().getListCriteria()) {
-	        	if(criteriaSet.getCriterionElement(critere) != null) {
-	        		strSCNA += criteriaSet.getCriterionElement(critere).getLibelle() + " "; //$NON-NLS-1$
-	        	}
-	        }
+//	        for (Criterion critere : criteriaSet.getReglement().getListCriteria()) {
+//	        	if(criteriaSet.getCriterionElement(critere) != null) {
+//	        		strSCNA += criteriaSet.getCriterionElement(critere).getLibelle() + " "; //$NON-NLS-1$
+//	        	}
+//	        }
 	        
 	        strSCNA = strSCNA.trim();
 	        

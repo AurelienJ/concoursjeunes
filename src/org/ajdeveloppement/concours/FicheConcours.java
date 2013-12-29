@@ -614,8 +614,8 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 					for (int j = 0; j < parametre.getReglement().getNbSerie(); j++) {
 						CriteriaSet placementCriteriaSet = scna.getFilteredCriteriaSet(parametre.getReglement().getPlacementFilter());
 						
-						tplClassement.parse("categories.distances.DISTANCE", //$NON-NLS-1$
-								placementCriteriaSet.getDistancesEtBlason().getDistances().get(j).getDistance() + "m"); //$NON-NLS-1$
+//						tplClassement.parse("categories.distances.DISTANCE", //$NON-NLS-1$
+//								placementCriteriaSet.getDistancesEtBlason().getDistances().get(j).getDistance() + "m"); //$NON-NLS-1$
 						tplClassement.loopBloc("categories.distances"); //$NON-NLS-1$
 					}
 					

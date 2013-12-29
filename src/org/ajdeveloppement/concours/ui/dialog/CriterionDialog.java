@@ -109,7 +109,7 @@ import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.ui.DefaultDialogReturn;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.concours.data.Criterion;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Rule;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Binding;
@@ -172,7 +172,7 @@ public class CriterionDialog extends JDialog implements ActionListener, ChangeLi
      * @param reglement le réglement auquel doit être associé le critère
      * @param localisation le fichier de localisation de l'interface
      */
-    public CriterionDialog(JDialog parent, Reglement reglement, AjResourcesReader localisation) {
+    public CriterionDialog(JDialog parent, Rule reglement, AjResourcesReader localisation) {
         this(parent, reglement, null, localisation);
     }
     
@@ -197,7 +197,7 @@ public class CriterionDialog extends JDialog implements ActionListener, ChangeLi
      * @param criterion le critère à afficher/modifier
      * @param localisation le fichier de localisation de l'interface
      */
-    private CriterionDialog(JDialog parent, Reglement reglement, Criterion criterion, AjResourcesReader localisation) {
+    private CriterionDialog(JDialog parent, Rule reglement, Criterion criterion, AjResourcesReader localisation) {
         super(parent, "", true); //$NON-NLS-1$
         
         this.localisation = localisation;
@@ -316,9 +316,6 @@ public class CriterionDialog extends JDialog implements ActionListener, ChangeLi
 		});
     	criterionBinding.addBinding(sortBinding);
     	
-		jcbPlacementCriterion.setEnabled(criterion.isClassement() && editable);
-    	jcbClassementCriterion.setEnabled(editable);
-    	jcbClassementEquipeCriterion.setEnabled(editable);
     	jcbWinFFTACode.setEnabled(editable);
     	jcbSortOrder.setEnabled(editable);
     	

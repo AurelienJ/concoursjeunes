@@ -88,7 +88,7 @@
  */
 package org.ajdeveloppement.concours;
 
-import static org.ajdeveloppement.concours.ApplicationCore.staticParameters;
+import static org.ajdeveloppement.concours.ApplicationCore.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -375,14 +375,14 @@ public class PhasesFinales implements PropertyChangeListener,FicheConcoursListen
 	 * @return le classement par catégorie
 	 */
 	public Map<CriteriaSet, List<Concurrent>> getClassement() {
-		CriteriaSet[] catList = CriteriaSet.listCriteriaSet(
-				ficheConcours.getParametre().getReglement(),
-				ficheConcours.getParametre().getReglement().getClassementFilter());
+//		CriteriaSet[] catList = CriteriaSet.listCriteriaSet(
+//				ficheConcours.getParametre().getReglement(),
+//				ficheConcours.getParametre().getReglement().getClassementFilter());
 		Map<CriteriaSet, List<Concurrent>> concurrentsClasse = new HashMap<CriteriaSet, List<Concurrent>>();
 		
-		for(CriteriaSet criteriaSet : catList) {
-			concurrentsClasse.put(criteriaSet, getClassement(criteriaSet));
-		}
+//		for(CriteriaSet criteriaSet : catList) {
+//			concurrentsClasse.put(criteriaSet, getClassement(criteriaSet));
+//		}
 		
 		return concurrentsClasse;
 	}

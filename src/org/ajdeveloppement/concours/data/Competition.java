@@ -120,10 +120,10 @@ public class Competition implements ObjectPersistence {
 	@SqlForeignKey(mappedTo="ID_ORGANISATEUR")
 	private Entite organisateur;
 	
-	@SqlField(name="LIEU_COMPETITION")
+	@SqlField(name="LIEU")
 	private String lieuCompetition;
 	
-	@SqlForeignKey(mappedTo="CODENIVEAU")
+	@SqlForeignKey(mappedTo="ID_NIVEAU_COMPETITION")
 	private CompetitionLevel competitionLevel;
 	
 	@SqlField(name="DATE_DEBUT")
@@ -132,14 +132,12 @@ public class Competition implements ObjectPersistence {
 	@SqlField(name="DATE_FIN")
 	private Date dateFinConcours;
 	
-	@SqlField(name="OPEN")
-	private boolean open = true;
+
+	@SqlField(name="DUEL")
+	private boolean gestionDuel = true;
 	
-	@SqlField(name="GESTION_DUEL")
-	private boolean gestionDuel = false;
-	
-	@SqlForeignKey(mappedTo="NUM_REGLEMENT")
-	private Reglement reglement;
+	@SqlForeignKey(mappedTo="ID_REGLEMENT")
+	private Rule reglement;
 	
 	private List<Judge> judge;
 
@@ -245,30 +243,12 @@ public class Competition implements ObjectPersistence {
 		this.dateFinConcours = dateFinConcours;
 	}
 
-
-	/**
-	 * @return open
-	 */
-	public boolean isOpen() {
-		return open;
-	}
-
-
-	/**
-	 * @param open open à définir
-	 */
-	public void setOpen(boolean open) {
-		this.open = open;
-	}
-
-
 	/**
 	 * @return gestionDuel
 	 */
 	public boolean isGestionDuel() {
 		return gestionDuel;
 	}
-
 
 	/**
 	 * @param gestionDuel gestionDuel à définir
@@ -281,7 +261,7 @@ public class Competition implements ObjectPersistence {
 	/**
 	 * @return reglement
 	 */
-	public Reglement getReglement() {
+	public Rule getReglement() {
 		return reglement;
 	}
 
@@ -289,7 +269,7 @@ public class Competition implements ObjectPersistence {
 	/**
 	 * @param reglement reglement à définir
 	 */
-	public void setReglement(Reglement reglement) {
+	public void setReglement(Rule reglement) {
 		this.reglement = reglement;
 	}
 

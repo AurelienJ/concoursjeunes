@@ -114,7 +114,7 @@ import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.commons.ui.NumberDocument;
 import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.data.Blason;
+import org.ajdeveloppement.concours.data.Face;
 import org.ajdeveloppement.concours.data.Distance;
 import org.ajdeveloppement.concours.data.DistancesEtBlason;
 import org.ajdeveloppement.concours.managers.BlasonManager;
@@ -131,7 +131,7 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 	private AjResourcesReader localisation;
 	
 	private List<DistancesEtBlason> distancesblasons = new ArrayList<DistancesEtBlason>();
-	private List<Blason> availableBlason = new ArrayList<Blason>();
+	private List<Face> availableBlason = new ArrayList<Face>();
 	
 	private JXHeader jlCriteriaSet = new JXHeader();
 	@Localizable(textMethod="setTitle",value="distancesblasons.distances")
@@ -142,13 +142,13 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 	private TitledBorder tbBlasons = new TitledBorder(""); //$NON-NLS-1$
 	@Localizable("distancesblasons.defaultblason")
 	private JLabel jlBlason = new JLabel();
-	private JComboBox<Blason> jcbBlason = new JComboBox<>();
+	private JComboBox<Face> jcbBlason = new JComboBox<>();
 	@Localizable(textMethod="setTitle",value="distancesblasons.blasonsalt")
 	private TitledBorder tbBlasonsAlt = new TitledBorder(""); //$NON-NLS-1$
 	@Localizable("distancesblasons.addblasonsalt")
 	private JLabel jlBlasonsAlt = new JLabel();
 	private JPanel jpBlasonsAlt = new JPanel();
-	private List<JComboBox<Blason>> lcbBlasonsAlt = new ArrayList<>();
+	private List<JComboBox<Face>> lcbBlasonsAlt = new ArrayList<>();
 	@Localizable("distancesblasons.add")
 	private JButton jbAddBlasonAlt = new JButton();
 	
@@ -195,7 +195,7 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 		jpBlasons.setBorder(tbBlasons);
 		jpBlasonsAltGen.setBorder(tbBlasonsAlt);
 		
-		for(Blason b : availableBlason)
+		for(Face b : availableBlason)
 			jcbBlason.addItem(b);
 				
 		jbAddBlasonAlt.addActionListener(this);
@@ -324,7 +324,7 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 	private void addBlasonAlterantif(DistancesEtBlason db) {
 		final JPanel jpanel = new JPanel();
 		
-		final JComboBox<Blason> jcbBlasons = new JComboBox<>();
+		final JComboBox<Face> jcbBlasons = new JComboBox<>();
 		JButton jbDeleteBlasonAlt = new JButton();
 		jbDeleteBlasonAlt.setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.removeelement")); //$NON-NLS-1$
 		jbDeleteBlasonAlt.setMargin(new Insets(1, 0, 1, 0));
@@ -337,7 +337,7 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 			}
 		});
 		
-		for(Blason b : availableBlason) {
+		for(Face b : availableBlason) {
 			jcbBlasons.addItem(b);
 		}
 		if(db != null)
@@ -365,7 +365,7 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 					distance.setDistance(0);
 				}
 			}
-			distancesblasons.get(0).setTargetFace((Blason)jcbBlason.getSelectedItem());
+			distancesblasons.get(0).setTargetFace((Face)jcbBlason.getSelectedItem());
 			
 			if(distancesblasons.size() > lcbBlasonsAlt.size()+1) {
 				int oldsize = distancesblasons.size();
@@ -377,7 +377,7 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 				if(i+1 > distancesblasons.size()-1)
 					distancesblasons.add(new DistancesEtBlason());
 				distancesblasons.get(i+1).setDistances(distancesblasons.get(0).getDistances());
-				distancesblasons.get(i+1).setTargetFace((Blason)lcbBlasonsAlt.get(i).getSelectedItem());
+				distancesblasons.get(i+1).setTargetFace((Face)lcbBlasonsAlt.get(i).getSelectedItem());
 			}
 			
 			setVisible(false);

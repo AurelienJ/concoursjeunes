@@ -100,6 +100,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
@@ -283,6 +284,9 @@ public class City implements SqlObjectPersistence {
 	 * @return zipCodes
 	 */
 	public List<ZipCode> getZipCodes() {
+		if(zipCodes == null) {
+			zipCodes = QResults.from(ZipCode.class).where(T_ZipCode.CODE_VILLE.equalTo(cityCode)).asList();
+		}
 		return zipCodes;
 	}
 

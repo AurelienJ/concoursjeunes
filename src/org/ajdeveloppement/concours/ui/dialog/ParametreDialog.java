@@ -130,8 +130,8 @@ import org.ajdeveloppement.concours.Parametre;
 import org.ajdeveloppement.concours.Profile;
 import org.ajdeveloppement.concours.builders.ReglementBuilder;
 import org.ajdeveloppement.concours.data.CompetitionLevel;
-import org.ajdeveloppement.concours.data.Reglement;
-import org.ajdeveloppement.concours.data.Reglement.TypeReglement;
+import org.ajdeveloppement.concours.data.Rule;
+import org.ajdeveloppement.concours.data.Rule.TypeReglement;
 import org.ajdeveloppement.swingxext.localisation.JXHeaderLocalisationHandler;
 import org.jdesktop.swingx.JXDatePicker;
 import org.jdesktop.swingx.JXHeader;
@@ -151,7 +151,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 	private AjResourcesReader localisation;
 	private Profile profile;
 	private Parametre parametre;
-	private Reglement tempReglement;
+	private Rule tempReglement;
 
 	private final FicheConcours ficheConcours;
 	private JFrame parentframe;
@@ -515,11 +515,11 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 		jtfLieuConcours.setText(parametre.getLieuConcours());
 		jtfDateDebutConcours.setDate(parametre.getDateDebutConcours());
 		jtfDateFinConcours.setDate(parametre.getDateFinConcours());
-		jlSelectedReglement.setText("<html><b>" + tempReglement.getDisplayName() + "</b> - " + tempReglement.getFederation().getSigleFederation()+ "</html>");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		jlSelectedReglement.setText("<html><b>" + tempReglement.getName() + "</b> - " + tempReglement.getEntite().getFederation().getSigleFederation()+ "</html>");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		jbSelectReglement.setEnabled(!parametre.isReglementLock());
 		jcbNiveauChampionnat.removeAllItems();
-		for(CompetitionLevel cl : tempReglement.getFederation().getCompetitionLevels())
-			jcbNiveauChampionnat.addItem(cl);
+		//for(CompetitionLevel cl : tempReglement.getFederation().getCompetitionLevels())
+		//	jcbNiveauChampionnat.addItem(cl);
 		jcbNiveauChampionnat.setSelectedItem(parametre.getNiveauChampionnat());
 		jcbCloseCompetition.setSelected(!parametre.isOpen());
 		jcbEnablePhaseFinal.setSelected(parametre.isDuel());
@@ -652,15 +652,15 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 			
 		} else if (ae.getSource() == jbSelectReglement) {
 			ReglementManagerDialog reglementManagerDialog = new ReglementManagerDialog(parentframe, profile);
-			Reglement reglement = reglementManagerDialog.showReglementManagerDialog(true);
+			Rule reglement = reglementManagerDialog.showReglementManagerDialog(true);
 			if(reglement != null && (tempReglement == null || !tempReglement.equals(reglement))) {
-				if(jtfIntituleConcours.getText().equals(tempReglement.getDisplayName()))
-					jtfIntituleConcours.setText(reglement.getDisplayName());
+				if(jtfIntituleConcours.getText().equals(tempReglement.getName()))
+					jtfIntituleConcours.setText(reglement.getName());
 				tempReglement = reglement;
-				jlSelectedReglement.setText("<html><b>" + reglement.getDisplayName() + "</b> - " + reglement.getFederation().getSigleFederation()+ "</html>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				jlSelectedReglement.setText("<html><b>" + reglement.getName() + "</b> - " + reglement.getEntite().getFederation().getSigleFederation()+ "</html>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				
 				jcbNiveauChampionnat.removeAllItems();
-				for(CompetitionLevel cl : tempReglement.getFederation().getCompetitionLevels())
+				for(CompetitionLevel cl : tempReglement.getEntite().getFederation().getCompetitionLevels())
 					jcbNiveauChampionnat.addItem(cl);
 				jcbNiveauChampionnat.setSelectedItem(parametre.getNiveauChampionnat());
 				

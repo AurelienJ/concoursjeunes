@@ -111,9 +111,8 @@ public class CriterionElementManager {
 	 */
 	public static List<CriterionElement> getAllCriterionElementsFor(Criterion criterion) {
 		return QResults.from(CriterionElement.class, criterion)
-	    		.where(CODECRITERE.equalTo(criterion.getCode())
-	    				.and(ID_REGLEMENT.equalTo(criterion.getReglement().getIdReglement())))
-	    		.orderBy(NUMORDRE).asList();
+	    		.where(ID_CRITERE_DISCRIMINANT.equalTo(criterion.getId()))
+	    		.orderBy(ORDRE).asList();
 	}
 
 }

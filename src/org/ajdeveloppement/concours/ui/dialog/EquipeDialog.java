@@ -124,7 +124,6 @@ import org.ajdeveloppement.apps.localisation.Localizator;
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.ui.AJTree;
 import org.ajdeveloppement.commons.ui.GhostGlassPane;
-import org.ajdeveloppement.concours.ConcurrentList;
 import org.ajdeveloppement.concours.Equipe;
 import org.ajdeveloppement.concours.EquipeList;
 import org.ajdeveloppement.concours.FicheConcours;
@@ -283,54 +282,52 @@ public class EquipeDialog extends JDialog implements ActionListener, TreeSelecti
 
 		Hashtable<Criterion, Boolean> criteriaFilter = new Hashtable<Criterion, Boolean>();
 		for (Map.Entry<Criterion, JCheckBox> cb : classmentCriteriaCB.entrySet()) {
-			cb.getValue().setSelected(cb.getKey().isClassementEquipe());
 			cb.getValue().setEnabled(tempEquipes.countEquipes() == 0);
-			criteriaFilter.put(cb.getKey(), cb.getKey().isClassementEquipe());
 		}
 		// Donne la liste des codes SCNA filtré
-		CriteriaSet[] catList = CriteriaSet.listCriteriaSet(ficheConcours.getParametre().getReglement(), criteriaFilter);
-
-		dmtnCategorie = new DefaultMutableTreeNode[catList.length];
+//		CriteriaSet[] catList = CriteriaSet.listCriteriaSet(ficheConcours.getParametre().getReglement(), criteriaFilter);
+//
+//		dmtnCategorie = new DefaultMutableTreeNode[catList.length];
 
 		rootNode.removeAllChildren();
 
-		for (int i = 0; i < catList.length; i++) {
-			// test si il existe des archers dans la catégorie
-			List<Concurrent> concurrents = ficheConcours.getConcurrentList().list(catList[i], -1, criteriaFilter);
-			if (concurrents.size() >= ficheConcours.getParametre().getReglement().getNbMembresRetenu()) {
-				dmtnCategorie[i] = new DefaultMutableTreeNode(new CriteriaSetLibelle(catList[i], localisation));
-
-				if (cbEquipeClub.isSelected()) {
-					Entite[] entites = ficheConcours.getConcurrentList().listCompagnie();
-					for (Entite entite : entites) {
-						List<Concurrent> clubConcurrents = ConcurrentList.sort(ficheConcours.getConcurrentList().list(entite, catList[i], criteriaFilter), ConcurrentList.SortCriteria.SORT_BY_NAME);
-						if (clubConcurrents.size() >= ficheConcours.getParametre().getReglement().getNbMembresRetenu()) {
-							DefaultMutableTreeNode dmtnEntite = new DefaultMutableTreeNode(entite);
-							for (Concurrent concurrent : clubConcurrents) {
-								if (tempEquipes.containsConcurrent(concurrent) == null)
-									dmtnEntite.add(new DefaultMutableTreeNode(concurrent));
-							}
-							dmtnCategorie[i].add(dmtnEntite);
-						}
-					}
-					if (dmtnCategorie[i].getChildCount() > 0) {
-						rootNode.add(dmtnCategorie[i]);
-						treeModelConcurrents.reload(rootNode);
-						treeConcurrents.expandPath(new TreePath(dmtnCategorie[i].getPath()));
-					}
-				} else {
-					concurrents = ConcurrentList.sort(concurrents, ConcurrentList.SortCriteria.SORT_BY_NAME);
-					for (Concurrent concurrent : concurrents) {
-						if (tempEquipes.containsConcurrent(concurrent) == null)
-							dmtnCategorie[i].add(new DefaultMutableTreeNode(concurrent));
-					}
-
-					rootNode.add(dmtnCategorie[i]);
-					treeModelConcurrents.reload(rootNode);
-					treeConcurrents.expandPath(new TreePath(rootNode.getPath()));
-				}
-			}
-		}
+//		for (int i = 0; i < catList.length; i++) {
+//			// test si il existe des archers dans la catégorie
+//			List<Concurrent> concurrents = ficheConcours.getConcurrentList().list(catList[i], -1, criteriaFilter);
+//			if (concurrents.size() >= ficheConcours.getParametre().getReglement().getNbMembresRetenu()) {
+//				dmtnCategorie[i] = new DefaultMutableTreeNode(new CriteriaSetLibelle(catList[i], localisation));
+//
+//				if (cbEquipeClub.isSelected()) {
+//					Entite[] entites = ficheConcours.getConcurrentList().listCompagnie();
+//					for (Entite entite : entites) {
+//						List<Concurrent> clubConcurrents = ConcurrentList.sort(ficheConcours.getConcurrentList().list(entite, catList[i], criteriaFilter), ConcurrentList.SortCriteria.SORT_BY_NAME);
+//						if (clubConcurrents.size() >= ficheConcours.getParametre().getReglement().getNbMembresRetenu()) {
+//							DefaultMutableTreeNode dmtnEntite = new DefaultMutableTreeNode(entite);
+//							for (Concurrent concurrent : clubConcurrents) {
+//								if (tempEquipes.containsConcurrent(concurrent) == null)
+//									dmtnEntite.add(new DefaultMutableTreeNode(concurrent));
+//							}
+//							dmtnCategorie[i].add(dmtnEntite);
+//						}
+//					}
+//					if (dmtnCategorie[i].getChildCount() > 0) {
+//						rootNode.add(dmtnCategorie[i]);
+//						treeModelConcurrents.reload(rootNode);
+//						treeConcurrents.expandPath(new TreePath(dmtnCategorie[i].getPath()));
+//					}
+//				} else {
+//					concurrents = ConcurrentList.sort(concurrents, ConcurrentList.SortCriteria.SORT_BY_NAME);
+//					for (Concurrent concurrent : concurrents) {
+//						if (tempEquipes.containsConcurrent(concurrent) == null)
+//							dmtnCategorie[i].add(new DefaultMutableTreeNode(concurrent));
+//					}
+//
+//					rootNode.add(dmtnCategorie[i]);
+//					treeModelConcurrents.reload(rootNode);
+//					treeConcurrents.expandPath(new TreePath(rootNode.getPath()));
+//				}
+//			}
+//		}
 	}
 	
 	private void completePanelEquipes() {
@@ -550,9 +547,6 @@ public class EquipeDialog extends JDialog implements ActionListener, TreeSelecti
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JCheckBox) {
 			if (e.getActionCommand().equals("filter")) { //$NON-NLS-1$
-				for (Map.Entry<Criterion, JCheckBox> cb : classmentCriteriaCB.entrySet()) {
-					cb.getKey().setClassementEquipe(cb.getValue().isSelected());
-				}
 				completePanel(); // categoriesEquipes();
 
 			} else if (e.getSource() == cbEquipeClub) {

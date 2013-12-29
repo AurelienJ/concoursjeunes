@@ -129,8 +129,6 @@ import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.ConcurrentList;
 import org.ajdeveloppement.concours.TargetPosition;
 import org.ajdeveloppement.concours.data.Concurrent;
-import org.ajdeveloppement.concours.data.Criterion;
-import org.ajdeveloppement.concours.data.CriterionElement;
 import org.ajdeveloppement.concours.event.FicheConcoursEvent;
 import org.ajdeveloppement.concours.event.FicheConcoursListener;
 import org.ajdeveloppement.concours.state.State;
@@ -522,11 +520,11 @@ public class GreffePane extends JPanel implements
 					return concurrent.getNumLicenceArcher();
 				case 4:
 					String categorie = ""; //$NON-NLS-1$
-					for (Criterion key : ficheConcoursPane.getFicheConcours().getParametre().getReglement().getListCriteria()) {
-						CriterionElement criterionElement = concurrent.getCriteriaSet().getCriterionElement(key);
-						if (criterionElement != null)
-							categorie += criterionElement.getCode();
-					}
+//					for (Criterion key : ficheConcoursPane.getFicheConcours().getParametre().getReglement().getListCriteria()) {
+//						CriterionElement criterionElement = concurrent.getCriteriaSet().getCriterionElement(key);
+//						if (criterionElement != null)
+//							categorie += criterionElement.getCode();
+//					}
 					return categorie;
 				case 5:
 					return TargetPosition.toString(concurrent.getCible(), concurrent.getPosition());

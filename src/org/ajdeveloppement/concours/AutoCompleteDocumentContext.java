@@ -90,7 +90,7 @@ package org.ajdeveloppement.concours;
 
 import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.data.Entite;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Rule;
 
 /**
  * Le Contexte d'autocomplement stock les instances et propriétés commune à tous les
@@ -101,7 +101,7 @@ import org.ajdeveloppement.concours.data.Reglement;
  */
 public class AutoCompleteDocumentContext {
 	private Concurrent concurrent;
-	private Reglement reglement;
+	private Rule reglement;
 	private Entite entite;
 	private boolean autocompleteNom = true;
 	private boolean autocompleteLicence = true;
@@ -112,7 +112,7 @@ public class AutoCompleteDocumentContext {
 	 * Crée un nouveau contexte d'autocomplement
 	 * @param reglement le réglement de concours sur lequel l'autocomplement des archers doit se faire.
 	 */
-	public AutoCompleteDocumentContext(Reglement reglement) {
+	public AutoCompleteDocumentContext(Rule reglement) {
 		this.reglement = reglement;
 	}
 
@@ -203,7 +203,7 @@ public class AutoCompleteDocumentContext {
 	/**
 	 * @return reglement
 	 */
-	public Reglement getReglement() {
+	public Rule getReglement() {
 		return reglement;
 	}
 }

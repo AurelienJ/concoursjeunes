@@ -141,7 +141,7 @@ public class DistancesEtBlason implements ObjectPersistence {
 
 	@XmlJavaTypeAdapter(BlasonAdapter.class)
 	@SqlForeignKey(mappedTo="NUMBLASON")
-	private Blason targetFace = new Blason();
+	private Face targetFace = new Face();
 	
 	/**
 	 * construit un DistancesEtBlason avec les options par défaut (pour sérialisation XML)
@@ -157,7 +157,7 @@ public class DistancesEtBlason implements ObjectPersistence {
 	 * 	Les distances sont représenté en mètre
 	 * @param targetFace le blason associé
 	 */
-	public DistancesEtBlason(List<Distance> distances, Blason targetFace) {
+	public DistancesEtBlason(List<Distance> distances, Face targetFace) {
 		this.distances = distances;
 		this.targetFace = targetFace;
 	}
@@ -176,7 +176,7 @@ public class DistancesEtBlason implements ObjectPersistence {
 	 * 
 	 * @return le blason
 	 */
-	public Blason getTargetFace() {
+	public Face getTargetFace() {
 		return targetFace;
 	}
 
@@ -185,7 +185,7 @@ public class DistancesEtBlason implements ObjectPersistence {
 	 * 
 	 * @param targetFace le blason
 	 */
-	public void setTargetFace(Blason targetFace) {
+	public void setTargetFace(Face targetFace) {
 		this.targetFace = targetFace;
 	}
 
@@ -271,11 +271,11 @@ public class DistancesEtBlason implements ObjectPersistence {
 	 * 
 	 * @return l'objet DistancesEtBlason correspondant au concurrent
 	 */
-	public static DistancesEtBlason getDistancesEtBlasonForConcurrent(Reglement reglement, Concurrent concurrent) {
-		CriteriaSet placementCriteriaSet = concurrent.getCriteriaSet().getFilteredCriteriaSet(reglement.getPlacementFilter());
-		if(placementCriteriaSet != null) {
-			return placementCriteriaSet.getDistancesEtBlason();
-		}
+	public static DistancesEtBlason getDistancesEtBlasonForConcurrent(Rule reglement, Concurrent concurrent) {
+//		CriteriaSet placementCriteriaSet = concurrent.getCriteriaSet().getFilteredCriteriaSet(reglement.getPlacementFilter());
+//		if(placementCriteriaSet != null) {
+//			return placementCriteriaSet.getDistancesEtBlason();
+//		}
 		
 		return null;
 //		List<DistancesEtBlason> ldb = reglement.getDistancesEtBlasonFor();

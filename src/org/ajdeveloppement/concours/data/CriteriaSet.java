@@ -86,10 +86,6 @@
  */
 package org.ajdeveloppement.concours.data;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -103,7 +99,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistence;
@@ -115,13 +110,13 @@ import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
-import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.builders.CriteriaSetBuilder;
 
 /**
@@ -131,8 +126,8 @@ import org.ajdeveloppement.concours.builders.CriteriaSetBuilder;
  * @author  Aurélien Jeoffray
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CRITERIASET",loadBuilder=CriteriaSetBuilder.class)
-@SqlPrimaryKey(fields="NUMCRITERIASET",generatedidField=@SqlGeneratedIdField(name="NUMCRITERIASET",type=Types.INTEGER))
+@SqlTable(name="JEUX_CRITERES_DISCRIMINANT",loadBuilder=CriteriaSetBuilder.class)
+@SqlPrimaryKey(fields="ID_JEUX_CRITERES_DISCRIMINANT",generatedidField=@SqlGeneratedIdField(name="ID_JEUX_CRITERES_DISCRIMINANT"))
 @SqlUnmappedFields(fields={"IDCRITERIASET"})
 public class CriteriaSet implements ObjectPersistence,Cloneable {
 	private static StoreHelper<CriteriaSet> helper = SqlStoreHelperFactory.getStoreHelper(CriteriaSet.class);
@@ -142,23 +137,17 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 	private String xmlId = null;
 	
 	@XmlTransient
-	@SqlField(name="NUMCRITERIASET")
-	private int numCriteriaSet = 0;
-
-	@XmlTransient
-	@SqlForeignKey(mappedTo="ID_REGLEMENT")
-	private Reglement reglement;
+	@SqlField(name="ID_JEUX_CRITERES_DISCRIMINANT")
+	private UUID id;
 	
-	@XmlIDREF
-	@SqlForeignKey(mappedTo="ID_DISTANCESBLASONS")
-	private DistancesEtBlason distancesEtBlason;
+	@SqlForeignKey(mappedTo="ID_CRITERE_CLASSEMENT")
+	private RankingCriterion rankingCriterion;
 	
+	@SqlChildCollection(foreignFields="ID_JEUX_CRITERES_DISCRIMINANT",type=RateCategory.class)
 	@XmlTransient
 	private List<RateCategory> tarifsCategorie = null;
 	
-	private List<DistancesEtBlasonAlternatif> distancesEtBlasonAlternatifs;
-	
-
+	@SqlChildCollection(foreignFields="ID_JEUX_CRITERES_DISCRIMINANT",type=CriteriaSetElement.class)
 	private List<CriteriaSetElement> elements;
 	private transient Map<Criterion, CriterionElement> indexedElement = new HashMap<Criterion, CriterionElement>(5);
 
@@ -171,10 +160,10 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 	/**
 	 * Initialise un nouveau jeux de critères pour le réglement fournit en paramètre.
 	 * 
-	 * @param reglement le réglement associé au jeux de critères
+	 * @param rankingCriterion le critère de classement associé aux jeux de critère discriminant
 	 */
-	public CriteriaSet(Reglement reglement) {
-		this(reglement, null);
+	public CriteriaSet(RankingCriterion rankingCriterion) {
+		this(rankingCriterion, null);
 	}
 
 	/**
@@ -190,12 +179,12 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 	 * Initialise un nouveau jeux de critères avec les critères fournit en paramètre et
 	 * associé au réglement fournit.
 	 * 
-	 * @param reglement le réglement associé au jeux de critères
+	 * @param rankingCriterion le critère de classement associé aux jeux de critère discriminant
 	 * @param elements les critères constitutif du jeux de critères
 	 */
-	public CriteriaSet(Reglement reglement, List<CriteriaSetElement> elements) {
-		if(reglement != null)
-			setReglement(reglement);
+	public CriteriaSet(RankingCriterion rankingCriterion, List<CriteriaSetElement> elements) {
+		this.rankingCriterion = rankingCriterion;
+		
 		if(elements != null) {
 			this.elements = elements;
 			reindexElements();
@@ -209,63 +198,31 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 	}
 
 	/**
-	 * @return numCriteriaSet
+	 * @return the id of criteria set
 	 */
-	public int getNumCriteriaSet() {
-		return numCriteriaSet;
+	public UUID getId() {
+		return id;
 	}
 
 	/**
-	 * @param numCriteriaSet numCriteriaSet à définir
+	 * @param id numCriteriaSet à définir
 	 */
-	public void setNumCriteriaSet(int numCriteriaSet) {
-		this.numCriteriaSet = numCriteriaSet;
+	public void setId(UUID id) {
+		this.id = id;
 	}
 
 	/**
-	 * @param reglement reglement à définir
+	 * @return rankingCriterion
 	 */
-	public void setReglement(Reglement reglement) {
-		this.reglement = reglement;
+	public RankingCriterion getRankingCriterion() {
+		return rankingCriterion;
 	}
 
 	/**
-	 * @return reglement
+	 * @param rankingCriterion rankingCriterion à définir
 	 */
-	public Reglement getReglement() {
-		return reglement;
-	}
-
-	/**
-	 * @return distancesEtBlason
-	 */
-	public DistancesEtBlason getDistancesEtBlason() {
-		return distancesEtBlason;
-	}
-
-	/**
-	 * @param distancesEtBlason distancesEtBlason à définir
-	 */
-	public void setDistancesEtBlason(DistancesEtBlason distancesEtBlason) {
-		this.distancesEtBlason = distancesEtBlason;
-	}
-
-	/**
-	 * @return distancesEtBlasonAlternatifs
-	 */
-	public List<DistancesEtBlasonAlternatif> getDistancesEtBlasonAlternatifs() {
-		return distancesEtBlasonAlternatifs;
-	}
-
-	/**
-	 * @param distancesEtBlasonAlternatifs distancesEtBlasonAlternatifs à définir
-	 */
-	public void setDistancesEtBlasonAlternatifs(
-			List<DistancesEtBlasonAlternatif> distancesEtBlasonAlternatifs) {
-		this.distancesEtBlasonAlternatifs = distancesEtBlasonAlternatifs;
-		
-		for(DistancesEtBlasonAlternatif alternative : distancesEtBlasonAlternatifs)
-			alternative.setCriteriaSet(this);
+	public void setRankingCriterion(RankingCriterion rankingCriterion) {
+		this.rankingCriterion = rankingCriterion;
 	}
 
 	/**
@@ -274,7 +231,7 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 	public List<RateCategory> getTarifsCategorie() {
 		if(tarifsCategorie == null) {
 			tarifsCategorie = QResults.from(RateCategory.class)
-					.where(T_RateCategory.NUMCRITERIASET.equalTo(numCriteriaSet))
+					.where(T_RateCategory.ID_JEUX_CRITERES_DISCRIMINANT.equalTo(id))
 					.asList();
 		}
 		return tarifsCategorie;
@@ -340,18 +297,18 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 			return this;
 		
 		CriteriaSet criteriaSet = new CriteriaSet();
-		criteriaSet.setReglement(reglement);
+		criteriaSet.setRankingCriterion(rankingCriterion);
 		for(CriteriaSetElement csElement : elements) {
 			Criterion criterion = csElement.getCriterionElement().getCriterion();
 			if(criteriaFilter.containsKey(criterion) && criteriaFilter.get(criterion))
 				criteriaSet.addCriterionElement(csElement.getCriterionElement());
 		}
 		
-		if(criteriaFilter.equals(reglement.getPlacementFilter())) {
+		/*if(criteriaFilter.equals(reglement.getPlacementFilter())) {
 			CriteriaSet reglementCriteriaSet = reglement.getPlacementCriteriaSet(criteriaSet);
 			if(reglementCriteriaSet != null)
 				criteriaSet = reglementCriteriaSet;
-		}
+		}*/
 		return criteriaSet;
 	}
 	
@@ -379,8 +336,8 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 		}
 		uid += "}";
 		UUID idReglement= null;
-		if(reglement != null)
-			idReglement = reglement.getIdReglement();
+		/*if(reglement != null)
+			idReglement = reglement.getIdReglement();*/
 		return "R=" + (idReglement != null ? idReglement.toString() : "") + ",S=" + uid;
 	}
 	
@@ -407,7 +364,7 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 			String uid = getUID();
 			String sql = "select NUMCRITERIASET from CRITERIASET where IDCRITERIASET='" + uid.replace("'","''") + "'"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			
-			try {
+			/*try {
 				Statement stmt = ApplicationCore.dbConnection.createStatement();
 				try {
 					ResultSet rs = stmt.executeQuery(sql);
@@ -426,7 +383,7 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 				}
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
-			}
+			}*/
 			
 	
 			helper.save(this, Collections.<String, Object>singletonMap("IDCRITERIASET", uid)); //$NON-NLS-1$
@@ -436,7 +393,7 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 			Session.addProcessedObject(session, this);
 			
 			PersitentCollection.save(elements, session, 
-					Collections.<String,Object>singletonMap(T_CriteriaSetElement.NUMCRITERIASET.getFieldName(), numCriteriaSet));
+					Collections.<String,Object>singletonMap(T_CriteriaSetElement.ID_JEUX_CRITERES_DISCRIMINANT.getFieldName(), id));
 		}
 	}
 
@@ -456,7 +413,7 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 	 * @param marshaller
 	 */
 	protected void beforeMarshal(Marshaller marshaller) {
-		xmlId = Integer.toString(numCriteriaSet);
+		xmlId = id.toString();
 	}
 	
 	/**
@@ -466,10 +423,10 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 	 */
 	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
 		if(xmlId != null && !xmlId.isEmpty())
-			numCriteriaSet = Integer.parseInt(xmlId);
+			id = UUID.fromString(xmlId);
 		
-		if(parent instanceof Reglement)
-			setReglement((Reglement)parent);
+		if(parent instanceof RankingCriterion)
+			setRankingCriterion((RankingCriterion)parent);
 	}
 	
 	/**
@@ -497,13 +454,7 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 					int index1 = testedCriterion.getCriterionElements().indexOf(result1);
 					int index2 = testedCriterion.getCriterionElements().indexOf(result2);
 
-					//ordre croissant
-					if(listCriteria.get(i).getSortOrder() > 0) {
-
-						regle = index1 > index2;
-						//ordre décroissants
-					} else
-						regle = index1 < index2;
+					regle = index1 > index2;
 
 					//pour les critères déjà passé en revue, vérifie qu'il y ai égalité
 					for(int l = 0; l < i; l++) {
@@ -529,17 +480,17 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 	/**
 	 * Retourne le liste des jeux de critères possible pour un règlement donné en fonction du filtre appliqué
 	 * 
-	 * @param reglement - le règlement servant de base à la génération du jeux de critère
+	 * @param rankingCriterion le critère de classement associé
 	 * @param criteriaFilter - le filtre du jeux
 	 * @return la liste des jeux de critères retourné
 	 */
-	public static CriteriaSet[] listCriteriaSet(Reglement reglement, Map<Criterion, Boolean> criteriaFilter) {       
+	public static CriteriaSet[] listCriteriaSet(RankingCriterion rankingCriterion, Map<Criterion, Boolean> criteriaFilter) {       
 		//crée la population complete pour l'ensemble des critères
 		//objet de référence
-		CriteriaSet[] referents = new CriteriaSet[] { new CriteriaSet(reglement) };
+		CriteriaSet[] referents = new CriteriaSet[] { new CriteriaSet(rankingCriterion) };
 
 		//boucle sur les critères du règlement
-		for(Criterion key : reglement.getListCriteria()) {
+		/*for(Criterion key : reglement.getListCriteria()) {
 			CriteriaSet[][] children = new CriteriaSet[referents.length][];
 
 			if(criteriaFilter.get(key)) {
@@ -557,7 +508,7 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 					}
 				}
 			}
-		}
+		}*/
 
 		return referents;
 	}
@@ -565,24 +516,22 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 	/**
 	 * Retourne une liste de jeux de critères enfant par rapport au jeux de reference
 	 * 
-	 * @param reglement le règlement servant de base
+	 * @param rankingCriterion le règlement servant de base
 	 * @param referent le jeux de critère de reference
 	 * @param criterion le critère de reference
 	 * @return les enfants
 	 */
-	private static List<CriteriaSet> getChildrenPopulation(Reglement reglement, CriteriaSet referent, Criterion criterion) {
+	private static List<CriteriaSet> getChildrenPopulation(RankingCriterion rankingCriterion, CriteriaSet referent, Criterion criterion) {
 		//crée la table des enfants
 		List<CriteriaSet> children = new ArrayList<CriteriaSet>();
 
 		for(CriterionElement element : criterion.getCriterionElements()) {
-			if(element.isActive()) {
-				//initialise les critères
-				CriteriaSet tempCrit = new CriteriaSet();
-				tempCrit.setReglement(reglement);
-				tempCrit.setElements(referent.getElements());
-				tempCrit.addCriterionElement(element);
-				children.add(tempCrit);
-			}
+			//initialise les critères
+			CriteriaSet tempCrit = new CriteriaSet();
+			tempCrit.setRankingCriterion(rankingCriterion);
+			tempCrit.setElements(referent.getElements());
+			tempCrit.addCriterionElement(element);
+			children.add(tempCrit);
 		}
 
 		return children;
@@ -645,11 +594,11 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		CriteriaSet clone = (CriteriaSet)super.clone();
-		List<DistancesEtBlasonAlternatif> clonedAlternative = new ArrayList<DistancesEtBlasonAlternatif>();
+		/*List<DistancesEtBlasonAlternatif> clonedAlternative = new ArrayList<DistancesEtBlasonAlternatif>();
 		for(DistancesEtBlasonAlternatif alternatif : distancesEtBlasonAlternatifs) {
 			clonedAlternative.add((DistancesEtBlasonAlternatif)alternatif.clone());
 		}
-		clone.setDistancesEtBlasonAlternatifs(clonedAlternative);
+		clone.setDistancesEtBlasonAlternatifs(clonedAlternative);*/
 		
 		clone.setTarifsCategorie(new ArrayList<RateCategory>(tarifsCategorie));
 		

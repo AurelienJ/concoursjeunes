@@ -88,8 +88,8 @@
  */
 package org.ajdeveloppement.concours;
 
-import org.ajdeveloppement.concours.data.Blason;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Face;
+import org.ajdeveloppement.concours.data.Rule;
 
 
 /**
@@ -102,7 +102,7 @@ import org.ajdeveloppement.concours.data.Reglement;
  *
  */
 public class Peloton extends Target {
-	public Peloton(int numPeloton, Reglement reglement, int nbTireurMaxparCible) {
+	public Peloton(int numPeloton, Rule reglement, int nbTireurMaxparCible) {
 		super(numPeloton, reglement, nbTireurMaxparCible);
 	}
 
@@ -124,7 +124,7 @@ public class Peloton extends Target {
 	 * @param position la position sur laquelle tester la présence d'un blason
 	 */
 	@Override
-	public boolean isSlotAvailable(Blason blason, int position) {
+	public boolean isSlotAvailable(Face blason, int position) {
 		if(getConcurrentAt(position) != null)
 			return false;
 		return true;

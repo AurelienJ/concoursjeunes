@@ -103,13 +103,13 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="CATEGORIE_TARIF",disableCache=true)
-@SqlPrimaryKey(fields={"ID_TARIF","NUMCRITERIASET"})
+@SqlPrimaryKey(fields={"ID_TARIF","ID_JEUX_CRITERES_DISCRIMINANT"})
 public class RateCategory implements SqlObjectPersistence {
 	@SqlForeignKey(mappedTo="ID_TARIF")
 	@XmlIDREF
 	private Rate tarif = null;
 	
-	@SqlForeignKey(mappedTo="NUMCRITERIASET")
+	@SqlForeignKey(mappedTo="ID_JEUX_CRITERES_DISCRIMINANT")
 	@XmlIDREF
 	private CriteriaSet category = null;
 	

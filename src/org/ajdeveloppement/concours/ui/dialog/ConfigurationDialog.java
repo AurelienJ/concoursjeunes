@@ -138,7 +138,7 @@ import org.ajdeveloppement.concours.Margin;
 import org.ajdeveloppement.concours.Profile;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Federation;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.event.AutoCompleteDocumentEvent;
 import org.ajdeveloppement.concours.event.AutoCompleteDocumentListener;
 import org.ajdeveloppement.concours.managers.ConfigurationManager;
@@ -682,9 +682,9 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 	}
 
 	private void completeConcoursPanel(Configuration configuration) {
-		Reglement reglement = reglementManager.getReglementByName(configuration.getReglementName());
+		Rule reglement = reglementManager.getReglementByName(configuration.getReglementName());
 		if(reglement != null) 
-			jlSelectedReglement.setText(reglement.getDisplayName());
+			jlSelectedReglement.setText(reglement.getName());
 		jtfNbCible.setText("" + configuration.getNbCible()); //$NON-NLS-1$
 		if(configuration.getNbTireur() == 2)
 			jcbNbTireur.setSelectedIndex(0);
@@ -1036,10 +1036,10 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 			jtfPortProxy.setEnabled(jrbUseSpecificConfig.isSelected());
 		} else if (source == jbSelectReglement) {
 			ReglementManagerDialog reglementManagerDialog = new ReglementManagerDialog(parentframe, profile);
-			Reglement reglement = reglementManagerDialog.showReglementManagerDialog(true);
+			Rule reglement = reglementManagerDialog.showReglementManagerDialog(true);
 			if(reglement != null) {
 				workConfiguration.setReglementName(reglement.getName());
-				jlSelectedReglement.setText(reglement.getDisplayName());
+				jlSelectedReglement.setText(reglement.getName());
 			}
 		}
 	}

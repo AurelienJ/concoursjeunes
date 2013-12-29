@@ -89,7 +89,6 @@ package org.ajdeveloppement.concours.builders;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -106,11 +105,8 @@ import org.ajdeveloppement.concours.data.Civility;
 import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.CriteriaSet;
-import org.ajdeveloppement.concours.data.Criterion;
-import org.ajdeveloppement.concours.data.CriterionElement;
 import org.ajdeveloppement.concours.data.Entite;
-import org.ajdeveloppement.concours.data.Reglement;
-import org.ajdeveloppement.concours.data.Surclassement;
+import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.T_Contact;
 
 /**
@@ -119,7 +115,7 @@ import org.ajdeveloppement.concours.data.T_Contact;
  * @author Aurélien JEOFFRAY
  * @version 1.0
  */
-public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,Reglement>{
+public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,Rule>{
 
 	private static LoadHelper<Archer,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Archer.class);
 	private static LoadHelper<Archer,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Archer.class);
@@ -132,7 +128,7 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 	 * @param reglement reglement le reglement appliqué à l'archer pour le qualifier en concurrent
 	 * @return le concurrent produit
 	 */
-	public static Concurrent getConcurrent(ResultSet resultSet, Reglement reglement) {
+	public static Concurrent getConcurrent(ResultSet resultSet, Rule reglement) {
 		return getConcurrent(null, resultSet, reglement);
 	}
 	
@@ -144,7 +140,7 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 	 * @param reglement le reglement appliqué
 	 * @return le concurrent construit
 	 */
-	public static Concurrent getConcurrent(UUID idArcher, Reglement reglement) {
+	public static Concurrent getConcurrent(UUID idArcher, Rule reglement) {
 		return getConcurrent(idArcher, null, reglement);
 	}
 	
@@ -157,7 +153,7 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 	 * @param reglement le reglement appliqué
 	 * @return l'archer construit
 	 */
-	private static Concurrent getConcurrent(UUID idArcher, ResultSet resultSet, Reglement reglement) {
+	private static Concurrent getConcurrent(UUID idArcher, ResultSet resultSet, Rule reglement) {
 		Concurrent concurrent = new Concurrent();
 
 		try {
@@ -193,58 +189,37 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 								differentiationCriteria = CriteriaSetBuilder
 										.getCriteriaSet(rsCriteriaSet.getInt("NUMCRITERIASET")); //$NON-NLS-1$
 							} else {
-								differentiationCriteria = new CriteriaSet(reglement);
-								for(Criterion key : reglement.getListCriteria()) {
-									boolean returnfirstval = true;
-									if(!key.getChampsTableArchers().isEmpty()) {
-										List<CriterionElement> arrayList = key.getCriterionElements();
-	
-										Integer value = (Integer)foreignKeyValue.get(Archer.class).get(key.getChampsTableArchers().toUpperCase());
-										if(value == null)
-											continue;
-										
-										int valindex = value; 
-										if(valindex >= arrayList.size())
-											valindex = arrayList.size() - 1;
-										if(valindex < 0)
-											valindex = 0;
-										
-										if(key.getCriterionElements().get(valindex).isActive())
-											differentiationCriteria.addCriterionElement(key.getCriterionElements().get(valindex));
-										else
-											return null;
-										
-										returnfirstval = false;
-									}
-									
-									if(returnfirstval) {
-										int valindex = 0;
-										while(valindex < key.getCriterionElements().size() 
-												&& !key.getCriterionElements().get(valindex).isActive())
-											valindex++;
-										if(valindex < key.getCriterionElements().size())
-											differentiationCriteria.addCriterionElement(key.getCriterionElements().get(valindex));
-										else
-											return null;
-									}
-								}
+//								differentiationCriteria = new CriteriaSet(reglement);
+//								for(Criterion key : reglement.getListCriteria()) {
+//									boolean returnfirstval = true;
+//									
+//									if(returnfirstval) {
+//										int valindex = 0;
+//										while(valindex < key.getCriterionElements().size())
+//											valindex++;
+//										if(valindex < key.getCriterionElements().size())
+//											differentiationCriteria.addCriterionElement(key.getCriterionElements().get(valindex));
+//										else
+//											return null;
+//									}
+//								}
 							}
 						}
 					}
 				}
 				
 				//régle de surclassement de l'archer
-				Surclassement surclassement = reglement.getSurclassement(differentiationCriteria);
-				if(surclassement != null) {
-					CriteriaSet tmpCS = surclassement.getCriteriaSetSurclasse();
-					
-					if(tmpCS == null) //si la categorie est invalide alors ne pas renvoyer l'archer
-						return null;
-					differentiationCriteria = tmpCS; //sinon retourner sa catégorie de surclassement
-					concurrent.setSurclassement(true);
-				}				
-
-				concurrent.setCriteriaSet(differentiationCriteria);
+//				Surclassement surclassement = reglement.getSurclassement(differentiationCriteria);
+//				if(surclassement != null) {
+//					CriteriaSet tmpCS = surclassement.getCriteriaSetSurclasse();
+//					
+//					if(tmpCS == null) //si la categorie est invalide alors ne pas renvoyer l'archer
+//						return null;
+//					differentiationCriteria = tmpCS; //sinon retourner sa catégorie de surclassement
+//					concurrent.setSurclassement(true);
+//				}				
+//
+//				concurrent.setCriteriaSet(differentiationCriteria);
 			}
 			
 		} catch (Exception e) {
@@ -260,27 +235,27 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 	 * @param reglement
 	 * @return L'objet concurrent produit à partir du reglement
 	 */
-	public static Concurrent getConcurrent(Reglement reglement) {
+	public static Concurrent getConcurrent(Rule reglement) {
 		Concurrent concurrent = new Concurrent();
 		
-		CriteriaSet differentiationCriteria = new CriteriaSet();
-		for(Criterion key : reglement.getListCriteria()) {
-			differentiationCriteria.addCriterionElement(key.getCriterionElements().get(0));
-		}
-		concurrent.setCriteriaSet(differentiationCriteria);
+//		CriteriaSet differentiationCriteria = new CriteriaSet();
+//		for(Criterion key : reglement.getListCriteria()) {
+//			differentiationCriteria.addCriterionElement(key.getCriterionElements().get(0));
+//		}
+//		concurrent.setCriteriaSet(differentiationCriteria);
 		
 		return concurrent;
 	}
 
 	@Override
-	public Concurrent get(ResultSet rs, SqlLoadingSessionCache sessionCache, Reglement binderRessourcesMap)
+	public Concurrent get(ResultSet rs, SqlLoadingSessionCache sessionCache, Rule binderRessourcesMap)
 			throws ObjectPersistenceException {
 		return getConcurrent(rs, binderRessourcesMap);
 	}
 
 	@Override
 	public Concurrent get(SqlLoadingSessionCache sessionCache,
-			Reglement binderRessourcesMap, Object... primaryKeyValues)
+			Rule binderRessourcesMap, Object... primaryKeyValues)
 			throws ObjectPersistenceException {
 		// TODO Raccord de méthode auto-généré
 		return null;

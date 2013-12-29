@@ -89,26 +89,19 @@
 package org.ajdeveloppement.concours.data;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
-import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
@@ -122,7 +115,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="FEDERATION")
 @SqlPrimaryKey(fields="ID_ENTITE")
-@SqlUnmappedFields(fields="ID_ENTITE")
+@SqlUnmappedFields(fields="ID_ENTITE",typeFields=UUID.class)
 public class Federation extends Entite implements SqlObjectPersistence {
 	private static StoreHelper<Federation> helper = SqlStoreHelperFactory.getStoreHelper(Federation.class);
 
@@ -133,11 +126,6 @@ public class Federation extends Entite implements SqlObjectPersistence {
 	@SqlField(name="NOM")
 	@XmlElement(name="nom")
 	private String nomFederation = ""; //$NON-NLS-1$
-	
-	@SqlChildCollection(foreignFields="ID_ENTITE",type=CompetitionLevel.class)
-	@XmlElementWrapper(name="niveaux",required=true)
-	@XmlElement(name="niveau")
-	private List<CompetitionLevel> competitionLevels = new ArrayList<CompetitionLevel>();
 	
 	/**
 	 * Construit une nouvelle fédération
@@ -194,60 +182,6 @@ public class Federation extends Entite implements SqlObjectPersistence {
 		this.nomFederation = nomFederation;
 	}
 
-
-	/**
-	 * <p>Définit la liste des niveaux de compétition disponible.</p>
-	 * <p>Comme aucune vérification de la présence en base des niveaux n'est réalisé,
-	 * cette méthode est uniquement présente pour une utilisation par les
-	 * fonction de sérialisation XML.</p>
-	 * <p>Utiliser à la place les méthodes {@link #addCompetitionLevel(CompetitionLevel)}
-	 * et {@link #removeCompetitionLevel(CompetitionLevel)} qui assure les fonctions
-	 * de persistance</p>
-	 * 
-	 * @param competitionLevels la liste des niveaux de compétition disponible
-	 */
-	public void setCompetitionLevels(List<CompetitionLevel> competitionLevels) {
-		this.competitionLevels = competitionLevels;
-		
-		for(CompetitionLevel competitionLevel : competitionLevels)
-			competitionLevel.setFederation(this);
-	}
-	
-	/**
-	 * Ajoute un niveau de compétition à la fédération. Lorsqu'un niveau
-	 * de compétition est ajouté à la fédération, celui ci est immédiatement 
-	 * enregistrer dans la base de données.
-	 * 
-	 * @param competitionLevel le niveau de compétition à ajouter à la fédération.
-	 */
-	public void addCompetitionLevel(CompetitionLevel competitionLevel) {
-		this.competitionLevels.add(competitionLevel);
-		
-		competitionLevel.setFederation(this);
-	}
-	
-	/**
-	 * Supprime un niveau de compétition de la fédération. Lorsqu'un niveau
-	 * de compétition est supprimé de la fédération, celui ci est immédiatement 
-	 * supprimé dans la base de données.
-	 * 
-	 * @param competitionLevel le niveau de compétition à supprimer de la fédération.
-	 */
-	public void removeCompetitionLevel(CompetitionLevel competitionLevel) {
-		this.competitionLevels.remove(competitionLevel);
-	}
-
-	/**
-	 * <p>Retourne la liste de tous les niveaux de compétition accessible pour la
-	 * fédération</p>
-	 * 
-	 * @return la liste de tous les niveaux de compétition accessible pour la
-	 * fédération
-	 */
-	public List<CompetitionLevel> getCompetitionLevels() {
-		return competitionLevels;
-	}
-
 	private void checkAlreadyExists() throws ObjectPersistenceException {
 		try {
 			UUID nullableIdFederation = QResults.from(Federation.class).where(
@@ -265,16 +199,6 @@ public class Federation extends Entite implements SqlObjectPersistence {
 		}
 	}
 	
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-	
 	/**
 	 * Sauvegarde la fédération en base de données. Les arguments sont ignoré.
 	 */
@@ -289,8 +213,6 @@ public class Federation extends Entite implements SqlObjectPersistence {
 			Session.addProcessedObject(session,this);
 			
 			Cache.put(this);
-
-			PersitentCollection.save(competitionLevels, session, Collections.<String, Object>singletonMap("ID_ENTITE", getIdEntite()));
 		}
 	}
 

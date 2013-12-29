@@ -99,12 +99,12 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  *
  */
 @SqlTable(name="ASSOCIER_CATEGORIE_CONTACT")
-@SqlPrimaryKey(fields={"ID_CONTACT", "NUM_CATEGORIE_CONTACT"})
+@SqlPrimaryKey(fields={"ID_CONTACT", "ID_CATEGORIE_CONTACT"})
 public class CategoryContactContact implements SqlObjectPersistence {
 	@SqlForeignKey(mappedTo="ID_CONTACT")
 	private Contact contact;
 	
-	@SqlForeignKey(mappedTo="NUM_CATEGORIE_CONTACT")
+	@SqlForeignKey(mappedTo="ID_CATEGORIE_CONTACT")
 	private CategoryContact categoryContact;
 	
 	/**

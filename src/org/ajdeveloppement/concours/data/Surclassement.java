@@ -118,7 +118,7 @@ public class Surclassement implements ObjectPersistence, Cloneable {
 	
 	@XmlTransient
 	@SqlForeignKey(mappedTo="ID_REGLEMENT")
-	private Reglement reglement;
+	private Rule reglement;
 	
 	@SqlForeignKey(mappedTo="NUMCRITERIASET_SURCLASSE")
 	private CriteriaSet criteriaSetSurclasse;
@@ -152,25 +152,25 @@ public class Surclassement implements ObjectPersistence, Cloneable {
 	 */
 	public void setCriteriaSet(CriteriaSet criteriaSet) {
 		this.criteriaSet = criteriaSet;
-		criteriaSet.setReglement(reglement);
+//		criteriaSet.setReglement(reglement);
 	}
 
 	/**
 	 * @return reglement
 	 */
-	public Reglement getReglement() {
+	public Rule getReglement() {
 		return reglement;
 	}
 
 	/**
 	 * @param reglement reglement à définir
 	 */
-	public void setReglement(Reglement reglement) {
+	public void setReglement(Rule reglement) {
 		this.reglement = reglement;
-		if(criteriaSet != null)
-			criteriaSet.setReglement(reglement);
-		if(criteriaSetSurclasse != null)
-			criteriaSetSurclasse.setReglement(reglement);
+//		if(criteriaSet != null)
+//			criteriaSet.setReglement(reglement);
+//		if(criteriaSetSurclasse != null)
+//			criteriaSetSurclasse.setReglement(reglement);
 	}
 
 	/**
@@ -185,7 +185,7 @@ public class Surclassement implements ObjectPersistence, Cloneable {
 	 */
 	public void setCriteriaSetSurclasse(CriteriaSet criteriaSetSurclasse) {
 		this.criteriaSetSurclasse = criteriaSetSurclasse;
-		criteriaSetSurclasse.setReglement(reglement);
+//		criteriaSetSurclasse.setReglement(reglement);
 	}
 	
 	/**
@@ -247,8 +247,8 @@ public class Surclassement implements ObjectPersistence, Cloneable {
 	 * @param parent
 	 */
 	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		if(parent instanceof Reglement)
-			setReglement((Reglement)parent);
+		if(parent instanceof Rule)
+			setReglement((Rule)parent);
 	}
 	
 	/* (non-Javadoc)

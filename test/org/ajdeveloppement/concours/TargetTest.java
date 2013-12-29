@@ -95,7 +95,7 @@ import org.ajdeveloppement.concours.Target;
 import org.ajdeveloppement.concours.Target.Repartition;
 import org.ajdeveloppement.concours.builders.ConcurrentBuilder;
 import org.ajdeveloppement.concours.data.Concurrent;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.exceptions.PlacementException;
 import org.ajdeveloppement.concours.managers.ReglementManager;
 import org.junit.After;
@@ -109,7 +109,7 @@ import org.junit.Test;
 @SuppressWarnings("nls")
 public class TargetTest extends TestCase {
 
-	Reglement reglement;
+	Rule reglement;
 	Target targetVide;
 	Target target1Archer;
 	/**

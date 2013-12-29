@@ -105,7 +105,7 @@ import org.ajdeveloppement.concours.data.CriteriaSet;
 import org.ajdeveloppement.concours.data.Criterion;
 import org.ajdeveloppement.concours.data.DistancesEtBlason;
 import org.ajdeveloppement.concours.data.Entite;
-import org.ajdeveloppement.concours.data.Reglement;
+import org.ajdeveloppement.concours.data.Rule;
 
 /**
  * Collection des concurrents présent sur le concours
@@ -284,13 +284,13 @@ public class ConcurrentList {
 		ArrayList<Concurrent> sel = new ArrayList<Concurrent>();
 
 		//recherche
-		for(Concurrent concurrent : archList) {
-			if(concurrent.getEntite().equals(compagnie)
-					&& (criteriaSet == null || 
-							criteriaSet.equals(concurrent.getCriteriaSet().getFilteredCriteriaSet(criteriaFilter)))
-							&& (depart == -1 || concurrent.getDepart() == depart))
-				sel.add(concurrent);
-		}
+//		for(Concurrent concurrent : archList) {
+//			if(concurrent.getEntite().equals(compagnie)
+//					&& (criteriaSet == null || 
+//							criteriaSet.equals(concurrent.getCriteriaSet().getFilteredCriteriaSet(criteriaFilter)))
+//							&& (depart == -1 || concurrent.getDepart() == depart))
+//				sel.add(concurrent);
+//		}
 
 		return sel;
 	}
@@ -311,11 +311,11 @@ public class ConcurrentList {
 
 		List<Concurrent> sel = new ArrayList<Concurrent>();
 
-		for(Concurrent concurrent : archList) {
-			if(criteriaSet.equals(concurrent.getCriteriaSet().getFilteredCriteriaSet(criteriaFilter)) && 
-					(depart == -1 || concurrent.getDepart() == depart))
-				sel.add(concurrent);
-		}
+//		for(Concurrent concurrent : archList) {
+//			if(criteriaSet.equals(concurrent.getCriteriaSet().getFilteredCriteriaSet(criteriaFilter)) && 
+//					(depart == -1 || concurrent.getDepart() == depart))
+//				sel.add(concurrent);
+//		}
 
 		return sel;
 	}
@@ -428,19 +428,19 @@ public class ConcurrentList {
 		Classement classement = new Classement();
 		Map<CriteriaSet, List<Concurrent>> concurrentsClasse = new HashMap<CriteriaSet, List<Concurrent>>();
 
-		CriteriaSet[] catList = CriteriaSet.listCriteriaSet(parametre.getReglement(), parametre.getReglement().getClassementFilter());
-
-		// Affectation des valeurs
-		for (CriteriaSet categorie : catList) {
-			// sort la liste des concurrents correspondant aux critères de
-			// recherche
-			List<Concurrent> unsortList = list(categorie, -1, parametre.getReglement().getClassementFilter());
-			if (unsortList.size() > 0) {
-				List<Concurrent> sortList = sort(unsortList, ConcurrentList.SortCriteria.SORT_BY_POINTS);
-			
-				concurrentsClasse.put(categorie, sortList);
-			}
-		}
+//		CriteriaSet[] catList = CriteriaSet.listCriteriaSet(parametre.getReglement(), parametre.getReglement().getClassementFilter());
+//
+//		// Affectation des valeurs
+//		for (CriteriaSet categorie : catList) {
+//			// sort la liste des concurrents correspondant aux critères de
+//			// recherche
+//			List<Concurrent> unsortList = list(categorie, -1, parametre.getReglement().getClassementFilter());
+//			if (unsortList.size() > 0) {
+//				List<Concurrent> sortList = sort(unsortList, ConcurrentList.SortCriteria.SORT_BY_POINTS);
+//			
+//				concurrentsClasse.put(categorie, sortList);
+//			}
+//		}
 		
 		classement.setClassementPhaseQualificative(concurrentsClasse);
 		
@@ -584,17 +584,17 @@ public class ConcurrentList {
 	 */
 	public List<CriteriaSet> listCriteriaSet() {
 		List<CriteriaSet> criteriaSets = new ArrayList<CriteriaSet>();
-		CriteriaSet[] catList = CriteriaSet.listCriteriaSet(parametre.getReglement(), parametre.getReglement().getClassementFilter());
-
-		// Affectation des valeurs
-		for (CriteriaSet categorie : catList) {
-			// sort la liste des concurrents correspondant aux critères de
-			// recherche
-			List<Concurrent> unsortList = list(categorie, -1, parametre.getReglement().getClassementFilter());
-			if (unsortList.size() > 0) {
-				criteriaSets.add(categorie);
-			}
-		}
+//		CriteriaSet[] catList = CriteriaSet.listCriteriaSet(parametre.getReglement(), parametre.getReglement().getClassementFilter());
+//
+//		// Affectation des valeurs
+//		for (CriteriaSet categorie : catList) {
+//			// sort la liste des concurrents correspondant aux critères de
+//			// recherche
+//			List<Concurrent> unsortList = list(categorie, -1, parametre.getReglement().getClassementFilter());
+//			if (unsortList.size() > 0) {
+//				criteriaSets.add(categorie);
+//			}
+//		}
 		
 		return criteriaSets;
 	}
@@ -607,7 +607,7 @@ public class ConcurrentList {
 	 * 
 	 * @return la liste des distances/blasons du départ
 	 */
-	public List<DistancesEtBlason> listDistancesEtBlason(Reglement reglement, int depart) {
+	public List<DistancesEtBlason> listDistancesEtBlason(Rule reglement, int depart) {
 		return listDistancesEtBlason(reglement, false, depart);
 	}
 
@@ -620,7 +620,7 @@ public class ConcurrentList {
 	 * 
 	 * @return la liste des distances/blasons utilisé pour un départ donné
 	 */
-	public List<DistancesEtBlason> listDistancesEtBlason(Reglement reglement, boolean sort, int depart) {
+	public List<DistancesEtBlason> listDistancesEtBlason(Rule reglement, boolean sort, int depart) {
 		List<DistancesEtBlason> alDB = new ArrayList<DistancesEtBlason>();
 
 		for(Concurrent concurrent: archList) {
@@ -812,8 +812,8 @@ public class ConcurrentList {
 	public void setParametre(Parametre parametre) {
 		this.parametre = parametre;
 		if(archList != null) {
-			for(Concurrent concurrent : archList)
-				concurrent.getCriteriaSet().setReglement(parametre.getReglement());
+//			for(Concurrent concurrent : archList)
+//				concurrent.getCriteriaSet().setReglement(parametre.getReglement());
 		}
 	}
 	

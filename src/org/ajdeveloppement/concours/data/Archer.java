@@ -116,7 +116,7 @@ import org.ajdeveloppement.concours.managers.ConcurrentManager;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="ARCHERS",loadBuilder=ConcurrentBuilder.class)
 @SqlPrimaryKey(fields="ID_CONTACT")
-@SqlUnmappedFields(fields={"ID_CONTACT","SEXE","CATEGORIE","NIVEAU","ARC"})
+@SqlUnmappedFields(fields={"ID_CONTACT","SEXE","CATEGORIE","NIVEAU","ARC","DATENAISS","DATEMODIF"},typeFields={UUID.class})
 public class Archer extends Contact {
 	private static CategoryContact archerCategoryContact = null;
 	private static StoreHelper<Archer> helper = SqlStoreHelperFactory.getStoreHelper(Archer.class);

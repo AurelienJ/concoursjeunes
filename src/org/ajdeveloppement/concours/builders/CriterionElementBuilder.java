@@ -164,7 +164,6 @@ public class CriterionElementBuilder implements ResultSetRowToObjectBinder<Crite
 	public static CriterionElement getCriterionElement(String codeElement, String libelle, boolean active, int numordre) {
 		CriterionElement element = new CriterionElement(codeElement);
 		element.setLibelle(libelle);
-		element.setActive(active);
 		element.setNumordre(numordre);
 		
 		return element;

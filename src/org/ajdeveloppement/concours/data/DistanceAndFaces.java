@@ -1,7 +1,7 @@
 /*
- * Créé le 3 mai 2009 à 17:32:56 pour ArcCompetition
+ * Créé le 28 déc. 2013 à 13:28:30 pour ArcCompetition
  *
- * Copyright 2002-2009 - Aurélien JEOFFRAY
+ * Copyright 2002-2013 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -36,7 +36,7 @@
  * à l'utiliser et l'exploiter dans les mêmes conditions de sécurité. 
  * 
  * Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
- * pri connaissance de la licence CeCILL, et que vous en avez accepté les
+ * pris connaissance de la licence CeCILL, et que vous en avez accepté les
  * termes.
  *
  * ENGLISH:
@@ -75,7 +75,7 @@
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
- *  any later version.
+ *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -86,123 +86,108 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.builders;
+package org.ajdeveloppement.concours.data;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
-import org.ajdeveloppement.commons.persistence.LoadHelper;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
-import org.ajdeveloppement.concours.data.CompetitionLevel;
-import org.ajdeveloppement.concours.data.Federation;
-import org.ajdeveloppement.concours.data.T_CompetitionLevel;
-import org.ajdeveloppement.concours.data.T_Federation;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class FederationBuilder implements ResultSetRowToObjectBinder<Federation,Void>{
+@SqlTable(name="DISTANCE_BLASONS")
+@SqlPrimaryKey(fields="ID_DISTANCE_BLASONS",generatedidField=@SqlGeneratedIdField(name="ID_DISTANCE_BLASONS"))
+public class DistanceAndFaces implements SqlObjectPersistence {
+	@SqlField(name="ID_DISTANCE_BLASONS")
+	private UUID id;
 	
-	private static LoadHelper<Federation,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Federation.class);
-	private static LoadHelper<Federation,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Federation.class);
+	@SqlField(name="DISTANCE")
+	private double distance;
 	
-	/**
-	 * Retourne la fédération qualifié par son identifiant en base
-	 * 
-	 * @param idFederation l'id de la fédération
-	 * @return la fédération a retourner
-	 * @throws ObjectPersistenceException
-	 */
-	public static Federation getFederation(UUID idFederation) throws ObjectPersistenceException {
-		return getFederation(idFederation, null, null);
-	}
+	@SqlField(name="SERIE")
+	private int serie;
 	
-	/**
-	 * Retourne la fédération qualifié par son identifiant en base
-	 * 
-	 * @param idFederation l'id de la fédération
-	 * @param sessionCache cache de session
-	 * @return la fédération a retourner
-	 * @throws ObjectPersistenceException
-	 */
-	public static Federation getFederation(UUID idFederation, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		return getFederation(idFederation, null, sessionCache);
-	}
+	@SqlForeignKey(mappedTo="ID_JEUX_DISTANCES_BLASONS")
+	private DistanceAndFacesSet distanceAndFaceSet;
+	
+	@SqlChildCollection(foreignFields="ID_DISTANCE_BLASONS",type=FaceDistanceAndFaces.class)
+	private List<FaceDistanceAndFaces> facesDistanceAndFaces;
 	
 	/**
-	 * Construit la fédération a partir du jeux de résultat correspondant
-	 * 
-	 * @param rs le resultset contenant les enregistrement en base permettant de construire la fédération
-	 * @param sessionCache 
-	 * @return la fédération a retourner
-	 * @throws ObjectPersistenceException
+	 * @return id
 	 */
-	public static Federation getFederation(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		return getFederation(null, rs, sessionCache);
-	}
-	
-	/**
-	 * 
-	 * @param idFederation
-	 * @param rs
-	 * @return
-	 * @throws ObjectPersistenceException
-	 */
-	private static Federation getFederation(UUID idFederation, ResultSet resultSet, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		if(sessionCache == null)
-			sessionCache = new SqlLoadingSessionCache();
-		
-		if(resultSet != null) {
-			try {
-				idFederation =  T_Federation.ID_ENTITE.getValue(resultSet);
-			} catch (SQLException e) {
-				throw new ObjectPersistenceException(e);
-			}
-		}
-			
-		Federation federation = Cache.get(Federation.class, idFederation);
-		if(federation == null) {
-			federation = new Federation();
-			if(resultSet == null) {
-				federation.setIdEntite(idFederation);
-				
-				loadHelper.load(federation);
-			} else {
-				resultSetLoadHelper.load(federation, resultSet);
-			}
-			
-			Cache.put(federation);
-
-			federation.setCompetitionLevels(
-					QResults.from(CompetitionLevel.class, sessionCache)
-						.where(T_CompetitionLevel.ID_ENTITE.equalTo(idFederation))
-						.orderBy(T_CompetitionLevel.ORDRE)
-						.asList());
-		}
-		
-		return federation;
+	public UUID getId() {
+		return id;
 	}
 
-	@Override
-	public Federation get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap)
-			throws ObjectPersistenceException {
-		return getFederation(rs, sessionCache);
+	/**
+	 * @param id id à définir
+	 */
+	public void setId(UUID id) {
+		this.id = id;
 	}
 
-	@Override
-	public Federation get(SqlLoadingSessionCache sessionCache,
-			Void binderRessourcesMap, Object... primaryKeyValues)
-			throws ObjectPersistenceException {
-		// TODO Raccord de méthode auto-généré
-		return null;
+	/**
+	 * @return distance
+	 */
+	public double getDistance() {
+		return distance;
+	}
+
+	/**
+	 * @param distance distance à définir
+	 */
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
+
+	/**
+	 * @return serie
+	 */
+	public int getSerie() {
+		return serie;
+	}
+
+	/**
+	 * @param serie serie à définir
+	 */
+	public void setSerie(int serie) {
+		this.serie = serie;
+	}
+
+	/**
+	 * @return distanceAndFaceSet
+	 */
+	public DistanceAndFacesSet getDistanceAndFaceSet() {
+		return distanceAndFaceSet;
+	}
+
+	/**
+	 * @param distanceAndFaceSet distanceAndFaceSet à définir
+	 */
+	public void setDistanceAndFaceSet(DistanceAndFacesSet distanceAndFaceSet) {
+		this.distanceAndFaceSet = distanceAndFaceSet;
+	}
+
+	/**
+	 * @return facesDistanceAndFaces
+	 */
+	public List<FaceDistanceAndFaces> getFacesDistanceAndFaces() {
+		return facesDistanceAndFaces;
+	}
+
+	/**
+	 * @param facesDistanceAndFaces facesDistanceAndFaces à définir
+	 */
+	public void setFacesDistanceAndFaces(List<FaceDistanceAndFaces> facesDistanceAndFaces) {
+		this.facesDistanceAndFaces = facesDistanceAndFaces;
 	}
 }

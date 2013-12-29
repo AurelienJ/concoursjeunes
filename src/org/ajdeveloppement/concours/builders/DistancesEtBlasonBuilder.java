@@ -118,7 +118,7 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 	/**
 	 * Construit un objet DistancesEtBlason en se basan sur le numero de sa reference
 	 * en base ainsi que le numero de réglement.<br>
-	 * Associe à l'objet DistancesEtBlason l'objet Reglement lié
+	 * Associe à l'objet DistancesEtBlason l'objet Rule lié
 	 * 
 	 * @param idDistancesblason Le numero de la ligne en base
 	 * 
@@ -132,7 +132,7 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 	/**
 	 * Construit un objet DistancesEtBlason en se basan sur le numero de sa reference
 	 * en base ainsi que le numero de réglement.<br>
-	 * Associe à l'objet DistancesEtBlason l'objet Reglement lié
+	 * Associe à l'objet DistancesEtBlason l'objet Rule lié
 	 * 
 	 * @param idDistancesblason Le numero de la ligne en base
 	 * @param doNotUseCache ne pas utiliser le cache
@@ -191,7 +191,7 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 	/**
 	 * Construit un objet DistancesEtBlason en se basan sur le numero de sa reference
 	 * en base ainsi que le numero de réglement.<br>
-	 * Associe à l'objet DistancesEtBlason l'objet Reglement lié
+	 * Associe à l'objet DistancesEtBlason l'objet Rule lié
 	 * 
 	 * @param idDistancesBlason Le numero de la ligne en base
 	 * @param reglement Le réglement à lié
@@ -226,7 +226,7 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 						.asList());
 			
 			if(foreignKeys != null) {
-				distancesEtBlason.setTargetFace(BlasonBuilder.getBlason((UUID)foreignKeys.get(DistancesEtBlason.class)
+				distancesEtBlason.setTargetFace(FaceBuilder.getBlason((UUID)foreignKeys.get(DistancesEtBlason.class)
 						.get(T_DistancesEtBlason.NUMBLASON.getFieldName())));
 			}
 		} catch (SQLException e) {

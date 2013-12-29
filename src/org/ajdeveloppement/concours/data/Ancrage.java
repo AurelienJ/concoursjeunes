@@ -155,7 +155,7 @@ public class Ancrage implements SqlObjectPersistence {
 	
 	@XmlTransient
 	@SqlForeignKey(mappedTo="ID_BLASON")
-	private Blason blason;
+	private Face blason;
 	
 	/**
 	 * Construit un nouvel encrange de blason
@@ -194,7 +194,7 @@ public class Ancrage implements SqlObjectPersistence {
 	 * 
 	 * @return blason le blason associé à l'ancrage
 	 */
-	public Blason getBlason() {
+	public Face getBlason() {
 		return blason;
 	}
 
@@ -203,7 +203,7 @@ public class Ancrage implements SqlObjectPersistence {
 	 * 
 	 * @param blason le blason associé à l'ancrage
 	 */
-	public void setBlason(Blason blason) {
+	public void setBlason(Face blason) {
 		this.blason = blason;
 	}
 
@@ -278,7 +278,7 @@ public class Ancrage implements SqlObjectPersistence {
 	 * @param parent the parent object in XML graph
 	 */
 	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		if(parent instanceof Blason)
-			blason = (Blason)parent;
+		if(parent instanceof Face)
+			blason = (Face)parent;
 	}
 }

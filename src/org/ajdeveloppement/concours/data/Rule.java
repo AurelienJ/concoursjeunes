@@ -91,6 +91,7 @@ package org.ajdeveloppement.concours.data;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -117,8 +118,10 @@ import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 
@@ -149,9 +152,9 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="REGLEMENT")
-@SqlPrimaryKey(fields="ID_REGLEMENT")
-public class Reglement implements SqlObjectPersistence, Cloneable {
-	private static StoreHelper<Reglement> helper = SqlStoreHelperFactory.getStoreHelper(Reglement.class);
+@SqlPrimaryKey(fields="ID_REGLEMENT", generatedidField=@SqlGeneratedIdField(name="ID_REGLEMENT",type=Types.JAVA_OBJECT))
+public class Rule implements SqlObjectPersistence, Cloneable {
+	private static StoreHelper<Rule> helper = SqlStoreHelperFactory.getStoreHelper(Rule.class);
 	
 	/**
 	 * Type de réglement
@@ -182,22 +185,18 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	@XmlTransient
 	@SqlField(name="ID_REGLEMENT")
 	private UUID idReglement;
+	
 	@XmlTransient
 	@SqlForeignKey(mappedTo="ID_COMPETITION")
 	private Competition competition;
 	
 	@XmlAttribute
 	@XmlID
-	@SqlField(name="NOMREGLEMENT")
+	@SqlField(name="NOM")
 	private String name = "default"; //$NON-NLS-1$
-	@SqlField(name="LIBELLE")
-	private String displayName = ""; //$NON-NLS-1$
-	
+
 	@SqlField(name="DESCRIPTION")
 	private String description = ""; //$NON-NLS-1$
-	
-	@SqlField(name="TYPEREGLEMENT")
-	private TypeReglement reglementType = TypeReglement.TARGET;
 
 	@SqlField(name="NBSERIE")
 	private int nbSerie = 2;
@@ -211,15 +210,15 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	private int nbMembresEquipe = 4;
 	@SqlField(name="NBMEMBRESRETENU")
 	private int nbMembresRetenu = 3;
+	@SqlField(name="ISOFFICIAL")
+	private boolean officialReglement = false;
 
 	@XmlElementWrapper(name="criteria",required=true)
     @XmlElement(name="criterion")
 	private List<Criterion> listCriteria = new ArrayList<>();
-	
 	@XmlElementWrapper(name="distancesEtBlasons",required=true)
     @XmlElement(name="distancesEtBlason")
 	private List<DistancesEtBlason> listDistancesEtBlason = new ArrayList<>();
-	
 	@XmlElementWrapper(name="surclassements",required=true)
 	@XmlElement(name="surclassement")
 	private List<Surclassement> surclassements = new ArrayList<>();
@@ -229,13 +228,16 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	@XmlElementWrapper(name="departages",required=true)
     @XmlElement(name="departage")
 	private List<Tie> tie = new ArrayList<>();
+	
+	@SqlChildCollection(foreignFields="ID_REGLEMENT", type=RankingCriterion.class)
+	private List<RankingCriterion> rankingCriteria;
 
-	@SqlField(name="ISOFFICIAL")
-	private boolean officialReglement = false;
-	@SqlForeignKey(mappedTo="NUMFEDERATION")
-	private Federation federation = new Federation();
-	@SqlField(name="NUMCATEGORIE_REGLEMENT")
-	private int category = 0;
+	@SqlForeignKey(mappedTo="ID_ENTITE")
+	private Entite entite = new Entite();
+	@SqlForeignKey(mappedTo="NUMCATEGORIE_REGLEMENT")
+	private RulesCategory category;
+	@SqlField(name="TYPEREGLEMENT")
+	private TypeReglement reglementType = TypeReglement.TARGET;
 	@SqlField(name="REMOVABLE")
 	private boolean removable = true;
 	
@@ -247,7 +249,7 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	 * Constructeur java-beans. Initialise un règlement par défaut
 	 * 
 	 */
-	public Reglement() {
+	public Rule() {
 	}
 
 	/**
@@ -255,7 +257,7 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	 * 
 	 * @param name le nom du règlement à créer
 	 */
-	public Reglement(String name) {
+	public Rule(String name) {
 		this.name = name;
 	}
 	
@@ -347,28 +349,6 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 		this.name = name;
 		
 		pcs.firePropertyChange("name", oldValue, name); //$NON-NLS-1$
-	}
-
-	/**
-	 * Retourne le nom à afficher du règlement
-	 * 
-	 * @return displayName le nom à afficher du règlement
-	 */
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	/**
-	 * Définit le nom à afficher du règlement
-	 * 
-	 * @param displayName le nom à afficher du règlement
-	 */
-	public void setDisplayName(String displayName) {
-		Object oldValue = this.displayName;
-		
-		this.displayName = displayName;
-		
-		pcs.firePropertyChange("displayName", oldValue, displayName); //$NON-NLS-1$
 	}
 	
 	/**
@@ -560,20 +540,20 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 		this.listPlacementCriteriaSet = placementCriteriaSet;
 		
 		listDistancesEtBlason.clear();
-		for(CriteriaSet criteriaSet : placementCriteriaSet) {
-			criteriaSet.setReglement(this);
-			
-			if(!listDistancesEtBlason.contains(criteriaSet.getDistancesEtBlason())) {
-				listDistancesEtBlason.add(criteriaSet.getDistancesEtBlason());
-				if(criteriaSet.getDistancesEtBlasonAlternatifs() != null) {
-					for (DistancesEtBlasonAlternatif alternative : criteriaSet.getDistancesEtBlasonAlternatifs()) {
-						if(!listDistancesEtBlason.contains(alternative.getDistancesEtBlason())) {
-							listDistancesEtBlason.add(alternative.getDistancesEtBlason());
-						}
-					}
-				}
-			}
-		}
+//		for(CriteriaSet criteriaSet : placementCriteriaSet) {
+//			criteriaSet.setReglement(this);
+//			
+//			if(!listDistancesEtBlason.contains(criteriaSet.getDistancesEtBlason())) {
+//				listDistancesEtBlason.add(criteriaSet.getDistancesEtBlason());
+//				if(criteriaSet.getDistancesEtBlasonAlternatifs() != null) {
+//					for (DistancesEtBlasonAlternatif alternative : criteriaSet.getDistancesEtBlasonAlternatifs()) {
+//						if(!listDistancesEtBlason.contains(alternative.getDistancesEtBlason())) {
+//							listDistancesEtBlason.add(alternative.getDistancesEtBlason());
+//						}
+//					}
+//				}
+//			}
+//		}
 	}
 	
 	/**
@@ -611,7 +591,7 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	public Map<Criterion, Boolean> getPlacementFilter() {
 		Hashtable<Criterion, Boolean> filterCriteria = new Hashtable<Criterion, Boolean>();
 		for (Criterion criterion : listCriteria) {
-			filterCriteria.put(criterion, criterion.isPlacement());
+			filterCriteria.put(criterion, false);
 		}
 
 		return filterCriteria;
@@ -626,7 +606,7 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	public Map<Criterion, Boolean> getClassementFilter() {
 		Hashtable<Criterion, Boolean> filterCriteria = new Hashtable<Criterion, Boolean>();
 		for (Criterion criterion : listCriteria) {
-			filterCriteria.put(criterion, criterion.isClassement());
+			filterCriteria.put(criterion, true);
 		}
 
 		return filterCriteria;
@@ -639,16 +619,16 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	 * @return liste des critères de classement valide sur le règlement
 	 */
 	public List<CriteriaSet> getValidClassementCriteriaSet() {
-		CriteriaSet[] lccs = CriteriaSet.listCriteriaSet(this, getClassementFilter());
+//		CriteriaSet[] lccs = CriteriaSet.listCriteriaSet(this, getClassementFilter());
 		List<CriteriaSet> validCS = new ArrayList<CriteriaSet>();
 		
 		if(indexedSurclassement.size() != surclassements.size())
 			reindexSurclassement();
 		
-		for(CriteriaSet cs : lccs) {
-			if(!indexedSurclassement.containsKey(cs))
-				validCS.add(cs);
-		}
+//		for(CriteriaSet cs : lccs) {
+//			if(!indexedSurclassement.containsKey(cs))
+//				validCS.add(cs);
+//		}
 		
 		return validCS;
 	}
@@ -662,23 +642,23 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	public List<CriteriaSet> getValidPlacementCriteriaSet() {
 		List<CriteriaSet> validCS = new ArrayList<CriteriaSet>();
 		List<CriteriaSet> placementCS = new ArrayList<CriteriaSet>();
-		CriteriaSet[] lccs = CriteriaSet.listCriteriaSet(this, getClassementFilter());
-		CriteriaSet[] lpcs = CriteriaSet.listCriteriaSet(this, getPlacementFilter());
+//		CriteriaSet[] lccs = CriteriaSet.listCriteriaSet(this, getClassementFilter());
+//		CriteriaSet[] lpcs = CriteriaSet.listCriteriaSet(this, getPlacementFilter());
 		
 		if(indexedSurclassement.size() != surclassements.size())
 			reindexSurclassement();
-
-		for(CriteriaSet cs : lccs) {
-			CriteriaSet jeuxDePlacement = cs.getFilteredCriteriaSet(getPlacementFilter());
-			if(indexedSurclassement.containsKey(cs) && !validCS.contains(jeuxDePlacement))
-				validCS.add(jeuxDePlacement);
-		}
-		
-		//permet de conserver l'ordre des critères de placements
-		for(CriteriaSet cs : lpcs) {
-			if(validCS.contains(cs))
-				placementCS.add(cs);
-		}
+//
+//		for(CriteriaSet cs : lccs) {
+//			CriteriaSet jeuxDePlacement = cs.getFilteredCriteriaSet(getPlacementFilter());
+//			if(indexedSurclassement.containsKey(cs) && !validCS.contains(jeuxDePlacement))
+//				validCS.add(jeuxDePlacement);
+//		}
+//		
+//		//permet de conserver l'ordre des critères de placements
+//		for(CriteriaSet cs : lpcs) {
+//			if(validCS.contains(cs))
+//				placementCS.add(cs);
+//		}
 		
 		return placementCS;
 	}
@@ -898,25 +878,25 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	}
 
 	/**
-	 * Définit la fédération associé à un règlement
+	 * Définit l'entité associé au reglement
 	 * 
-	 * @param federation la fédération associé à un règlement
+	 * @param entite l'entité associé au reglement
 	 */
-	public void setFederation(Federation federation) {
-		Object oldValue = this.federation;
+	public void setEntite(Entite entite) {
+		Object oldValue = this.entite;
 		
-		this.federation = federation;
+		this.entite = entite;
 		
-		pcs.firePropertyChange("federation", oldValue, federation); //$NON-NLS-1$
+		pcs.firePropertyChange("entite", oldValue, entite); //$NON-NLS-1$
 	}
 
 	/**
-	 * Retourne la fédération associé à un règlement
+	 * Retourne l'entité associé au reglement
 	 * 
-	 * @return la fédération associé à un règlement
+	 * @return l'entité associé au reglement
 	 */
-	public Federation getFederation() {
-		return federation;
+	public Entite getEntite() {
+		return entite;
 	}
 
 	/**
@@ -926,7 +906,7 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	 * 
 	 * @param category le numéro de la catégorie du règlement
 	 */
-	public void setCategory(int category) {
+	public void setCategory(RulesCategory category) {
 		Object oldValue = this.category;
 		
 		this.category = category;
@@ -941,7 +921,7 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	 * 
 	 * @return le numéro de la catégorie du règlement
 	 */
-	public int getCategory() {
+	public RulesCategory getCategory() {
 		return category;
 	}
 
@@ -964,6 +944,20 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	}
 
 	/**
+	 * @return rankingCriteria
+	 */
+	public List<RankingCriterion> getRankingCriteria() {
+		return rankingCriteria;
+	}
+
+	/**
+	 * @param rankingCriteria rankingCriteria à définir
+	 */
+	public void setRankingCriteria(List<RankingCriterion> rankingCriteria) {
+		this.rankingCriteria = rankingCriteria;
+	}
+
+	/**
 	 * <p>Rend l'objet persistant. Sauvegarde l'ensemble des données de l'objet
 	 * dans la base de donnée de ArcCompetition.</p>
 	 * 
@@ -972,8 +966,8 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
 		if(Session.canExecute(session, this)) {
-			if(federation.getIdEntite() == null)
-				federation.save(session);
+			if(entite.getIdEntite() == null)
+				entite.save(session);
 	
 			if(idReglement == null) {
 				idReglement = UUID.randomUUID();
@@ -1035,8 +1029,8 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	 * @throws SQLException
 	 */
 	private void saveDistancesAndBlasons(Session session) throws ObjectPersistenceException {
-		PersitentCollection.save(listPlacementCriteriaSet, session,
-				Collections.<String, Object>singletonMap(T_CriteriaSet.ID_REGLEMENT.getFieldName(), idReglement));
+//		PersitentCollection.save(listPlacementCriteriaSet, session,
+//				Collections.<String, Object>singletonMap(T_CriteriaSet.ID_REGLEMENT.getFieldName(), idReglement));
 	}
 
 	/**
@@ -1056,7 +1050,7 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 				Session.addProcessedObject(session, this);
 			}
 		} else
-			throw new ObjectPersistenceException("delete this Reglement is not authorized because there is official"); //$NON-NLS-1$
+			throw new ObjectPersistenceException("delete this Rule is not authorized because there is official"); //$NON-NLS-1$
 	}
 	
 	protected void beforeMarshal(Marshaller marshaller) {
@@ -1102,7 +1096,7 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Reglement other = (Reglement) obj;
+		Rule other = (Rule) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -1116,12 +1110,12 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 	 */
 	@Override
 	public String toString() {
-		return federation.getSigleFederation() + " - " + displayName; //$NON-NLS-1$
+		return entite.getNom() + " - " + name; //$NON-NLS-1$
 	}
 	
 	@Override
-	public Reglement clone() throws CloneNotSupportedException {
-		Reglement clone = (Reglement)super.clone();
+	public Rule clone() throws CloneNotSupportedException {
+		Rule clone = (Rule)super.clone();
 		clone.setIdReglement(null);
 		
 		//Reinitialisation des D/B
@@ -1144,12 +1138,12 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 		List<Surclassement> clonedSurclassements = new ArrayList<Surclassement>();
 		for(Surclassement surclassement : surclassements) {
 			Surclassement clonedSurclassement = (Surclassement)surclassement.clone();
-			clonedSurclassement.getCriteriaSet().setNumCriteriaSet(0);
+//			clonedSurclassement.getCriteriaSet().setNumCriteriaSet(0);
 			for(CriteriaSetElement element : clonedSurclassement.getCriteriaSet().getElements()) {
 				if(correpondanceCritereElement.containsKey(element.getCriterionElement()))
 					element.setCriterionElement(correpondanceCritereElement.get(element.getCriterionElement()));
 			}
-			clonedSurclassement.getCriteriaSetSurclasse().setNumCriteriaSet(0);
+//			clonedSurclassement.getCriteriaSetSurclasse().setNumCriteriaSet(0);
 			for(CriteriaSetElement element : clonedSurclassement.getCriteriaSetSurclasse().getElements()) {
 				if(correpondanceCritereElement.containsKey(element.getCriterionElement()))
 					element.setCriterionElement(correpondanceCritereElement.get(element.getCriterionElement()));
@@ -1162,7 +1156,7 @@ public class Reglement implements SqlObjectPersistence, Cloneable {
 		List<CriteriaSet> clonedPlacementCriteriaSet = new ArrayList<CriteriaSet>();
 		for(CriteriaSet criteriaSet : listPlacementCriteriaSet) {
 			CriteriaSet clonedCriteriaSet = (CriteriaSet)criteriaSet.clone();
-			clonedCriteriaSet.setNumCriteriaSet(0);
+//			clonedCriteriaSet.setNumCriteriaSet(0);
 			for(CriteriaSetElement element : clonedCriteriaSet.getElements()) {
 				if(correpondanceCritereElement.containsKey(element.getCriterionElement()))
 					element.setCriterionElement(correpondanceCritereElement.get(element.getCriterionElement()));

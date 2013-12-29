@@ -131,7 +131,7 @@ import org.ajdeveloppement.concours.managers.EntiteManager;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="CONTACT",disableCache=true)
 @SqlPrimaryKey(fields="ID_CONTACT",generatedidField=@SqlGeneratedIdField(name="ID_CONTACT",type=Types.JAVA_OBJECT))
-@SqlUnmappedFields(fields={"UPPER_NAME"})
+@SqlUnmappedFields(fields="UPPER_NAME",typeFields=String.class)
 public class Contact implements SqlObjectPersistence, Cloneable {
 	
 	// [start] Helper persistence

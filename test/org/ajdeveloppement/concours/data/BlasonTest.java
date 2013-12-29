@@ -1,7 +1,7 @@
 /*
- * Créé le 3 mai 2009 à 17:32:56 pour ArcCompetition
+ * Créé le 26 déc. 2013 à 18:21:45 pour ArcCompetition
  *
- * Copyright 2002-2009 - Aurélien JEOFFRAY
+ * Copyright 2002-2013 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -36,7 +36,7 @@
  * à l'utiliser et l'exploiter dans les mêmes conditions de sécurité. 
  * 
  * Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
- * pri connaissance de la licence CeCILL, et que vous en avez accepté les
+ * pris connaissance de la licence CeCILL, et que vous en avez accepté les
  * termes.
  *
  * ENGLISH:
@@ -75,7 +75,7 @@
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
- *  any later version.
+ *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -86,123 +86,124 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.builders;
+package org.ajdeveloppement.concours.data;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.UUID;
+import junit.framework.TestCase;
 
-import org.ajdeveloppement.commons.persistence.LoadHelper;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
-import org.ajdeveloppement.concours.data.CompetitionLevel;
-import org.ajdeveloppement.concours.data.Federation;
-import org.ajdeveloppement.concours.data.T_CompetitionLevel;
-import org.ajdeveloppement.concours.data.T_Federation;
+import org.junit.Test;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class FederationBuilder implements ResultSetRowToObjectBinder<Federation,Void>{
-	
-	private static LoadHelper<Federation,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Federation.class);
-	private static LoadHelper<Federation,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Federation.class);
-	
+public class BlasonTest extends TestCase {
+
 	/**
-	 * Retourne la fédération qualifié par son identifiant en base
-	 * 
-	 * @param idFederation l'id de la fédération
-	 * @return la fédération a retourner
-	 * @throws ObjectPersistenceException
+	 * Test method for {@link org.ajdeveloppement.concours.data.Face#Blason(java.lang.String)}.
 	 */
-	public static Federation getFederation(UUID idFederation) throws ObjectPersistenceException {
-		return getFederation(idFederation, null, null);
-	}
-	
-	/**
-	 * Retourne la fédération qualifié par son identifiant en base
-	 * 
-	 * @param idFederation l'id de la fédération
-	 * @param sessionCache cache de session
-	 * @return la fédération a retourner
-	 * @throws ObjectPersistenceException
-	 */
-	public static Federation getFederation(UUID idFederation, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		return getFederation(idFederation, null, sessionCache);
-	}
-	
-	/**
-	 * Construit la fédération a partir du jeux de résultat correspondant
-	 * 
-	 * @param rs le resultset contenant les enregistrement en base permettant de construire la fédération
-	 * @param sessionCache 
-	 * @return la fédération a retourner
-	 * @throws ObjectPersistenceException
-	 */
-	public static Federation getFederation(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		return getFederation(null, rs, sessionCache);
-	}
-	
-	/**
-	 * 
-	 * @param idFederation
-	 * @param rs
-	 * @return
-	 * @throws ObjectPersistenceException
-	 */
-	private static Federation getFederation(UUID idFederation, ResultSet resultSet, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		if(sessionCache == null)
-			sessionCache = new SqlLoadingSessionCache();
+	@Test
+	public void testBlasonString() {
+		Face blason = new Face("Test"); //$NON-NLS-1$
 		
-		if(resultSet != null) {
-			try {
-				idFederation =  T_Federation.ID_ENTITE.getValue(resultSet);
-			} catch (SQLException e) {
-				throw new ObjectPersistenceException(e);
-			}
-		}
-			
-		Federation federation = Cache.get(Federation.class, idFederation);
-		if(federation == null) {
-			federation = new Federation();
-			if(resultSet == null) {
-				federation.setIdEntite(idFederation);
-				
-				loadHelper.load(federation);
-			} else {
-				resultSetLoadHelper.load(federation, resultSet);
-			}
-			
-			Cache.put(federation);
+		assertEquals("Test", blason.getName()); //$NON-NLS-1$
+		assertEquals(1, blason.getHorizontalRatio(), 0);
+		assertEquals(1, blason.getVerticalRatio(), 0);
+		assertEquals(0, blason.getNumordre(), 0);
+		assertEquals(4, blason.getNbArcher(), 0);
+	}
 
-			federation.setCompetitionLevels(
-					QResults.from(CompetitionLevel.class, sessionCache)
-						.where(T_CompetitionLevel.ID_ENTITE.equalTo(idFederation))
-						.orderBy(T_CompetitionLevel.ORDRE)
-						.asList());
-		}
+	/**
+	 * Test method for {@link org.ajdeveloppement.concours.data.Face#Blason(java.lang.String, double, double)}.
+	 */
+	@Test
+	public void testBlasonStringDoubleDouble() {
+		Face blason = new Face("Test", 0.5, 0.75); //$NON-NLS-1$
+			
+		assertEquals("Test", blason.getName()); //$NON-NLS-1$
+		assertEquals(0.5, blason.getHorizontalRatio(), 0);
+		assertEquals(0.75, blason.getVerticalRatio(), 0);
 		
-		return federation;
+		blason = new Face("Test", 0.5, 1.75); //$NON-NLS-1$
+		assertEquals(0.5, blason.getHorizontalRatio(), 0);
+		assertEquals(1, blason.getVerticalRatio(), 0);
+		
+		blason = new Face("Test", 1.5, 0.75); //$NON-NLS-1$
+		assertEquals(1, blason.getHorizontalRatio(), 0);
+		assertEquals(0.75, blason.getVerticalRatio(), 0);
+		
+		blason = new Face("Test", -0.5, 0.75); //$NON-NLS-1$
+		assertEquals(0, blason.getHorizontalRatio(), 0);
+		assertEquals(0.75, blason.getVerticalRatio(), 0);
+		
+		blason = new Face("Test", 0.5, -0.75); //$NON-NLS-1$
+		assertEquals(0.5, blason.getHorizontalRatio(), 0);
+		assertEquals(0, blason.getVerticalRatio(), 0);
 	}
 
-	@Override
-	public Federation get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap)
-			throws ObjectPersistenceException {
-		return getFederation(rs, sessionCache);
+	/**
+	 * Test method for {@link org.ajdeveloppement.concours.data.Face#Blason(java.lang.String, double, double, int, int)}.
+	 */
+	@Test
+	public void testBlasonStringDoubleDoubleIntInt() {
+		Face blason = new Face("Test", 0.5, 0.5, 2, 1); //$NON-NLS-1$
+		
+		assertEquals("Test", blason.getName()); //$NON-NLS-1$
+		assertEquals(0.5, blason.getHorizontalRatio(), 0);
+		assertEquals(0.5, blason.getVerticalRatio(), 0);
+		assertEquals(2, blason.getNumordre(), 0);
+		assertEquals(1, blason.getNbArcher(), 0);
 	}
 
-	@Override
-	public Federation get(SqlLoadingSessionCache sessionCache,
-			Void binderRessourcesMap, Object... primaryKeyValues)
-			throws ObjectPersistenceException {
-		// TODO Raccord de méthode auto-généré
-		return null;
+	/**
+	 * Test method for {@link org.ajdeveloppement.concours.data.Face#setHorizontalRatio(double)}.
+	 */
+	@Test
+	public void testSetHorizontalRatio() {
+		Face blason = new Face("Test"); //$NON-NLS-1$
+		
+		assertEquals(1, blason.getHorizontalRatio(), 0);
+		blason.setHorizontalRatio(0.5);
+		assertEquals(0.5, blason.getHorizontalRatio(), 0);
+		
+		blason.setHorizontalRatio(-0.5);
+		assertEquals(0, blason.getHorizontalRatio(), 0);
+		
+		blason.setHorizontalRatio(1.5);
+		assertEquals(1, blason.getHorizontalRatio(), 0);
 	}
+
+	/**
+	 * Test method for {@link org.ajdeveloppement.concours.data.Face#setVerticalRatio(double)}.
+	 */
+	@Test
+	public void testSetVerticalRatio() {
+		Face blason = new Face("Test"); //$NON-NLS-1$
+		
+		assertEquals(1, blason.getVerticalRatio(), 0);
+		blason.setVerticalRatio(0.5);
+		assertEquals(0.5, blason.getVerticalRatio(), 0);
+		
+		blason.setVerticalRatio(-0.5);
+		assertEquals(0, blason.getVerticalRatio(), 0);
+		
+		blason.setVerticalRatio(1.5);
+		assertEquals(1, blason.getVerticalRatio(), 0);
+	}
+
+	/**
+	 * Test method for {@link org.ajdeveloppement.concours.data.Face#setAncrages(java.util.Map)}.
+	 */
+	@Test
+	public void testSetAncrages() {
+		fail("Not yet implemented");
+	}
+
+	/**
+	 * Test method for {@link org.ajdeveloppement.concours.data.Face#isOver(int, org.ajdeveloppement.concours.data.Face, int)}.
+	 */
+	@Test
+	public void testIsOver() {
+		fail("Not yet implemented");
+	}
+
 }

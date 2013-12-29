@@ -89,12 +89,12 @@
 package org.ajdeveloppement.concours.managers;
 
 
-import static org.ajdeveloppement.concours.data.T_Blason.*;
+import static org.ajdeveloppement.concours.data.T_Face.*;
 
 import java.util.List;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.data.Blason;
+import org.ajdeveloppement.concours.data.Face;
 
 /**
  * Gére la construction des blasons à partir des données trouvé en base
@@ -109,10 +109,10 @@ public class BlasonManager {
 	 * 
 	 * @param name le nom du blason à trouver
 	 * 
-	 * @return l'objet Blason trouvé ou null si inexistant
+	 * @return l'objet Face trouvé ou null si inexistant
 	 */
-	public static Blason findBlasonByName(String name) {	
-		return QResults.from(Blason.class).where(NOM.equalTo(name)).first();
+	public static Face findBlasonByName(String name) {	
+		return QResults.from(Face.class).where(NOM.equalTo(name)).first();
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class BlasonManager {
 	 * 
 	 * @return la liste des blasons existant
 	 */
-	public static List<Blason> listAvailableTargetFace() {
-		return QResults.from(Blason.class).orderBy(ORDRE).asList();
+	public static List<Face> listAvailableTargetFace() {
+		return QResults.from(Face.class).orderBy(ORDRE).asList();
 	}
 }

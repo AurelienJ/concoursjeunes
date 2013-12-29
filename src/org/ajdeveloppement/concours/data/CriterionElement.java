@@ -114,8 +114,8 @@ import org.ajdeveloppement.concours.builders.CriterionElementBuilder;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CRITEREELEMENT",loadBuilder=CriterionElementBuilder.class)
-@SqlPrimaryKey(fields={"CODECRITEREELEMENT","CODECRITERE","ID_REGLEMENT"})
+@SqlTable(name="ELEMENT_CRITERE_DISCRIMINANT",loadBuilder=CriterionElementBuilder.class)
+@SqlPrimaryKey(fields={"ID_ELEMENT_CRITERE_DISCRIMINANT"})
 public class CriterionElement implements ObjectPersistence, Cloneable {
 	private static StoreHelper<CriterionElement> helper = SqlStoreHelperFactory.getStoreHelper(CriterionElement.class);
 	
@@ -124,18 +124,23 @@ public class CriterionElement implements ObjectPersistence, Cloneable {
 	@XmlAttribute(name="id")
 	private String xmlId;
 	
-	@SqlField(name="CODECRITEREELEMENT")
+	@SqlField(name="ID_ELEMENT_CRITERE_DISCRIMINANT")
+	private UUID id;
+	
+	@SqlField(name="CODE")
     private String code = ""; //$NON-NLS-1$
-	@SqlField(name="LIBELLECRITEREELEMENT")
+	@SqlField(name="NOM")
     private String libelle = ""; //$NON-NLS-1$
-	@SqlField(name="ACTIF")
-    private boolean active = true;
-	@SqlField(name="NUMORDRE")
+
+	@SqlField(name="ORDRE")
     private int numordre = 0;
 	
 	@XmlTransient
-	@SqlForeignKey(mappedTo={"CODECRITERE","ID_REGLEMENT"})
+	@SqlForeignKey(mappedTo={"ID_CRITERE_DISCRIMINANT"})
 	private Criterion criterion;
+	
+	@SqlForeignKey(mappedTo={"ID_ELEMENT_CRITERE_DISCRIMINANT_REFERENCE"})
+	private CriterionElement elementReference;
 	/**
 	 * 
 	 */
@@ -187,24 +192,6 @@ public class CriterionElement implements ObjectPersistence, Cloneable {
 	public void setCriterion(Criterion criterion) {
 		this.criterion = criterion;
 	}
-
-	/**
-	 * Est-ce que l'élément est utilisé?
-	 * 
-	 * @return <code>true</code> si l'élément est actif
-	 */
-    public boolean isActive() {
-        return active;
-    }
-
-    /**
-	 * Détermine si l'élément doit être utilisé
-	 * 
-	 * @param active État de l'élément (actif ou non).
-	 */
-    public void setActive(boolean active) {
-        this.active = active;
-    }
 
     /**
 	 * Renvoi le libellé de l'élément

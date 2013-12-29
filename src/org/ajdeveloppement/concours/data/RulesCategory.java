@@ -89,12 +89,16 @@
 package org.ajdeveloppement.concours.data;
 
 import java.sql.Types;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -115,6 +119,10 @@ public class RulesCategory implements SqlObjectPersistence {
 	@XmlAttribute
 	@SqlField(name="NOMCATEGORIE", sqlType="VARCHAR", size=128)
 	private String name;
+	
+	@XmlTransient
+	@SqlChildCollection(foreignFields="NUMCATEGORIE_REGLEMENT",type=Rule.class)
+	private List<Rule> rules;
 
 	/**
 	 * @return id
@@ -142,5 +150,22 @@ public class RulesCategory implements SqlObjectPersistence {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return rules
+	 */
+	public List<Rule> getRules() {
+		if(rules == null) {
+			rules = QResults.from(Rule.class).where(T_Rule.NUMCATEGORIE_REGLEMENT.equalTo(id)).asList();
+		}
+		return rules;
+	}
+
+	/**
+	 * @param rules rules à définir
+	 */
+	public void setRules(List<Rule> rules) {
+		this.rules = rules;
 	}
 }

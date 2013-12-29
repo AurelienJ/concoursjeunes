@@ -100,8 +100,9 @@ import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.data.Federation;
-import org.ajdeveloppement.concours.data.Reglement;
-import org.ajdeveloppement.concours.data.T_Reglement;
+import org.ajdeveloppement.concours.data.Rule;
+import org.ajdeveloppement.concours.data.RulesCategory;
+import org.ajdeveloppement.concours.data.T_Rule;
 
 /**
  * Permet la gestion listage, sélection, ajout et suppression des
@@ -112,9 +113,9 @@ import org.ajdeveloppement.concours.data.T_Reglement;
  */
 public class ReglementManager {
 	
-	private List<Reglement> availableReglements = new ArrayList<Reglement>();
-	private List<Federation> federation = new ArrayList<Federation>();
-	private List<Integer> categorie = new ArrayList<Integer>();
+	private List<Rule> availableReglements = new ArrayList<>();
+	private List<Federation> federation = new ArrayList<>();
+	private List<RulesCategory> categorie = new ArrayList<>();
 	
 	private static ReglementManager instance = new ReglementManager();
 	
@@ -138,9 +139,9 @@ public class ReglementManager {
 		federation.clear();
 		categorie.clear();
 	
-		for(Reglement reglement : QResults.from(Reglement.class).where(T_Reglement.NOMREGLEMENT.differentOf("default")).orderBy(T_Reglement.LIBELLE)) { //$NON-NLS-1$
-			if(!federation.contains(reglement.getFederation()))
-				federation.add(reglement.getFederation());
+		for(Rule reglement : QResults.from(Rule.class).where(T_Rule.NOM.differentOf("default")).orderBy(T_Rule.NOM)) { //$NON-NLS-1$
+			if(!federation.contains(reglement.getEntite().getFederation()))
+				federation.add(reglement.getEntite().getFederation());
 			if(!categorie.contains(reglement.getCategory()))
 				categorie.add(reglement.getCategory());
 			availableReglements.add(reglement); 
@@ -154,15 +155,15 @@ public class ReglementManager {
 	 * @param reglement le règlement à ajouter
 	 * @throws ObjectPersistenceException
 	 */
-	public void addReglement(Reglement reglement) throws ObjectPersistenceException {
+	public void addReglement(Rule reglement) throws ObjectPersistenceException {
 		if(reglement == null)
 			return;
 		
 		reglement.save();
 		
 		availableReglements.add(reglement);
-		if(!federation.contains(reglement.getFederation()))
-			federation.add(reglement.getFederation());
+		if(!federation.contains(reglement.getEntite().getFederation()))
+			federation.add(reglement.getEntite().getFederation());
 		if(!categorie.contains(reglement.getCategory()))
 			categorie.add(reglement.getCategory());
 	}
@@ -173,14 +174,14 @@ public class ReglementManager {
 	 * @param reglement le règlement à supprimer
 	 * @throws ObjectPersistenceException 
 	 */
-	public void removeReglement(Reglement reglement) throws ObjectPersistenceException {
+	public void removeReglement(Rule reglement) throws ObjectPersistenceException {
 		reglement.delete();
 	
 		availableReglements.remove(reglement);
 		if(getReglementsForCategory(reglement.getCategory()).size() == 0)
-			categorie.remove(new Integer(reglement.getCategory()));
-		if(getReglementsForFederation(reglement.getFederation()).size() == 0)
-			removeFederation(reglement.getFederation());
+			categorie.remove(reglement.getCategory());
+		if(getReglementsForFederation(reglement.getEntite().getFederation()).size() == 0)
+			removeFederation(reglement.getEntite().getFederation());
 		reglement = null;
 	}
 	
@@ -191,7 +192,7 @@ public class ReglementManager {
 	 * @param reglement
 	 * @throws ObjectPersistenceException
 	 */
-	public void updateReglement(Reglement reglement) throws ObjectPersistenceException {
+	public void updateReglement(Rule reglement) throws ObjectPersistenceException {
 		availableReglements.remove(reglement);
 		/*
 		if(getReglementsForCategory(reglement.getCategory()).size() == 0)
@@ -218,7 +219,7 @@ public class ReglementManager {
 	 * 
 	 * @return la liste des règlement disponible
 	 */
-	public List<Reglement> getAvailableReglements() {
+	public List<Rule> getAvailableReglements() {
 		return availableReglements;
 	}
 	
@@ -228,9 +229,9 @@ public class ReglementManager {
 	 * @param category le nom de la catégorie des règlements à retourner
 	 * @return la liste des règlements de la catégorie
 	 */
-	public List<Reglement> getReglementsForCategory(int category) {
-		List<Reglement> reglements = new ArrayList<Reglement>();
-		for(Reglement reglement : availableReglements) {
+	public List<Rule> getReglementsForCategory(RulesCategory category) {
+		List<Rule> reglements = new ArrayList<Rule>();
+		for(Rule reglement : availableReglements) {
 			if(reglement.getCategory() == category)
 				reglements.add(reglement);
 		}
@@ -244,10 +245,10 @@ public class ReglementManager {
 	 * @param federation la fédération pour laquelle retourner les règlements
 	 * @return la liste des règlements
 	 */
-	public List<Reglement> getReglementsForFederation(Federation federation) {
-		List<Reglement> reglements = new ArrayList<Reglement>();
-		for(Reglement reglement : availableReglements) {
-			if(reglement.getFederation().equals(federation))
+	public List<Rule> getReglementsForFederation(Federation federation) {
+		List<Rule> reglements = new ArrayList<Rule>();
+		for(Rule reglement : availableReglements) {
+			if(reglement.getEntite().getFederation().equals(federation))
 				reglements.add(reglement);
 		}
 		
@@ -261,10 +262,10 @@ public class ReglementManager {
 	 * @param category le numéro de la catégorie des règlements à retourner
 	 * @return la liste des règlements
 	 */
-	public List<Reglement> getReglementsForFederationAndCategory(Federation federation, int category) {
-		List<Reglement> reglements = new ArrayList<Reglement>();
-		for(Reglement reglement : availableReglements) {
-			if(reglement.getFederation().equals(federation) && reglement.getCategory() == category)
+	public List<Rule> getReglementsForFederationAndCategory(Federation federation, RulesCategory category) {
+		List<Rule> reglements = new ArrayList<Rule>();
+		for(Rule reglement : availableReglements) {
+			if(reglement.getEntite().getFederation().equals(federation) && reglement.getCategory() == category)
 				reglements.add(reglement);
 		}
 		
@@ -277,8 +278,8 @@ public class ReglementManager {
 	 * @param name le nom du règlement à retourner
 	 * @return le règlement correspondant
 	 */
-	public Reglement getReglementByName(String name) {
-		for(Reglement reglement : availableReglements) {
+	public Rule getReglementByName(String name) {
+		for(Rule reglement : availableReglements) {
 			if(reglement.getName().equals(name))
 				return reglement;
 		}
@@ -299,7 +300,7 @@ public class ReglementManager {
 	 * 
 	 * @return la liste des catégories de règlement
 	 */
-	public List<Integer> getCategories() {
+	public List<RulesCategory> getCategories() {
 		return categorie;
 	}
 	
@@ -312,7 +313,7 @@ public class ReglementManager {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static void exportReglement(Reglement reglement, File exportFile) throws FileNotFoundException, IOException {
+	public static void exportReglement(Rule reglement, File exportFile) throws FileNotFoundException, IOException {
 		try {
 			XMLSerializer.saveMarshallStructure(exportFile, reglement);
 		} catch (JAXBException e) {
@@ -329,10 +330,10 @@ public class ReglementManager {
 	 * @throws IOException
 	 * @throws ObjectPersistenceException
 	 */
-	public Reglement importReglement(File importFile) throws IOException, ObjectPersistenceException {
-		Reglement reglement = null;
+	public Rule importReglement(File importFile) throws IOException, ObjectPersistenceException {
+		Rule reglement = null;
 		try {
-			reglement = XMLSerializer.loadMarshallStructure(importFile, Reglement.class, false);
+			reglement = XMLSerializer.loadMarshallStructure(importFile, Rule.class, false);
 			updateReglement(reglement);
 		} catch (JAXBException e) {
 			e.printStackTrace();

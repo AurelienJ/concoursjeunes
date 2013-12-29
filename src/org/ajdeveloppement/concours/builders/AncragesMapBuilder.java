@@ -93,7 +93,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.data.Ancrage;
-import org.ajdeveloppement.concours.data.Blason;
+import org.ajdeveloppement.concours.data.Face;
 import org.ajdeveloppement.concours.data.T_Ancrage;
 
 /**
@@ -111,10 +111,10 @@ public class AncragesMapBuilder {
 	 * @param blason la reference du blason pour récuperer les informations en base
 	 * @return la tables des ancrages ou null si non trouvé en base
 	 */
-	public static Map<Integer, Ancrage> getAncragesMap(Blason blason) {
+	public static Map<Integer, Ancrage> getAncragesMap(Face blason) {
 		Map<Integer, Ancrage> ancrages = new ConcurrentHashMap<Integer, Ancrage>();
 		
-		for(Ancrage ancrage : QResults.from(Ancrage.class).where(T_Ancrage.ID_BLASON.equalTo(blason.getIdBlason()))) {
+		for(Ancrage ancrage : QResults.from(Ancrage.class).where(T_Ancrage.ID_BLASON.equalTo(blason.getId()))) {
 			ancrages.put(ancrage.getEmplacement(), ancrage);
 		}
 		
