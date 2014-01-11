@@ -15,12 +15,12 @@ function updateReglements() {
 if(dbVersion == 0) {
 	//passe l'ensemble des scripts de base
 	sql.executeScript("01-create_db.sql",true);
-	sql.executeScript("../sql/ImportClubFFTA.sql",true);
-	sql.executeUpdate("RUNSCRIPT FROM 'ressources/sql/ImportVillesFr.sql'");
+	//sql.executeScript("../sql/ImportClubFFTA.sql",true);
+	//sql.executeUpdate("RUNSCRIPT FROM 'ressources/sql/ImportVillesFr.sql'");
 	//sql.executeScript("../sql/ImportVillesFr.sql");
 	
-	updateReglements();
-	sql.executeScript("../sql/ImportClubLFBTA.sql");
+	//updateReglements();
+	//sql.executeScript("../sql/ImportClubLFBTA.sql");
 } else {
 	if(dbVersion < 20) {
 		sql.executeScript("01-dropoldtable.sql");

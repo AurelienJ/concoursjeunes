@@ -5,4 +5,5 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/junit/junit/4.4/junit-4.4.jar" enabled="false" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/ajdeveloppement/ajcommons-webserver/2.0.0-SNAPSHOT/ajcommons-webserver-2.0.0-SNAPSHOT.jar" enabled="false" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/h2database/h2/1.3.174/h2-1.3.174.jar" enabled="false" runInBatchMode="false"/>
+    <factorypathentry kind="PLUGIN" id="org.eclipse.jst.ws.annotations.core" enabled="false" runInBatchMode="false"/>
 </factorypath>
