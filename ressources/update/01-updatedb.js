@@ -21,39 +21,6 @@ if(dbVersion == 0) {
 	
 	//updateReglements();
 	//sql.executeScript("../sql/ImportClubLFBTA.sql");
-} else {
-	if(dbVersion < 20) {
-		sql.executeScript("01-dropoldtable.sql");
-		sql.executeScript("01-create_db.sql");
-		
-		sql.executeUpdate("ALTER TABLE ENTITE ADD DATEMODIF DATE DEFAULT CURRENT_DATE()");
-	}
-	
-	if(dbVersion < 21) {
-		sql.executeUpdate("update REGLEMENT set REMOVABLE=FALSE where NOMREGLEMENT like 'FFTA%'");
-	}
-
-	if(dbVersion < 30) {
-		sql.executeScript("02-V21toV30.sql", true);
-		sql.executeScript("../sql/ImportClubFFTA.sql");
-		sql.executeUpdate("RUNSCRIPT FROM 'ressources/sql/ImportVillesFr.sql'");
-		
-		updateReglements();
-		sql.executeScript("../sql/ImportClubLFBTA.sql");
-	} else if(dbVersion < 31) {
-		sql.executeUpdate("ALTER TABLE CONTACT ADD UPPER_NAME VARCHAR(128) as UPPER(NAME)");
-		sql.executeUpdate("CREATE INDEX IF NOT EXISTS I_UPPER_NAME ON CONTACT (UPPER_NAME ASC)");
-	}
-	
-	if(dbVersion < 32) {
-		sql.executeUpdate("ALTER TABLE ENTITE ADD UPPER_VILLEENTITE VARCHAR(64) as UPPER(VILLEENTITE)");
-		sql.executeUpdate("CREATE INDEX IF NOT EXISTS I_UPPER_VILLE_ENTITE ON ENTITE (UPPER_VILLEENTITE ASC);");
-		sql.executeUpdate("CREATE INDEX IF NOT EXISTS I_VILLE_NOM ON VILLE (NOM ASC);");
-	}
-	
-	if(dbVersion < 33) {
-		sql.executeScript("03-V32toV33.sql", true);
-	}
 }
 
 if(dbVersion != org.ajdeveloppement.concours.ApplicationCore.DB_RELEASE_REQUIRED) {
