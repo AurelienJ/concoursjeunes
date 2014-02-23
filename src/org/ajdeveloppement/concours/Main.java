@@ -121,11 +121,19 @@ import java.util.logging.Level;
 
 import javafx.application.Application;
 import javafx.concurrent.Worker;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
@@ -172,6 +180,17 @@ import org.jdesktop.swingx.error.ErrorInfo;
  */
 public class Main extends Application {
 	public static class Bridge {
+		private Stage stage;
+		
+		private int startX = -1;
+		private int startY = -1;
+		
+		private boolean inMove = false;
+		
+		public Bridge(Stage stage) {
+			this.stage = stage;
+		}
+		
 		public String SelectFile() {
 			FileChooser chooser = new FileChooser();
 			File file = chooser.showOpenDialog(null);
@@ -209,7 +228,8 @@ public class Main extends Application {
 
 	private static AjResourcesReader staticParameters = new AjResourcesReader(WEBSERVER_CONFIG);
 	
-	
+	private double startX = -1;
+	private double startY = -1;
 	
 	/**
 	 * @param args
@@ -264,17 +284,77 @@ public class Main extends Application {
 //		showUserInterface();
 	}
 	
+	boolean onDrag = false;
+	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("ArcCompetition");
+		primaryStage.initStyle(StageStyle.UNDECORATED);
+		
+		Label title = new Label();
+		title.setId("title");
+		title.setText("ArcCompetition 0.0.1");
+		
+		Region spacer = new Region();
+		HBox.setHgrow(spacer, Priority.ALWAYS);
+		
+		Button minButton = new Button();
+		minButton.setId("window-min"); //$NON-NLS-1$
+		minButton.setOnAction(e -> {
+			primaryStage.setIconified(true);
+		});
+		
+		Button maxButton = new Button();
+		maxButton.setId("window-max"); //$NON-NLS-1$
+		maxButton.setOnAction(e -> {
+			primaryStage.setMaximized(!primaryStage.isMaximized());
+		});
+		
+		Button closeButton = new Button();
+		closeButton.setId("window-close"); //$NON-NLS-1$
+		closeButton.setOnAction(e -> {
+			System.exit(0);
+		});
+		
+		HBox header = new HBox(4);
+		header.setMinHeight(30);
+		header.setId("header"); //$NON-NLS-1$
+		header.setAlignment(Pos.CENTER_RIGHT);
+		header.getChildren().addAll(title, spacer,minButton,maxButton,closeButton);
+		header.setOnMouseClicked(e -> {
+			if(e.getClickCount() == 2) {
+				primaryStage.setMaximized(!primaryStage.isMaximized());
+			}
+		});
+		
 		WebView webView = new WebView();
+
+		BorderPane root = new BorderPane();
+		root.setTop(header);
+		root.setCenter(webView);
 		
-		StackPane root = new StackPane();
-		root.getChildren().add(webView);
-		primaryStage.setScene(new Scene(root, 1024, 768));
+		Scene scene = new Scene(root, 1024, 768);
+		scene.getStylesheets().add(Main.class.getResource("ui/fx/styles.css").toExternalForm()); //$NON-NLS-1$
+		
+		primaryStage.setScene(scene);
 		primaryStage.show();
-		//Thread.sleep(5000);
 		
+		header.setOnMouseDragged(e -> {
+			if(e.getSceneY() < 40) {
+				if(!onDrag) {
+					startX = primaryStage.getX() - e.getScreenX();
+					startY = primaryStage.getY() - e.getScreenY();
+					
+					onDrag = true;
+				} else {
+					webView.setCursor(Cursor.MOVE);
+					primaryStage.setX(e.getScreenX() + startX);
+					primaryStage.setY(e.getScreenY() + startY);
+				}
+			}
+		});
+		header.setOnMouseReleased(e -> { onDrag = false; });
+
 		Worker<Void> worker = webView.getEngine().getLoadWorker();
 		worker.exceptionProperty().addListener((observableValue, oldThrowable, newThrowable) -> newThrowable.printStackTrace());
 		webView.getEngine().setOnError(event ->	event.getException().getStackTrace());
@@ -283,9 +363,9 @@ public class Main extends Application {
 		webView.getEngine().load("http://localhost:8081");
 		netscape.javascript.JSObject win = 
                 (netscape.javascript.JSObject) webView.getEngine().executeScript("window");
-        win.setMember("app", new Bridge());
+        win.setMember("app", new Bridge(primaryStage));
 		
-		//webView.getEngine().load("http://html5demos.com/");
+		//webView.getEngine().load("http://jsfiddle.net/2Qffw/39/");
 		//Object jsobj = webView.getEngine().executeScript("window");
 		//System.out.println(jsobj);
 		

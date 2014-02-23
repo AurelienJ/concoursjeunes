@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.web.WebEngine?>
+<?import javafx.scene.web.WebView?>
+
+<?scenebuilder-classpath-element ../../../../bin?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Region?>
+
+<BorderPane 
+		depthTest="DISABLE" 
+		xmlns:fx="http://javafx.com/fxml">
+	<stylesheets>
+		<URL value="@styles.css" />
+	</stylesheets>
+	<top>
+		<HBox spacing="4">
+			<Label text="ArcCompetition 0.0.1" />
+			<Region><HBox.hgrow>ALWAYS</HBox.hgrow></Region>
+			<Button fx:id="window-min" />
+			<Button fx:id="window-max" />
+			<Button fx:id="window-close" />
+		</HBox>
+	</top>
+	<center>
+		<WebView fx:id="webview" />
+	</center>
+</BorderPane>

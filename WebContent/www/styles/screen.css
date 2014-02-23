@@ -5,7 +5,8 @@ body {
 	padding:		0px;
 	/*font-family:	"Trebuchet MS","Lucida Sans","Lucida Sans Unicode","Lucida",Verdana,"Bitstream Vera Sans",sans-serif;*/
 	/*font-family:	'Open Sans',sans-serif;*/
-	font-family:	'Kite One', cursive;
+	/*font-family:	'Kite One', cursive;*/
+	font-family: "BentonSans",sans-serif;
 }
 
 img {
@@ -185,6 +186,16 @@ main {
     -ms-transform:skewX(45deg);
     -webkit-transform:skewX(45deg);
     z-index: -1;
+}
+
+#windowAction {
+	display: inline-block;
+	float: right;
+	
+	padding: 6px;
+	height: 30px;
+	
+	vertical-align: middle;
 }
 
 #login {
@@ -423,7 +434,7 @@ main {
 }
 
 #OAuth {
-	display: none/*table-row*/;
+	display: none;
 }
 
 #introduction {

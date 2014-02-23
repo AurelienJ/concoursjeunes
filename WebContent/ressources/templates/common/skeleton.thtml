@@ -44,13 +44,41 @@
 			    }
 		    }
 		}, false);
+		
+		$("#windowMinifyAction").hover(
+			function() { $(this).attr('src', "images/window-min-over.png"); },
+			function() { $(this).attr('src', "images/window-min.png"); }
+		);
+		$("#windowMinifyAction").click(function() { app.minify(); });
+		
+		$("#windowExpandAction").hover(
+			function() { $(this).attr('src', "images/window-expand-over.png"); },
+			function() { $(this).attr('src', "images/window-expand.png"); }
+		);
+		$("#windowExpandAction").click(function() { app.expand(); });
+		
+		$("#windowCloseAction").hover(
+			function() { $(this).attr('src', "images/window-close-over.png"); },
+			function() { $(this).attr('src', "images/window-close.png"); }
+		);
+		$("#windowCloseAction").click(function() { app.close(); });
+		
+		/*$("body > header").onmousemove(function(e) {
+			$(this).css("cursor","move");
+		});*/
 	});
+
 	</script>
 	<bloc::script></bloc::script>
 </head>
 <body>
 	<header>
 		<div id="pagetitle">{TITRE}</div>
+	<!--	<div id="windowAction">
+			<img src="images/window-min.png" alt="min" id="windowMinifyAction" />
+			<img src="images/window-expand.png" alt="expand" id="windowExpandAction" />
+			<img src="images/window-close.png" alt="close" id="windowCloseAction" />
+		</div> -->
 	</header>
 	
 	<div id="filarianne">
