@@ -15,6 +15,7 @@ function updateReglements() {
 if(dbVersion == 0) {
 	//passe l'ensemble des scripts de base
 	sql.executeScript("01-create_db.sql",true);
+	sql.executeScript("01-create_db-webserver.sql",true);
 	//sql.executeScript("../sql/ImportClubFFTA.sql",true);
 	//sql.executeUpdate("RUNSCRIPT FROM 'ressources/sql/ImportVillesFr.sql'");
 	//sql.executeScript("../sql/ImportVillesFr.sql");
@@ -22,6 +23,8 @@ if(dbVersion == 0) {
 	//updateReglements();
 	//sql.executeScript("../sql/ImportClubLFBTA.sql");
 }
+
+//sql.executeScript("01-create_db-webserver.sql",true);
 
 if(dbVersion != org.ajdeveloppement.concours.ApplicationCore.DB_RELEASE_REQUIRED) {
 	//mise à jour du numero de version de la base

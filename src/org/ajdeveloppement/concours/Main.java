@@ -259,13 +259,10 @@ public class Main extends Application {
 			}
 		}
 
-		HttpServer httpServer = new HttpServer(staticParameters.getResourceInteger(WEBSERVER_LISTEN_PORT));
-		httpServer.start(true);
-		
 		
 		
 		showSplashScreen();
-		initErrorManaging();
+		//initErrorManaging();
 		initNetworkManaging();
 		initCore();
 		initSecureContext();
@@ -273,6 +270,9 @@ public class Main extends Application {
 //			loadStartupPlugin();
 //
 		initShutdownHook();
+		
+		HttpServer httpServer = new HttpServer(staticParameters.getResourceInteger(WEBSERVER_LISTEN_PORT));
+		httpServer.start(true);
 		
 		launch(args);
 		

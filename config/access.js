@@ -23,12 +23,9 @@ function verifyAccess(session) {
 				"text/plain",
 				"Accessible uniquement sur le réseau local");
 		
-		response.addHeader("WWW-Authenticate", "Basic realm=\"Authentification requise\"");
+		response.addHeader("WWW-Authenticate", "Basic realm=\"Authentification require\"");
+		
 		return response;
-//		return new org.ajdeveloppement.webserver.HttpResponse(
-//				org.ajdeveloppement.webserver.HttpReturnCode.ClientError.Forbidden, 
-//				"text/plain",
-//				"Accessible uniquement sur le réseau local");
 	}
 	
 	return null;
