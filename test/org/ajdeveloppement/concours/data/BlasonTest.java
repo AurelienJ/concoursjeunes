@@ -195,7 +195,7 @@ public class BlasonTest extends TestCase {
 	 */
 	@Test
 	public void testSetAncrages() {
-		fail("Not yet implemented");
+		fail("Not yet implemented"); //$NON-NLS-1$
 	}
 
 	/**
@@ -203,7 +203,7 @@ public class BlasonTest extends TestCase {
 	 */
 	@Test
 	public void testIsOver() {
-		fail("Not yet implemented");
+		fail("Not yet implemented"); //$NON-NLS-1$
 	}
 
 }

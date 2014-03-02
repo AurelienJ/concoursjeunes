@@ -2,8 +2,6 @@
  * 
  */
 function verifyAccess(session) {
-	print(session.getRemoteAddress().getHostAddress() + "\t" + session.getProtocol()+ "\t" + session.getRequestMethod() + "\t" + session.getRequestUri());
-	
 	var authorization = session.getHeaderValues().get("authorization");
 	var credential = "";
 	if(authorization != null) {

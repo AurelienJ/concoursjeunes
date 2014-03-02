@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS AJWEBSERVER.Request (
 	RequestLength BIGINT,
 	ResponseLength BIGINT,
 	ResponseCode INTEGER,
+	RemoteAddress VARCHAR(128),
 	UserAgent VARCHAR(1024),
 	Header TEXT,
 	ResourcePath varchar(1024),

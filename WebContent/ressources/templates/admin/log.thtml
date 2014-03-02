@@ -1,0 +1,39 @@
+<menu class="mainMenu">
+			<li><a href="/admin/global.html">Informations</a></li> 
+			<li class="selected">Log</li>
+		</menu>
+		
+<section style="max-width: none;">
+	<h1>Logs</h1>
+	<table>
+	<!--
+	Date DATETIME,
+	Method VARCHAR(10),
+	Uri VARCHAR(255),
+	RequestLength BIGINT,
+	ResponseLength BIGINT,
+	ResponseCode INTEGER,
+	UserAgent VARCHAR(1024),
+	Header TEXT,
+	ResourcePath varchar(1024)
+	-->
+		<tr>
+			<th>Date</th>
+			<th>Methode</th>
+			<th>Uri</th>
+			<th>Code de réponse</th>
+			<th>Adresse IP</th>
+			<th>User Agent</th>
+		</tr>
+		<bloc::logEntry>
+		<tr>
+			<td>{date}</td>
+			<td>{method}</td>
+			<td>{uri}</td>
+			<td>{responseCode}</td>
+			<td>{ipAddress}</td>
+			<td>{userAgent}</td>
+		</tr>
+		</bloc::logEntry>
+	</table>
+</section>
