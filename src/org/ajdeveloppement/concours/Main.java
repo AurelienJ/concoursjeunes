@@ -289,7 +289,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("ArcCompetition");
-		primaryStage.initStyle(StageStyle.UNDECORATED);
+		primaryStage.initStyle(StageStyle.TRANSPARENT);
 		
 		Label title = new Label();
 		title.setId("title");

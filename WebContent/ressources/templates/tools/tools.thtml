@@ -1,0 +1,6 @@
+<menu class="mainMenu">
+			<li class="selected">Administration</li>
+			<li><a href="">Divers</a></li> 
+		</menu>
+		
+		<a href="admin/global.html">Administration serveur</>

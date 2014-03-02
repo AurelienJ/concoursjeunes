@@ -32,8 +32,8 @@ function init(basePath) {
 	mainTemplate = new AJTemplate();
 	mainTemplate.loadTemplate(basePath + "/templates/common/skeleton.thtml");
 	
-	mainTemplate.parse("TITRE","ArcCompetition, Gestion des Compétition de Tir à l'Arc");
-	mainTemplate.parse("FILARIANNE", "Administration");
+	mainTemplate.parse("TITRE","Administration");
+	mainTemplate.parse("FILARIANNE", "<a href=\"tools.html\">Outils</a> &gt; Administration");
 	
 	loadNavigationContent(basePath, mainTemplate.getBlocs().get("navigation"));
 	
