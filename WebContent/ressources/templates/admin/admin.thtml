@@ -1,8 +1,5 @@
-<menu class="mainMenu">
-			<li class="selected">Informations</li> 
-			<li><a href="/admin/log.html">Log</a></li>
-		</menu>
-		
+<bloc::navigation></bloc::navigation>
+
 <section>
 	<h1>Service Dynamique</h1>
 	<p>

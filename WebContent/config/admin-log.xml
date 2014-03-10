@@ -2,5 +2,5 @@
 <webpage>
 	<uri>/admin/log.html</uri>
 	<mimeType>text/html</mimeType>
-	<script>scripts/admin/log.js</script>
+	<script>scripts/admin/logs.js</script>
 </webpage>

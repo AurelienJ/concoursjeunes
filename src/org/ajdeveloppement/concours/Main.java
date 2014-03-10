@@ -180,18 +180,13 @@ import org.jdesktop.swingx.error.ErrorInfo;
  */
 public class Main extends Application {
 	public static class Bridge {
-		private Stage stage;
-		
-		private int startX = -1;
-		private int startY = -1;
-		
-		private boolean inMove = false;
-		
 		public Bridge(Stage stage) {
-			this.stage = stage;
+			//this.stage = stage;
 		}
 		
 		public String SelectFile() {
+			
+			//Date.from(LocalDateTime.now().minusDays(30).toInstant(ZoneOffset.UTC));
 			FileChooser chooser = new FileChooser();
 			File file = chooser.showOpenDialog(null);
 			if(file != null) {

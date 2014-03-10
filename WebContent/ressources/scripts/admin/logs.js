@@ -8,10 +8,6 @@ var JavaString = Java.type("java.lang.String");
 var JavaStringArray = Java.type("java.lang.String[]");
 var Pattern = Java.type("java.util.regex.Pattern");
 
-RegExp.quote = function(str) {
-    return (str+'').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
-};
-
 var mainTemplate = null;
 
 function loadNavigationContent(basePath, template) {
@@ -23,8 +19,18 @@ function loadNavigationContent(basePath, template) {
 	template.parse("selectedAdmin", "class=\"selected\"");
 }
 
+function loadAdminNavigationContent(basePath, template) {
+	template.loadTemplate(basePath + "/templates/admin/navigation.thtml");
+	template.parse("selectedInfos", "");
+	template.parse("selectedLogs", "class=\"selected\"");
+	template.parse("selectedStats", "");
+	template.parse("selectedBrowser", "");
+}
+
 function loadMainContent(basePath, template) {
-	template.loadTemplate(basePath + "/templates/admin/log.thtml");
+	template.loadTemplate(basePath + "/templates/admin/logs.thtml");
+	
+	loadAdminNavigationContent(basePath, template.getBlocs().get("navigation"));
 }
 
 function init(basePath) {
@@ -32,7 +38,7 @@ function init(basePath) {
 	mainTemplate.loadTemplate(basePath + "/templates/common/skeleton.thtml");
 	
 	mainTemplate.parse("TITRE","ArcCompetition, Gestion des Compétition de Tir à l'Arc");
-	mainTemplate.parse("FILARIANNE", "Administration");
+	mainTemplate.parse("FILARIANNE", "<a href=\"tools.html\">Outils</a> &gt; Administration");
 	
 	loadNavigationContent(basePath, mainTemplate.getBlocs().get("navigation"));
 	

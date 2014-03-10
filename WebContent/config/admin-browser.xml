@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webpage>
+	<uri>/admin/browser.html</uri>
+	<mimeType>text/html</mimeType>
+	<script>scripts/admin/browser.js</script>
+</webpage>

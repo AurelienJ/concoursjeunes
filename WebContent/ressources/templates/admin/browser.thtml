@@ -1,0 +1,10 @@
+<bloc::navigation></bloc::navigation>
+		
+<div id="browser">
+</div>
+
+<div id="editor">
+<a href="#" id="save">Enregistrer</a>
+<textarea id="code" name="code">
+</textarea>
+</div>

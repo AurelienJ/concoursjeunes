@@ -24,6 +24,10 @@ if(dbVersion == 0) {
 	//sql.executeScript("../sql/ImportClubLFBTA.sql");
 }
 
+if(dbVersion < 34) {
+	sql.executeUpdate("ALTER TABLE AJWEBSERVER.Request ADD Referer VARCHAR(255)");
+}
+
 //sql.executeScript("01-create_db-webserver.sql",true);
 
 if(dbVersion != org.ajdeveloppement.concours.ApplicationCore.DB_RELEASE_REQUIRED) {

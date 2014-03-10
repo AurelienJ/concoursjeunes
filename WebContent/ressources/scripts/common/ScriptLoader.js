@@ -20,7 +20,8 @@ function loadScript(script, execContext) {
 		var reader = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(new java.io.File(basePath, script)), java.nio.charset.Charset.forName("UTF-8")));
 		try {
 			print("Chargement du script: " + script);
-			engine.eval(reader, execContext);
+			var compiledScript = engine.compile(reader);
+			compiledScript.eval(execContext);
 			
 			loadedScripts[execContext].add(script);
 		} finally {

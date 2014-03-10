@@ -1,22 +1,8 @@
-<menu class="mainMenu">
-			<li><a href="/admin/global.html">Informations</a></li> 
-			<li class="selected">Log</li>
-		</menu>
+<bloc::navigation></bloc::navigation>
 		
 <section style="max-width: none;">
 	<h1>Logs</h1>
 	<table>
-	<!--
-	Date DATETIME,
-	Method VARCHAR(10),
-	Uri VARCHAR(255),
-	RequestLength BIGINT,
-	ResponseLength BIGINT,
-	ResponseCode INTEGER,
-	UserAgent VARCHAR(1024),
-	Header TEXT,
-	ResourcePath varchar(1024)
-	-->
 		<tr>
 			<th>Date</th>
 			<th>Methode</th>

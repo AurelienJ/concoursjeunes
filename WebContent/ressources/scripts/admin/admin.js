@@ -9,10 +9,6 @@ var JavaString = Java.type("java.lang.String");
 var JavaStringArray = Java.type("java.lang.String[]");
 var Pattern = Java.type("java.util.regex.Pattern");
 
-RegExp.quote = function(str) {
-    return (str+'').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
-};
-
 var mainTemplate = null;
 
 function loadNavigationContent(basePath, template) {
@@ -24,8 +20,18 @@ function loadNavigationContent(basePath, template) {
 	template.parse("selectedAdmin", "class=\"selected\"");
 }
 
+function loadAdminNavigationContent(basePath, template) {
+	template.loadTemplate(basePath + "/templates/admin/navigation.thtml");
+	template.parse("selectedInfos", "class=\"selected\"");
+	template.parse("selectedLogs", "");
+	template.parse("selectedStats", "");
+	template.parse("selectedBrowser", "");
+}
+
 function loadMainContent(basePath, template) {
 	template.loadTemplate(basePath + "/templates/admin/admin.thtml");
+	
+	loadAdminNavigationContent(basePath, template.getBlocs().get("navigation"));
 }
 
 function init(basePath) {
@@ -55,8 +61,8 @@ function getPage(session) {
 			while(webPages.hasNext()) {
 				var webPage = webPages.next();
 				
-				var detail = "Uris<br/>" + JavaString.join("<br>", webPage.getUris());
-				detail += "<br/>Script:<br/>" + JavaString.join("<br>", webPage.getScripts().stream()
+				var detail = "Uris: " + JavaString.join(", ", webPage.getUris());
+				detail += "<br/>Script: " + JavaString.join(", ", webPage.getScripts().stream()
 						.map(function(s) {return s.script; })
 						.toArray(function(size) { return new JavaStringArray(size); }));
 				

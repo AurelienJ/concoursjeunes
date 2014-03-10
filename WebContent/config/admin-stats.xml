@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webpage>
+	<uri>/admin/stats.html</uri>
+	<mimeType>text/html</mimeType>
+	<script>scripts/admin/stats.js</script>
+</webpage>

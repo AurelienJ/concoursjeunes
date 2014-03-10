@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS AJWEBSERVER.Request (
 	ResponseCode INTEGER,
 	RemoteAddress VARCHAR(128),
 	UserAgent VARCHAR(1024),
+	Referer VARCHAR(255),
 	Header TEXT,
 	ResourcePath varchar(1024),
 	

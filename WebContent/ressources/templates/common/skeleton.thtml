@@ -19,11 +19,6 @@
 	<script type="text/javascript" src="scripts/jquery-1.10.2.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
-		var startPoint = {
-			X: -1,
-			Y: -1
-		};
-		
 		document.getElementsByTagName("nav")[0].addEventListener("touchstart", function(e) {
 			var touches = e.changedTouches;
 			
@@ -44,28 +39,6 @@
 			    }
 		    }
 		}, false);
-		
-		$("#windowMinifyAction").hover(
-			function() { $(this).attr('src', "images/window-min-over.png"); },
-			function() { $(this).attr('src', "images/window-min.png"); }
-		);
-		$("#windowMinifyAction").click(function() { app.minify(); });
-		
-		$("#windowExpandAction").hover(
-			function() { $(this).attr('src', "images/window-expand-over.png"); },
-			function() { $(this).attr('src', "images/window-expand.png"); }
-		);
-		$("#windowExpandAction").click(function() { app.expand(); });
-		
-		$("#windowCloseAction").hover(
-			function() { $(this).attr('src', "images/window-close-over.png"); },
-			function() { $(this).attr('src', "images/window-close.png"); }
-		);
-		$("#windowCloseAction").click(function() { app.close(); });
-		
-		/*$("body > header").onmousemove(function(e) {
-			$(this).css("cursor","move");
-		});*/
 	});
 
 	</script>
