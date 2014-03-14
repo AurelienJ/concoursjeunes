@@ -231,8 +231,8 @@ public class Main extends Application {
 	 */
 	public static void main(String[] args) {
 		
-		JsService.setConfigPath(new File(staticParameters.getResourceString(WEBSERVER_DYNAMIC_PATH_CONFIG)));
-		JsService.setContentPath(new File(staticParameters.getResourceString(WEBSERVER_DYNAMIC_PATH_RESSOURCES)));
+		JsService.setConfigPaths(new File(staticParameters.getResourceString(WEBSERVER_DYNAMIC_PATH_CONFIG)));
+		JsService.setDefaultContentPath(new File(staticParameters.getResourceString(WEBSERVER_DYNAMIC_PATH_RESSOURCES)));
 		FilesService.setBasePath(new File(staticParameters.getResourceString(WEBSERVER_STATIC_PATH)));
 		FilesService.setAllowedGzipExt(Arrays.asList(staticParameters.getResourceString(WEBSERVER_STATIC_ALLOWEDGZIPEXT).split(","))); //$NON-NLS-1$
 		FilesService.setGzipCachePath(new File(staticParameters.getResourceString(WEBSERVER_STATIC_GZIPCACHE)));

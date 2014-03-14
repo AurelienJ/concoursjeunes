@@ -7,9 +7,15 @@
 		<span style="font-weight: bold;">Chemin des scripts:</span> {DynContentPath}<br />
 	</p>
 	<table>
-		<tr><th>Page</th><th>Détail</th></tr>
+		<tr><th></th><th>Page</th><th>Détail</th></tr>
 		<bloc::pages>
-		<tr><td>{page}</td><td>{detail}</td></tr>
+		<tr>
+			<td>
+				<a href="#" onclick="reload('{page}'); return false;"><img src="images/Reload-04.png" title="Recharger"></a>
+			</td>
+			<td id="{page}">{page}</td>
+			<td>{detail}</td>
+		</tr>
 		</bloc::pages>
 	</table>
 </section>

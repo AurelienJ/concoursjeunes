@@ -37,8 +37,12 @@ function loadMainContent(basePath, template) {
 function init(basePath) {
 	mainTemplate = new AJTemplate();
 	mainTemplate.loadTemplate(basePath + "/templates/common/skeleton.thtml");
+	mainTemplate.parseBloc("head","<link rel=\"stylesheet\" href=\"styles/admin.css\"></link>");
+	mainTemplate.parseBloc("script","<script src=\"scripts/admin.js\"></script>");
+	mainTemplate.getBlocs().get("header").loadTemplate(basePath + "/templates/header.thtml");
 	
 	mainTemplate.parse("TITRE","Administration");
+	mainTemplate.parse("header.TITRE","Administration");
 	mainTemplate.parse("FILARIANNE", "<a href=\"tools.html\">Outils</a> &gt; Administration");
 	
 	loadNavigationContent(basePath, mainTemplate.getBlocs().get("navigation"));
@@ -47,13 +51,33 @@ function init(basePath) {
 }
 
 function getPage(session) {
+	var services = HttpSession.getRequestProcessor().getServices();
+	
+	if(session.getUrlParameters().containsKey("reload")) {
+		for(var i = 0; i < services.size(); i++) {
+			if(services.get(i) instanceof JsService) {
+				var webPages = services.get(i).getWebPageManager().getWebPages().iterator();
+				
+				while(webPages.hasNext()) {
+					var webPage = webPages.next();
+					
+					if(webPage.getName().equals(session.getUrlParameters().get("reload"))) {
+						webPage.compileScript();
+						
+						return ResponseFormatter.getGzipedResponseForOutputTemplate(session, JSON.stringify({status: "OK"}));
+					}
+				}
+			}
+		}
+		return ResponseFormatter.getGzipedResponseForOutputTemplate(session, JSON.stringify({status: "FAIL"}));
+	}
+	
 	var template = mainTemplate.clone();
 	
 	var mainBloc = template.getBlocs().get("main");
-	mainBloc.parse("DynConfigPath", JsService.getConfigPath().getPath());
-	mainBloc.parse("DynContentPath", JsService.getContentPath().getPath());
+	//mainBloc.parse("DynConfigPath", JsService.getConfigPaths().getPath());
+	mainBloc.parse("DynContentPath", JsService.getDefaultContentPath().getPath());
 	
-	var services = HttpSession.getRequestProcessor().getServices();
 	for(var i = 0; i < services.size(); i++) {
 		if(services.get(i) instanceof JsService) {
 			var webPages = services.get(i).getWebPageManager().getWebPages().iterator();
