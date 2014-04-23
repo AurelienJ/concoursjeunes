@@ -100,8 +100,10 @@ import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlSession;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
@@ -117,7 +119,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields
 @SqlPrimaryKey(fields="ID_ENTITE")
 @SqlUnmappedFields(fields="ID_ENTITE",typeFields=UUID.class)
 public class Federation extends Entite implements SqlObjectPersistence {
-	private static StoreHelper<Federation> helper = SqlStoreHelperFactory.getStoreHelper(Federation.class);
+	//private static StoreHelper<Federation> helper = SqlStoreHelperFactory.getStoreHelper(Federation.class);
 
 	@SqlField(name="SIGLE")
 	@XmlElement(name="sigle")
@@ -208,27 +210,16 @@ public class Federation extends Entite implements SqlObjectPersistence {
 
 			checkAlreadyExists();
 			
+			SqlContext context = SqlContext.getDefaultContext();
+			if(session instanceof SqlSession)
+				context = ((SqlSession)session).getContext();
+			
+			StoreHelper<Federation> helper = SqlStoreHelperCache.getHelper(Federation.class, context);
 			helper.save(this);
 			
 			Session.addProcessedObject(session,this);
 			
 			Cache.put(this);
-		}
-	}
-
-	/**
-	 * Supprime la fédération de la base de données. Les arguments sont ignoré.
-	 * 
-	 * Tous les règlements attaché à cette fédération seront également supprimés
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session,this);
-			
-			Cache.remove(this);
 		}
 	}
 	

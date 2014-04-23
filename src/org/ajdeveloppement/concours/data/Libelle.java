@@ -95,7 +95,9 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.SqlSession;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
@@ -205,7 +207,11 @@ public class Libelle implements SqlObjectPersistence {
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
 		if((idLibelle == null || updated) && Session.canExecute(session, this)) {
-			StoreHelper<Libelle> helper = SqlStoreHelperCache.getHelper(Libelle.class);
+			SqlContext context = null;
+			if(session instanceof SqlSession)
+				context = ((SqlSession)session).getContext();
+			
+			StoreHelper<Libelle> helper = SqlStoreHelperCache.getHelper(Libelle.class, context);
 			if(helper != null) {
 				helper.save(this);
 				

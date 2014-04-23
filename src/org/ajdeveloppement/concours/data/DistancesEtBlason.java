@@ -101,13 +101,14 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.SqlSession;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -124,8 +125,8 @@ import org.ajdeveloppement.concours.xml.bind.BlasonAdapter;
 @SqlTable(name="DISTANCESBLASONS",loadBuilder=DistancesEtBlasonBuilder.class)
 @SqlPrimaryKey(fields="ID_DISTANCESBLASONS")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DistancesEtBlason implements ObjectPersistence {
-	private static StoreHelper<DistancesEtBlason> helper = SqlStoreHelperFactory.getStoreHelper(DistancesEtBlason.class);
+public class DistancesEtBlason implements SqlObjectPersistence {
+	//private static StoreHelper<DistancesEtBlason> helper = SqlStoreHelperFactory.getStoreHelper(DistancesEtBlason.class);
 	
 	@XmlAttribute(name="id")
 	@XmlID
@@ -216,16 +217,6 @@ public class DistancesEtBlason implements ObjectPersistence {
 		this.idDistancesBlason = idDistancesBlason;
 	}
 	
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-	
 	/**
 	 * Sauvegarde le couple distances/blasons en base.
 	 * 
@@ -234,7 +225,12 @@ public class DistancesEtBlason implements ObjectPersistence {
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {			
+		if(Session.canExecute(session, this)) {
+			SqlContext context = SqlContext.getDefaultContext();
+			if(session instanceof SqlSession)
+				context = ((SqlSession)session).getContext();
+			
+			StoreHelper<DistancesEtBlason> helper = SqlStoreHelperCache.getHelper(DistancesEtBlason.class, context);
 			helper.save(this);
 			
 			Session.addProcessedObject(session, this);
@@ -244,20 +240,6 @@ public class DistancesEtBlason implements ObjectPersistence {
 				distance.setNumOrdre(numOrdre++);
 			PersitentCollection.save(distances, session, 
 					Collections.<String,Object>singletonMap(T_Distance.ID_DISTANCESBLASONS.getFieldName(), idDistancesBlason));
-		}
-	}
-	
-	/**
-	 * Supprime le distances/blason de la base.
-	 * 
-	 * @throws ObjectPersistenceException
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
 		}
 	}
 

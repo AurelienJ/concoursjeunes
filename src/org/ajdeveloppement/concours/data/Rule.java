@@ -116,8 +116,10 @@ import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlSession;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
@@ -154,7 +156,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @SqlTable(name="REGLEMENT")
 @SqlPrimaryKey(fields="ID_REGLEMENT", generatedidField=@SqlGeneratedIdField(name="ID_REGLEMENT",type=Types.JAVA_OBJECT))
 public class Rule implements SqlObjectPersistence, Cloneable {
-	private static StoreHelper<Rule> helper = SqlStoreHelperFactory.getStoreHelper(Rule.class);
+	//private static StoreHelper<Rule> helper = SqlStoreHelperFactory.getStoreHelper(Rule.class);
 	
 	/**
 	 * Type de réglement
@@ -973,6 +975,11 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 				idReglement = UUID.randomUUID();
 			}
 			
+			SqlContext context = SqlContext.getDefaultContext();
+			if(session instanceof SqlSession)
+				context = ((SqlSession)session).getContext();
+			
+			StoreHelper<Rule> helper = SqlStoreHelperCache.getHelper(Rule.class, context);
 			helper.save(this);
 			
 			Cache.put(this);
@@ -1032,6 +1039,12 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 //		PersitentCollection.save(listPlacementCriteriaSet, session,
 //				Collections.<String, Object>singletonMap(T_CriteriaSet.ID_REGLEMENT.getFieldName(), idReglement));
 	}
+	
+	
+	@Override
+	public boolean validateBeforeDelete() {
+		return !officialReglement;
+	}
 
 	/**
 	 * Supprime la persistance du règlement. Cette persistance ne peut être
@@ -1041,8 +1054,13 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	 */
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
-		if (!officialReglement) {
+		if (validateBeforeDelete()) {
 			if(Session.canExecute(session, this)) {
+				SqlContext context = SqlContext.getDefaultContext();
+				if(session instanceof SqlSession)
+					context = ((SqlSession)session).getContext();
+				
+				StoreHelper<Rule> helper = SqlStoreHelperCache.getHelper(Rule.class, context);
 				helper.delete(this);
 				
 				Cache.remove(this);

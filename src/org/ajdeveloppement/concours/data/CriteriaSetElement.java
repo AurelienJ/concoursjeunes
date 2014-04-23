@@ -94,12 +94,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -112,8 +107,8 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="ELEMENT_JEUX_CRITERES_DISCRIMINANT")
 @SqlPrimaryKey(fields={"ID_JEUX_CRITERES_DISCRIMINANT", "ID_ELEMENT_CRITERE_DISCRIMINANT"})
-public class CriteriaSetElement implements ObjectPersistence,Cloneable {
-	private static StoreHelper<CriteriaSetElement> helper = SqlStoreHelperFactory.getStoreHelper(CriteriaSetElement.class);
+public class CriteriaSetElement implements SqlObjectPersistence,Cloneable {
+	//private static StoreHelper<CriteriaSetElement> helper = SqlStoreHelperFactory.getStoreHelper(CriteriaSetElement.class);
 
 	@XmlTransient
 	@SqlForeignKey(mappedTo="ID_JEUX_CRITERES_DISCRIMINANT")
@@ -183,48 +178,6 @@ public class CriteriaSetElement implements ObjectPersistence,Cloneable {
 	 */
 	public void setOrdre(int ordre) {
 		this.ordre = ordre;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete()
-	 */
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save()
-	 */
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			criteriaSet.save(session);
-			
-			helper.save(this);
-			
-			Session.addProcessedObject(session, this);
-		}
 	}
 
 	/* (non-Javadoc)

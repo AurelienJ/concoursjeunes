@@ -108,8 +108,10 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlSession;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -149,7 +151,7 @@ public class CompetitionLevel implements SqlObjectPersistence {
 	private List<Libelles> libelles = null;
 	private transient Map<String, String> localizedLibelle;
 	
-	private static StoreHelper<CompetitionLevel> helper = SqlStoreHelperFactory.getStoreHelper(CompetitionLevel.class);
+	//private static StoreHelper<CompetitionLevel> helper = SqlStoreHelperFactory.getStoreHelper(CompetitionLevel.class);
 	
 	/**
 	 * 
@@ -294,24 +296,12 @@ public class CompetitionLevel implements SqlObjectPersistence {
 				}
 			}
 			
-			helper.save(this);
+			SqlContext context = SqlContext.getDefaultContext();
+			if(session instanceof SqlSession)
+				context = ((SqlSession)session).getContext();
 			
-			Session.addProcessedObject(session, this);
-		}
-	}
-
-	/** 
-	 * Sauvegarde de la base le niveau de compétition
-	 * 
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(Session)
-	 * compte.
-	 * 
-	 * @throws ObjectPersistenceException
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
+			StoreHelper<CompetitionLevel> helper = SqlStoreHelperCache.getHelper(CompetitionLevel.class, context);
+			helper.save(this);
 			
 			Session.addProcessedObject(session, this);
 		}

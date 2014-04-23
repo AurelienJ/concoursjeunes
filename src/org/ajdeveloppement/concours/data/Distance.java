@@ -90,12 +90,7 @@ package org.ajdeveloppement.concours.data;
 
 import java.util.UUID;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -107,8 +102,8 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  */
 @SqlTable(name="DISTANCE")
 @SqlPrimaryKey(fields={"ID_DISTANCE", "ID_DISTANCESBLASONS"})
-public class Distance implements ObjectPersistence {
-	private static StoreHelper<Distance> helper = SqlStoreHelperFactory.getStoreHelper(Distance.class);
+public class Distance implements SqlObjectPersistence {
+	//private static StoreHelper<Distance> helper = SqlStoreHelperFactory.getStoreHelper(Distance.class);
 
 	@SqlField(name="ID_DISTANCE")
 	private UUID idDistance;
@@ -194,48 +189,6 @@ public class Distance implements ObjectPersistence {
 	 */
 	public void setNumOrdre(int numOrdre) {
 		this.numOrdre = numOrdre;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete()
-	 */
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save()
-	 */
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			distancesEtBlason.save(session);
-			
-			helper.save(this);
-			
-			Session.addProcessedObject(session, this);
-		}
 	}
 
 	/* (non-Javadoc)

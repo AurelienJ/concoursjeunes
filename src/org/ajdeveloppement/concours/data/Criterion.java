@@ -105,9 +105,10 @@ import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlSession;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
@@ -166,7 +167,7 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
     @SqlForeignKey(mappedTo="ID_CRITERE_DISCRIMINANT_REFERENCE")
     private Criterion critereReference;
     
-    private static StoreHelper<Criterion> helper = SqlStoreHelperFactory.getStoreHelper(Criterion.class);
+    //private static StoreHelper<Criterion> helper = SqlStoreHelperFactory.getStoreHelper(Criterion.class);
     
     /**
      * 
@@ -370,16 +371,6 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
 	public void removeCriterionElement(CriterionElement criterionElement) {
 		criterionElements.remove(criterionElement);
 	}
-	
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
 
 	/**
 	 * Sauvegarde le critère en base.
@@ -392,6 +383,11 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
 		if(Session.canExecute(session, this)) {
 			reglement.save(session);
 			
+			SqlContext context = SqlContext.getDefaultContext();
+			if(session instanceof SqlSession)
+				context = ((SqlSession)session).getContext();
+			
+			StoreHelper<Criterion> helper = SqlStoreHelperCache.getHelper(Criterion.class, context);
 			helper.save(this); //$NON-NLS-1$
 			
 			Session.addProcessedObject(session, this);
@@ -407,22 +403,6 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
 			}
 			
 			PersitentCollection.save(criterionElements, session, fkMap);
-		}
-	}
-	
-	/** 
-	 * Supprime le critère de la base.
-	 * 
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(Session)
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Cache.remove(this);
-
-			Session.addProcessedObject(session, this);
 		}
 	}
 	

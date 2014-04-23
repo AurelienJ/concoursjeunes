@@ -39,7 +39,8 @@ function init(basePath) {
 	mainTemplate.loadTemplate(basePath + "/templates/common/skeleton.thtml");
 	mainTemplate.parseBloc("head","<link rel=\"stylesheet\" href=\"styles/admin.css\"></link>");
 	mainTemplate.parseBloc("script","<script src=\"scripts/admin.js\"></script>");
-	mainTemplate.getBlocs().get("header").loadTemplate(basePath + "/templates/header.thtml");
+	if(mainTemplate.getBlocs().containsKey("header"))
+		mainTemplate.getBlocs().get("header").loadTemplate(basePath + "/templates/header.thtml");
 	
 	mainTemplate.parse("TITRE","Administration");
 	mainTemplate.parse("header.TITRE","Administration");

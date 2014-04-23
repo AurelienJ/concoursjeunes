@@ -96,12 +96,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -116,7 +111,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @SqlTable(name="TARIF")
 @SqlPrimaryKey(fields="ID_TARIF")
 public class Rate implements SqlObjectPersistence {
-	private static StoreHelper<Rate> helper = SqlStoreHelperFactory.getStoreHelper(Rate.class);
+	//private static StoreHelper<Rate> helper = SqlStoreHelperFactory.getStoreHelper(Rate.class);
 	
 	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
 	@XmlID
@@ -202,51 +197,6 @@ public class Rate implements SqlObjectPersistence {
 //		this.categoriesTarif = categoriesTarif;
 //	}
 	
-	/**
-	 * Save contact in database
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			if(idTarif == null)
-				idTarif = UUID.randomUUID();
-			
-			helper.save(this);
-			
-//			SqlManager sqlManager = new SqlManager(ApplicationCore.dbConnection, null);
-			
-//			try {
-//				String savedCriteriaSetIds = ""; //$NON-NLS-1$
-//				for(RateCategory rateCategory : categoriesTarif) {
-//					rateCategory.save(session);
-//					
-//					savedCriteriaSetIds += (!savedCriteriaSetIds.isEmpty() ? ",": "")  //$NON-NLS-1$ //$NON-NLS-2$
-//						+ rateCategory.getCategory().getNumCriteriaSet();
-//				}
-//				sqlManager.executeUpdate("delete from CATEGORIE_TARIF where ID_TARIF='" + idTarif.toString() + "' and NUMCRITERIASET not in (" + savedCriteriaSetIds +")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//			} catch(SQLException e) {
-//				throw new ObjectPersistenceException(e);
-//			}
-			
-			Cache.put(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-	
-	/**
-	 * remove the contact database 
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(idTarif != null && Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Cache.remove(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
 	
 	/**
 	 * Use only by JAXB. Do not use.

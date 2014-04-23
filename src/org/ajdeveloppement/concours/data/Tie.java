@@ -98,12 +98,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -116,9 +111,9 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="DEPARTAGE")
 @SqlPrimaryKey(fields="ID_DEPARTAGE")
-public class Tie implements ObjectPersistence,Cloneable {
+public class Tie implements SqlObjectPersistence,Cloneable {
 	
-	private static StoreHelper<Tie> helper = SqlStoreHelperFactory.getStoreHelper(Tie.class);
+	//private static StoreHelper<Tie> helper = SqlStoreHelperFactory.getStoreHelper(Tie.class);
 
 	@XmlAttribute(name="id")
 	@XmlID
@@ -201,51 +196,6 @@ public class Tie implements ObjectPersistence,Cloneable {
 	 */
 	public void setNumOrdre(int numOrdre) {
 		this.numOrdre = numOrdre;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete()
-	 */
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save()
-	 */
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			if(idDepartage == null)
-				idDepartage = UUID.randomUUID();
-			
-			reglement.save(session);
-			
-			helper.save(this);
-			
-			Session.addProcessedObject(session, this);
-		}
 	}
 
 	/* (non-Javadoc)

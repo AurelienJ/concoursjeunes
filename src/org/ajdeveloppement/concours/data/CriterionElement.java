@@ -96,12 +96,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -116,8 +111,8 @@ import org.ajdeveloppement.concours.builders.CriterionElementBuilder;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="ELEMENT_CRITERE_DISCRIMINANT",loadBuilder=CriterionElementBuilder.class)
 @SqlPrimaryKey(fields={"ID_ELEMENT_CRITERE_DISCRIMINANT"})
-public class CriterionElement implements ObjectPersistence, Cloneable {
-	private static StoreHelper<CriterionElement> helper = SqlStoreHelperFactory.getStoreHelper(CriterionElement.class);
+public class CriterionElement implements SqlObjectPersistence, Cloneable {
+	//private static StoreHelper<CriterionElement> helper = SqlStoreHelperFactory.getStoreHelper(CriterionElement.class);
 	
 	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
 	@XmlID
@@ -228,46 +223,6 @@ public class CriterionElement implements ObjectPersistence, Cloneable {
 	public void setNumordre(int numordre) {
     	this.numordre = numordre;
     }
-	
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-	/**
-	 * Sauvegarde l'élement de critère dans la base.  Les arguments sont ignoré
-	 * 
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(Session)
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			if(criterion!=null)
-				criterion.save(session);
-			
-			helper.save(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-	
-	/**
-	 * Supprime de la base le présent élément. Les arguments sont ignoré
-	 * 
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(Session)
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
 	
 	/**
 	 * 

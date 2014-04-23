@@ -96,7 +96,6 @@ import java.io.PrintStream;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -112,7 +111,8 @@ import javax.swing.event.EventListenerList;
 
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.io.FileUtils;
-import org.ajdeveloppement.commons.persistence.sql.SqlPersistenceProperties;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext.ContextDomain;
 import org.ajdeveloppement.commons.security.SecurityImporter;
 import org.ajdeveloppement.commons.sql.SqlManager;
 import org.ajdeveloppement.concours.event.ApplicationCoreEvent;
@@ -176,8 +176,6 @@ public class ApplicationCore {
 	 * constructeur, création de la fenêtre principale
 	 */
 	private ApplicationCore() throws SQLException {
-		SqlPersistenceProperties.databaseEngine = "h2"; //$NON-NLS-1$
-		
 		debugLogger();
 		openDatabase();
 		checkUpdateDatabase();
@@ -269,11 +267,16 @@ public class ApplicationCore {
 	 * Ouvre la base de donné de l'application
 	 */
 	private void openDatabase() throws SQLException {
-		dbConnection = DriverManager.getConnection(staticParameters.getResourceString("database.url", userRessources.getBasePath()), //$NON-NLS-1$
-				staticParameters.getResourceString("database.user"),   //$NON-NLS-1$
-				staticParameters.getResourceString("database.password"));   //$NON-NLS-1$
+		ContextDomain contextDomain = new ContextDomain();
+		contextDomain.setDatabaseUrl(staticParameters.getResourceString("database.url", userRessources.getBasePath())); //$NON-NLS-1$
+		contextDomain.setUser(staticParameters.getResourceString("database.user")); //$NON-NLS-1$
+		contextDomain.setPassword(staticParameters.getResourceString("database.password")); //$NON-NLS-1$
+		contextDomain.setPersistenceDialect("h2"); //$NON-NLS-1$
 		
-		SqlPersistenceProperties.sqlConnection = dbConnection;
+		SqlContext.getContextDomains().put(SqlContext.DEFAULT_DOMAIN, contextDomain);
+		//SqlContext.getContextDomains().put(HttpServer.WEBSERVER_DB_DOMAIN, contextDomain);
+		
+		dbConnection = SqlContext.getDefaultContext().getDefaultConnection(); 
 	}
 	
 	private void checkUpdateDatabase() throws SQLException {

@@ -101,15 +101,16 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.SqlSession;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
@@ -129,8 +130,8 @@ import org.ajdeveloppement.concours.builders.CriteriaSetBuilder;
 @SqlTable(name="JEUX_CRITERES_DISCRIMINANT",loadBuilder=CriteriaSetBuilder.class)
 @SqlPrimaryKey(fields="ID_JEUX_CRITERES_DISCRIMINANT",generatedidField=@SqlGeneratedIdField(name="ID_JEUX_CRITERES_DISCRIMINANT"))
 @SqlUnmappedFields(fields={"IDCRITERIASET"})
-public class CriteriaSet implements ObjectPersistence,Cloneable {
-	private static StoreHelper<CriteriaSet> helper = SqlStoreHelperFactory.getStoreHelper(CriteriaSet.class);
+public class CriteriaSet implements SqlObjectPersistence,Cloneable {
+	//private static StoreHelper<CriteriaSet> helper = SqlStoreHelperFactory.getStoreHelper(CriteriaSet.class);
 
 	@XmlAttribute(name="id")
 	@XmlID
@@ -341,16 +342,6 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 		return "R=" + (idReglement != null ? idReglement.toString() : "") + ",S=" + uid;
 	}
 	
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-	
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-	
 	/**
 	 * Sauvegarde en base le jeux de critère. Les arguments sont ignoré
 	 * 
@@ -362,30 +353,12 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 		if(Session.canExecute(session, this)) {
 			//vérifie si le jeux n'existe pas déjà
 			String uid = getUID();
-			String sql = "select NUMCRITERIASET from CRITERIASET where IDCRITERIASET='" + uid.replace("'","''") + "'"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			
-			/*try {
-				Statement stmt = ApplicationCore.dbConnection.createStatement();
-				try {
-					ResultSet rs = stmt.executeQuery(sql);
-					try {
-						//si le jeux existe ne pas aller plus loin
-						if(rs.first()) {
-							if(numCriteriaSet == 0)
-								numCriteriaSet = rs.getInt(1);
-							return;
-						}
-					} finally {
-						rs.close();
-					}
-				} finally {
-					stmt.close();
-				}
-			} catch (SQLException e) {
-				throw new ObjectPersistenceException(e);
-			}*/
-			
 	
+			SqlContext context = SqlContext.getDefaultContext();
+			if(session instanceof SqlSession)
+				context = ((SqlSession)session).getContext();
+			
+			StoreHelper<CriteriaSet> helper = SqlStoreHelperCache.getHelper(CriteriaSet.class, context);
 			helper.save(this, Collections.<String, Object>singletonMap("IDCRITERIASET", uid)); //$NON-NLS-1$
 			
 			Cache.put(this);
@@ -394,17 +367,6 @@ public class CriteriaSet implements ObjectPersistence,Cloneable {
 			
 			PersitentCollection.save(elements, session, 
 					Collections.<String,Object>singletonMap(T_CriteriaSetElement.ID_JEUX_CRITERES_DISCRIMINANT.getFieldName(), id));
-		}
-	}
-
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Cache.remove(this);
-			
-			Session.addProcessedObject(session, this);
 		}
 	}
 	

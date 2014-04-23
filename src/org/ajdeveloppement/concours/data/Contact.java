@@ -110,8 +110,10 @@ import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlSession;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
@@ -135,7 +137,7 @@ import org.ajdeveloppement.concours.managers.EntiteManager;
 public class Contact implements SqlObjectPersistence, Cloneable {
 	
 	// [start] Helper persistence
-	private static StoreHelper<Contact> helper = SqlStoreHelperFactory.getStoreHelper(Contact.class);
+	//private static StoreHelper<Contact> helper = SqlStoreHelperFactory.getStoreHelper(Contact.class);
 	// [end]
 	
 	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
@@ -592,6 +594,11 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 			if(entite != null && entite.getNom().isEmpty())
 				entite = null;
 			
+			SqlContext context = SqlContext.getDefaultContext();
+			if(session instanceof SqlSession)
+				context = ((SqlSession)session).getContext();
+			
+			StoreHelper<Contact> helper = SqlStoreHelperCache.getHelper(Contact.class, context);
 			helper.save(this);
 			
 			entite = savedEntite;
@@ -605,18 +612,6 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 				PersitentCollection.save(coordinates, session, 
 						Collections.<String, Object>singletonMap(T_CategoryContactContact.ID_CONTACT.getFieldName(), idContact));
 			}
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-
-	/**
-	 * remove the contact database 
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(idContact != null && Session.canExecute(session, this)) {
-			helper.delete(this);
 			
 			Session.addProcessedObject(session, this);
 		}

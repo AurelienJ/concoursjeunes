@@ -98,7 +98,9 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
+import org.ajdeveloppement.commons.persistence.sql.SqlSession;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
@@ -119,7 +121,7 @@ import org.ajdeveloppement.concours.managers.ConcurrentManager;
 @SqlUnmappedFields(fields={"ID_CONTACT","SEXE","CATEGORIE","NIVEAU","ARC","DATENAISS","DATEMODIF"},typeFields={UUID.class})
 public class Archer extends Contact {
 	private static CategoryContact archerCategoryContact = null;
-	private static StoreHelper<Archer> helper = SqlStoreHelperFactory.getStoreHelper(Archer.class);
+	//private static StoreHelper<Archer> helper = SqlStoreHelperFactory.getStoreHelper(Archer.class);
 
 	@SqlField(name="NUMLICENCEARCHER")
 	private String numLicenceArcher;
@@ -329,6 +331,11 @@ public class Archer extends Contact {
 			
 			super.save(session);
 			
+			SqlContext context = SqlContext.getDefaultContext();
+			if(session instanceof SqlSession)
+				context = ((SqlSession)session).getContext();
+			
+			StoreHelper<Archer> helper = SqlStoreHelperCache.getHelper(Archer.class, context);
 			helper.save(this, Collections.<String, Object>singletonMap(T_Archer.ID_CONTACT.getFieldName(), getIdContact()));
 		}
 	}

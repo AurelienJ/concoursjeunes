@@ -92,12 +92,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -110,9 +105,9 @@ import org.ajdeveloppement.concours.Judge;
  */
 @SqlTable(name="COMPETITION")
 @SqlPrimaryKey(fields="ID_COMPETITION")
-public class Competition implements ObjectPersistence {
+public class Competition implements SqlObjectPersistence {
 	
-	private static StoreHelper<Competition> helper = SqlStoreHelperFactory.getStoreHelper(Competition.class);
+	//private static StoreHelper<Competition> helper = SqlStoreHelperFactory.getStoreHelper(Competition.class);
 	
 	@SqlField(name="ID_COMPETITION")
 	private UUID idCompetition;
@@ -287,52 +282,6 @@ public class Competition implements ObjectPersistence {
 	 */
 	public void setJudge(List<Judge> judge) {
 		this.judge = judge;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save()
-	 */
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			if(idCompetition == null)
-				idCompetition = UUID.randomUUID();
-			
-			helper.save(this);
-			
-			//PersitentCollection.save(judge, session, T_Competition.g)
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete()
-	 */
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-		}
 	}
 
 	/* (non-Javadoc)

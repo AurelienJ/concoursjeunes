@@ -93,12 +93,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
@@ -110,8 +105,8 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="SURCLASSEMENT")
 @SqlPrimaryKey(fields={"NUMCRITERIASET", "ID_REGLEMENT"})
-public class Surclassement implements ObjectPersistence, Cloneable {
-	private static StoreHelper<Surclassement> helper = SqlStoreHelperFactory.getStoreHelper(Surclassement.class);
+public class Surclassement implements SqlObjectPersistence, Cloneable {
+	//private static StoreHelper<Surclassement> helper = SqlStoreHelperFactory.getStoreHelper(Surclassement.class);
 	
 	@SqlForeignKey(mappedTo="NUMCRITERIASET")
 	private CriteriaSet criteriaSet;
@@ -194,51 +189,6 @@ public class Surclassement implements ObjectPersistence, Cloneable {
 	 */
 	public boolean isAuthorized() {
 		return criteriaSetSurclasse != null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete()
-	 */
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save()
-	 */
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			criteriaSet.save(session);
-			reglement.save(session);
-			if(criteriaSetSurclasse != null)
-				criteriaSetSurclasse.save(session);
-			
-			helper.save(this);
-			
-			Session.addProcessedObject(session, this);
-		}
 	}
 
 	/**

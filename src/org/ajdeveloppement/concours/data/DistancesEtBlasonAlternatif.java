@@ -93,12 +93,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistence;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.SessionHelper;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
@@ -110,8 +105,8 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="DISTANCESBLASONALTERNATIF")
 @SqlPrimaryKey(fields={"NUMCRITERIASET","ID_DISTANCESBLASONS"})
-public class DistancesEtBlasonAlternatif implements ObjectPersistence,Cloneable {
-	private static StoreHelper<DistancesEtBlasonAlternatif> helper = SqlStoreHelperFactory.getStoreHelper(DistancesEtBlasonAlternatif.class);
+public class DistancesEtBlasonAlternatif implements SqlObjectPersistence,Cloneable {
+	//private static StoreHelper<DistancesEtBlasonAlternatif> helper = SqlStoreHelperFactory.getStoreHelper(DistancesEtBlasonAlternatif.class);
 	
 	@XmlTransient
 	@SqlForeignKey(mappedTo="NUMCRITERIASET")
@@ -166,49 +161,6 @@ public class DistancesEtBlasonAlternatif implements ObjectPersistence,Cloneable 
 	 */
 	public void setDistancesEtBlason(DistancesEtBlason distancesEtBlason) {
 		this.distancesEtBlason = distancesEtBlason;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete()
-	 */
-	@Override
-	public void delete() throws ObjectPersistenceException {
-		SessionHelper.startDeleteSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#delete(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save()
-	 */
-	@Override
-	public void save() throws ObjectPersistenceException {
-		SessionHelper.startSaveSession(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(org.ajdeveloppement.commons.persistence.Session)
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			criteriaSet.save(session);
-			distancesEtBlason.save(session);
-			
-			helper.save(this);
-			
-			Session.addProcessedObject(session, this);
-		}
 	}
 
 	/* (non-Javadoc)

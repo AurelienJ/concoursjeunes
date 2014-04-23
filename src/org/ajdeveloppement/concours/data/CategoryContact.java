@@ -103,8 +103,10 @@ import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperFactory;
+import org.ajdeveloppement.commons.persistence.sql.SqlSession;
+import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
@@ -149,7 +151,7 @@ public class CategoryContact implements SqlObjectPersistence {
 		}
 	}
 	
-	private static StoreHelper<CategoryContact> helper = SqlStoreHelperFactory.getStoreHelper(CategoryContact.class);
+	//private static StoreHelper<CategoryContact> helper = SqlStoreHelperFactory.getStoreHelper(CategoryContact.class);
 	
 	@SqlField(name="ID_CATEGORIE_CONTACT")
 	private UUID id;
@@ -254,23 +256,14 @@ public class CategoryContact implements SqlObjectPersistence {
 				}
 			}
 			
+			SqlContext context = SqlContext.getDefaultContext();
+			if(session instanceof SqlSession)
+				context = ((SqlSession)session).getContext();
+			
+			StoreHelper<CategoryContact> helper = SqlStoreHelperCache.getHelper(CategoryContact.class, context);
 			helper.save(this);
 			
 			Cache.put(this);
-			
-			Session.addProcessedObject(session, this);
-		}
-	}
-	
-	/**
-	 * Delete Category in database
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			helper.delete(this);
-			
-			Cache.remove(this);
 			
 			Session.addProcessedObject(session, this);
 		}
