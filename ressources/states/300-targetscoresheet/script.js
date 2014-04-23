@@ -15,7 +15,7 @@ function printState(ficheConcours, template, document, writer, options) {
 	templateXML.loadTemplate(template);
 
 	try {
-		templateXML.parse("CURRENT_TIME", java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL).format(new Date()));
+		templateXML.parse("CURRENT_TIME", java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL).format(new java.util.Date()));
 		templateXML.parse("producer", org.concoursjeunes.AppInfos.NOM + " " + org.concoursjeunes.AppInfos.VERSION);
 		templateXML.parse("author", profile.getConfiguration().getClub().getNom());
 		
@@ -104,7 +104,7 @@ function printState(ficheConcours, template, document, writer, options) {
 		//print(templateXML.output());
 		com.lowagie.text.xml.XmlParser.parse(document, new java.io.StringReader(templateXML.output()));
 	} catch (e) {
-		print(e);
+		e.printStackTrace();
 	}
 }
 
