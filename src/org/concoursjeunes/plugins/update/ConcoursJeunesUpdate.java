@@ -241,7 +241,7 @@ public class ConcoursJeunesUpdate extends Thread implements AjUpdaterListener, M
 		switch (event.getStatus()) {
 		case UPDATE_AVAILABLE:
 			
-			if (SystemTray.isSupported() && tray == null) {
+			if (SystemTray.isSupported() && !org.ajdeveloppement.apps.ApplicationContext.getContext().getOSName().toLowerCase().startsWith("linux") && tray == null) {
 				tray = SystemTray.getSystemTray();
 				// load an image
 				Dimension dimension = tray.getTrayIconSize();
