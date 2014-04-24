@@ -17,7 +17,7 @@ function printState(ficheConcours, template, document, writer, options) {
 	try {
 		templateXML.parse("CURRENT_TIME", java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL).format(new java.util.Date()));
 		templateXML.parse("producer", org.concoursjeunes.AppInfos.NOM + " " + org.concoursjeunes.AppInfos.VERSION);
-		templateXML.parse("author", profile.getConfiguration().getClub().getNom());
+		templateXML.parse("author", org.ajdeveloppement.commons.XmlUtils.sanitizeText(profile.getConfiguration().getClub().getNom()));
 		
 		var nbSerie = ficheConcours.getParametre().getReglement().getNbSerie();
 		var nbVoleeParSerie = ficheConcours.getParametre().getReglement().getNbVoleeParSerie();
@@ -34,10 +34,10 @@ function printState(ficheConcours, template, document, writer, options) {
 		for(var i = 0; i < targets.size(); i++) {
 			if(targets.get(i).getNbArcher() == 0)
 				continue;
-			templateXML.parse("scoresheet.LOGO_CLUB_URI", logo);
-			templateXML.parse("scoresheet.INTITULE_CLUB", nomClub);
-			templateXML.parse("scoresheet.INTITULE_CONCOURS", intituleConcours);
-			templateXML.parse("scoresheet.VILLE_CLUB", lieuConcours);
+			templateXML.parse("scoresheet.LOGO_CLUB_URI", org.ajdeveloppement.commons.XmlUtils.sanitizeText(logo));
+			templateXML.parse("scoresheet.INTITULE_CLUB", org.ajdeveloppement.commons.XmlUtils.sanitizeText(nomClub));
+			templateXML.parse("scoresheet.INTITULE_CONCOURS", org.ajdeveloppement.commons.XmlUtils.sanitizeText(intituleConcours));
+			templateXML.parse("scoresheet.VILLE_CLUB", org.ajdeveloppement.commons.XmlUtils.sanitizeText(lieuConcours));
 			templateXML.parse("scoresheet.DATE_CONCOURS", dateConcours);
 			
 			var percentPositions = "";
@@ -51,9 +51,9 @@ function printState(ficheConcours, template, document, writer, options) {
 			for(var j = 0; j < nbPositions; j++) {
 				var concurrent = targets.get(i).getConcurrentAt(j);
 				if(concurrent != null) {
-					templateXML.parse("scoresheet.positions.cid", concurrent.getNomArcher() + " " + concurrent.getPrenomArcher());
-					templateXML.parse("scoresheet.positions.cclub", concurrent.getClub().toString());
-					templateXML.parse("scoresheet.positions.clicence", concurrent.getNumLicenceArcher());
+					templateXML.parse("scoresheet.positions.cid", org.ajdeveloppement.commons.XmlUtils.sanitizeText(concurrent.getNomArcher() + " " + concurrent.getPrenomArcher()));
+					templateXML.parse("scoresheet.positions.cclub", org.ajdeveloppement.commons.XmlUtils.sanitizeText(concurrent.getClub().toString()));
+					templateXML.parse("scoresheet.positions.clicence", org.ajdeveloppement.commons.XmlUtils.sanitizeText(concurrent.getNumLicenceArcher()));
 					templateXML.parse("scoresheet.positions.emplacement", new org.concoursjeunes.TargetPosition(concurrent.getCible(), concurrent.getPosition()).toString());
 				} else {
 					templateXML.parse("scoresheet.positions.cid", "");

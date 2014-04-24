@@ -1034,5 +1034,26 @@
     </void>
    </object>
   </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Correction problème d&apos;édition si présence de caractères XML invalide dans les informations de l&apos;édition</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1398372293313</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.23</string>
+    </void>
+   </object>
+  </void>
  </object>
 </java>

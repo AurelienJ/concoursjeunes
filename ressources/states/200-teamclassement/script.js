@@ -54,7 +54,7 @@ function printState(ficheConcours, template, document, writer, options) {
 		org.concoursjeunes.CriteriaSet.sortCriteriaSet(sortedTeamCriteriaSets, ficheConcours.getParametre().getReglement().getListCriteria());
 		
 		for(var i = 0; i < sortedTeamCriteriaSets.size(); i++) {			
-			tplClassementEquipe.parse("categories.CATEGORIE", new org.concoursjeunes.localisable.CriteriaSetLibelle(sortedTeamCriteriaSets.get(i), profile.getLocalisation()).toString()); //$NON-NLS-1$
+			tplClassementEquipe.parse("categories.CATEGORIE", org.ajdeveloppement.commons.XmlUtils.sanitizeText(new org.concoursjeunes.localisable.CriteriaSetLibelle(sortedTeamCriteriaSets.get(i), profile.getLocalisation()).toString())); //$NON-NLS-1$
 			tplClassementEquipe.parse("categories.NB_EQUIPES", "" + ficheConcours.getEquipes().countEquipes()); //$NON-NLS-1$ //$NON-NLS-2$
 
 			var sortEquipes = org.concoursjeunes.EquipeList.sort(ficheConcours.getEquipes().list(sortedTeamCriteriaSets.get(i)));

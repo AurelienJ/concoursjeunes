@@ -51,7 +51,7 @@ function printState(ficheConcours, template, document, writer, options) {
 	
 		templateEtiquettesXML.parse("CURRENT_TIME", java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL).format(new java.util.Date())); //$NON-NLS-1$
 		templateEtiquettesXML.parse("producer", org.concoursjeunes.AppInfos.NOM + " " + org.concoursjeunes.AppInfos.VERSION); //$NON-NLS-1$ //$NON-NLS-2$
-		templateEtiquettesXML.parse("author", profile.getConfiguration().getClub().getNom()); //$NON-NLS-1$
+		templateEtiquettesXML.parse("author", org.ajdeveloppement.commons.XmlUtils.sanitizeText(profile.getConfiguration().getClub().getNom())); //$NON-NLS-1$
 		templateEtiquettesXML.parse("pagesize", profile.getConfiguration().getFormatPapier()); //$NON-NLS-1$
 		templateEtiquettesXML.parse("orientation", profile.getConfiguration().getOrientation()); //$NON-NLS-1$
 		templateEtiquettesXML.parse("top", "" + org.ajdeveloppement.commons.AJToolKit.centimeterToDpi(profile.getConfiguration().getMarges().top)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -72,9 +72,9 @@ function printState(ficheConcours, template, document, writer, options) {
 					templateEtiquettesXML.parse("page.ligne.leading", "" + (zoneaffichable_y * (cellule_y / 100.0) + espacement_cellule_v)); //$NON-NLS-1$ //$NON-NLS-2$
 				else
 					templateEtiquettesXML.parse("page.ligne.leading", "" + (zoneaffichable_y * (cellule_y / 100.0) - 1)); //$NON-NLS-1$ //$NON-NLS-2$
-			templateEtiquettesXML.parse("page.ligne.colonne.cid", concurrents.get(i).getID()); //$NON-NLS-1$
-			templateEtiquettesXML.parse("page.ligne.colonne.cclub", concurrents.get(i).getClub().toString()); //$NON-NLS-1$
-			templateEtiquettesXML.parse("page.ligne.colonne.clicence", concurrents.get(i).getNumLicenceArcher()); //$NON-NLS-1$
+			templateEtiquettesXML.parse("page.ligne.colonne.cid", org.ajdeveloppement.commons.XmlUtils.sanitizeText(concurrents.get(i).getID())); //$NON-NLS-1$
+			templateEtiquettesXML.parse("page.ligne.colonne.cclub", org.ajdeveloppement.commons.XmlUtils.sanitizeText(concurrents.get(i).getClub().toString())); //$NON-NLS-1$
+			templateEtiquettesXML.parse("page.ligne.colonne.clicence", org.ajdeveloppement.commons.XmlUtils.sanitizeText(concurrents.get(i).getNumLicenceArcher())); //$NON-NLS-1$
 			templateEtiquettesXML.parse("page.ligne.colonne.emplacement", new org.concoursjeunes.TargetPosition(concurrents.get(i).getCible(), concurrents.get(i).getPosition()).toString()); //$NON-NLS-1$
 			if (colonne + 1 == nblarg)
 				templateEtiquettesXML.parseBloc("page.ligne.colonne.interbloc", ""); //$NON-NLS-1$ //$NON-NLS-2$

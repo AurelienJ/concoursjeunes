@@ -16,12 +16,12 @@ function printState(ficheConcours, template, document, writer, options) {
 	try {
 		templateXML.parse("CURRENT_TIME", java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL).format(new java.util.Date()));
 		templateXML.parse("producer", org.concoursjeunes.AppInfos.NOM + " " + org.concoursjeunes.AppInfos.VERSION);
-		templateXML.parse("author", profile.getConfiguration().getClub().getNom());
+		templateXML.parse("author", org.ajdeveloppement.commons.XmlUtils.sanitizeText(profile.getConfiguration().getClub().getNom()));
 
 		templateXML.parse("scoresheet.LOGO_CLUB_URI", profile.getConfiguration().getLogoPath().replaceAll("\\\\", "\\\\\\\\"));
-		templateXML.parse("scoresheet.INTITULE_CLUB", ficheConcours.getParametre().getClub().getNom());
-		templateXML.parse("scoresheet.INTITULE_CONCOURS", ficheConcours.getParametre().getIntituleConcours());
-		templateXML.parse("scoresheet.VILLE_CLUB", ficheConcours.getParametre().getLieuConcours());
+		templateXML.parse("scoresheet.INTITULE_CLUB", org.ajdeveloppement.commons.XmlUtils.sanitizeText(ficheConcours.getParametre().getClub().getNom()));
+		templateXML.parse("scoresheet.INTITULE_CONCOURS", org.ajdeveloppement.commons.XmlUtils.sanitizeText(ficheConcours.getParametre().getIntituleConcours()));
+		templateXML.parse("scoresheet.VILLE_CLUB", org.ajdeveloppement.commons.XmlUtils.sanitizeText(ficheConcours.getParametre().getLieuConcours()));
 		templateXML.parse("scoresheet.DATE_CONCOURS", java.text.DateFormat.getDateInstance(java.text.DateFormat.LONG).format(ficheConcours.getParametre().getDate()));
 		
 		var nbPositions = ficheConcours.getParametre().getNbTireur();

@@ -25,11 +25,11 @@ function printState(ficheConcours, template, document, writer, options) {
 
 		tplClassement.parse("CURRENT_TIME", java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL).format(new java.util.Date()));
 		tplClassement.parse("LOGO_CLUB_URI", profile.getConfiguration().getLogoPath().replaceAll("\\\\", "\\\\\\\\"));
-		tplClassement.parse("INTITULE_CLUB", ficheConcours.getParametre().getClub().getNom());
-		tplClassement.parse("INTITULE_CONCOURS", ficheConcours.getParametre().getIntituleConcours());
-		tplClassement.parse("VILLE_CLUB", ficheConcours.getParametre().getLieuConcours());
+		tplClassement.parse("INTITULE_CLUB", org.ajdeveloppement.commons.XmlUtils.sanitizeText(ficheConcours.getParametre().getClub().getNom()));
+		tplClassement.parse("INTITULE_CONCOURS", org.ajdeveloppement.commons.XmlUtils.sanitizeText(ficheConcours.getParametre().getIntituleConcours()));
+		tplClassement.parse("VILLE_CLUB", org.ajdeveloppement.commons.XmlUtils.sanitizeText(ficheConcours.getParametre().getLieuConcours()));
 		tplClassement.parse("DATE_CONCOURS", java.text.DateFormat.getDateInstance(java.text.DateFormat.LONG).format(ficheConcours.getParametre().getDateDebutConcours()));
-		tplClassement.parse("author", ficheConcours.getParametre().getClub().getNom());
+		tplClassement.parse("author", org.ajdeveloppement.commons.XmlUtils.sanitizeText(ficheConcours.getParametre().getClub().getNom()));
 
 		var arbitres = ficheConcours.getParametre().getJudges();
 		for (var i = 0; i < arbitres.size(); i++) {
@@ -74,7 +74,7 @@ function printState(ficheConcours, template, document, writer, options) {
 				strSCNA = new org.concoursjeunes.localisable.CriteriaSetLibelle(scnaUse.get(i), localeReader).toString();
 
 				tplClassement.parse("categories.TAILLE_CHAMPS_DISTANCE", strTailleChampsDistance);
-				tplClassement.parse("categories.CATEGORIE", strSCNA);
+				tplClassement.parse("categories.CATEGORIE", org.ajdeveloppement.commons.XmlUtils.sanitizeText(strSCNA));
 				tplClassement.parse("categories.NB_TIREUR_COLS", "" + (4 + nbSerie)); //$NON-NLS-1$ //$NON-NLS-2$
 				tplClassement.parse("categories.NB_TIREURS", "" + sortList.size());
 
@@ -106,15 +106,15 @@ function printState(ficheConcours, template, document, writer, options) {
 
 							tplClassement.parse("categories.classement.PLACE", "" + (j + 1));
 							tplClassement.parse("categories.classement.POSITION", "" + sortList.get(j).getPosition() + sortList.get(j).getCible());
-							tplClassement.parse("categories.classement.IDENTITEE", sortList.get(j).getFullName());
-							tplClassement.parse("categories.classement.CLUB", sortList.get(j).getClub().toString());
-							tplClassement.parse("categories.classement.NUM_LICENCE", sortList.get(j).getNumLicenceArcher());
+							tplClassement.parse("categories.classement.IDENTITEE", org.ajdeveloppement.commons.XmlUtils.sanitizeText(sortList.get(j).getFullName()));
+							tplClassement.parse("categories.classement.CLUB", org.ajdeveloppement.commons.XmlUtils.sanitizeText(sortList.get(j).getClub().toString()));
+							tplClassement.parse("categories.classement.NUM_LICENCE", org.ajdeveloppement.commons.XmlUtils.sanitizeText(sortList.get(j).getNumLicenceArcher()));
 
 							var keys = ficheConcours.getParametre().getReglement().getListCriteria();
 							var catStr = "";
 							for (var k = 0; k < keys.size(); k++)
 								catStr += sortList.get(j).getCriteriaSet().getCriterionElement(keys.get(k)).getCode();
-							tplClassement.parse("categories.classement.categorie", catStr);
+							tplClassement.parse("categories.classement.categorie", org.ajdeveloppement.commons.XmlUtils.sanitizeText(catStr));
 
 							for (var k = 0; k < nbSerie; k++) {
 								if (sortList.get(j).getScore() != null)

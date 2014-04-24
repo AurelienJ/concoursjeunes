@@ -30,11 +30,11 @@ function printState(ficheConcours, template, document, writer, options) {
 		
 		tplClassement.parse("CURRENT_TIME", java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL).format(new java.util.Date()));
 		tplClassement.parse("LOGO_CLUB_URI", ficheConcours.getProfile().getConfiguration().getLogoPath().replaceAll("\\\\", "\\\\\\\\")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		tplClassement.parse("INTITULE_CLUB", ficheConcours.getParametre().getClub().getNom()); //$NON-NLS-1$
-		tplClassement.parse("INTITULE_CONCOURS", ficheConcours.getParametre().getIntituleConcours());
-		tplClassement.parse("VILLE_CLUB", ficheConcours.getParametre().getLieuConcours());
+		tplClassement.parse("INTITULE_CLUB", org.ajdeveloppement.commons.XmlUtils.sanitizeText(ficheConcours.getParametre().getClub().getNom())); //$NON-NLS-1$
+		tplClassement.parse("INTITULE_CONCOURS", org.ajdeveloppement.commons.XmlUtils.sanitizeText(ficheConcours.getParametre().getIntituleConcours()));
+		tplClassement.parse("VILLE_CLUB", org.ajdeveloppement.commons.XmlUtils.sanitizeText(ficheConcours.getParametre().getLieuConcours()));
 		tplClassement.parse("DATE_CONCOURS", java.text.DateFormat.getDateInstance(java.text.DateFormat.LONG).format(ficheConcours.getParametre().getDateDebutConcours()));
-		tplClassement.parse("author", ficheConcours.getParametre().getClub().getNom());
+		tplClassement.parse("author", org.ajdeveloppement.commons.XmlUtils.sanitizeText(ficheConcours.getParametre().getClub().getNom()));
 		
 		var arbitres = ficheConcours.getParametre().getJudges();
 		for (var i = 0; i < arbitres.size(); i++) {
@@ -64,14 +64,14 @@ function printState(ficheConcours, template, document, writer, options) {
 			if (sortList.size() > 0) {
 				var strSCNA = org.concoursjeunes.localisable.CriteriaSetLibelle.getLibelle(scnaUse.get(i), ficheConcours.getProfile().getLocalisation());
 				
-				tplClassement.parse("categories.CATEGORIE", strSCNA); //$NON-NLS-1$
+				tplClassement.parse("categories.CATEGORIE", org.ajdeveloppement.commons.XmlUtils.sanitizeText(strSCNA)); //$NON-NLS-1$
 
 				var place = 0;
 				var scorePrecedent = -1;
 				var phasePrecedente = -1;
 				for(var j = 0; j < sortList.size(); j++) {
 					var concurrent = sortList.get(j);
-					println(concurrent);
+
 					if(concurrent == null)
 						continue;
 					
@@ -92,14 +92,14 @@ function printState(ficheConcours, template, document, writer, options) {
 					phasePrecedente = phase;
 	
 					tplClassement.parse("categories.classement.PLACE", "" + place); //$NON-NLS-1$
-					tplClassement.parse("categories.classement.IDENTITEE", concurrent.getFullName()); //$NON-NLS-1$
-					tplClassement.parse("categories.classement.CLUB", concurrent.getEntite().toString()); //$NON-NLS-1$
-					tplClassement.parse("categories.classement.NUM_LICENCE", concurrent.getNumLicenceArcher()); //$NON-NLS-1$
+					tplClassement.parse("categories.classement.IDENTITEE", org.ajdeveloppement.commons.XmlUtils.sanitizeText(concurrent.getFullName())); //$NON-NLS-1$
+					tplClassement.parse("categories.classement.CLUB", org.ajdeveloppement.commons.XmlUtils.sanitizeText(concurrent.getEntite().toString())); //$NON-NLS-1$
+					tplClassement.parse("categories.classement.NUM_LICENCE", org.ajdeveloppement.commons.XmlUtils.sanitizeText(concurrent.getNumLicenceArcher())); //$NON-NLS-1$
 					var keys = ficheConcours.getParametre().getReglement().getListCriteria();
 					var catStr = "";
 					for (var k = 0; k < keys.size(); k++)
 						catStr += concurrent.getCriteriaSet().getCriterionElement(keys.get(k)).getCode();
-					tplClassement.parse("categories.classement.categorie", catStr);
+					tplClassement.parse("categories.classement.categorie", org.ajdeveloppement.commons.XmlUtils.sanitizeText(catStr));
 					tplClassement.parse("categories.classement.PHASE", (phase > 0 || place < 3) ? ficheConcours.getProfile().getLocalisation().getResourceString("duel.phase."+phase) : ficheConcours.getProfile().getLocalisation().getResourceString("duel.phase.smallfinal")); //$NON-NLS-1$ //$NON-NLS-2$
 					tplClassement.parse("categories.classement.SCORE", "" + concurrent.getScorePhasefinale(phase)); //$NON-NLS-1$
 					

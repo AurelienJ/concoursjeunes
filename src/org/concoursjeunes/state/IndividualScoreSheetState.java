@@ -96,6 +96,7 @@ import java.util.List;
 
 import org.ajdeveloppement.commons.AJTemplate;
 import org.ajdeveloppement.commons.AjResourcesReader;
+import org.ajdeveloppement.commons.XmlUtils;
 import org.concoursjeunes.AppInfos;
 import org.concoursjeunes.Concurrent;
 import org.concoursjeunes.ConcurrentList;
@@ -147,19 +148,19 @@ public class IndividualScoreSheetState {
 	
 		try {
 			templateXML.parse("producer", AppInfos.NOM + " " + AppInfos.VERSION + " - " + AppInfos.VERSION_DATE); //$NON-NLS-1$ //$NON-NLS-2$
-			templateXML.parse("author", profile.getConfiguration().getClub().getNom()); //$NON-NLS-1$
+			templateXML.parse("author", XmlUtils.sanitizeText(profile.getConfiguration().getClub().getNom())); //$NON-NLS-1$
 			
 			List<Concurrent> concurrents = ConcurrentList.sort(ficheConcours.getConcurrentList().list(depart), ConcurrentList.SortCriteria.SORT_BY_TARGETS);
 			for(int i = 0; i < concurrents.size(); i++) {
 				templateXML.parse("scoresheet.LOGO_CLUB_URI", profile.getConfiguration().getLogoPath().replaceAll("\\\\", "\\\\\\\\")); //$NON-NLS-1$
-				templateXML.parse("scoresheet.INTITULE_CLUB", ficheConcours.getParametre().getClub().toString()); //$NON-NLS-1$
-				templateXML.parse("scoresheet.INTITULE_CONCOURS", ficheConcours.getParametre().getIntituleConcours()); //$NON-NLS-1$
-				templateXML.parse("scoresheet.VILLE_CLUB", ficheConcours.getParametre().getLieuConcours()); //$NON-NLS-1$
+				templateXML.parse("scoresheet.INTITULE_CLUB", XmlUtils.sanitizeText(ficheConcours.getParametre().getClub().toString())); //$NON-NLS-1$
+				templateXML.parse("scoresheet.INTITULE_CONCOURS", XmlUtils.sanitizeText(ficheConcours.getParametre().getIntituleConcours())); //$NON-NLS-1$
+				templateXML.parse("scoresheet.VILLE_CLUB", XmlUtils.sanitizeText(ficheConcours.getParametre().getLieuConcours())); //$NON-NLS-1$
 				templateXML.parse("scoresheet.DATE_CONCOURS", DateFormat.getDateInstance(DateFormat.LONG).format(ficheConcours.getParametre().getDateDebutConcours())); //$NON-NLS-1$
 				
-				templateXML.parse("scoresheet.cid", concurrents.get(i).getName() + " " + concurrents.get(i).getFirstName()); //$NON-NLS-1$
-				templateXML.parse("scoresheet.cclub", concurrents.get(i).getEntite().getNom()); //$NON-NLS-1$
-				templateXML.parse("scoresheet.clicence", concurrents.get(i).getNumLicenceArcher()); //$NON-NLS-1$
+				templateXML.parse("scoresheet.cid", XmlUtils.sanitizeText(concurrents.get(i).getFullName())); //$NON-NLS-1$
+				templateXML.parse("scoresheet.cclub", XmlUtils.sanitizeText(concurrents.get(i).getEntite().getNom())); //$NON-NLS-1$
+				templateXML.parse("scoresheet.clicence", XmlUtils.sanitizeText(concurrents.get(i).getNumLicenceArcher())); //$NON-NLS-1$
 				templateXML.parse("scoresheet.emplacement", TargetPosition.toString(concurrents.get(i).getCible(), concurrents.get(i).getPosition())); //$NON-NLS-1$
 				
 				int nbSerie = ficheConcours.getParametre().getReglement().getNbSerie();
