@@ -111,6 +111,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 
 import org.ajdeveloppement.apps.AppUtilities;
@@ -267,14 +268,19 @@ public class ConcoursJeunesUpdate extends Thread implements AjUpdaterListener, M
 			if (trayIcon != null) {
 				trayIcon.displayMessage(pluginLocalisation.getResourceString("update.available.title"), pluginLocalisation.getResourceString("update.available", strSize), TrayIcon.MessageType.INFO); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				AjUpdaterFrame ajUpdaterFrame = new AjUpdaterFrame(ajUpdater);
-				
-				if(ajUpdaterFrame.showAjUpdaterFrame() == DefaultDialogReturn.OK) {
-					Map<Repository, List<FileMetaData>> filesMap = new HashMap<Repository, List<FileMetaData>>();
-					for(Repository r : ajUpdaterFrame.getValidateRepositories())
-						filesMap.put(r, updateFiles.get(r));
-					ajUpdater.downloadFiles(filesMap);
-				}
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						AjUpdaterFrame ajUpdaterFrame = new AjUpdaterFrame(ajUpdater);
+						
+						if(ajUpdaterFrame.showAjUpdaterFrame() == DefaultDialogReturn.OK) {
+							Map<Repository, List<FileMetaData>> filesMap = new HashMap<Repository, List<FileMetaData>>();
+							for(Repository r : ajUpdaterFrame.getValidateRepositories())
+								filesMap.put(r, updateFiles.get(r));
+							ajUpdater.downloadFiles(filesMap);
+						}
+					}
+				});
 			}
 			currentStatus = Status.AVAILABLE;
 			break;

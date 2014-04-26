@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.8.0-ea" class="java.beans.XMLDecoder">
+<java version="1.7.0_51" class="java.beans.XMLDecoder">
  <object class="java.util.ArrayList">
   <void method="add">
    <object class="org.ajdeveloppement.updater.Version">
@@ -1052,6 +1052,28 @@
     </void>
     <void property="version">
      <string>2.30.23</string>
+    </void>
+   </object>
+  </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Correction système de mise à jour
+  * Correction dépendance manquante sur le plugin ScriptExt</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1398547830315</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.24</string>
     </void>
    </object>
   </void>
