@@ -967,7 +967,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 			Federation baseFederation = profile.getConfiguration().getFederation();
 			profile.getConfiguration().setFederation((Federation)jcbFederation.getSelectedItem());
 			EntiteListDialog eld = new EntiteListDialog(null, profile, true);
-			if (eld.getAction() == EntiteListDialog.VALIDER) {
+			if (eld.getAction() == EntiteListDialog.VALIDER && eld.getSelectedEntite() != null) {
 				workConfiguration.setClub(eld.getSelectedEntite());
 				
 				jtfAgrClub.setText(eld.getSelectedEntite().getAgrement());

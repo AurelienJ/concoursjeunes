@@ -257,6 +257,8 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	 * @return le club organisateur
 	 */
 	public Entite getClub() {
+		if(club == null)
+			club = new Entite();
 		return club;
 	}
 
