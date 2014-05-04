@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<webpage>
-	<uri>/admin/log.html</uri>
-	<mimeType>text/html</mimeType>
-	<script>scripts/admin/logs.js</script>
-</webpage>

@@ -22,9 +22,7 @@ if(dbVersion == 0) {
 	
 	//updateReglements();
 	//sql.executeScript("../sql/ImportClubLFBTA.sql");
-}
-
-if(dbVersion < 34) {
+} else if(dbVersion < 34) {
 	sql.executeUpdate("ALTER TABLE AJWEBSERVER.Request ADD Referer VARCHAR(255)");
 }
 

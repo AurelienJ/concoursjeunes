@@ -162,9 +162,11 @@ import org.ajdeveloppement.concours.plugins.PluginMetadata;
 import org.ajdeveloppement.concours.ui.ArcCompetitionFrame;
 import org.ajdeveloppement.swingxext.error.WebErrorReporter;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
+import org.ajdeveloppement.webserver.FileSelector;
 import org.ajdeveloppement.webserver.HttpServer;
 import org.ajdeveloppement.webserver.HttpSession;
 import org.ajdeveloppement.webserver.RewriteUrlRules;
+import org.ajdeveloppement.webserver.StandAloneWebServer;
 import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
 import org.ajdeveloppement.webserver.services.files.FilesService;
 import org.ajdeveloppement.webserver.services.js.JsService;
@@ -190,7 +192,7 @@ public class Main extends Application {
 			FileChooser chooser = new FileChooser();
 			File file = chooser.showOpenDialog(null);
 			if(file != null) {
-				File uploadPath = new File(FilesService.getBasePath(), "images/upload");
+				File uploadPath = new File(FilesService.getFileSelector().getBasePath(), "www/images/upload"); //$NON-NLS-1$
 				if(!uploadPath.exists())
 					uploadPath.mkdirs();
 				try {
@@ -198,7 +200,7 @@ public class Main extends Application {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				return "images/upload/" + file.getName();
+				return "images/upload/" + file.getName(); //$NON-NLS-1$
 			}
 			
 			return null;
@@ -213,15 +215,20 @@ public class Main extends Application {
 	private static final String WEBSERVER_CONFIG = "webserver"; //$NON-NLS-1$
 
 	private static final String WEBSERVER_LISTEN_PORT = "webserver.listen.port"; //$NON-NLS-1$
+	private static final String WEBSERVER_SSLLISTEN_PORT = "webserver.ssllisten.port"; //$NON-NLS-1$
 	private static final String WEBSERVER_REWRITERULES_FILE = "webserver.rewriterules.file"; //$NON-NLS-1$
-	private static final String WEBSERVER_DYNAMIC_PATH_CONFIG = "webserver.dynamic.path.config"; //$NON-NLS-1$
-	private static final String WEBSERVER_DYNAMIC_PATH_RESSOURCES = "webserver.dynamic.path.ressources"; //$NON-NLS-1$
-	private static final String WEBSERVER_STATIC_PATH = "webserver.static.path"; //$NON-NLS-1$
+	private static final String WEBSERVER_FILESELECTOR_FILE = "webserver.fileselector.file"; //$NON-NLS-1$$
 	private static final String WEBSERVER_STATIC_ALLOWEDGZIPEXT = "webserver.static.allowedgzipext"; //$NON-NLS-1$
 	private static final String WEBSERVER_STATIC_GZIPCACHE = "webserver.static.gzipcache"; //$NON-NLS-1$
 	private static final String WEBSERVER_SERVICE_ORDER = "webserver.service.order"; //$NON-NLS-1$
+	
+	private static final String WEBSERVER_CERTIFICATE_ALIAS = "webserver.certificateAlias"; //$NON-NLS-1$
+	private static final String WEBSERVER_PKCS12PASSWORD = "webserver.pkcs12password"; //$NON-NLS-1$
+	private static final String WEBSERVER_PKCS12_KEY_STORE_FILE = "webserver.pkcs12KeyStore.file"; //$NON-NLS-1$
 
 	private static AjResourcesReader staticParameters = new AjResourcesReader(WEBSERVER_CONFIG);
+	
+	private static int webServerListenPort = 0;
 	
 	private double startX = -1;
 	private double startY = -1;
@@ -230,32 +237,47 @@ public class Main extends Application {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
-		JsService.setConfigPaths(new File(staticParameters.getResourceString(WEBSERVER_DYNAMIC_PATH_CONFIG)));
-		JsService.setDefaultContentPath(new File(staticParameters.getResourceString(WEBSERVER_DYNAMIC_PATH_RESSOURCES)));
-		FilesService.setBasePath(new File(staticParameters.getResourceString(WEBSERVER_STATIC_PATH)));
+		System.setProperty("nashorn.option.scripting", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		FilesService.setAllowedGzipExt(Arrays.asList(staticParameters.getResourceString(WEBSERVER_STATIC_ALLOWEDGZIPEXT).split(","))); //$NON-NLS-1$
 		FilesService.setGzipCachePath(new File(staticParameters.getResourceString(WEBSERVER_STATIC_GZIPCACHE)));
 		
+		String fileSelectorFilePath = staticParameters.getResourceString(WEBSERVER_FILESELECTOR_FILE);
+		if(fileSelectorFilePath != null && !fileSelectorFilePath.isEmpty()) {
+			URL fileSelectorURL = staticParameters.getClass().getResource(fileSelectorFilePath);
+			if(fileSelectorURL != null) {
+				File fileSelectorFile = new File(fileSelectorURL.getPath());
+				if(fileSelectorFile.exists()) {
+					try {
+						FileSelector fileSelector = XMLSerializer.loadMarshallStructure(fileSelectorFile, FileSelector.class);
+						JsService.setFileSelector(fileSelector);
+						FilesService.setFileSelector(fileSelector);
+					} catch (JAXBException | IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+
 		String[] servicesOrder = staticParameters.getResourceString(WEBSERVER_SERVICE_ORDER).split(","); //$NON-NLS-1$
 		ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor = new ExtensibleHttpRequestProcessor(servicesOrder);
 		HttpSession.setRequestProcessor(extensibleHttpRequestProcessor);
 		
 		String rewriteRulesFilePath = staticParameters.getResourceString(WEBSERVER_REWRITERULES_FILE);
 		if(rewriteRulesFilePath != null && !rewriteRulesFilePath.isEmpty()) {
-			File rewriteRulesFileFile = new File(rewriteRulesFilePath);
-			
-			if(rewriteRulesFileFile.exists()) {
-				try {
-					HttpSession.setRewriteUrlRules(XMLSerializer.loadMarshallStructure(rewriteRulesFileFile, RewriteUrlRules.class));
-				} catch (JAXBException | IOException e) {
-					e.printStackTrace();
+			URL rewriteRulesFileURL = staticParameters.getClass().getResource(rewriteRulesFilePath);
+			if(rewriteRulesFileURL != null) {
+				File rewriteRulesFileFile = new File(rewriteRulesFileURL.getPath());
+				
+				if(rewriteRulesFileFile.exists()) {
+					try {
+						HttpSession.setRewriteUrlRules(XMLSerializer.loadMarshallStructure(rewriteRulesFileFile, RewriteUrlRules.class));
+					} catch (JAXBException | IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
 
-		
-		
 		showSplashScreen();
 		//initErrorManaging();
 		initNetworkManaging();
@@ -267,7 +289,24 @@ public class Main extends Application {
 		initShutdownHook();
 		
 		HttpServer httpServer = new HttpServer(staticParameters.getResourceInteger(WEBSERVER_LISTEN_PORT));
+		httpServer.setPkcs12KeyStorePath(staticParameters.getResourceString(WEBSERVER_PKCS12_KEY_STORE_FILE));
+		httpServer.setPkcs12KeyStorePassword(staticParameters.getResourceString(WEBSERVER_PKCS12PASSWORD));
+		httpServer.setCertificateAlias(staticParameters.getResourceString(WEBSERVER_CERTIFICATE_ALIAS));
+		httpServer.setListenSslPort(staticParameters.getResourceInteger(WEBSERVER_SSLLISTEN_PORT));
 		httpServer.start(true);
+		try {
+			int timeout = 30;
+			while((webServerListenPort = httpServer.getListenPort()) == 0) {
+				Thread.sleep(1000);
+				timeout--;
+				if(timeout == 0)
+					break;
+			}
+		} catch (InterruptedException e) {
+			// TODO Bloc catch auto-généré
+			e.printStackTrace();
+		}
+		System.out.println("Http listen on port: " + webServerListenPort);
 		
 		launch(args);
 		
@@ -355,7 +394,7 @@ public class Main extends Application {
 		webView.getEngine().setOnError(event ->	event.getException().getStackTrace());
 		webView.getEngine().setOnAlert(event -> System.out.println(event.getData()));
 		
-		webView.getEngine().load("http://localhost:8081");
+		webView.getEngine().load("http://localhost:" + webServerListenPort);
 		netscape.javascript.JSObject win = 
                 (netscape.javascript.JSObject) webView.getEngine().executeScript("window");
         win.setMember("app", new Bridge(primaryStage));
@@ -368,6 +407,15 @@ public class Main extends Application {
 		core.addProfile(profile);
 		
 		//new org.ajdeveloppement.concours.ui.fx.ArcCompetitionFrame(primaryStage, profile);
+	}
+	
+	private static File getClasspathResourcesFile(String relativePath) {
+		URL url = StandAloneWebServer.class.getResource(relativePath);
+		if(url != null) {
+			return  new File(url.getPath());
+		}
+		
+		return null;
 	}
 
 	/**
