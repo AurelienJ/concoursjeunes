@@ -166,7 +166,6 @@ import org.ajdeveloppement.webserver.FileSelector;
 import org.ajdeveloppement.webserver.HttpServer;
 import org.ajdeveloppement.webserver.HttpSession;
 import org.ajdeveloppement.webserver.RewriteUrlRules;
-import org.ajdeveloppement.webserver.StandAloneWebServer;
 import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
 import org.ajdeveloppement.webserver.services.files.FilesService;
 import org.ajdeveloppement.webserver.services.js.JsService;
@@ -303,10 +302,10 @@ public class Main extends Application {
 					break;
 			}
 		} catch (InterruptedException e) {
-			// TODO Bloc catch auto-généré
 			e.printStackTrace();
 		}
-		System.out.println("Http listen on port: " + webServerListenPort);
+		
+		System.out.println("Http listen on port: " + webServerListenPort); //$NON-NLS-1$
 		
 		launch(args);
 		
@@ -407,15 +406,6 @@ public class Main extends Application {
 		core.addProfile(profile);
 		
 		//new org.ajdeveloppement.concours.ui.fx.ArcCompetitionFrame(primaryStage, profile);
-	}
-	
-	private static File getClasspathResourcesFile(String relativePath) {
-		URL url = StandAloneWebServer.class.getResource(relativePath);
-		if(url != null) {
-			return  new File(url.getPath());
-		}
-		
-		return null;
 	}
 
 	/**

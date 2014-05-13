@@ -169,7 +169,7 @@
 							basedir="${projet.pack.dir}/langpack/zh" />
 		
 		<taskdef name="revisionscreator" classname="org.ajdeveloppement.updater.ant.RevisionsCreator">
-			<classpath location="lib/ajcommons.jar"/>
+			<classpath location="lib/ajcommons-2.0.0-SNAPSHOT.jar"/>
 		</taskdef>
 
 		<revisionscreator 
@@ -266,7 +266,7 @@
 	<target name="revisions" description="revisions">
 		<taskdef name="revisionscreator"
 			classname="org.ajdeveloppement.updater.ant.RevisionsCreator">
-			<classpath location="lib/ajcommons.jar"/>
+			<classpath location="lib/ajcommons-2.0.0-SNAPSHOT.jar"/>
 		</taskdef>
 
 		<revisionscreator

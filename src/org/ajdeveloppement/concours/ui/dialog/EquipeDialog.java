@@ -271,7 +271,7 @@ public class EquipeDialog extends JDialog implements ActionListener, TreeSelecti
 	}
 
 	private void completePanel() {
-		DefaultMutableTreeNode[] dmtnCategorie;
+		//DefaultMutableTreeNode[] dmtnCategorie;
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(lsConcurrentTable); 
 
 		treeModelConcurrents = new DefaultTreeModel(rootNode);
@@ -280,7 +280,7 @@ public class EquipeDialog extends JDialog implements ActionListener, TreeSelecti
 		cbEquipeClub.setSelected(tempEquipes.isLimitedByClub());
 		cbEquipeClub.setEnabled(tempEquipes.countEquipes() == 0);
 
-		Hashtable<Criterion, Boolean> criteriaFilter = new Hashtable<Criterion, Boolean>();
+		//Hashtable<Criterion, Boolean> criteriaFilter = new Hashtable<Criterion, Boolean>();
 		for (Map.Entry<Criterion, JCheckBox> cb : classmentCriteriaCB.entrySet()) {
 			cb.getValue().setEnabled(tempEquipes.countEquipes() == 0);
 		}

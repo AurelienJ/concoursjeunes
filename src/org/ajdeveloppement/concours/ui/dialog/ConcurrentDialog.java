@@ -139,13 +139,13 @@ import org.ajdeveloppement.concours.Profile;
 import org.ajdeveloppement.concours.TargetPosition;
 import org.ajdeveloppement.concours.TargetsOccupation;
 import org.ajdeveloppement.concours.data.Archer;
-import org.ajdeveloppement.concours.data.Face;
 import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.data.CriteriaSet;
 import org.ajdeveloppement.concours.data.Criterion;
 import org.ajdeveloppement.concours.data.CriterionElement;
 import org.ajdeveloppement.concours.data.DistancesEtBlason;
 import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Face;
 import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.Surclassement;
 import org.ajdeveloppement.concours.data.Tie;
@@ -699,9 +699,9 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 				jcbSurclassement.setSelected(concurrent.isSurclassement());
 				
 				jcbBlason.removeAllItems();
-				CriteriaSet cs = readCriteriaSet();
-				CriteriaSet placementCriteriaSet = cs.getFilteredCriteriaSet(
-						ficheConcours.getParametre().getReglement().getPlacementFilter());
+				//CriteriaSet cs = readCriteriaSet();
+				//CriteriaSet placementCriteriaSet = cs.getFilteredCriteriaSet(
+				//		ficheConcours.getParametre().getReglement().getPlacementFilter());
 //				DistancesEtBlason distanceEtBlason = placementCriteriaSet.getDistancesEtBlason();
 //				if(distanceEtBlason != null) {
 //					jcbBlason.addItem(distanceEtBlason.getTargetFace());
@@ -1170,7 +1170,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 						JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			DistancesEtBlason db2 = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), tempConcurrent);
+			//DistancesEtBlason db2 = DistancesEtBlason.getDistancesEtBlasonForConcurrent(ficheConcours.getParametre().getReglement(), tempConcurrent);
 			
 			tempConcurrent.setHandicape(jcbHandicape.isSelected());
 			tempConcurrent.setSurclassement(jcbSurclassement.isSelected());

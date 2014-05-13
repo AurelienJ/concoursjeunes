@@ -103,7 +103,6 @@ import org.ajdeveloppement.concours.ui.webui.WebContentManager;
  * @author Aurélien JEOFFRAY
  *
  */
-@SuppressWarnings("restriction")
 public class AboutController implements Initializable {
 	
 	@FXML

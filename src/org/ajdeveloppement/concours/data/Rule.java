@@ -642,7 +642,7 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	 * @return liste des critères de placement valide sur le règlement
 	 */
 	public List<CriteriaSet> getValidPlacementCriteriaSet() {
-		List<CriteriaSet> validCS = new ArrayList<CriteriaSet>();
+		//List<CriteriaSet> validCS = new ArrayList<CriteriaSet>();
 		List<CriteriaSet> placementCS = new ArrayList<CriteriaSet>();
 //		CriteriaSet[] lccs = CriteriaSet.listCriteriaSet(this, getClassementFilter());
 //		CriteriaSet[] lpcs = CriteriaSet.listCriteriaSet(this, getPlacementFilter());

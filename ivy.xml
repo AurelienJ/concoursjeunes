@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                              xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd"> 
+        <info organisation="org.ajdeveloppement" module="arccompetition" revision="1.0" status="integration"> 
+        </info>
+        <configurations>
+		    <conf name="runtime" description="Modules needed for running the application"/>
+		</configurations>
+        <dependencies>
+            <dependency org="org.ajdeveloppement" name="ajcommons" rev="2.0.0-SNAPSHOT"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-ext" rev="2.0.0"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-webserver" rev="0.0.2-SNAPSHOT"/>
+            <dependency org="com.h2database" name="h2" rev="1.3.176" conf="runtime->default">
+            	
+            </dependency>
+            
+            <exclude type="javadoc" ext="jar" conf="runtime" />
+            <exclude type="src" ext="jar" conf="runtime"/>
+        </dependencies> 
+</ivy-module> 
