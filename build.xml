@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="ArcCompetition" default="auto-pack" basedir="./">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="ArcCompetition" default="auto-pack" basedir="./">
 	<description>
 		Generation de ArcCompetition
 	</description>
@@ -58,8 +58,13 @@
 		</javadoc>
 		<echo message="Fin de la generation de la doc..."/>
 	</target>
+	
+	<target name="resolve" description="--> retrieve dependencies with ivy">
+		<!--<ivy:cleancache />-->
+        <ivy:retrieve />
+    </target>
 
-	<target name="pack_stage1">
+	<target name="pack_stage1" depends="resolve">
 		<mkdir dir="${projet.pack.dir}" />
 
 		<delete includeemptydirs="true">
@@ -67,7 +72,7 @@
 		</delete>
 		
 		<java classname="org.ajdeveloppement.updater.tools.ChangeLogEditor"
-			classpath="lib/ajcommons.jar"
+			classpath="lib/ajcommons-2.0.0-SNAPSHOT.jar"
 			fork="yes">
 			<arg value="packager/changelog.xml"/>
 		</java>
@@ -202,7 +207,7 @@
 			encoding="UTF-8"
 			nowarn="on"
 			debug="true"
-			target="1.7"
+			target="1.8"
 			classpath="${compilclasspath}"
 			>
 			<compilerarg value="-s" />
