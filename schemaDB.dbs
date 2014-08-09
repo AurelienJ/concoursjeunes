@@ -1,0 +1,864 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="H2" id="Project3219004" database="H2" >
+	<schema name="AJWEBSERVER" catalogname="ARCCOMPETITIONDB" schemaname="AJWEBSERVER" defo="y" >
+		<table name="PARAM" >
+			<column name="DBVERSION" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="APPREVISION" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="DEFAULT_LANG" type="varchar" length="5" decimal="0" jt="12" mandatory="y" >
+				<defo>&#039;fr&#039;</defo>
+			</column>
+			<column name="DBUUID" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+		</table>
+		<table name="REQUEST" >
+			<column name="IDREQUEST" type="bigint" length="19" decimal="0" jt="-5" mandatory="y" >
+				<defo>(NEXT VALUE FOR AJWEBSERVER.SYSTEM_SEQUENCE_1506C3A4_935D_45C9_9045_0C73DD45F1AF)</defo>
+			</column>
+			<column name="DATE" type="timestamp" length="23" decimal="10" jt="93" />
+			<column name="METHOD" type="varchar" length="10" decimal="0" jt="12" />
+			<column name="URI" type="varchar" length="255" decimal="0" jt="12" />
+			<column name="REQUESTLENGTH" type="bigint" length="19" decimal="0" jt="-5" />
+			<column name="RESPONSELENGTH" type="bigint" length="19" decimal="0" jt="-5" />
+			<column name="RESPONSECODE" type="integer" length="10" decimal="0" jt="4" />
+			<column name="REMOTEADDRESS" type="varchar" length="128" decimal="0" jt="12" />
+			<column name="USERAGENT" type="varchar" length="1024" decimal="0" jt="12" />
+			<column name="REFERER" type="varchar" length="255" decimal="0" jt="12" />
+			<column name="HEADER" type="clob" length="2147483647" decimal="0" jt="2005" />
+			<column name="RESOURCEPATH" type="varchar" length="1024" decimal="0" jt="12" />
+			<index name="CONSTRAINT_6" unique="PRIMARY_KEY" >
+				<column name="IDREQUEST" />
+			</index>
+			<index name="IX_REQUEST_DATE" unique="NORMAL" >
+				<column name="DATE" />
+			</index>
+			<index name="IX_REQUEST_RESOURCEPATH" unique="NORMAL" >
+				<column name="RESOURCEPATH" />
+			</index>
+		</table>
+		<table name="RESOURCES" >
+			<column name="PATH" type="varchar" length="1024" decimal="0" jt="12" mandatory="y" />
+			<column name="LENGTH" type="bigint" length="19" decimal="0" jt="-5" />
+			<column name="CREATEDDATE" type="timestamp" length="23" decimal="10" jt="93" />
+			<column name="LASTMODIFIEDDATE" type="timestamp" length="23" decimal="10" jt="93" />
+			<index name="CONSTRAINT_2" unique="PRIMARY_KEY" >
+				<column name="PATH" />
+			</index>
+		</table>
+		<sequence name="SYSTEM_SEQUENCE_1506C3A4_935D_45C9_9045_0C73DD45F1AF" start="10689" />
+	</schema>
+	<schema name="PUBLIC" catalogname="ARCCOMPETITIONDB" schemaname="PUBLIC" defo="y" >
+		<table name="ANCRAGE_BLASON" >
+			<column name="ID_BLASON" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="EMPLACEMENT" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="ANCRAGEX" type="double" length="17" decimal="0" jt="8" mandatory="y" />
+			<column name="ANCRAGEY" type="double" length="17" decimal="0" jt="8" mandatory="y" />
+			<index name="CONSTRAINT_F" unique="PRIMARY_KEY" >
+				<column name="ID_BLASON" />
+				<column name="EMPLACEMENT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_F" unique="NORMAL" >
+				<column name="ID_BLASON" />
+			</index>
+			<fk name="CONSTRAINT_F5" to_schema="PUBLIC" to_table="BLASON" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_BLASON" pk="ID_BLASON" />
+			</fk>
+		</table>
+		<table name="ARCHER" >
+			<column name="ID_CONTACT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="NUMLICENCEARCHER" type="varchar" length="32" decimal="0" jt="12" />
+			<column name="CERTIFMEDICAL" type="boolean" length="1" decimal="0" jt="16" />
+			<column name="SEXE" type="integer" length="10" decimal="0" jt="4" />
+			<column name="DATENAISS" type="date" length="8" decimal="0" jt="91" />
+			<column name="CATEGORIE" type="integer" length="10" decimal="0" jt="4" />
+			<column name="NIVEAU" type="integer" length="10" decimal="0" jt="4" />
+			<column name="ARC" type="integer" length="10" decimal="0" jt="4" />
+			<column name="DATEMODIF" type="date" length="8" decimal="0" jt="91" >
+				<defo>CURRENT_DATE()</defo>
+			</column>
+			<index name="CONSTRAINT_73" unique="PRIMARY_KEY" >
+				<column name="ID_CONTACT" />
+			</index>
+			<fk name="CONSTRAINT_738" to_schema="PUBLIC" to_table="CONTACT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_CONTACT" pk="ID_CONTACT" />
+			</fk>
+		</table>
+		<table name="ASSOCIER_CATEGORIE_CONTACT" >
+			<column name="ID_CONTACT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="ID_CATEGORIE_CONTACT" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<index name="CONSTRAINT_81" unique="PRIMARY_KEY" >
+				<column name="ID_CONTACT" />
+				<column name="ID_CATEGORIE_CONTACT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_8" unique="NORMAL" >
+				<column name="ID_CONTACT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_81" unique="NORMAL" >
+				<column name="ID_CATEGORIE_CONTACT" />
+			</index>
+			<fk name="CONSTRAINT_81BD" to_schema="PUBLIC" to_table="CATEGORIE_CONTACT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_CATEGORIE_CONTACT" pk="ID_CATEGORIE_CONTACT" />
+			</fk>
+			<fk name="CONSTRAINT_81B" to_schema="PUBLIC" to_table="CONTACT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_CONTACT" pk="ID_CONTACT" />
+			</fk>
+		</table>
+		<table name="BLASON" >
+			<column name="ID_BLASON" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="NOM" type="varchar" length="32" decimal="0" jt="12" mandatory="y" />
+			<column name="HORIZONTAL_RATIO" type="double" length="17" decimal="0" jt="8" mandatory="y" />
+			<column name="VERTICAL_RATIO" type="double" length="17" decimal="0" jt="8" mandatory="y" />
+			<column name="NBARCHER" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="ORDRE" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="IMAGE" type="varchar" length="64" decimal="0" jt="12" mandatory="y" >
+				<defo>&#039;&#039;</defo>
+			</column>
+			<index name="CONSTRAINT_7" unique="PRIMARY_KEY" >
+				<column name="ID_BLASON" />
+			</index>
+		</table>
+		<table name="BLASON_DISTANCE_BLASONS" >
+			<column name="ID_BLASON_DISTANCE_BLASONS" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="ID_DISTANCE_BLASONS" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="ID_BLASON" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="PRINCIPAL" type="boolean" length="1" decimal="0" jt="16" mandatory="y" >
+				<defo>FALSE</defo>
+			</column>
+			<index name="CONSTRAINT_9" unique="PRIMARY_KEY" >
+				<column name="ID_BLASON_DISTANCE_BLASONS" />
+			</index>
+			<index name="CONSTRAINT_INDEX_9" unique="NORMAL" >
+				<column name="ID_BLASON" />
+			</index>
+			<index name="CONSTRAINT_INDEX_9C" unique="NORMAL" >
+				<column name="ID_DISTANCE_BLASONS" />
+			</index>
+			<fk name="CONSTRAINT_9C" to_schema="PUBLIC" to_table="BLASON" delete_action="restrict" update_action="cascade" >
+				<fk_column name="ID_BLASON" pk="ID_BLASON" />
+			</fk>
+			<fk name="CONSTRAINT_9CD" to_schema="PUBLIC" to_table="DISTANCE_BLASONS" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_DISTANCE_BLASONS" pk="ID_DISTANCE_BLASONS" />
+			</fk>
+		</table>
+		<table name="CATEGORIE_CONTACT" >
+			<column name="ID_CATEGORIE_CONTACT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="ID_LIBELLE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<index name="CONSTRAINT_8" unique="PRIMARY_KEY" >
+				<column name="ID_CATEGORIE_CONTACT" />
+			</index>
+		</table>
+		<table name="CATEGORIE_REGLEMENT" >
+			<column name="NUMCATEGORIE_REGLEMENT" type="integer" length="10" decimal="0" jt="4" mandatory="y" >
+				<defo>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_0E085A3B_41C2_450B_B350_4A941060310F)</defo>
+			</column>
+			<column name="NOMCATEGORIE" type="varchar" length="128" decimal="0" jt="12" />
+			<index name="CONSTRAINT_A" unique="PRIMARY_KEY" >
+				<column name="NUMCATEGORIE_REGLEMENT" />
+			</index>
+		</table>
+		<table name="CATEGORIE_TARIF" >
+			<column name="ID_TARIF" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="ID_JEUX_CRITERES_DISCRIMINANT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<index name="CONSTRAINT_E7" unique="PRIMARY_KEY" >
+				<column name="ID_TARIF" />
+				<column name="ID_JEUX_CRITERES_DISCRIMINANT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_E7" unique="NORMAL" >
+				<column name="ID_TARIF" />
+			</index>
+			<index name="CONSTRAINT_INDEX_E7B" unique="NORMAL" >
+				<column name="ID_JEUX_CRITERES_DISCRIMINANT" />
+			</index>
+			<fk name="CONSTRAINT_E7BE" to_schema="PUBLIC" to_table="JEUX_CRITERES_DISCRIMINANT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_JEUX_CRITERES_DISCRIMINANT" pk="ID_JEUX_CRITERES_DISCRIMINANT" />
+			</fk>
+			<fk name="CONSTRAINT_E7B" to_schema="PUBLIC" to_table="TARIF" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_TARIF" pk="ID_TARIF" />
+			</fk>
+		</table>
+		<table name="CIVILITY" >
+			<column name="ID_CIVILITY" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="ABREVIATION" type="varchar" length="10" decimal="0" jt="12" />
+			<column name="LIBELLE" type="varchar" length="64" decimal="0" jt="12" />
+			<column name="MORALE" type="boolean" length="1" decimal="0" jt="16" mandatory="y" >
+				<defo>FALSE</defo>
+			</column>
+			<index name="CONSTRAINT_D" unique="PRIMARY_KEY" >
+				<column name="ID_CIVILITY" />
+			</index>
+		</table>
+		<table name="CODE_POSTAL" >
+			<column name="CODE_POSTAL" type="varchar" length="5" decimal="0" jt="12" mandatory="y" />
+			<column name="CODE_VILLE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<index name="CONSTRAINT_E" unique="PRIMARY_KEY" >
+				<column name="CODE_POSTAL" />
+				<column name="CODE_VILLE" />
+			</index>
+			<index name="CONSTRAINT_INDEX_E" unique="NORMAL" >
+				<column name="CODE_VILLE" />
+			</index>
+			<index name="I_CODE_POSTAL_CODE_POSTAL" unique="NORMAL" >
+				<column name="CODE_POSTAL" />
+			</index>
+			<fk name="CONSTRAINT_EA" to_schema="PUBLIC" to_table="VILLE" delete_action="cascade" update_action="cascade" >
+				<fk_column name="CODE_VILLE" pk="CODE_VILLE" />
+			</fk>
+		</table>
+		<table name="COMPETITION" >
+			<column name="ID_COMPETITION" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="ID_REGLEMENT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="ID_ORGANISATEUR" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="LIEU" type="varchar" length="128" decimal="0" jt="12" />
+			<column name="DATE_DEBUT" type="date" length="8" decimal="0" jt="91" />
+			<column name="DATE_FIN" type="date" length="8" decimal="0" jt="91" />
+			<column name="DUEL" type="boolean" length="1" decimal="0" jt="16" mandatory="y" >
+				<defo>TRUE</defo>
+			</column>
+			<column name="ID_NIVEAU_COMPETITION" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<index name="CONSTRAINT_3F0" unique="PRIMARY_KEY" >
+				<column name="ID_COMPETITION" />
+			</index>
+			<index name="CONSTRAINT_INDEX_3F0" unique="NORMAL" >
+				<column name="ID_REGLEMENT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_3F09" unique="NORMAL" >
+				<column name="ID_ORGANISATEUR" />
+			</index>
+			<index name="CONSTRAINT_INDEX_3F092" unique="NORMAL" >
+				<column name="ID_NIVEAU_COMPETITION" />
+			</index>
+			<fk name="CONSTRAINT_3F092" to_schema="PUBLIC" to_table="ENTITE" delete_action="restrict" update_action="cascade" >
+				<fk_column name="ID_ORGANISATEUR" pk="ID_ENTITE" />
+			</fk>
+			<fk name="CONSTRAINT_3F0925" to_schema="PUBLIC" to_table="NIVEAU_COMPETITION" delete_action="restrict" update_action="cascade" >
+				<fk_column name="ID_NIVEAU_COMPETITION" pk="ID_NIVEAU_COMPETITION" />
+			</fk>
+			<fk name="CONSTRAINT_3F09" to_schema="PUBLIC" to_table="REGLEMENT" delete_action="restrict" update_action="cascade" >
+				<fk_column name="ID_REGLEMENT" pk="ID_REGLEMENT" />
+			</fk>
+		</table>
+		<table name="CONCURRENT" >
+			<column name="ID_CONTACT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="ID_COMPETITION" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="ID_CRITERE_CLASSEMENT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="DEPART" type="integer" length="10" decimal="0" jt="4" />
+			<column name="TARGET" type="integer" length="10" decimal="0" jt="4" />
+			<column name="POSITION" type="integer" length="10" decimal="0" jt="4" />
+			<column name="PRESENCE" type="boolean" length="1" decimal="0" jt="16" />
+			<column name="SURCLASSEMENT" type="boolean" length="1" decimal="0" jt="16" />
+			<column name="ID_BLASON_DISTANCE_BLASONS_ALTERNATIF" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<index name="CONSTRAINT_C" unique="PRIMARY_KEY" >
+				<column name="ID_CONTACT" />
+				<column name="ID_COMPETITION" />
+			</index>
+			<index name="CONSTRAINT_INDEX_C" unique="NORMAL" >
+				<column name="ID_CONTACT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_C4" unique="NORMAL" >
+				<column name="ID_COMPETITION" />
+			</index>
+			<index name="CONSTRAINT_INDEX_C4E" unique="NORMAL" >
+				<column name="ID_CRITERE_CLASSEMENT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_C4E9" unique="NORMAL" >
+				<column name="ID_BLASON_DISTANCE_BLASONS_ALTERNATIF" />
+			</index>
+			<fk name="CONSTRAINT_C4" to_schema="PUBLIC" to_table="ARCHER" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_CONTACT" pk="ID_CONTACT" />
+			</fk>
+			<fk name="CONSTRAINT_C4E9D" to_schema="PUBLIC" to_table="BLASON_DISTANCE_BLASONS" delete_action="restrict" update_action="cascade" >
+				<fk_column name="ID_BLASON_DISTANCE_BLASONS_ALTERNATIF" pk="ID_BLASON_DISTANCE_BLASONS" />
+			</fk>
+			<fk name="CONSTRAINT_C4E" to_schema="PUBLIC" to_table="COMPETITION" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_COMPETITION" pk="ID_COMPETITION" />
+			</fk>
+			<fk name="CONSTRAINT_C4E9" to_schema="PUBLIC" to_table="CRITERE_CLASSEMENT" delete_action="restrict" update_action="cascade" >
+				<fk_column name="ID_CRITERE_CLASSEMENT" pk="ID_CRITERE_CLASSEMENT" />
+			</fk>
+		</table>
+		<table name="CONTACT" >
+			<column name="ID_CONTACT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="NAME" type="varchar" length="128" decimal="0" jt="12" mandatory="y" />
+			<column name="FIRSTNAME" type="varchar" length="128" decimal="0" jt="12" />
+			<column name="ID_CIVILITY" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<column name="ADDRESS" type="varchar" length="255" decimal="0" jt="12" />
+			<column name="ZIP_CODE" type="varchar" length="10" decimal="0" jt="12" />
+			<column name="CITY" type="varchar" length="64" decimal="0" jt="12" />
+			<column name="COUNTRY" type="varchar" length="2" decimal="0" jt="12" >
+				<defo>&#039;fr&#039;</defo>
+			</column>
+			<column name="NOTE" type="clob" length="2147483647" decimal="0" jt="2005" />
+			<column name="ID_ENTITE" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<column name="IDENTIFIANT" type="varchar" length="128" decimal="0" jt="12" />
+			<column name="MOT_DE_PASSE" type="varchar" length="255" decimal="0" jt="12" />
+			<column name="TOKEN_IDP_EXTERNE" type="varchar" length="255" decimal="0" jt="12" />
+			<column name="UPPER_NAME" type="varchar" length="128" decimal="0" jt="12" >
+				<defo>UPPER(NAME)</defo>
+			</column>
+			<index name="CONSTRAINT_63" unique="PRIMARY_KEY" >
+				<column name="ID_CONTACT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_6" unique="NORMAL" >
+				<column name="ID_CIVILITY" />
+			</index>
+			<index name="CONSTRAINT_INDEX_63" unique="NORMAL" >
+				<column name="ID_ENTITE" />
+			</index>
+			<index name="I_FIRSTNAME" unique="NORMAL" >
+				<column name="FIRSTNAME" />
+			</index>
+			<index name="I_NAME" unique="NORMAL" >
+				<column name="NAME" />
+			</index>
+			<index name="I_UPPER_NAME" unique="NORMAL" >
+				<column name="UPPER_NAME" />
+			</index>
+			<fk name="CONSTRAINT_638" to_schema="PUBLIC" to_table="CIVILITY" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_CIVILITY" pk="ID_CIVILITY" />
+			</fk>
+			<fk name="CONSTRAINT_6382" to_schema="PUBLIC" to_table="ENTITE" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_ENTITE" pk="ID_ENTITE" />
+			</fk>
+		</table>
+		<table name="COORDINATE" >
+			<column name="ID_COORDINATE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="ID_CONTACT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="CODE_COORDINATE_TYPE" type="varchar" length="16" decimal="0" jt="12" />
+			<column name="VALUE" type="varchar" length="64" decimal="0" jt="12" />
+			<index name="CONSTRAINT_2" unique="PRIMARY_KEY" >
+				<column name="ID_COORDINATE" />
+			</index>
+			<index name="CONSTRAINT_INDEX_2" unique="NORMAL" >
+				<column name="ID_CONTACT" />
+			</index>
+			<fk name="CONSTRAINT_28" to_schema="PUBLIC" to_table="CONTACT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_CONTACT" pk="ID_CONTACT" />
+			</fk>
+		</table>
+		<table name="CRITERE_CLASSEMENT" >
+			<column name="ID_CRITERE_CLASSEMENT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="NOM" type="varchar" length="128" decimal="0" jt="12" mandatory="y" />
+			<column name="CRITERE_EQUIPE" type="boolean" length="1" decimal="0" jt="16" mandatory="y" >
+				<defo>0</defo>
+			</column>
+			<column name="ID_REGLEMENT" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<column name="ID_JEUX_DISTANCES_BLASONS" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<index name="CONSTRAINT_B" unique="PRIMARY_KEY" >
+				<column name="ID_CRITERE_CLASSEMENT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_B" unique="NORMAL" >
+				<column name="ID_REGLEMENT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_BD" unique="NORMAL" >
+				<column name="ID_JEUX_DISTANCES_BLASONS" />
+			</index>
+			<fk name="CONSTRAINT_BD9" to_schema="PUBLIC" to_table="JEUX_DISTANCES_BLASONS" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_JEUX_DISTANCES_BLASONS" pk="ID_JEUX_DISTANCES_BLASONS" />
+			</fk>
+			<fk name="CONSTRAINT_BD" to_schema="PUBLIC" to_table="REGLEMENT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_REGLEMENT" pk="ID_REGLEMENT" />
+			</fk>
+		</table>
+		<table name="CRITERE_DISCRIMINANT" >
+			<column name="ID_CRITERE_DISCRIMINANT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="NOM" type="varchar" length="64" decimal="0" jt="12" />
+			<column name="CODE" type="varchar" length="16" decimal="0" jt="12" />
+			<column name="ORDRE" type="integer" length="10" decimal="0" jt="4" />
+			<column name="ID_ENTITE" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<column name="ID_REGLEMENT" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<column name="ID_CRITERE_DISCRIMINANT_REFERENCE" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<index name="CONSTRAINT_62" unique="PRIMARY_KEY" >
+				<column name="ID_CRITERE_DISCRIMINANT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_62" unique="NORMAL" >
+				<column name="ID_ENTITE" />
+			</index>
+			<index name="CONSTRAINT_INDEX_62B" unique="NORMAL" >
+				<column name="ID_REGLEMENT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_62B9" unique="NORMAL" >
+				<column name="ID_CRITERE_DISCRIMINANT_REFERENCE" />
+			</index>
+			<index name="I_CRITERE_DISCRIMINANT_ORDRE" unique="NORMAL" >
+				<column name="ORDRE" />
+			</index>
+			<fk name="CONSTRAINT_62B98" to_schema="PUBLIC" to_table="CRITERE_DISCRIMINANT" delete_action="setNull" update_action="cascade" >
+				<fk_column name="ID_CRITERE_DISCRIMINANT_REFERENCE" pk="ID_CRITERE_DISCRIMINANT" />
+			</fk>
+			<fk name="CONSTRAINT_62B" to_schema="PUBLIC" to_table="FEDERATION" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_ENTITE" pk="ID_ENTITE" />
+			</fk>
+			<fk name="CONSTRAINT_62B9" to_schema="PUBLIC" to_table="REGLEMENT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_REGLEMENT" pk="ID_REGLEMENT" />
+			</fk>
+		</table>
+		<table name="DEPARTAGE" >
+			<column name="ID_DEPARTAGE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="ID_REGLEMENT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="FIELDNAME" type="varchar" length="64" decimal="0" jt="12" />
+			<column name="NUMORDRE" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<index name="CONSTRAINT_5D" unique="PRIMARY_KEY" >
+				<column name="ID_DEPARTAGE" />
+			</index>
+			<index name="CONSTRAINT_INDEX_5D" unique="NORMAL" >
+				<column name="ID_REGLEMENT" />
+			</index>
+			<fk name="CONSTRAINT_5D6" to_schema="PUBLIC" to_table="REGLEMENT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_REGLEMENT" pk="ID_REGLEMENT" />
+			</fk>
+		</table>
+		<table name="DISTANCE_BLASONS" >
+			<column name="ID_DISTANCE_BLASONS" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="DISTANCE" type="double" length="17" decimal="0" jt="8" mandatory="y" />
+			<column name="SERIE" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="ID_JEUX_DISTANCES_BLASONS" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<index name="CONSTRAINT_F50" unique="PRIMARY_KEY" >
+				<column name="ID_DISTANCE_BLASONS" />
+			</index>
+			<index name="CONSTRAINT_INDEX_F5" unique="NORMAL" >
+				<column name="ID_JEUX_DISTANCES_BLASONS" />
+			</index>
+			<fk name="CONSTRAINT_F500" to_schema="PUBLIC" to_table="JEUX_DISTANCES_BLASONS" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_JEUX_DISTANCES_BLASONS" pk="ID_JEUX_DISTANCES_BLASONS" />
+			</fk>
+		</table>
+		<table name="ELEMENT_CRITERE_DISCRIMINANT" >
+			<column name="ID_ELEMENT_CRITERE_DISCRIMINANT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="CODE" type="varchar" length="16" decimal="0" jt="12" mandatory="y" />
+			<column name="NOM" type="varchar" length="64" decimal="0" jt="12" mandatory="y" />
+			<column name="ORDRE" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="ID_CRITERE_DISCRIMINANT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="ID_ELEMENT_CRITERE_DISCRIMINANT_REFERENCE" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<index name="CONSTRAINT_E9" unique="PRIMARY_KEY" >
+				<column name="ID_ELEMENT_CRITERE_DISCRIMINANT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_E9" unique="NORMAL" >
+				<column name="ID_CRITERE_DISCRIMINANT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_E96" unique="NORMAL" >
+				<column name="ID_ELEMENT_CRITERE_DISCRIMINANT_REFERENCE" />
+			</index>
+			<fk name="CONSTRAINT_E96" to_schema="PUBLIC" to_table="CRITERE_DISCRIMINANT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_CRITERE_DISCRIMINANT" pk="ID_CRITERE_DISCRIMINANT" />
+			</fk>
+			<fk name="CONSTRAINT_E968" to_schema="PUBLIC" to_table="ELEMENT_CRITERE_DISCRIMINANT" delete_action="setNull" update_action="cascade" >
+				<fk_column name="ID_ELEMENT_CRITERE_DISCRIMINANT_REFERENCE" pk="ID_ELEMENT_CRITERE_DISCRIMINANT" />
+			</fk>
+		</table>
+		<table name="ELEMENT_JEUX_CRITERES_DISCRIMINANT" >
+			<column name="ID_JEUX_CRITERES_DISCRIMINANT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="ID_ELEMENT_CRITERE_DISCRIMINANT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="ORDRE" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<index name="CONSTRAINT_23" unique="PRIMARY_KEY" >
+				<column name="ID_JEUX_CRITERES_DISCRIMINANT" />
+				<column name="ID_ELEMENT_CRITERE_DISCRIMINANT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_23" unique="NORMAL" >
+				<column name="ID_JEUX_CRITERES_DISCRIMINANT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_232" unique="NORMAL" >
+				<column name="ID_ELEMENT_CRITERE_DISCRIMINANT" />
+			</index>
+			<fk name="CONSTRAINT_232C" to_schema="PUBLIC" to_table="ELEMENT_CRITERE_DISCRIMINANT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_ELEMENT_CRITERE_DISCRIMINANT" pk="ID_ELEMENT_CRITERE_DISCRIMINANT" />
+			</fk>
+			<fk name="CONSTRAINT_232" to_schema="PUBLIC" to_table="JEUX_CRITERES_DISCRIMINANT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_JEUX_CRITERES_DISCRIMINANT" pk="ID_JEUX_CRITERES_DISCRIMINANT" />
+			</fk>
+		</table>
+		<table name="ENTITE" >
+			<column name="ID_ENTITE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="NOM" type="varchar" length="64" decimal="0" jt="12" mandatory="y" />
+			<column name="TYPEENTITE" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="ID_ENTITE_PARENT" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<column name="REFERENCE" type="varchar" length="64" decimal="0" jt="12" />
+			<column name="ADRESSE" type="clob" length="2147483647" decimal="0" jt="2005" />
+			<column name="CODEPOSTAL" type="varchar" length="5" decimal="0" jt="12" />
+			<column name="VILLE" type="varchar" length="64" decimal="0" jt="12" />
+			<column name="PAYS" type="varchar" length="2" decimal="0" jt="12" />
+			<column name="NOTE" type="clob" length="2147483647" decimal="0" jt="2005" />
+			<column name="DATEMODIF" type="date" length="8" decimal="0" jt="91" >
+				<defo>CURRENT_DATE()</defo>
+			</column>
+			<column name="REMOVABLE" type="boolean" length="1" decimal="0" jt="16" mandatory="y" >
+				<defo>TRUE</defo>
+			</column>
+			<column name="UPPER_VILLE" type="varchar" length="64" decimal="0" jt="12" >
+				<defo>UPPER(VILLE)</defo>
+			</column>
+			<index name="CONSTRAINT_7A" unique="PRIMARY_KEY" >
+				<column name="ID_ENTITE" />
+			</index>
+			<index name="CONSTRAINT_INDEX_7" unique="NORMAL" >
+				<column name="ID_ENTITE_PARENT" />
+			</index>
+			<index name="I_ENTITE_NOM" unique="NORMAL" >
+				<column name="NOM" />
+			</index>
+			<index name="I_ENTITE_REFERENCE" unique="NORMAL" >
+				<column name="REFERENCE" />
+			</index>
+			<index name="I_ENTITE_UPPER_VILLE" unique="NORMAL" >
+				<column name="UPPER_VILLE" />
+			</index>
+			<index name="I_ENTITE_VILLE" unique="NORMAL" >
+				<column name="VILLE" />
+			</index>
+			<fk name="CONSTRAINT_7A3" to_schema="PUBLIC" to_table="ENTITE" delete_action="restrict" update_action="cascade" >
+				<fk_column name="ID_ENTITE_PARENT" pk="ID_ENTITE" />
+			</fk>
+		</table>
+		<table name="FEDERATION" >
+			<column name="ID_ENTITE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="NOM" type="varchar" length="128" decimal="0" jt="12" />
+			<column name="SIGLE" type="varchar" length="32" decimal="0" jt="12" />
+			<index name="CONSTRAINT_2C" unique="PRIMARY_KEY" >
+				<column name="ID_ENTITE" />
+			</index>
+			<fk name="CONSTRAINT_2C0" to_schema="PUBLIC" to_table="ENTITE" delete_action="restrict" update_action="cascade" >
+				<fk_column name="ID_ENTITE" pk="ID_ENTITE" />
+			</fk>
+		</table>
+		<table name="JEUX_CRITERES_DISCRIMINANT" >
+			<column name="ID_JEUX_CRITERES_DISCRIMINANT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="ID_CRITERE_CLASSEMENT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<index name="CONSTRAINT_3F" unique="PRIMARY_KEY" >
+				<column name="ID_JEUX_CRITERES_DISCRIMINANT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_3F" unique="NORMAL" >
+				<column name="ID_CRITERE_CLASSEMENT" />
+			</index>
+			<fk name="CONSTRAINT_3FF" to_schema="PUBLIC" to_table="CRITERE_CLASSEMENT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_CRITERE_CLASSEMENT" pk="ID_CRITERE_CLASSEMENT" />
+			</fk>
+		</table>
+		<table name="JEUX_DISTANCES_BLASONS" >
+			<column name="ID_JEUX_DISTANCES_BLASONS" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="ID_REGLEMENT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="NOM" type="varchar" length="64" decimal="0" jt="12" mandatory="y" />
+			<index name="CONSTRAINT_5" unique="PRIMARY_KEY" >
+				<column name="ID_JEUX_DISTANCES_BLASONS" />
+			</index>
+			<index name="CONSTRAINT_INDEX_5" unique="NORMAL" >
+				<column name="ID_REGLEMENT" />
+			</index>
+			<fk name="CONSTRAINT_52" to_schema="PUBLIC" to_table="REGLEMENT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_REGLEMENT" pk="ID_REGLEMENT" />
+			</fk>
+		</table>
+		<table name="LIBELLE" >
+			<column name="ID_LIBELLE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="LANG" type="varchar" length="5" decimal="0" jt="12" mandatory="y" />
+			<column name="LIBELLE" type="varchar" length="255" decimal="0" jt="12" />
+			<index name="CONSTRAINT_3" unique="PRIMARY_KEY" >
+				<column name="ID_LIBELLE" />
+				<column name="LANG" />
+			</index>
+		</table>
+		<table name="NIVEAU_COMPETITION" >
+			<column name="ID_NIVEAU_COMPETITION" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="ID_ENTITE" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<column name="ID_LIBELLE" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<column name="DEFAUT" type="boolean" length="1" decimal="0" jt="16" />
+			<column name="ORDRE" type="integer" length="10" decimal="0" jt="4" />
+			<index name="CONSTRAINT_88" unique="PRIMARY_KEY" >
+				<column name="ID_NIVEAU_COMPETITION" />
+			</index>
+			<index name="CONSTRAINT_INDEX_88" unique="NORMAL" >
+				<column name="ID_ENTITE" />
+			</index>
+			<fk name="CONSTRAINT_88C" to_schema="PUBLIC" to_table="ENTITE" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_ENTITE" pk="ID_ENTITE" />
+			</fk>
+		</table>
+		<table name="PARAM" >
+			<column name="DBVERSION" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="APPREVISION" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="DEFAULT_LANG" type="varchar" length="5" decimal="0" jt="12" mandatory="y" >
+				<defo>&#039;fr&#039;</defo>
+			</column>
+			<column name="DBUUID" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+		</table>
+		<table name="PROFILE" >
+			<column name="ID_PROFILE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="INTITULE" type="varchar" length="128" decimal="0" jt="12" mandatory="y" />
+			<column name="ID_ENTITE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<index name="CONSTRAINT_1" unique="PRIMARY_KEY" >
+				<column name="ID_PROFILE" />
+			</index>
+			<index name="CONSTRAINT_INDEX_1" unique="NORMAL" >
+				<column name="ID_ENTITE" />
+			</index>
+			<fk name="CONSTRAINT_18" to_schema="PUBLIC" to_table="ENTITE" delete_action="restrict" update_action="cascade" >
+				<fk_column name="ID_ENTITE" pk="ID_ENTITE" />
+			</fk>
+		</table>
+		<table name="REGLEMENT" >
+			<column name="ID_REGLEMENT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="NOM" type="varchar" length="64" decimal="0" jt="12" />
+			<column name="DESCRIPTION" type="varchar" length="255" decimal="0" jt="12" />
+			<column name="NBSERIE" type="integer" length="10" decimal="0" jt="4" />
+			<column name="NBVOLEEPARSERIE" type="integer" length="10" decimal="0" jt="4" />
+			<column name="NBFLECHEPARVOLEE" type="integer" length="10" decimal="0" jt="4" />
+			<column name="NBPOINTSPARFLECHE" type="integer" length="10" decimal="0" jt="4" />
+			<column name="NBMEMBRESEQUIPE" type="integer" length="10" decimal="0" jt="4" />
+			<column name="NBMEMBRESRETENU" type="integer" length="10" decimal="0" jt="4" />
+			<column name="ISOFFICIAL" type="boolean" length="1" decimal="0" jt="16" />
+			<column name="ID_ENTITE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="NUMCATEGORIE_REGLEMENT" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="TYPEREGLEMENT" type="varchar" length="10" decimal="0" jt="12" mandatory="y" >
+				<defo>&#039;TARGET&#039;</defo>
+			</column>
+			<column name="REMOVABLE" type="boolean" length="1" decimal="0" jt="16" />
+			<index name="CONSTRAINT_AF" unique="PRIMARY_KEY" >
+				<column name="ID_REGLEMENT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_A" unique="NORMAL" >
+				<column name="ID_ENTITE" />
+			</index>
+			<index name="CONSTRAINT_INDEX_AF" unique="NORMAL" >
+				<column name="NUMCATEGORIE_REGLEMENT" />
+			</index>
+			<index name="I_NOM_REGLEMENT" unique="NORMAL" >
+				<column name="NOM" />
+			</index>
+			<fk name="CONSTRAINT_AF17" to_schema="PUBLIC" to_table="CATEGORIE_REGLEMENT" delete_action="restrict" update_action="cascade" >
+				<fk_column name="NUMCATEGORIE_REGLEMENT" pk="NUMCATEGORIE_REGLEMENT" />
+			</fk>
+			<fk name="CONSTRAINT_AF1" to_schema="PUBLIC" to_table="ENTITE" delete_action="restrict" update_action="cascade" >
+				<fk_column name="ID_ENTITE" pk="ID_ENTITE" />
+			</fk>
+		</table>
+		<table name="REPARTITION_PHASE_FINALE" >
+			<column name="NUM_REPARTITION_PHASE_FINALE" type="smallint" length="5" decimal="0" jt="5" mandatory="y" />
+			<column name="NUM_TYPE_REPARTITION" type="smallint" length="5" decimal="0" jt="5" mandatory="y" />
+			<column name="NUM_ORDRE" type="smallint" length="5" decimal="0" jt="5" mandatory="y" />
+			<index name="CONSTRAINT_6" unique="PRIMARY_KEY" >
+				<column name="NUM_REPARTITION_PHASE_FINALE" />
+				<column name="NUM_TYPE_REPARTITION" />
+			</index>
+		</table>
+		<table name="SCORE_CONCURRENT" >
+			<column name="ID_SCORE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="TYPE_SCORE" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="ID_CONTACT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="ID_COMPETITION" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="NUMORDRE" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="SCORE" type="integer" length="10" decimal="0" jt="4" />
+			<index name="CONSTRAINT_D8" unique="PRIMARY_KEY" >
+				<column name="ID_SCORE" />
+			</index>
+			<index name="CONSTRAINT_INDEX_D" unique="NORMAL" >
+				<column name="ID_CONTACT" />
+				<column name="ID_COMPETITION" />
+			</index>
+			<fk name="CONSTRAINT_D8C" to_schema="PUBLIC" to_table="CONCURRENT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_CONTACT" pk="ID_CONTACT" />
+				<fk_column name="ID_COMPETITION" pk="ID_COMPETITION" />
+			</fk>
+		</table>
+		<table name="TARIF" >
+			<column name="ID_TARIF" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="ID_PROFILE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="INTITULE" type="varchar" length="128" decimal="0" jt="12" mandatory="y" />
+			<column name="TARIF" type="decimal" length="16" decimal="2" jt="3" mandatory="y" />
+			<index name="CONSTRAINT_4B" unique="PRIMARY_KEY" >
+				<column name="ID_TARIF" />
+			</index>
+			<index name="CONSTRAINT_INDEX_4" unique="NORMAL" >
+				<column name="ID_PROFILE" />
+			</index>
+			<fk name="CONSTRAINT_4BE" to_schema="PUBLIC" to_table="PROFILE" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_PROFILE" pk="ID_PROFILE" />
+			</fk>
+		</table>
+		<table name="TYPE_EQUIPE" >
+			<column name="CODETYPEEQUIPE" type="varchar" length="16" decimal="0" jt="12" mandatory="y" />
+			<column name="ID_ENTITE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="LANG" type="varchar" length="5" decimal="0" jt="12" mandatory="y" />
+			<column name="LIBELLE" type="varchar" length="64" decimal="0" jt="12" />
+			<index name="CONSTRAINT_39" unique="PRIMARY_KEY" >
+				<column name="CODETYPEEQUIPE" />
+				<column name="ID_ENTITE" />
+				<column name="LANG" />
+			</index>
+			<index name="CONSTRAINT_INDEX_3" unique="NORMAL" >
+				<column name="ID_ENTITE" />
+			</index>
+			<fk name="CONSTRAINT_397" to_schema="PUBLIC" to_table="FEDERATION" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_ENTITE" pk="ID_ENTITE" />
+			</fk>
+		</table>
+		<table name="VILLE" >
+			<column name="CODE_VILLE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" >
+				<defo>RANDOM_UUID()</defo>
+			</column>
+			<column name="INSEE" type="varchar" length="5" decimal="0" jt="12" mandatory="y" />
+			<column name="NOM" type="varchar" length="100" decimal="0" jt="12" />
+			<column name="UPPER_NAME" type="varchar" length="100" decimal="0" jt="12" >
+				<defo>UPPER(NOM)</defo>
+			</column>
+			<column name="ALTITUDE" type="varchar" length="25" decimal="0" jt="12" />
+			<column name="LONGITUDE_RADIAN" type="varchar" length="50" decimal="0" jt="12" />
+			<column name="LATITUDE_RADIAN" type="varchar" length="50" decimal="0" jt="12" />
+			<column name="POP99" type="varchar" length="25" decimal="0" jt="12" />
+			<column name="SURFACE" type="varchar" length="25" decimal="0" jt="12" />
+			<column name="PAYS" type="varchar" length="2" decimal="0" jt="12" />
+			<index name="CONSTRAINT_4" unique="PRIMARY_KEY" >
+				<column name="CODE_VILLE" />
+			</index>
+			<index name="I_VILLE_NOM" unique="NORMAL" >
+				<column name="NOM" />
+			</index>
+			<index name="I_VILLE_PAYS" unique="NORMAL" >
+				<column name="PAYS" />
+			</index>
+			<index name="I_VILLE_UPPER_NAME" unique="NORMAL" >
+				<column name="UPPER_NAME" />
+			</index>
+		</table>
+		<sequence name="SYSTEM_SEQUENCE_0E085A3B_41C2_450B_B350_4A941060310F" start="1" />
+	</schema>
+	<connector name="H2" database="H2" driver_class="org.h2.Driver" driver_jar="h2-1.3.176.jar" url="jdbc:h2:file:/var/lib/ArcCompetition/base/arccompetitiondb;AUTO_SERVER=true" host="localhost" port="-1" instance="/var/lib/ArcCompetition/base/arccompetitiondb" user="sa" schema_mapping="" />
+	<layout id="Layout3371094" name="AJWEBSERVER" show_relation_columns="y" >
+		<entity schema="AJWEBSERVER" name="PARAM" color="b2cdf7" x="240" y="45" />
+		<entity schema="AJWEBSERVER" name="REQUEST" color="b2cdf7" x="45" y="45" />
+		<entity schema="AJWEBSERVER" name="RESOURCES" color="b2cdf7" x="420" y="45" />
+	</layout>
+	<layout id="Layout3371103" name="PUBLIC" show_relation_columns="y" >
+		<entity schema="PUBLIC" name="ANCRAGE_BLASON" color="f5d9b5" x="1080" y="720" />
+		<entity schema="PUBLIC" name="ARCHER" color="c0f5b5" x="240" y="825" />
+		<entity schema="PUBLIC" name="BLASON" color="f5d9b5" x="870" y="720" />
+		<entity schema="PUBLIC" name="BLASON_DISTANCE_BLASONS" color="f5d9b5" x="1260" y="720" />
+		<entity schema="PUBLIC" name="CATEGORIE_REGLEMENT" color="f5d9b5" x="45" y="450" />
+		<entity schema="PUBLIC" name="CODE_POSTAL" color="b5b5f5" x="1365" y="120" />
+		<entity schema="PUBLIC" name="COMPETITION" color="c0f5b5" x="75" y="1155" />
+		<entity schema="PUBLIC" name="CONCURRENT" color="c0f5b5" x="450" y="825" />
+		<entity schema="PUBLIC" name="CONTACT" color="b5b5f5" x="645" y="225" />
+		<entity schema="PUBLIC" name="CRITERE_CLASSEMENT" color="cbb5f5" x="870" y="1245" />
+		<entity schema="PUBLIC" name="CRITERE_DISCRIMINANT" color="cbb5f5" x="1140" y="1245" />
+		<entity schema="PUBLIC" name="DEPARTAGE" color="f5d9b5" x="330" y="585" />
+		<entity schema="PUBLIC" name="DISTANCE_BLASONS" color="f5d9b5" x="1080" y="555" />
+		<entity schema="PUBLIC" name="ELEMENT_CRITERE_DISCRIMINANT" color="cbb5f5" x="1455" y="1050" />
+		<entity schema="PUBLIC" name="ELEMENT_JEUX_CRITERES_DISCRIMINANT" color="cbb5f5" x="1140" y="1095" />
+		<entity schema="PUBLIC" name="ENTITE" color="c0f5b5" x="510" y="1380" />
+		<entity schema="PUBLIC" name="JEUX_CRITERES_DISCRIMINANT" color="cbb5f5" x="1455" y="1245" />
+		<entity schema="PUBLIC" name="JEUX_DISTANCES_BLASONS" color="f5d9b5" x="1260" y="885" />
+		<entity schema="PUBLIC" name="REGLEMENT" color="f5d9b5" x="330" y="270" />
+		<entity schema="PUBLIC" name="REPARTITION_PHASE_FINALE" color="f5d9b5" x="45" y="585" />
+		<entity schema="PUBLIC" name="SCORE_CONCURRENT" color="c0f5b5" x="45" y="825" />
+		<entity schema="PUBLIC" name="PARAM" color="f5d9b5" x="45" y="90" />
+		<entity schema="PUBLIC" name="LIBELLE" color="b5b5f5" x="210" y="90" />
+		<entity schema="PUBLIC" name="VILLE" color="b5b5f5" x="1545" y="120" />
+		<entity schema="PUBLIC" name="COORDINATE" color="b5b5f5" x="825" y="60" />
+		<entity schema="PUBLIC" name="CIVILITY" color="b5b5f5" x="840" y="180" />
+		<entity schema="PUBLIC" name="ASSOCIER_CATEGORIE_CONTACT" color="b5cef5" x="840" y="315" />
+		<entity schema="PUBLIC" name="CATEGORIE_CONTACT" color="b5cef5" x="1080" y="60" />
+		<entity schema="PUBLIC" name="PROFILE" color="b5cef5" x="795" y="1680" />
+		<entity schema="PUBLIC" name="TARIF" color="b5cef5" x="1035" y="1665" />
+		<entity schema="PUBLIC" name="CATEGORIE_TARIF" color="b5cef5" x="780" y="1560" />
+		<entity schema="PUBLIC" name="FEDERATION" color="c0f5b5" x="165" y="1500" />
+		<entity schema="PUBLIC" name="TYPE_EQUIPE" color="c0f5b5" x="90" y="1365" />
+		<entity schema="PUBLIC" name="NIVEAU_COMPETITION" color="c0f5b5" x="300" y="1380" />
+		<group name="Blasons" color="f7f0e6" >
+			<comment>Used by : &#10;   ARCHER&#10;   CRITERE_DISCRIMINANT</comment>
+			<entity schema="PUBLIC" name="ANCRAGE_BLASON" />
+			<entity schema="PUBLIC" name="BLASON" />
+			<entity schema="PUBLIC" name="BLASON_DISTANCE_BLASONS" />
+			<entity schema="PUBLIC" name="DISTANCE_BLASONS" />
+			<entity schema="PUBLIC" name="JEUX_DISTANCES_BLASONS" />
+			<callout x="885" y="585" pointer="SV" />
+		</group>
+		<group name="ARCHER" color="e9f7e6" >
+			<entity schema="PUBLIC" name="ARCHER" />
+			<entity schema="PUBLIC" name="SCORE_CONCURRENT" />
+			<entity schema="PUBLIC" name="CONCURRENT" />
+		</group>
+		<group name="Profile" color="e6edf7" >
+			<entity schema="PUBLIC" name="PROFILE" />
+			<entity schema="PUBLIC" name="CATEGORIE_TARIF" />
+			<entity schema="PUBLIC" name="TARIF" />
+		</group>
+		<group name="Contact" color="e6e6f7" >
+			<comment>Used by : &#10;   ARCHER&#10;   CATEGORIE_CONTACT</comment>
+			<entity schema="PUBLIC" name="COORDINATE" />
+			<entity schema="PUBLIC" name="CIVILITY" />
+			<entity schema="PUBLIC" name="CONTACT" />
+			<entity schema="PUBLIC" name="ASSOCIER_CATEGORIE_CONTACT" />
+			<entity schema="PUBLIC" name="CATEGORIE_CONTACT" />
+			<callout x="645" y="45" pointer="SV" />
+		</group>
+		<group name="CRITERE_DISCRIMINANT" color="ece6f7" >
+			<comment>Used by : &#10;   ARCHER&#10;   CATEGORIE_CONTACT</comment>
+			<entity schema="PUBLIC" name="CRITERE_DISCRIMINANT" />
+			<entity schema="PUBLIC" name="CRITERE_CLASSEMENT" />
+			<entity schema="PUBLIC" name="JEUX_CRITERES_DISCRIMINANT" />
+			<entity schema="PUBLIC" name="ELEMENT_JEUX_CRITERES_DISCRIMINANT" />
+			<entity schema="PUBLIC" name="ELEMENT_CRITERE_DISCRIMINANT" />
+			<callout x="915" y="1080" pointer="SV" />
+		</group>
+		<group name="Réglement" color="f7f0e6" >
+			<comment>Used by : &#10;   ANCRAGE_BLASON&#10;   CRITERE_DISCRIMINANT&#10;   TYPE_EQUIPE</comment>
+			<entity schema="PUBLIC" name="REPARTITION_PHASE_FINALE" />
+			<entity schema="PUBLIC" name="DEPARTAGE" />
+			<entity schema="PUBLIC" name="CATEGORIE_REGLEMENT" />
+			<entity schema="PUBLIC" name="REGLEMENT" />
+			<callout x="90" y="300" pointer="SV" />
+		</group>
+		<group name="Compétition" color="e9f7e6" >
+			<comment>Used by : &#10;   ARCHER&#10;   CATEGORIE_CONTACT&#10;   CODE_POSTAL&#10;   CRITERE_DISCRIMINANT&#10;   REPARTITION_PHASE_FINALE</comment>
+			<entity schema="PUBLIC" name="TYPE_EQUIPE" />
+			<entity schema="PUBLIC" name="FEDERATION" />
+			<entity schema="PUBLIC" name="ENTITE" />
+			<entity schema="PUBLIC" name="NIVEAU_COMPETITION" />
+			<entity schema="PUBLIC" name="COMPETITION" />
+			<callout x="465" y="1095" pointer="SV" />
+		</group>
+		<group name="Ville" color="c4e0f9" >
+			<entity schema="PUBLIC" name="VILLE" />
+			<entity schema="PUBLIC" name="CODE_POSTAL" />
+		</group>
+	</layout>
+</project>
