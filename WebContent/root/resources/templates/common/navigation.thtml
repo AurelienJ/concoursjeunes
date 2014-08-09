@@ -1,12 +1,12 @@
 <nav>
-			<a href="#" id="homeNav">
-				<img src="images/fnd.jpg" alt="ArcCompetion" width="140"/>
-				<span class="masquable"><br />Gestion des competitions de Tir à l'Arc</span>
-			</a>
-			<a href="competitions.html"><img src="images/award_fill_24x24.png"/><span class="masquable"> Compétitions</span></a>
-			<a href="#"><img src="images/group.png"/><span class="masquable"> Personnes</span></a>
-			<a href="#"><img src="images/home.png" /><span class="masquable"> Entités</span></a>
-			<a href="#"><img src="images/ruler.png" /><span class="masquable"> Réglements</span></a>
-			<a href="#"><img src="images/loop_alt4_24x18.png" /><span class="masquable"> Import/Export</span></a>
-			<a href="tools.html"><img src="images/tool_box.png" /><span class="masquable"> Outils</span></a>
-		</nav>
+	<a href="#parameters" id="homeNav">
+		<img src="images/fnd.jpg" alt="ArcCompetion" width="140"/>
+		<span class="masquable"><br />Gestion des competitions de Tir à l'Arc</span>
+	</a>
+	<a href="#" id="competitionNav"><img src="images/award_fill_24x24.png"/><span class="masquable"> Compétitions</span></a>
+	<a href="#" id="personsNav"><img src="images/group.png"/><span class="masquable"> Personnes</span></a>
+	<a href="#listEntities" id="entitiesNav"><img src="images/home.png" /><span class="masquable"> Entités</span></a>
+	<a href="#" id="rulesNav"><img src="images/ruler.png" /><span class="masquable"> Réglements</span></a>
+	<a href="#" id="importExportNav"><img src="images/loop_alt4_24x18.png" /><span class="masquable"> Import/Export</span></a>
+	<a href="#" id="toolsNav"><img src="images/tool_box.png" /><span class="masquable"> Outils</span></a>
+</nav>

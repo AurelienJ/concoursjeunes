@@ -24,7 +24,7 @@ function loadNavigationContent(basePath, template) {
 
 function loadMainContent(basePath) {
 	//mainTemplate.getBlocs().get("script").loadTemplate(basePath + "/templates/parameters/scriptsSection.thtml");
-	mainTemplate.getBlocs().get("main").loadTemplate(basePath + "/templates/tools/tools.thtml");
+	//mainTemplate.getBlocs().get("main").loadTemplate(basePath + "/templates/tools/tools.thtml");
 }
 
 

@@ -105,6 +105,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.ajdeveloppement.commons.net.json.JsonExclude;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
@@ -135,10 +136,6 @@ import org.ajdeveloppement.concours.managers.EntiteManager;
 @SqlPrimaryKey(fields="ID_CONTACT",generatedidField=@SqlGeneratedIdField(name="ID_CONTACT",type=Types.JAVA_OBJECT))
 @SqlUnmappedFields(fields="UPPER_NAME",typeFields=String.class)
 public class Contact implements SqlObjectPersistence, Cloneable {
-	
-	// [start] Helper persistence
-	//private static StoreHelper<Contact> helper = SqlStoreHelperFactory.getStoreHelper(Contact.class);
-	// [end]
 	
 	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
 	@XmlID
@@ -187,11 +184,23 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	@SqlField(name="TOKEN_IDP_EXTERNE")
 	private String idpToken;
 	
+	@SqlField(name="LANGUAGE")
+	private String language;
+	
+	@SqlField(name="SURBRILLANCE_EXAEQUO")
+	private boolean highlightExAequo;
+	
+	@SqlField(name="SAISI_NON_CUMULE")
+	private boolean uncumuledInput;
+	
 	@SqlChildCollection(foreignFields="ID_CONTACT",type=Coordinate.class)
 	private List<Coordinate> coordinates;
 	
 	@SqlChildCollection(foreignFields="ID_CONTACT",type=CategoryContactContact.class)
 	private List<CategoryContactContact> categories;
+	
+	@SqlChildCollection(foreignFields="ID_CONTACT",type=ManagerProfile.class)
+	private List<ManagerProfile> managedProfiles;
 
 	protected transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
@@ -436,6 +445,7 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	/**
 	 * @return passwordHash
 	 */
+	@JsonExclude
 	public String getPasswordHash() {
 		return passwordHash;
 	}
@@ -450,6 +460,7 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	/**
 	 * @return idpToken
 	 */
+	@JsonExclude
 	public String getIdpToken() {
 		return idpToken;
 	}
@@ -459,6 +470,48 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	 */
 	public void setIdpToken(String idpToken) {
 		this.idpToken = idpToken;
+	}
+
+	/**
+	 * @return language
+	 */
+	public String getLanguage() {
+		return language;
+	}
+
+	/**
+	 * @param language language à définir
+	 */
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	/**
+	 * @return highlightExAequo
+	 */
+	public boolean isHighlightExAequo() {
+		return highlightExAequo;
+	}
+
+	/**
+	 * @param highlightExAequo highlightExAequo à définir
+	 */
+	public void setHighlightExAequo(boolean highlightExAequo) {
+		this.highlightExAequo = highlightExAequo;
+	}
+
+	/**
+	 * @return uncumuledInput
+	 */
+	public boolean isUncumuledInput() {
+		return uncumuledInput;
+	}
+
+	/**
+	 * @param uncumuledInput uncumuledInput à définir
+	 */
+	public void setUncumuledInput(boolean uncumuledInput) {
+		this.uncumuledInput = uncumuledInput;
 	}
 
 	/**
@@ -531,10 +584,39 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	}
 	
 	/**
+	 * @return managedProfiles
+	 */
+	public List<ManagerProfile> getManagedProfiles() {
+		if(managedProfiles == null) {
+			managedProfiles = QResults.from(ManagerProfile.class)
+					.where(T_ManagerProfile.ID_CONTACT.equalTo(idContact))
+					.asList();
+			if(managedProfiles == null)
+				managedProfiles = new ArrayList<>();
+		}
+		return managedProfiles;
+	}
+
+	/**
+	 * @param managedProfiles managedProfiles à définir
+	 */
+	public void setManagedProfiles(List<ManagerProfile> managedProfiles) {
+		Object oldValue = this.managedProfiles;
+		
+		this.managedProfiles = managedProfiles;
+		
+		for(ManagerProfile managedProfile : managedProfiles)
+			managedProfile.setManager(this);
+		
+		pcs.firePropertyChange("managedProfiles", oldValue, managedProfiles); //$NON-NLS-1$
+	}
+
+	/**
 	 * Get identity of contact (firstName + name)
 	 * 
 	 * @return the identity of contact
 	 */
+	@JsonExclude
 	public String getFullName() {
 		return name + " " + firstName; //$NON-NLS-1$
 	}
@@ -544,6 +626,7 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	 * 
 	 * @return the identity of contact
 	 */
+	@JsonExclude
 	public String getFullNameWithCivility() {
 		return ((civility != null && civility.getAbreviation() != null) ? civility.getAbreviation() + " " : "")  + name + " " + firstName; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}

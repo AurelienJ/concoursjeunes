@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry including="**/*.java" kind="src" output="target/classes" path="src">
+	<classpathentry kind="src" path="src">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
@@ -16,10 +16,6 @@
 	<classpathentry kind="lib" path="lang"/>
 	<classpathentry kind="lib" path="plugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/jgraphx.jar"/>
-	<classpathentry kind="lib" path="lib/beansbinding-1.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/swingx-1.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/iText-2.1.7.jar"/>
 	<classpathentry kind="lib" path="lib/debug.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ajcommons"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ajcommons-swingx-ext"/>

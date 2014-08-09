@@ -133,7 +133,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
@@ -150,16 +149,19 @@ import org.ajdeveloppement.apps.ApplicationContext;
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.io.FileUtils;
 import org.ajdeveloppement.commons.io.XMLSerializer;
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.security.SSLUtils;
 import org.ajdeveloppement.commons.security.SecureSiteAuthenticationStore;
 import org.ajdeveloppement.commons.ui.SwingURLAuthenticator;
+import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.Profile;
 import org.ajdeveloppement.concours.db.UpgradeDatabaseEventListener;
 import org.ajdeveloppement.concours.exceptions.ExceptionHandlingEventQueue;
 import org.ajdeveloppement.concours.plugins.Plugin.Type;
 import org.ajdeveloppement.concours.plugins.PluginEntry;
 import org.ajdeveloppement.concours.plugins.PluginLoader;
 import org.ajdeveloppement.concours.plugins.PluginMetadata;
-import org.ajdeveloppement.concours.ui.ArcCompetitionFrame;
 import org.ajdeveloppement.swingxext.error.WebErrorReporter;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
 import org.ajdeveloppement.webserver.FileSelector;
@@ -281,6 +283,11 @@ public class Main extends Application {
 		//initErrorManaging();
 		initNetworkManaging();
 		initCore();
+		try {
+			initDefaultProfile();
+		} catch (ObjectPersistenceException e1) {
+			e1.printStackTrace();
+		}
 		initSecureContext();
 //		if(System.getProperty("noplugin") == null)//$NON-NLS-1$
 //			loadStartupPlugin();
@@ -321,8 +328,8 @@ public class Main extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("ArcCompetition");
-		primaryStage.initStyle(StageStyle.TRANSPARENT);
+		primaryStage.setTitle("ArcCompetition 0.0.1");
+		//primaryStage.initStyle(StageStyle.TRANSPARENT);
 		
 		Label title = new Label();
 		title.setId("title");
@@ -363,13 +370,16 @@ public class Main extends Application {
 		WebView webView = new WebView();
 
 		BorderPane root = new BorderPane();
-		root.setTop(header);
+		//root.setTop(header);
 		root.setCenter(webView);
 		
 		Scene scene = new Scene(root, 1024, 768);
-		scene.getStylesheets().add(Main.class.getResource("ui/fx/styles.css").toExternalForm()); //$NON-NLS-1$
+		URL appStyleUrl = Main.class.getResource("ui/fx/styles.css"); //$NON-NLS-1$
+		if(appStyleUrl != null)
+			scene.getStylesheets().add(appStyleUrl.toExternalForm()); 
 		
 		primaryStage.setScene(scene);
+		primaryStage.setOnCloseRequest(e -> System.exit(0));
 		primaryStage.show();
 		
 		header.setOnMouseDragged(e -> {
@@ -392,20 +402,12 @@ public class Main extends Application {
 		worker.exceptionProperty().addListener((observableValue, oldThrowable, newThrowable) -> newThrowable.printStackTrace());
 		webView.getEngine().setOnError(event ->	event.getException().getStackTrace());
 		webView.getEngine().setOnAlert(event -> System.out.println(event.getData()));
+		System.out.println(webView.getEngine().getUserDataDirectory());
 		
-		webView.getEngine().load("http://localhost:" + webServerListenPort);
+		webView.getEngine().load("http://localhost:" + webServerListenPort); //$NON-NLS-1$
 		netscape.javascript.JSObject win = 
-                (netscape.javascript.JSObject) webView.getEngine().executeScript("window");
-        win.setMember("app", new Bridge(primaryStage));
-		
-		//webView.getEngine().load("http://jsfiddle.net/2Qffw/39/");
-		//Object jsobj = webView.getEngine().executeScript("window");
-		//System.out.println(jsobj);
-		
-		Profile profile = new Profile();
-		core.addProfile(profile);
-		
-		//new org.ajdeveloppement.concours.ui.fx.ArcCompetitionFrame(primaryStage, profile);
+                (netscape.javascript.JSObject) webView.getEngine().executeScript("window"); //$NON-NLS-1$
+        win.setMember("app", new Bridge(primaryStage)); //$NON-NLS-1$
 	}
 
 	/**
@@ -544,6 +546,20 @@ public class Main extends Application {
 		} while(retry);
 		
 		core = ApplicationCore.getInstance();
+	}
+	
+	private static void initDefaultProfile() throws ObjectPersistenceException {
+		List<Profile> profiles = QResults.from(Profile.class).asList();
+		if(profiles == null || profiles.size() == 0) {
+			Contact defaultUser = new Contact("default", "", null);
+			
+			Profile profile = new Profile();
+			profile.setEntite(null);
+			profile.setIntitule("default");
+			profile.addManager(defaultUser);
+			
+			profile.save();
+		}
 	}
 	
 	/**
@@ -725,10 +741,10 @@ public class Main extends Application {
 			@SuppressWarnings("unused")
 			@Override
 			public void run() {
-				Profile profile = new Profile();
-				core.addProfile(profile);
+				//Profile profile = new Profile();
+				//core.addProfile(profile);
 
-				new ArcCompetitionFrame(profile);
+				//new ArcCompetitionFrame(profile);
 			}
 		});
 	}

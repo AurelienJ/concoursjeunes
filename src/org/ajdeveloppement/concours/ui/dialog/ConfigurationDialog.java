@@ -790,7 +790,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 		ImageIcon logo = new ImageIcon(f.getPath());
 		logo = new ImageIcon(logo.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
 		jbLogoPath.setIcon(logo);
-		//jbLogoPath.setText("<html><img src=\"file:" + f.getPath() + "\" width=90 height=100></html>"); 
+
 		workConfiguration.setLogoPath(f.getPath());
 	}
 

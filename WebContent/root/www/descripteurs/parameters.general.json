@@ -1,0 +1,8 @@
+{
+	"title": "Personnalisation de l'application",
+	"scripts": [
+	          "scripts/parameters/parameters.js"
+	          ],
+	"mainActiveMenu": "homeNav",
+	"mainContent": "parameters.general"
+}

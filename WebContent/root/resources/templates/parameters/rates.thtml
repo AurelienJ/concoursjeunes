@@ -1,10 +1,3 @@
-<menu class="mainMenu">
-	<li><a href="general.html">General</a></li>
-	<li><a href="display.html">Affichage</a></li>
-	<li class="selected">Tarifs</li> 
-	<li><a href="editions.html">Editions</a></li> 
-</menu>
-
 <h1>Tarification des compétitions</h1>
 
 <section>

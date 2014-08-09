@@ -88,9 +88,17 @@
  */
 package org.ajdeveloppement.concours.data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlID;
+
+import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
@@ -105,14 +113,22 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @SqlPrimaryKey(fields="ID_PROFILE",generatedidField=@SqlGeneratedIdField(name="ID_PROFILE"))
 public class Profile implements SqlObjectPersistence {
 	
+	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
+	@XmlID
+	@XmlAttribute(name="id")
+	private String xmlId;
+	
 	@SqlField(name="ID_PROFILE")
 	private UUID id;
 	
 	@SqlField(name="INTITULE")
-	private String initule;
+	private String intitule;
 	
 	@SqlForeignKey(mappedTo="ID_ENTITE")
 	private Entite entite;
+	
+	@SqlChildCollection(foreignFields="ID_PROFILE",type=ManagerProfile.class)
+	private List<ManagerProfile> managers;
 	
 	/**
 	 * @return id
@@ -131,15 +147,15 @@ public class Profile implements SqlObjectPersistence {
 	/**
 	 * @return initule
 	 */
-	public String getInitule() {
-		return initule;
+	public String getIntitule() {
+		return intitule;
 	}
 
 	/**
 	 * @param initule initule à définir
 	 */
-	public void setInitule(String initule) {
-		this.initule = initule;
+	public void setIntitule(String initule) {
+		this.intitule = initule;
 	}
 
 	/**
@@ -154,5 +170,83 @@ public class Profile implements SqlObjectPersistence {
 	 */
 	public void setEntite(Entite entite) {
 		this.entite = entite;
+	}
+
+	/**
+	 * @return managers
+	 */
+	public List<ManagerProfile> getManagers() {
+		if(managers == null) {
+			managers = QResults.from(ManagerProfile.class)
+					.where(T_ManagerProfile.ID_PROFILE.equalTo(id))
+					.asList();
+			if(managers == null)
+				managers = new ArrayList<>();
+		}
+		return managers;
+	}
+
+	/**
+	 * @param managers managers à définir
+	 */
+	public void setManagers(List<ManagerProfile> managers) {
+		this.managers = managers;
+	}
+	
+	public boolean addManager(Contact manager) {
+		return getManagers().add(new ManagerProfile(manager, this));
+	}
+	
+	public boolean removeManager(Contact manager) {
+		return getManagers().remove(new ManagerProfile(manager, this));
+	}
+	
+	/**
+	 * For JAXB Usage only. Do not use.
+	 * 
+	 * @param marshaller
+	 */
+	protected void beforeMarshal(Marshaller marshaller) {
+		if(id == null)
+			id = UUID.randomUUID();
+		xmlId = id.toString();
+		
+		entite.beforeMarshal(marshaller);
+	}
+	
+	@SuppressWarnings("nls")
+	public String toJSON() {
+		return String.format("{\"id\":\"%s\",\"intitule\":\"%s\",\"entite\":\"%s\"}", id, intitule, entite.getIdEntite());
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Profile other = (Profile) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 }

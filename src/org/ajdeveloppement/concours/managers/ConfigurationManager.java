@@ -170,7 +170,6 @@ public class ConfigurationManager {
 		return configuration;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static AppConfiguration loadAppConfiguration() {
 		File confFile = new File(
 				userRessources.getConfigPathForUser(),
@@ -186,37 +185,7 @@ public class ConfigurationManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		if(appConfiguration == null) {
-			try {
-				Configuration oldConf = loadConfiguration(confFile);
-				
-				//on crée un fichier de configuration avec les bons paramètres 
-				appConfiguration = new AppConfiguration();
-				appConfiguration.setFirstboot(true);
-				appConfiguration.setPdfReaderPath(oldConf.getPdfReaderPath());
-				appConfiguration.setProxy(oldConf.getProxy());
-				appConfiguration.setUseProxy(oldConf.isUseProxy());
-				appConfiguration.save();
-				
-				//on reset les paramètres obsolète
-				//oldConf.setFirstboot(true);
-				oldConf.setPdfReaderPath(null); 
-				oldConf.setProxy(null);
-				oldConf.setUseProxy(false);
-				oldConf.save();
-			} catch (JAXBException e) {
-				e.printStackTrace();
-				appConfiguration = null;
-			} catch(FileNotFoundException e) {
-				//ne rien faire, c'est que la configuration n'a pas été créé
-				appConfiguration = null;
-			} catch (IOException e) {
-				e.printStackTrace();
-				appConfiguration = null;
-			}
-		}
-		
+
 		if(appConfiguration == null) {
 			appConfiguration = new AppConfiguration();
 		}

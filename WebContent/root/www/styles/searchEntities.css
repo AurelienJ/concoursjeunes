@@ -1,0 +1,57 @@
+#entitiesOperations {
+	float: left;
+}
+
+#entitiesOperations > section {
+	border-color: black;
+	border-style: solid;
+	border-width: 1px;
+	
+	/*background-color: #00d2a7;*/
+	
+	vertical-align: top;
+	
+	margin: 0px 10px 10px;
+	padding: 5px;
+}
+
+#entitiesOperations > section > header {
+	font-size: x-large;
+	padding-bottom: 10px;
+}
+
+#entitiesOperations input, #entitiesOperations select {
+	border-color: black;
+	border-style: solid;
+	border-width: 1px;
+	
+	width: 100%;
+}
+
+#entitiesResults {
+	overflow: auto;
+	height: 80vh;
+	
+	margin: 10px;
+}
+
+#entitiesAction img {
+	width: 16px;
+}
+
+/*#entitiesResultsTable {
+	width: calc(100% - 15px);
+	height: 100vh;
+	
+	border-collapse: collapse;
+}
+
+#entitiesResultsTable tr:hover {
+	color: white;
+	background-color: black;
+	
+	cursor: default;
+}*/
+#entitiesResultsTable {
+	border: 0;
+}

@@ -111,6 +111,7 @@ import org.ajdeveloppement.concours.managers.ConfigurationManager;
  * @author Aurélien JEOFFRAY
  *
  */
+@Deprecated
 public class Profile {
 	
 	private String name = "defaut"; //$NON-NLS-1$

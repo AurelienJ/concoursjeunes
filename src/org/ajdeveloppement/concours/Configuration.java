@@ -91,27 +91,20 @@ package org.ajdeveloppement.concours;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ajdeveloppement.commons.io.XMLSerializer;
-import org.ajdeveloppement.commons.net.Proxy;
+import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Federation;
-import org.ajdeveloppement.concours.data.Rate;
+import org.ajdeveloppement.concours.data.Profile;
 
 /**
  * paramètre de configuration du profile utilisateur
@@ -121,9 +114,9 @@ import org.ajdeveloppement.concours.data.Rate;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder={"federations", "federation", "club", "langue", "logoPath", "reglementName", "tarifs", "pdfReaderPath", "formatPapier",
+/*@XmlType(propOrder={"federations", "federation", "club", "langue", "logoPath", "reglementName", "tarifs", "pdfReaderPath", "formatPapier",
 		"orientation", "colonneAndLigne", "marges", "espacements", "interfaceResultatCumul", "interfaceAffResultatExEquo",
-		"useProxy", "proxy", "metaDataFichesConcours", "curProfil"})
+		"useProxy", "proxy", "metaDataFichesConcours", "curProfil"})*/
 public class Configuration extends DefaultParameters implements Cloneable {
 	
 	/**
@@ -138,23 +131,9 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	private static String[] strLstLangue;
 
 	@XmlAttribute
-	private String version			= "2"; //$NON-NLS-1$
-	private String langue           = "fr";               //$NON-NLS-1$
-	private String logoPath         = "ressources/graphics/logos/default.png";   //$NON-NLS-1$
+	private String version			= "3"; //$NON-NLS-1$
 	
-	@XmlElementWrapper(name="federations")
-	@XmlElement(name="federation")
-	private List<Federation> federations = null;
-	
-	@XmlIDREF
-	private Federation federation	= new Federation();
-	private Entite club				= new Entite();
 	private String reglementName	= "FFTASJF"; //$NON-NLS-1$
-	@XmlElementWrapper(name="tarifs",required=true)
-	private List<Rate> tarifs		= new ArrayList<Rate>(); 
-
-	@XmlElement(required=false)
-	private String pdfReaderPath;
 
 	private String formatPapier     = "A4";             //$NON-NLS-1$
 	private String orientation      = "portrait";       //$NON-NLS-1$
@@ -165,14 +144,14 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	private boolean interfaceResultatCumul = false;
 	private boolean interfaceAffResultatExEquo = true;
 	
-	@XmlElement(required=false,defaultValue="false")
-	private boolean useProxy		= false;
-	@XmlElement(required=false)
-	private Proxy proxy;
+	@XmlIDREF
+	private Contact lastConnectedUser;
+	@XmlIDREF
+	private Profile lastSelectedProfile;
 
 	//propriété caché
-	private MetaDataFichesConcours metaDataFichesConcours = new MetaDataFichesConcours();
-	private String curProfil        = "defaut";          //$NON-NLS-1$
+	private transient MetaDataFichesConcours metaDataFichesConcours = new MetaDataFichesConcours();
+	private transient String curProfil        = "defaut";          //$NON-NLS-1$
 
 	/**
 	 * Construit la configuration 
@@ -182,29 +161,42 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	}
 	
 	/**
+	 * @return lastConnectedUser
+	 */
+	public Contact getLastConnectedUser() {
+		return lastConnectedUser;
+	}
+
+	/**
+	 * @param lastConnectedUser lastConnectedUser à définir
+	 */
+	public void setLastConnectedUser(Contact lastConnectedUser) {
+		this.lastConnectedUser = lastConnectedUser;
+	}
+
+	/**
+	 * @return lastSelectedProfile
+	 */
+	public Profile getLastSelectedProfile() {
+		return lastSelectedProfile;
+	}
+
+	/**
+	 * @param lastSelectedProfile lastSelectedProfile à définir
+	 */
+	public void setLastSelectedProfile(Profile lastSelectedProfile) {
+		this.lastSelectedProfile = lastSelectedProfile;
+	}
+
+	/**
 	 * Retourne la langue courante de l'IHM
 	 * @return  String - le code langue
 	 */
 	public String getLangue() {
-		return this.langue;
-	}
-
-	/**
-	 * Retourne l'adresse du lecteur pdf. <i>Déplacer dans la class AppConfiguration</i>
-	 * @return  String - l'adresse du lecteur pdf
-	 */
-	@Deprecated
-	public String getPdfReaderPath() {
-		return this.pdfReaderPath;
-	}
-	
-	/**
-	 * défini l'adresse du lecteur pdf
-	 * @param pdfReaderPath  - l'adresse du lecteur pdf
-	 */
-	@Deprecated
-	public void setPdfReaderPath(String pdfReaderPath) {
-		this.pdfReaderPath = pdfReaderPath;
+		if(lastConnectedUser != null)
+			return lastConnectedUser.getLanguage();
+		
+		return Locale.getDefault().getLanguage();
 	}
 
 	/**
@@ -212,7 +204,8 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	 * @param langue  - la langue de l'application
 	 */
 	public void setLangue(String langue) {
-		this.langue = langue;
+		if(lastConnectedUser != null)
+			lastConnectedUser.setLanguage(langue);
 	}
 
 	/**
@@ -242,7 +235,9 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	 * @return federation la fédération définit pour le profil
 	 */
 	public Federation getFederation() {
-		return federation;
+		if(lastSelectedProfile != null)
+			return lastSelectedProfile.getEntite().getFederation();
+		return null;
 	}
 
 	/**
@@ -250,8 +245,8 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	 * 
 	 * @param federation la fédération attaché au profil
 	 */
+	@Deprecated
 	public void setFederation(Federation federation) {
-		this.federation = federation;
 	}
 	
 	/**
@@ -260,7 +255,9 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	 * @return le club organisateur
 	 */
 	public Entite getClub() {
-		return club;
+		if(lastSelectedProfile != null)
+			return lastSelectedProfile.getEntite();
+		return null;
 	}
 
 	/**
@@ -268,30 +265,8 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	 * 
 	 * @param club le club organisateur
 	 */
+	@Deprecated
 	public void setClub(Entite club) {
-		Object oldValue = this.club;
-		
-		this.club = club;
-		
-		pcs.firePropertyChange("club", oldValue, club); //$NON-NLS-1$
-	}
-
-	/**
-	 * Retourne la liste des tarifs praticable pour ce profil
-	 * 
-	 * @return tarifs les tarifs du profil
-	 */
-	public List<Rate> getTarifs() {
-		return tarifs;
-	}
-
-	/**
-	 * Définit la liste des tarifs pour le profil.
-	 * 
-	 * @param tarifs la liste des tarifs du profil.
-	 */
-	public void setTarifs(List<Rate> tarifs) {
-		this.tarifs = tarifs;
 	}
 
 	/**
@@ -431,15 +406,17 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	 * @return  Renvoie logoPath.
 	 */
 	public String getLogoPath() {
-		return logoPath;
+		if(lastSelectedProfile != null)
+			return lastSelectedProfile.getEntite().getLogo();
+		return null;
 	}
 
 	/**
 	 * Définit le chemin du logo du club
 	 * @param logoPath  logoPath à définir.
 	 */
+	@Deprecated
 	public void setLogoPath(String logoPath) {
-		this.logoPath = logoPath;
 	}
 	
 	/**
@@ -459,48 +436,6 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	public void setMetaDataFichesConcours(
 			MetaDataFichesConcours metaDataFichesConcours) {
 		this.metaDataFichesConcours = metaDataFichesConcours;
-	}
-
-	/**
-	 * Est ce qu'un proxy doit être utilisé pour la connectivité réseau?
-	 * 
-	 * @deprecated remplacé par {@link AppConfiguration#isUseProxy()}
-	 * @return true si un proxy doit être utilisé
-	 */
-	@Deprecated
-	public boolean isUseProxy() {
-		return useProxy;
-	}
-
-	/**
-	 * Définit l'utilisation ou nom d'un serveur mandataire pour la connectivité réseau
-	 * 
-	 * @deprecated remplacé par {@link AppConfiguration#setUseProxy(boolean)}
-	 * @param useProxy true si un proxy doit être utilisé, false sinon
-	 */
-	@Deprecated
-	public void setUseProxy(boolean useProxy) {
-		this.useProxy = useProxy;
-	}
-
-	/**
-	 * Retourne les paramètres du proxy qui doit être utilisé pour les connections http
-	 * 
-	 * @return les paramètres de proxy
-	 */
-	@Deprecated
-	public Proxy getProxy() {
-		return proxy;
-	}
-
-	/**
-	 * Définit les paramètres du proxy qui doit être utilisé pour les connections http
-	 * 
-	 * @param proxy les paramètres de proxy
-	 */
-	@Deprecated
-	public void setProxy(Proxy proxy) {
-		this.proxy = proxy;
 	}
 	
 	/**
@@ -555,32 +490,6 @@ public class Configuration extends DefaultParameters implements Cloneable {
 		File f = new File(ApplicationCore.userRessources.getConfigPathForUser(),
 				CONFIG_PROFILE + curProfil + EXT_XML);
 		XMLSerializer.saveMarshallStructure(f, this);
-	}
-	
-	/**
-	 * 
-	 * @param marshaller
-	 */
-	protected void beforeMarshal(Marshaller marshaller) {
-		federations = new ArrayList<Federation>();
-		federations.add(federation);
-	}
-	
-	/**
-	 * 
-	 * @param marshaller
-	 */
-	protected void afterMarshal(Marshaller marshaller) {
-		federations = null;
-	}
-	
-	/**
-	 * 
-	 * @param unmarshaller
-	 * @param parent
-	 */
-	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		federations = null;
 	}
 	
 	@Override

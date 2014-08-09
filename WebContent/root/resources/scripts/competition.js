@@ -35,8 +35,8 @@ function init(basePath) {
 	mainTemplate.parseBloc("head", "<link href=\"styles/competitions.css\" media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />");
 	mainTemplate.parseBloc("navigation",getNavigationContent(basePath));
 	
-	competitionTemplate = mainTemplate.getBlocs().get("main");
-	competitionTemplate.loadTemplate(basePath + "/templates/competition.thtml");
+	/*competitionTemplate = mainTemplate.getBlocs().get("main");
+	competitionTemplate.loadTemplate(basePath + "/templates/competition.thtml");*/
 }
 
 function getPage(session) {

@@ -1,0 +1,9 @@
+{
+	"title": "Parametres de l'application",
+	"shortTitle": "Parametres",
+	"scripts": [
+	          "scripts/parameters/navigation.js"
+	          ],
+	"mainActiveMenu": "homeNav",
+	"mainContent": "parameters"
+}

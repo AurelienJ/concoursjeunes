@@ -11,57 +11,37 @@
 	<link href="styles/screen.css" media="screen" rel="stylesheet" type="text/css" />
 	<link href="styles/phone.css" media="screen and (max-width: 800px)" rel="stylesheet" type="text/css" />
 	<link href="styles/openid.css" media="all" rel="stylesheet" type="text/css" />
+	<link href="libs/jquery-ui-1.11.0/jquery-ui.css" media="all" rel="stylesheet" type="text/css" />
+	<link href="libs/jquery-ui-1.11.0/jquery-ui.theme.css" media="all" rel="stylesheet" type="text/css" />
+	<link href="libs/datatables/css/dataTables.jqueryui.css" media="all" rel="stylesheet" type="text/css" />
+	
+	<link href="styles/searchEntities.css" media="all" rel="stylesheet" type="text/css" />
 	
 	<meta name="viewport" content="user-scalable=no, initial-scale = 1, minimum-scale = 1, maximum-scale = 1, width=device-width">
 	
 	<bloc::head></bloc::head>
 	
-	<script type="text/javascript" src="scripts/jquery-1.10.2.min.js"></script>
-	<script type="text/javascript">
-	$(document).ready(function() {
-		document.getElementsByTagName("nav")[0].addEventListener("touchstart", function(e) {
-			var touches = e.changedTouches;
-			
-			startPoint = { X:touches[0].pageX, Y:touches[0].pageY };
-			//alert(startPoint.X);
-		}, false);
-		
-		document.getElementsByTagName("nav")[0].addEventListener("touchend", function(e) {
-			//alert(startPoint.X);
-			if(startPoint != null && startPoint.X > -1) {
-				var touches = e.changedTouches;
-				if(startPoint.X + 100 < touches[0].pageX) {
-			   		$("#home > nav").css("width", '220px');
-			    	$("#home > nav:hover .masquable").show();
-			    } else if(startPoint.X - 100 > touches[0].pageX) {
-			    	$("#home > nav").css("width", '40px');
-			    	$("#home > nav:hover .masquable").hide();
-			    }
-		    }
-		}, false);
-	});
-
-	</script>
+	<script type="text/javascript" src="scripts/libs/jquery-2.1.1.js"></script>
+	<script type="text/javascript" src="libs/jquery-ui-1.11.0/jquery-ui.js"></script>
+	<script type="text/javascript" src="libs/datatables/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="libs/datatables/js/dataTables.jqueryui.js"></script>
+	<script type="text/javascript" src="scripts/global.js"></script>
 	<bloc::script></bloc::script>
 </head>
 <body>
 	<header>
-		<div id="pagetitle">{TITRE}</div>
-	<!--	<div id="windowAction">
-			<img src="images/window-min.png" alt="min" id="windowMinifyAction" />
-			<img src="images/window-expand.png" alt="expand" id="windowExpandAction" />
-			<img src="images/window-close.png" alt="close" id="windowCloseAction" />
-		</div> -->
+		<div id="pagetitle"></div>
 	</header>
 	
 	<div id="filarianne">
-		<img src="images/home.png" id="homeAnchor"/> &gt; {FILARIANNE}
+		<img src="images/home.png" id="homeAnchor"/><span id="filArianne"></span>
 	</div>
 	
 	<main role="main">
 	<div id="home">
 		<bloc::navigation></bloc::navigation>
-		<bloc::main></bloc::main>
+		<div id="main">
+		</div>
 	</div>
 	</main>
 </body>

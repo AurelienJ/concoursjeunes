@@ -1,18 +1,19 @@
 loadScript("scripts/common/ResponseFormatter.js");
 loadScript("scripts/common/Sessions.js");
-loadScript("scripts/common/database/database.js");
+
+var AJTemplate = Java.type("org.ajdeveloppement.commons.AJTemplate");
+var QResults = Java.type("org.ajdeveloppement.commons.persistence.sql.QResults");
+
+var UserSessionData = Java.type("org.ajdeveloppement.concours.webapi.UserSessionData");
+
+var Contact = Java.type("org.ajdeveloppement.concours.data.Contact");
+var ManagerProfile = Java.type("org.ajdeveloppement.concours.data.ManagerProfile");
+var T_Contact = Java.type("org.ajdeveloppement.concours.data.T_Contact");
+var T_ManagerProfile = Java.type("org.ajdeveloppement.concours.data.T_ManagerProfile");
+
 
 var mainTemplate = null;
 var basePath = null;
-
-function openDatabase(basePath) {
-	var database = new Database();
-	database.connectionString = "jdbc:h2:" + basePath + "/arccompetition";
-	database.user = "sa";
-	database.password = "";
-
-	return database.connect();
-}
 
 function loadNavigationContent(basePath, template) {
 	template.loadTemplate(basePath + "/templates/common/navigation.thtml");
@@ -22,51 +23,28 @@ function loadNavigationContent(basePath, template) {
 	template.parse("selectedDocumentation", "");
 }
 
-function loadMainContent(basePath) {
-	mainTemplate.getBlocs().get("script").loadTemplate(basePath + "/templates/parameters/scriptsSection.thtml");
-	mainTemplate.getBlocs().get("main").loadTemplate(basePath + "/templates/parameters/general.thtml");
-}
-
-function showDisplay(template) {
-	var mainBloc = template.getBlocs().get("main");
-	mainBloc.loadTemplate(basePath + "/templates/parameters/display.thtml");
-	
-	var libelleLangues = org.ajdeveloppement.concours.Configuration.getAvailableLanguages();
-	for(var libelle in libelleLangues) {
-		mainBloc.parse("locale.langCode", libelle);
-		mainBloc.parse("locale.langLabel", libelleLangues[libelle]);
-		
-		mainBloc.loopBloc("locale");
-	}
-}
-
-function showRates(template) {
-	var mainBloc = template.getBlocs().get("main");
-	mainBloc.loadTemplate(basePath + "/templates/parameters/rates.thtml");
-}
-
 function init(basePath) {
 	this.basePath = basePath;
 	
-	mainTemplate = new org.ajdeveloppement.commons.AJTemplate();
+	mainTemplate = new AJTemplate();
 	mainTemplate.loadTemplate(basePath + "/templates/common/skeleton.thtml");
 	
 	mainTemplate.parse("TITRE","ArcCompetition, Gestion des Compétition de Tir à l'Arc");
-	mainTemplate.parse("FILARIANNE", "Parametrage");
 	
 	loadNavigationContent(basePath, mainTemplate.getBlocs().get("navigation"));
-	
-	loadMainContent(basePath);
 }
 
 function getPage(session) {
-	var template = mainTemplate.clone();
+	var userSession = new Sessions(session);
 	
-	if(session.getRequestUri().equals("/display.html")) {
-		showDisplay(template);
-	} else if(session.getRequestUri().equals("/rates.html")) {
-		showRates(template);
-	}
+	var defaultUser = QResults.from(Contact.class)
+		.innerJoin(ManagerProfile.class, T_Contact.ID_CONTACT.equalTo(T_ManagerProfile.ID_CONTACT))
+		.first();
+	var userSessionData = new UserSessionData();
+	userSessionData.setSessionUser(defaultUser);
+	userSession.putSessionData(userSessionData);
 	
-	return ResponseFormatter.getGzipedResponseForOutputTemplate(session, template.output());
+	var response = ResponseFormatter.getGzipedResponseForOutputTemplate(session, mainTemplate.output());
+	userSession.addCookieHeader(response);
+	return response;
 }

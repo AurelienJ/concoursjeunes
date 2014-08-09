@@ -1,0 +1,9 @@
+{
+	"title": "Liste des clubs",
+	"shortTitle": "Entités",
+	"scripts": [
+				"scripts/searchEntities.js"
+	          ],
+	"mainActiveMenu": "entitiesNav",
+	"mainContent": "searchEntities"
+}

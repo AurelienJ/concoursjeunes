@@ -173,6 +173,9 @@ public class Entite implements SqlObjectPersistence {
 	@SqlField(name = "NOTE")
 	private String note;
 	
+	@SqlField(name = "LOGO")
+	private String logo;
+	
 	@SqlField(name = "TYPEENTITE")
 	private int type = CLUB;
 
@@ -395,6 +398,20 @@ public class Entite implements SqlObjectPersistence {
 	 */
 	public void setNote(String note) {
 		this.note = note;
+	}
+
+	/**
+	 * @return logo
+	 */
+	public String getLogo() {
+		return logo;
+	}
+
+	/**
+	 * @param logo logo à définir
+	 */
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}
 
 	/**
