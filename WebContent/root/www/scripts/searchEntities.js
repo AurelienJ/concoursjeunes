@@ -5,6 +5,22 @@ var searchEntitiesState = {
 		selectedRow: null
 }
 
+$("#entitiesEdit").click(function(e) {
+	var navHistory = pageContext["listEntities"].navHistory;
+	if(navHistory != undefined && Array.isArray(navHistory))
+		navHistory.push({ shortTitle: "Entités", name: "listEntities" });
+	else
+		navHistory = [{ shortTitle: "Entités", name: "listEntities" }];
+	loadContent("entite","#main", {
+		origin: "listEntities",
+		action: "edit",
+		navHistory: navHistory,
+		data: searchEntitiesState.selectedRow
+	});
+	
+	return false;
+});
+
 $("#entitiesSelect").click(function(e) {
 	if(pageContext["listEntities"].origin == "parameters") {
 		loadContent("parameters","#main", {

@@ -11,7 +11,7 @@
 <section>
 	<h2>Saisi des scores / Affichage des résultats:</h2>
 	<p>
-	<input type="checkbox" />Permettre la saisie non cumulée sur une série complète<br />
-	<input type="checkbox" />Mettre en surbrillance les Ex-Eequo
+	<input type="checkbox" id="parametersDisplayUncumuledInput" />Permettre la saisie non cumulée sur une série complète<br />
+	<input type="checkbox" id="parametersDisplayHighlightExAequo" />Mettre en surbrillance les Ex-Eequo
 	</p>
 </section>

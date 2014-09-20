@@ -92,6 +92,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
+import org.ajdeveloppement.commons.CollectionsUtils;
 import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
@@ -158,9 +159,9 @@ public class LibelleHelper {
 	 */
 	public static List<String> getAvailableLangForLibelle(UUID idLibelle) {
 		try {
-			return QResults.from(Libelle.class)
+			return CollectionsUtils.asList(QResults.from(Libelle.class)
 				.where(T_Libelle.ID_LIBELLE.equalTo(idLibelle))
-				.selectOneColumn(true, T_Libelle.LANG);
+				.selectOneColumn(true, T_Libelle.LANG));
 		} catch (SQLException e) {
 			throw new UncheckedException(e);
 		}

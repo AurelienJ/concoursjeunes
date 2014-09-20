@@ -1,13 +1,14 @@
 <h1>Personnalisation de l'Application</h1>
 
 <section>
-	<h2>Nom du club: <a href="#" id="parametersGeneralClubChoice">Choisir...</a></h2>
-	<p><span id="parametersGeneralSelectedClub">Aucun club selectionné</span></p>
+	<h2>Nom du club</h2>
+	<p><a href="#" id="parametersGeneralSelectedClub">Aucun club selectionné</a> <a href="#" id="parametersGeneralClubChoice">Choisir...</a></p>
 </section>
 <section>
-	<h2>Logo du club: <a href="#" onclick="browseLogoClub(); return false;">Choisir...</a></h2>
+	<h2>Logo du club </h2>
 	<p>
 	<img id="logo" src="images/logos/1ere Cie Aix les Bains (3373001).gif" style="width: 200px;" />
+	<a href="#" onclick="browseLogoClub(); return false;">Choisir...</a>
 	</p>
 <input id="upload" type="file" name="myPhoto" style="display: none;"/>
 </section>

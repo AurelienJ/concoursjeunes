@@ -132,6 +132,9 @@ table th {
 	padding: 6px;
 	
 	color: black;
+	border-width: 2px;
+	border-style: solid;
+	border-color: black;
 	
 	margin:5px;
 }
@@ -141,6 +144,10 @@ table th {
 	padding: 6px;
 	
 	color: black;
+	border-width: 2px;
+	border-style: solid;
+	border-color: black;
+	
 	margin:5px;
 }
 
@@ -402,6 +409,51 @@ table th {
 
 #home > section > h1 {
 	margin-left: -20px;
+}
+
+#home h2 {
+	display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+	display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+	display: -ms-flexbox;      /* TWEENER - IE 10 */
+	display: -webkit-flex;     /* NEW - Chrome */
+	display: flex;
+	flex-direction: row;
+	width: 80%;
+}
+
+
+#home h2:after {
+	-webkit-flex-grow: 1;
+	flex-grow: 1;
+	height: 1px;
+	content: '\a0';
+	background-color: black;
+	position: relative;
+	top: 0.5em;
+	margin-left:10px;
+}
+
+#home .formulaire {
+}
+
+#home .formulaire input, #home .formulaire select, #home .formulaire textarea{
+	display: block;
+	width: 400px;
+	border: 0;
+	margin-bottom: 10px;
+}
+#home .formulaire input:focus, #home .formulaire select:focus, #home .formulaire textarea:focus {
+	border-width: 1px;
+	border-style: solid;
+}
+#home .formulaire label, #home .formulaire .label {
+	display: block;
+    width: 150px;
+    float: left;
+    margin-bottom: 10px;
+}
+#home .formulaire .input {
+	display: block;
 }
 
 #authenticate {

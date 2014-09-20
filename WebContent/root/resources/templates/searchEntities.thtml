@@ -19,7 +19,7 @@ Fédérations:<br />
 <span id="entitiesAction">
 <a href="#"><img src="images/add.png" /></a>
 <a href="#"><img src="images/del.png" /></a>
-<a href="#"><img src="images/edit.png" /></a>
+<a href="#" id="entitiesEdit"><img src="images/edit.png" /></a>
 </span>
 <table id="entitiesResultsTable" class="display">
 	<thead>

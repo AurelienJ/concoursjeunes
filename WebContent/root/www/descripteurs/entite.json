@@ -1,0 +1,9 @@
+{
+	"title": "Entité",
+	"shortTitle": "Entité",
+	"scripts": [
+				"scripts/entite.js"
+	          ],
+	"mainActiveMenu": "entitiesNav",
+	"mainContent": "entite"
+}

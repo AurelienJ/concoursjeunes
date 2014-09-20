@@ -1,6 +1,6 @@
 {
 	"title": "Parametre d'affichage",
-	"scripts": [],
+	"scripts": ["scripts/parameters/display.js"],
 	"mainActiveMenu": "homeNav",
 	"mainContent": "parameters.display"
 }
