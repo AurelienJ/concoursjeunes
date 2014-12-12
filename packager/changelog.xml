@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.8.0-ea" class="java.beans.XMLDecoder">
+<java version="1.8.0_05" class="java.beans.XMLDecoder">
  <object class="java.util.ArrayList">
   <void method="add">
    <object class="org.ajdeveloppement.updater.Version">
@@ -1095,6 +1095,28 @@
     </void>
     <void property="version">
      <string>2.30.25</string>
+    </void>
+   </object>
+  </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Mise à jour de l&apos;installeur Windows
+  * Amelioration des performances de saisie d&apos;un concurrent</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1418331948923</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.26</string>
     </void>
    </object>
   </void>

@@ -68,7 +68,7 @@ CRCCheck on
 XPStyle on
 ShowInstDetails show
 RequestExecutionLevel highest
-VIProductVersion 1.1.0.0
+VIProductVersion 1.2.0.0
 VIAddVersionKey ProductName "ConcoursJeunes Setup"
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"

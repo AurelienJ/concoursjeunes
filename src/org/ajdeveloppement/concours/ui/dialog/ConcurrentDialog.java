@@ -119,6 +119,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.PlainDocument;
 
@@ -854,7 +855,16 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 		this.concurrent = concurrent;
 		this.entiteConcurrent = concurrent.getEntite();
 
-		completePanel();
+		if(!SwingUtilities.isEventDispatchThread()) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					completePanel();
+				}
+			});
+		} else {
+			completePanel();
+		}
 	}
 
 	/**
@@ -1089,17 +1099,22 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 			setConcurrent(findConcurrent);
 		}
 		
-		if (concurrent.haveHomonyme()) {
-			jlDescription.setText(localisation.getResourceString("concurrent.homonyme")); //$NON-NLS-1$
-			jlDescription.setBackground(Color.ORANGE);
-		} else if(concurrent.isSurclassement()) {
-			jlDescription.setText(localisation.getResourceString("concurrent.mustbeoverclassified")); //$NON-NLS-1$
-			jlDescription.setBackground(new Color(155, 155, 255));
-		} else {
-			jlDescription.setText(localisation.getResourceString("concurrent.description")); //$NON-NLS-1$
-			jlDescription.setBackground(new Color(255, 255, 225));
-		}
-
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (concurrent.haveHomonyme()) {
+					jlDescription.setText(localisation.getResourceString("concurrent.homonyme")); //$NON-NLS-1$
+					jlDescription.setBackground(Color.ORANGE);
+				} else if(concurrent.isSurclassement()) {
+					jlDescription.setText(localisation.getResourceString("concurrent.mustbeoverclassified")); //$NON-NLS-1$
+					jlDescription.setBackground(new Color(155, 155, 255));
+				} else {
+					jlDescription.setText(localisation.getResourceString("concurrent.description")); //$NON-NLS-1$
+					jlDescription.setBackground(new Color(255, 255, 225));
+				}
+			}
+		});
+		
 		filter = e.getGenericArcher();
 	}
 
@@ -1126,8 +1141,14 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 
 		setConcurrent(newConcurrent);
 
-		jlDescription.setText(localisation.getResourceString("concurrent.noconcurrent")); //$NON-NLS-1$
-		jlDescription.setBackground(Color.ORANGE);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				jlDescription.setText(localisation.getResourceString("concurrent.noconcurrent")); //$NON-NLS-1$
+				jlDescription.setBackground(Color.ORANGE);
+			}
+		});
+		
 	}
 
 	@Override
@@ -1137,7 +1158,12 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 			//concurrent.setClub(findEntite);
 			//setConcurrent(concurrent);
 			entiteConcurrent = findEntite;
-			completePanel();
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					completePanel();
+				}
+			});
 		}
 	}
 
@@ -1154,7 +1180,12 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 		//concurrent.setClub(newEntite);
 		//setConcurrent(concurrent);
 		entiteConcurrent = newEntite;
-		completePanel();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				completePanel();
+			}
+		});
 	}
 
 	@Override
