@@ -1,4 +1,3 @@
-#Sun Oct 09 22:08:17 CEST 2011
 attrDuplicate=2
 attrInvalidName=-1
 attrInvalidValue=-1
@@ -6,7 +5,7 @@ attrNameMismatch=2
 attrUndefName=-1
 attrUndefValue=2
 attrValueEqualsMissing=2
-attrValueMismatch=1
+attrValueMismatch=2
 attrValueUnclosed=2
 cdataInvalidContent=2
 cdataUnclosed=1
@@ -30,10 +29,11 @@ elemMissingStart=2
 elemStartInvalidCase=2
 elemUnclosedEndTag=1
 elemUnclosedStartTag=1
-elemUnknownName=2
+elemUnknownName=-1
 elemUnnecessaryEnd=2
 piInvalidContent=2
 piUnclosed=1
 piUndefined=2
 refInvalidContent=2
+resourceNotFound=1
 use-project-settings=true

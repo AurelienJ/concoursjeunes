@@ -186,6 +186,9 @@ public class AboutDialog extends JDialog implements ActionListener, HyperlinkLis
 				+ localisation.getResourceString("apropos.liens") + "</b></td></tr></table></html>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
+	/**
+	 * Affiche la boite de dialogue "A Propos"
+	 */
 	public void showAboutDialog() {
  		setSize(new Dimension(427, 376));
 		//pack();

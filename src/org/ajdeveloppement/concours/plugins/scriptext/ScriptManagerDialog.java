@@ -553,10 +553,10 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 			extension.setWriter(writer);
 			
 			if(!evalOnly && extension.getScriptInterface() != null)
-				extension.getScriptInterface().unload();
+				extension.getScriptInterface().stop();
 			extension.compileScript();
 			if(!evalOnly)
-				extension.getScriptInterface().load(concoursJeunesFrame, concoursJeunesFrame.profile);
+				extension.getScriptInterface().start(concoursJeunesFrame, concoursJeunesFrame.profile);
 			jtpOutput.setForeground(Color.black);
 			jtpOutput.setText(writer.toString());
 		} catch (MalformedURLException e) {
@@ -1253,9 +1253,9 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 					
 					try {
 						if(ext.getScriptInterface() != null)
-							ext.getScriptInterface().unload();
+							ext.getScriptInterface().stop();
 						ext.compileScript();
-						ext.getScriptInterface().load((ConcoursJeunesFrame)parentframe, ((ConcoursJeunesFrame)parentframe).profile);
+						ext.getScriptInterface().start((ConcoursJeunesFrame)parentframe, ((ConcoursJeunesFrame)parentframe).profile);
 					} catch (MalformedURLException ex) {
 						DisplayableErrorHelper.displayException(ex);
 						ex.printStackTrace();

@@ -160,12 +160,12 @@ public class ScriptExtLauncher {
 						
 						@Override
 						public void run() {
-							extention.getScriptInterface().load(null, null);
+							extention.getScriptInterface().start(null, null);
 						}
 					});
 					t.start();
 				} else
-					extention.getScriptInterface().load(null, null);
+					extention.getScriptInterface().start(null, null);
 			}
 		}
 	}

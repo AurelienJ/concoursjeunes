@@ -142,9 +142,9 @@ public class ScriptExtLauncherOnDemand {
 					for(ScriptExtention script : scripts) {
 						try {
 							if(script.getScriptInterface() != null) {
-								script.getScriptInterface().unload();
+								script.getScriptInterface().stop();
 								script.compileScript();
-								script.getScriptInterface().load(concoursJeunesFrame, profile);
+								script.getScriptInterface().start(concoursJeunesFrame, profile);
 							}
 						} catch (ScriptException e) {
 							DisplayableErrorHelper.displayException(e);
@@ -163,7 +163,7 @@ public class ScriptExtLauncherOnDemand {
 			scripts = ScriptExtLauncher.getUiStartupScripts();
 			for(ScriptExtention script : scripts) {
 				if(script.getScriptInterface() != null)
-					script.getScriptInterface().load(concoursJeunesFrame, profile);
+					script.getScriptInterface().start(concoursJeunesFrame, profile);
 			}
 			
 			List<ScriptExtention> onDemandScripts = ScriptExtLauncher.getOnDemandScripts();
@@ -180,7 +180,7 @@ public class ScriptExtLauncherOnDemand {
 						
 						
 						if(script.getScriptInterface() != null)
-							script.getScriptInterface().load(concoursJeunesFrame, profile);
+							script.getScriptInterface().start(concoursJeunesFrame, profile);
 					}
 				});
 				MenuBarTools.addItem(jmiScript, parentframe.getJMenuBar(), 

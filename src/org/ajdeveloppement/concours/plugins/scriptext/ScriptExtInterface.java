@@ -10,10 +10,10 @@ public interface ScriptExtInterface {
 	 * @param parentframe
 	 * @param profile
 	 */
-	public void load(ConcoursJeunesFrame parentframe, Profile profile);
+	public void start(ConcoursJeunesFrame parentframe, Profile profile);
 	
 	/**
 	 *  Execute les opérations de déchargement du script
 	 */
-	public void unload();
+	public void stop();
 }

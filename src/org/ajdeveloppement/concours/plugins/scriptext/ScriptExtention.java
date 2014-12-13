@@ -227,10 +227,15 @@ public class ScriptExtention {
 		if(scriptEngine != null) {
 			Reader reader = new BufferedReader(new InputStreamReader(
                     new FileInputStream(new File(mainPath, scriptFile)), "UTF-8")); //$NON-NLS-1$
+			scriptEngine.put(ScriptEngine.FILENAME, scriptFile);
 			scriptEngine.eval(reader);
 			reader.close();
 			
 			invocableEngine = ((Invocable)scriptEngine).getInterface(ScriptExtInterface.class);
+			if(invocableEngine == null) {
+				scriptEngine.eval("function start(parentframe, profile) { this.load(parentframe, profile); }; function stop() { unload(); }"); //$NON-NLS-1$
+				invocableEngine = ((Invocable)scriptEngine).getInterface(ScriptExtInterface.class);
+			}
 			//invocableEngine = (Invocable)scriptEngine;
 		}
 	}
