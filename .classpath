@@ -24,7 +24,7 @@
 	<classpathentry kind="lib" path="plugins/language_support.jar"/>
 	<classpathentry kind="lib" path="plugins/rsyntaxtextarea.jar"/>
 	<classpathentry kind="lib" path="plugins/js.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_05">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>

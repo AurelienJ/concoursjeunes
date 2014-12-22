@@ -131,7 +131,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.crypto.NoSuchPaddingException;
@@ -147,7 +146,6 @@ import javax.xml.bind.JAXBException;
 import org.ajdeveloppement.apps.AppUtilities;
 import org.ajdeveloppement.apps.ApplicationContext;
 import org.ajdeveloppement.commons.AjResourcesReader;
-import org.ajdeveloppement.commons.io.FileUtils;
 import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
@@ -166,11 +164,8 @@ import org.ajdeveloppement.swingxext.error.WebErrorReporter;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
 import org.ajdeveloppement.webserver.FileSelector;
 import org.ajdeveloppement.webserver.HttpServer;
-import org.ajdeveloppement.webserver.HttpSession;
-import org.ajdeveloppement.webserver.RewriteUrlRules;
 import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
 import org.ajdeveloppement.webserver.services.files.FilesService;
-import org.ajdeveloppement.webserver.services.js.JsService;
 import org.h2.tools.DeleteDbFiles;
 import org.jdesktop.swingx.error.ErrorInfo;
 
@@ -190,10 +185,10 @@ public class Main extends Application {
 		public String SelectFile() {
 			
 			//Date.from(LocalDateTime.now().minusDays(30).toInstant(ZoneOffset.UTC));
-			FileChooser chooser = new FileChooser();
+			/*FileChooser chooser = new FileChooser();
 			File file = chooser.showOpenDialog(null);
 			if(file != null) {
-				File uploadPath = new File(FilesService.getFileSelector().getBasePath(), "www/images/upload"); //$NON-NLS-1$
+				File uploadPath = new File(HttpServer.getFileSelector().getBasePath(), "www/images/upload"); //$NON-NLS-1$
 				if(!uploadPath.exists())
 					uploadPath.mkdirs();
 				try {
@@ -202,7 +197,7 @@ public class Main extends Application {
 					e.printStackTrace();
 				}
 				return "images/upload/" + file.getName(); //$NON-NLS-1$
-			}
+			}*/
 			
 			return null;
 		}
@@ -217,10 +212,8 @@ public class Main extends Application {
 
 	private static final String WEBSERVER_LISTEN_PORT = "webserver.listen.port"; //$NON-NLS-1$
 	private static final String WEBSERVER_SSLLISTEN_PORT = "webserver.ssllisten.port"; //$NON-NLS-1$
-	private static final String WEBSERVER_REWRITERULES_FILE = "webserver.rewriterules.file"; //$NON-NLS-1$
 	private static final String WEBSERVER_FILESELECTOR_FILE = "webserver.fileselector.file"; //$NON-NLS-1$$
 	private static final String WEBSERVER_STATIC_ALLOWEDGZIPEXT = "webserver.static.allowedgzipext"; //$NON-NLS-1$
-	private static final String WEBSERVER_STATIC_GZIPCACHE = "webserver.static.gzipcache"; //$NON-NLS-1$
 	private static final String WEBSERVER_SERVICE_ORDER = "webserver.service.order"; //$NON-NLS-1$
 	
 	private static final String WEBSERVER_CERTIFICATE_ALIAS = "webserver.certificateAlias"; //$NON-NLS-1$
@@ -240,8 +233,8 @@ public class Main extends Application {
 	public static void main(String[] args) {
 		System.setProperty("nashorn.option.scripting", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		FilesService.setAllowedGzipExt(Arrays.asList(staticParameters.getResourceString(WEBSERVER_STATIC_ALLOWEDGZIPEXT).split(","))); //$NON-NLS-1$
-		FilesService.setGzipCachePath(new File(staticParameters.getResourceString(WEBSERVER_STATIC_GZIPCACHE)));
 		
+		FileSelector fileSelector = null;
 		String fileSelectorFilePath = staticParameters.getResourceString(WEBSERVER_FILESELECTOR_FILE);
 		if(fileSelectorFilePath != null && !fileSelectorFilePath.isEmpty()) {
 			URL fileSelectorURL = staticParameters.getClass().getResource(fileSelectorFilePath);
@@ -249,9 +242,7 @@ public class Main extends Application {
 				File fileSelectorFile = new File(fileSelectorURL.getPath());
 				if(fileSelectorFile.exists()) {
 					try {
-						FileSelector fileSelector = XMLSerializer.loadMarshallStructure(fileSelectorFile, FileSelector.class);
-						JsService.setFileSelector(fileSelector);
-						FilesService.setFileSelector(fileSelector);
+						fileSelector = XMLSerializer.loadMarshallStructure(fileSelectorFile, FileSelector.class);
 					} catch (JAXBException | IOException e) {
 						e.printStackTrace();
 					}
@@ -261,23 +252,6 @@ public class Main extends Application {
 
 		String[] servicesOrder = staticParameters.getResourceString(WEBSERVER_SERVICE_ORDER).split(","); //$NON-NLS-1$
 		ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor = new ExtensibleHttpRequestProcessor(servicesOrder);
-		HttpSession.setRequestProcessor(extensibleHttpRequestProcessor);
-		
-		String rewriteRulesFilePath = staticParameters.getResourceString(WEBSERVER_REWRITERULES_FILE);
-		if(rewriteRulesFilePath != null && !rewriteRulesFilePath.isEmpty()) {
-			URL rewriteRulesFileURL = staticParameters.getClass().getResource(rewriteRulesFilePath);
-			if(rewriteRulesFileURL != null) {
-				File rewriteRulesFileFile = new File(rewriteRulesFileURL.getPath());
-				
-				if(rewriteRulesFileFile.exists()) {
-					try {
-						HttpSession.setRewriteUrlRules(XMLSerializer.loadMarshallStructure(rewriteRulesFileFile, RewriteUrlRules.class));
-					} catch (JAXBException | IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
 
 		showSplashScreen();
 		//initErrorManaging();
@@ -299,6 +273,8 @@ public class Main extends Application {
 		httpServer.setPkcs12KeyStorePassword(staticParameters.getResourceString(WEBSERVER_PKCS12PASSWORD));
 		httpServer.setCertificateAlias(staticParameters.getResourceString(WEBSERVER_CERTIFICATE_ALIAS));
 		httpServer.setListenSslPort(staticParameters.getResourceInteger(WEBSERVER_SSLLISTEN_PORT));
+		httpServer.setFileSelector(fileSelector);
+		httpServer.setRequestProcessor(extensibleHttpRequestProcessor);
 		httpServer.start(true);
 		try {
 			int timeout = 30;

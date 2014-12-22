@@ -98,6 +98,7 @@ import java.util.Map;
 import org.ajdeveloppement.commons.ExceptionUtils;
 import org.ajdeveloppement.webserver.HttpResponse;
 import org.ajdeveloppement.webserver.HttpReturnCode;
+import org.ajdeveloppement.webserver.HttpServer;
 import org.ajdeveloppement.webserver.HttpSession;
 import org.ajdeveloppement.webserver.services.RequestProcessor;
 import org.ajdeveloppement.webserver.services.js.ResponseFormatter;
@@ -138,7 +139,7 @@ public class ApiService implements RequestProcessor {
 	 * @see org.ajdeveloppement.webserver.services.RequestProcessor#init()
 	 */
 	@Override
-	public void init() {
+	public void init(HttpServer server) {
 		discoverJsonServices(ContactsModel.class);
 		discoverJsonServices(EntitiesModel.class);
 		discoverJsonServices(ProfileModel.class);
@@ -168,7 +169,7 @@ public class ApiService implements RequestProcessor {
 				try {
 					String jsonResponse = invokeJsonService(session, urlParameters.get("key"));
 					if(jsonResponse != null)
-						return ResponseFormatter.getGzipedResponseForOutputTemplate(session, jsonResponse);
+						return ResponseFormatter.getGzipedResponseForOutputTemplate(session, jsonResponse, "application/json");
 				} catch (IOException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					e.printStackTrace();
 					
@@ -179,5 +180,4 @@ public class ApiService implements RequestProcessor {
 		
 		return new HttpResponse(HttpReturnCode.ClientError.NotFound, "text/plain; charset=utf-8", "Unknown request"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
 }
