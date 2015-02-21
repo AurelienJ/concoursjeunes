@@ -35,8 +35,9 @@
 	margin: 10px;
 }
 
-#entitiesAction img {
+.action-button {
 	width: 16px;
+	margin: 0px 3px;
 }
 
 /*#entitiesResultsTable {

@@ -111,6 +111,10 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
 import org.ajdeveloppement.concours.managers.ContactManager;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Entité organisationnelle.<br>
  * Une entité peut représenté
@@ -220,6 +224,17 @@ public class Entite implements SqlObjectPersistence {
 	public Entite(String nom, int type) {
 		this.nom = nom;
 		this.type = type;
+	}
+	
+	@JsonCreator
+	private static Entite create(@JsonProperty("idEntite") UUID idEntite) {
+		Entite entite = QResults.from(Entite.class).where(T_Entite.ID_ENTITE.equalTo(idEntite)).first();
+		if(entite == null) {
+			entite = new Entite();
+			entite.setIdEntite(idEntite);
+		}
+		
+		return entite;
 	}
 
 	/**
@@ -463,6 +478,7 @@ public class Entite implements SqlObjectPersistence {
 	/**
 	 * @return contacts
 	 */
+	@JsonIgnore
 	public Iterable<Contact> getContacts() {
 		if(idEntite != null)
 			return ContactManager.getContactsForEntity(this);

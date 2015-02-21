@@ -1,0 +1,15 @@
+<h1>Options d'affichage</h1>
+
+<section>
+	<h2>Langue de l'application:</h2>
+	<p>
+		<select id="localisation" ng-options="lang.label for lang in langs" ng-model="selectedLang"></select>
+	</p>
+</section>
+<section>
+	<h2>Saisi des scores / Affichage des résultats:</h2>
+	<p>
+	<input type="checkbox" id="parametersDisplayUncumuledInput" />Permettre la saisie non cumulée sur une série complète<br />
+	<input type="checkbox" id="parametersDisplayHighlightExAequo" />Mettre en surbrillance les Ex-Eequo
+	</p>
+</section>

@@ -92,7 +92,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.ajdeveloppement.commons.net.json.JsonParser;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.T_Contact;
 import org.ajdeveloppement.webserver.HttpSession;
@@ -117,7 +116,7 @@ public class ContactsModel {
 			}
 			
 			if(idContact != null) {
-				Contact contact = QResults.from(Contact.class).where(T_Contact.ID_CONTACT.equalTo(idContact)).first();
+				Contact contact = T_Contact.getInstanceWithPrimaryKey(idContact);;
 				
 				if(contact != null) {
 					JsonParser parser = new JsonParser();

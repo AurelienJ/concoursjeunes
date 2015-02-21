@@ -1,5 +1,4 @@
-
-register(['/','index.html','/general.html','/display.html','/rates.html','/editions.html'], (function(global) {
+register(["/","index.html"], (function(global) {
 	var AJTemplate = Java.type("org.ajdeveloppement.commons.AJTemplate");
 	var QResults = Java.type("org.ajdeveloppement.commons.persistence.sql.QResults");
 
@@ -9,11 +8,13 @@ register(['/','index.html','/general.html','/display.html','/rates.html','/editi
 	var ManagerProfile = Java.type("org.ajdeveloppement.concours.data.ManagerProfile");
 	var T_Contact = Java.type("org.ajdeveloppement.concours.data.T_Contact");
 	var T_ManagerProfile = Java.type("org.ajdeveloppement.concours.data.T_ManagerProfile");
-	
-	var mainTemplate = null;
 
-	function loadNavigationContent(basePath, template) {
-		template.loadTemplate(basePath + "/templates/common/navigation.thtml");
+
+	var mainTemplate = null;
+	var basePath = null;
+
+	function loadNavigationContent(template) {
+		template.loadTemplate(global.basePath + "/templates/common/navigation.thtml");
 		
 		template.parse("selectedCompetition", "");
 		template.parse("selectedLogiciel", "");
@@ -22,11 +23,11 @@ register(['/','index.html','/general.html','/display.html','/rates.html','/editi
 
 	function init(server) {
 		mainTemplate = new AJTemplate();
-		mainTemplate.loadTemplate(basePath + "/templates/common/skeleton.thtml");
+		mainTemplate.loadTemplate(global.basePath + "/templates/common/skeleton.thtml");
 		
 		mainTemplate.parse("TITRE","ArcCompetition, Gestion des Compétition de Tir à l'Arc");
 		
-		loadNavigationContent(basePath, mainTemplate.getBlocs().get("navigation"));
+		loadNavigationContent(mainTemplate.getBlocs().get("navigation"));
 	}
 
 	function getPage(session) {
@@ -47,5 +48,5 @@ register(['/','index.html','/general.html','/display.html','/rates.html','/editi
 	return {
 		init: init,
 		getPage: getPage
-	};
+	}
 })(this));

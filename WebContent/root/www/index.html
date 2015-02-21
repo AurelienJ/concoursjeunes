@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html ng-app="ArcCompetitionApp">
+<head>
+	<meta charset="UTF-8">
+	
+	<link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+	<link href="styles/FontKiteOne.css" rel='stylesheet' type='text/css'>
+	<link href="styles/screen.css" media="screen" rel="stylesheet" type="text/css" />
+	<link href="styles/phone.css" media="screen and (max-width: 800px)" rel="stylesheet" type="text/css" />
+	<link href="styles/openid.css" media="all" rel="stylesheet" type="text/css" />
+	
+	<!-- <link href="libs/jquery-ui-1.11.0/jquery-ui.css" media="all" rel="stylesheet" type="text/css" />
+	<link href="libs/jquery-ui-1.11.0/jquery-ui.theme.css" media="all" rel="stylesheet" type="text/css" /> -->
+	<link href="libs/datatables/css/dataTables.jqueryui.css" media="all" rel="stylesheet" type="text/css" /> 
+	
+	<link href="styles/searchEntities.css" media="all" rel="stylesheet" type="text/css" />
+	
+	<meta name="viewport" content="user-scalable=no, initial-scale = 1, minimum-scale = 1, maximum-scale = 1, width=device-width">
+	
+	<script type="text/javascript" src="scripts/libs/jquery-2.1.1.js"></script>
+	<script type="text/javascript" src="libs/jquery-ui-1.11.0/jquery-ui.js"></script>
+	<script type="text/javascript" src="libs/datatables/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="libs/datatables/js/dataTables.jqueryui.js"></script>
+	<script type="text/javascript" src="scripts/libs/angularjs/angular.min.js"></script>
+	<script type="text/javascript" src="scripts/libs/angularjs/angular-route.min.js"></script>
+	<script type="text/javascript" src="scripts/libs/angularjs/angular-resource.min.js"></script>
+	<script type="text/javascript" src="scripts/libs/angularjs/angular-datatables.min.js"></script>
+	<script type="text/javascript" src="scripts/app.js"></script>
+	<!-- <script type="text/javascript" src="scripts/global.js"></script> -->
+	
+	<title>{{title}}</title>
+</head>
+<body>
+	<header>
+		<div id="pagetitle">{{pageTitle}}</div>
+	</header>
+	
+	<div id="filarianne">
+		<img src="images/home.png" id="homeAnchor"/>
+		<span id="filArianne">
+		<span ng-repeat="item in breadcrumb"> &gt; <a href="#/{{item.path}}">{{item.name}}</a></span>
+		</span>
+	</div>
+	
+	<main role="main">
+	<div id="home">
+		<nav>
+			<a href="#/parameters" id="homeNav">
+				<img src="images/fnd.jpg" alt="ArcCompetion" width="140"/>
+				<span class="masquable"><br />Gestion des competitions de Tir à l'Arc</span>
+			</a>
+			<a href="#" id="competitionNav"><img src="images/award_fill_24x24.png"/><span class="masquable"> Compétitions</span></a>
+			<a href="#" id="personsNav"><img src="images/group.png"/><span class="masquable"> Personnes</span></a>
+			<a href="#/entities" id="entitiesNav"><img src="images/home.png" /><span class="masquable"> Entités</span></a>
+			<a href="#" id="rulesNav"><img src="images/ruler.png" /><span class="masquable"> Réglements</span></a>
+			<a href="#" id="importExportNav"><img src="images/loop_alt4_24x18.png" /><span class="masquable"> Import/Export</span></a>
+			<a href="#" id="toolsNav"><img src="images/tool_box.png" /><span class="masquable"> Outils</span></a>
+		</nav>
+		<div id="main" ng-view>
+		</div>
+	</div>
+	</main>
+</body>
+</html>

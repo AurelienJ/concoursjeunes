@@ -90,7 +90,6 @@ package org.ajdeveloppement.concours.data;
 
 import java.sql.Types;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -107,7 +106,6 @@ import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlSession;
 import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -150,17 +148,15 @@ public class CategoryContact implements SqlObjectPersistence {
 			return value;
 		}
 	}
-	
-	//private static StoreHelper<CategoryContact> helper = SqlStoreHelperFactory.getStoreHelper(CategoryContact.class);
-	
+
 	@SqlField(name="ID_CATEGORIE_CONTACT")
 	private UUID id;
 	
 	@SqlField(name="ID_LIBELLE")
 	private UUID idLibelle;
 	
-	@SqlChildCollection(foreignFields="ID_CATEGORIE_CONTACT", type=CategoryContactContact.class)
-	private List<CategoryContactContact> categorysContactContact;
+	//@SqlChildCollection(foreignFields="ID_CATEGORIE_CONTACT", type=CategoryContactContact.class)
+	private QResults<CategoryContactContact,Void> categorysContactContact;
 	
 	private transient Map<String, String> localizedLibelle;
 	
@@ -194,19 +190,12 @@ public class CategoryContact implements SqlObjectPersistence {
 	 * 
 	 * @return all contacts association linked with this category.
 	 */
-	public List<CategoryContactContact> getCategorysContactContact() {
+	public QResults<CategoryContactContact,Void> getCategorysContactContact() {
 		if(categorysContactContact == null) {
 			categorysContactContact = QResults.from(CategoryContactContact.class)
-					.where(T_CategoryContactContact.ID_CATEGORIE_CONTACT.equalTo(id)).asList();
+					.where(T_CategoryContactContact.ID_CATEGORIE_CONTACT.equalTo(id));
 		}
 		return categorysContactContact;
-	}
-
-	/**
-	 * @param categorysContactContact categorysContactContact à définir
-	 */
-	public void setCategorysContactContact(List<CategoryContactContact> categorysContactContact) {
-		this.categorysContactContact = categorysContactContact;
 	}
 
 	/**
@@ -257,7 +246,7 @@ public class CategoryContact implements SqlObjectPersistence {
 			}
 			
 			SqlContext context = SqlContext.getDefaultContext();
-			if(session instanceof SqlSession)
+			if(session != null && session instanceof SqlSession)
 				context = ((SqlSession)session).getContext();
 			
 			StoreHelper<CategoryContact> helper = SqlStoreHelperCache.getHelper(CategoryContact.class, context);

@@ -1,4 +1,8 @@
-
+//load("WebContent/ressources/scripts/common/ResponseFormatter.js");
+//load("WebContent/ressources/scripts/common/Sessions.js");
+//load("WebContent/ressources/scripts/common/Authenticator.js");
+loadScript("scripts/common/ResponseFormatter.js");
+loadScript("scripts/common/Sessions.js");
 loadScript("scripts/common/Authenticator.js");
 /**
  * 

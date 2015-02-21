@@ -1,3 +1,5 @@
+loadScript("scripts/common/ResponseFormatter.js");
+loadScript("scripts/common/Sessions.js");
 loadScript("scripts/common/Authenticator.js");
 
 /**

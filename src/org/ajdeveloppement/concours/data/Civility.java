@@ -89,7 +89,6 @@
 package org.ajdeveloppement.concours.data;
 
 import java.sql.Types;
-import java.util.List;
 import java.util.UUID;
 
 import javax.xml.bind.Marshaller;
@@ -102,7 +101,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
@@ -136,8 +134,8 @@ public class Civility implements SqlObjectPersistence {
 	@SqlField(name="MORALE")
 	private boolean morale = false;
 	
-	@SqlChildCollection(foreignFields="ID_CIVILITY", type=Contact.class)
-	private List<Contact> contacts;
+	//@SqlChildCollection(foreignFields="ID_CIVILITY", type=Contact.class)
+	private QResults<Contact, Void> contacts;
 	
 	/**
 	 * Init ne civility
@@ -233,18 +231,11 @@ public class Civility implements SqlObjectPersistence {
 	/**
 	 * @return contacts
 	 */
-	public List<Contact> getContacts() {
+	public QResults<Contact,Void> getContacts() {
 		if(contacts == null) {
-			contacts = QResults.from(Contact.class).where(T_Contact.ID_CIVILITY.equalTo(idCivility)).asList();
+			contacts = QResults.from(Contact.class).where(T_Contact.ID_CIVILITY.equalTo(idCivility));
 		}
 		return contacts;
-	}
-
-	/**
-	 * @param contacts contacts à définir
-	 */
-	public void setContacts(List<Contact> contacts) {
-		this.contacts = contacts;
 	}
 
 	/**

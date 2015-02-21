@@ -106,7 +106,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="ANCRAGE_BLASON", disableCache=true)
+@SqlTable(name="ANCRAGE_BLASON")
 @SqlPrimaryKey(fields={"ID_BLASON","EMPLACEMENT"})
 public class Ancrage implements SqlObjectPersistence {
 	/**

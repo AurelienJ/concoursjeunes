@@ -88,6 +88,7 @@ package org.ajdeveloppement.concours.data;
 
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -118,15 +119,15 @@ import org.ajdeveloppement.concours.managers.ConcurrentManager;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="ARCHERS",loadBuilder=ConcurrentBuilder.class)
 @SqlPrimaryKey(fields="ID_CONTACT")
-@SqlUnmappedFields(fields={"ID_CONTACT","SEXE","CATEGORIE","NIVEAU","ARC","DATENAISS","DATEMODIF"},typeFields={UUID.class})
+@SqlUnmappedFields(fields={"ID_CONTACT","SEXE","CATEGORIE","NIVEAU","ARC","DATENAISS","DATEMODIF"},
+	typeFields={UUID.class, Integer.class, Integer.class, Integer.class, Integer.class, Date.class, Date.class})
 public class Archer extends Contact {
 	private static CategoryContact archerCategoryContact = null;
-	//private static StoreHelper<Archer> helper = SqlStoreHelperFactory.getStoreHelper(Archer.class);
 
-	@SqlField(name="NUMLICENCEARCHER")
+	@SqlField(name="NUMLICENCEARCHER",sqlType="VARCHAR",size=32)
 	private String numLicenceArcher;
 
-	@SqlField(name="CERTIFMEDICAL")
+	@SqlField(name="CERTIFMEDICAL",sqlType="BOOLEAN")
 	private boolean certificat      = false;
 	private boolean handicape		= false;
 
@@ -160,77 +161,6 @@ public class Archer extends Contact {
 		this.numLicenceArcher = numLicenceArcher;
 		
 		pcs.firePropertyChange("numLicenceArcher", oldValue, numLicenceArcher); //$NON-NLS-1$
-	}
-
-	/**
-	 * Retourne le nom de l'archer
-	 * @deprecated replacé par {@link Archer#getName()}
-	 * 
-	 * @return le nom de l'archer
-	 */
-	@Deprecated
-	public String getNomArcher() {
-		return getName();
-	}
-
-	/**
-	 * Définit le nom de l'archer
-	 * @deprecated replacé par {@link #setName(String)}
-	 * 
-	 * @param nomArcher le nom de l'archer
-	 */
-	@Deprecated
-	public void setNomArcher(String nomArcher) {
-		setName(nomArcher);
-	}
-
-	/**
-	 * Retourne le prénom de l'archer
-	 * @deprecated remplacé par {@link #getFirstName()}
-	 * 
-	 * @return le prénom de l'archer
-	 */
-	@Deprecated
-	public String getPrenomArcher() {
-		return getFirstName();
-	}
-
-	/**
-	 * Définit le prénom de l'archer
-	 * @deprecated remplacé par {{@link #setFirstName(String)}
-	 * 
-	 * @param prenomArcher le prénom de l'archer
-	 */
-	@Deprecated
-	public void setPrenomArcher(String prenomArcher) {
-		setFirstName(prenomArcher);
-	}
-
-	/**
-	 * Retourne le club (Compagnie) auquel appartient l'archer
-	 * 
-	 * @deprecated utiliser {@link #getEntite()} à la place
-	 * @return club le club de l'archer
-	 */
-	@Deprecated
-	public Entite getClub() {
-		return getEntite();
-	}
-
-	/**
-	 * Définit le club (Entite legal) de l'archer
-	 * 
-	 * @deprecated utiliser {@link #setEntite(Entite)} à la place
-	 * 
-	 * @param club l'objet Entite représentant le club de l'archer
-	 */
-	@Deprecated
-	public void setClub(Entite club) {
-		Entite oldValue = getEntite();
-		
-		setEntite(club);
-		
-		pcs.firePropertyChange("club", oldValue, club); //$NON-NLS-1$
 	}
 	
 	/**
@@ -296,12 +226,10 @@ public class Archer extends Contact {
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
 		if(Session.canExecute(session, this)) {
-			//SqlManager sqlManager = new SqlManager(ApplicationCore.dbConnection, null);
 			//Avant d'enregistrer, on recherche dans la base si il n'y a pas déjà un enregistrement pour ce contact avec
 			//un autre id
 			try {
 				UUID savedidContact = QResults.from(Archer.class)
-					.innerJoin(Contact.class, T_Contact.ID_CONTACT.equalTo(T_Archer.ID_CONTACT))
 					.where(T_Contact.NAME.equalTo(this.getName())
 							.and(T_Contact.FIRSTNAME.equalTo(this.getFirstName()))
 							.and(T_Archer.NUMLICENCEARCHER.equalTo(this.getNumLicenceArcher())))
@@ -309,14 +237,6 @@ public class Archer extends Contact {
 				
 				if(savedidContact != null && !savedidContact.equals(getIdContact()))
 					return;
-//				ResultSet rs = sqlManager.executeQuery(
-//						String.format("select CONTACT.ID_CONTACT from CONTACT inner join ARCHERS on CONTACT.ID_CONTACT=ARCHERS.ID_CONTACT where NAME='%s' and FIRSTNAME='%s' and NUMLICENCEARCHER='%s'", //$NON-NLS-1$
-//								this.getName().replace("'", "''"), this.getFirstName().replace("'", "''"), this.getNumLicenceArcher().replace("'", "''"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-//				if(rs.first()) {
-//					UUID savedidContact = (UUID)rs.getObject("ID_CONTACT"); //$NON-NLS-1$
-//					if(!savedidContact.equals(getIdContact()))
-//						return;
-//				}
 			} catch (SQLException e) {
 				throw new ObjectPersistenceException(e);
 			}

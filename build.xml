@@ -60,7 +60,7 @@
 	</target>
 	
 	<target name="resolve" description="--> retrieve dependencies with ivy">
-		<!--<ivy:cleancache />-->
+		<ivy:cleancache />
         <ivy:retrieve />
     </target>
 

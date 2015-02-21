@@ -234,7 +234,7 @@ table th {
 }
 
 #windowAction {
-	display: inline-block;
+	display: inline-block;http://www.netflix.com/WiMessage?msg=51
 	float: right;
 	
 	padding: 6px;
@@ -261,7 +261,7 @@ table th {
 	padding-right: 8px;
 	margin: auto;
 
-	font-size: 9pt;
+	font-size: 9pt;http://www.netflix.com/WiMessage?msg=51
 	font-weight:bold;
 	text-transform: uppercase;
 	color: white;
@@ -441,6 +441,7 @@ table th {
 	width: 400px;
 	border: 0;
 	margin-bottom: 10px;
+	font-family: sans-serif;
 }
 #home .formulaire input:focus, #home .formulaire select:focus, #home .formulaire textarea:focus {
 	border-width: 1px;
@@ -450,7 +451,7 @@ table th {
 	display: block;
     width: 150px;
     float: left;
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
 }
 #home .formulaire .input {
 	display: block;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app>
 <head>
 	<meta charset="UTF-8">
 	<title>{TITRE}</title>
@@ -25,6 +25,9 @@
 	<script type="text/javascript" src="libs/jquery-ui-1.11.0/jquery-ui.js"></script>
 	<script type="text/javascript" src="libs/datatables/js/jquery.dataTables.js"></script>
 	<script type="text/javascript" src="libs/datatables/js/dataTables.jqueryui.js"></script>
+	<script type="text/javascript" src="scripts/libs/angularjs/angular.min.js"></script>
+	<script type="text/javascript" src="scripts/libs/angularjs/angular-resource.min.js"></script>
+	<script type="text/javascript" src="scripts/libs/angularjs/angular-route.min.js"></script>
 	<script type="text/javascript" src="scripts/global.js"></script>
 	<bloc::script></bloc::script>
 </head>

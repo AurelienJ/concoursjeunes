@@ -1,0 +1,17 @@
+<menu class="mainMenu" id="parametersMainMenu">
+	<li id="parameters.general.menu" ng-class="{selected: subscreen=='general'}"><a href="#/parameters/general">General</a></li>
+	<li id="parameters.display.menu" ng-class="{selected: subscreen=='display'}"><a href="#/parameters/display">Affichage</a></li>
+	<li id="parameters.rates.menu" ng-class="{selected: subscreen=='rates'}"><a href="#/parameters/rates">Tarifs</a></li> 
+	<li id="parameters.editions.menu" ng-class="{selected: subscreen=='editions'}"><a href="#/parameters/editions">Editions</a></li> 
+</menu>
+
+<div id="parametersContent">
+	<div ng-if="subscreen=='general'" ng-include="'partials/parameters/general.html'"></div>
+	<div ng-if="subscreen=='display'" ng-include="'partials/parameters/display.html'"></div>
+	<div ng-if="subscreen=='rates'" ng-include="'partials/parameters/rates.html'"></div>
+</div>
+
+<div id="parametersValidation" class="validationPanel">
+	<a href="#" id="parametersValid" class="buttonScreenValid">Valider</a>
+	<a href="#" id="parametersCancel" class="buttonScreenCancel">Annuler</a>
+</div>

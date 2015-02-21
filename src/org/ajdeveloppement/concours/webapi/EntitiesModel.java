@@ -88,13 +88,21 @@
  */
 package org.ajdeveloppement.concours.webapi;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.UUID;
 
+import org.ajdeveloppement.commons.net.json.JsonParser;
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.T_Entite;
+import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.HttpSession;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -110,59 +118,112 @@ public class EntitiesModel {
 	 * @return réponse json avec la liste des entités trouvé
 	 */
 	@SuppressWarnings("nls")
-	@JsonService(key="searchEntities")
+	@JsonService(key="entities")
 	public static String getEntities(HttpSession session) {
 		Map<String,String> urlParameters = session.getUrlParameters();
 		
 		SqlContext context = new SqlContext();
 		
-		QResults<Entite, Void> entites = QResults.from(Entite.class)
+		QResults<Entite, Void> entites = T_Entite.all()
 				.useContext(context);
 		
-		int nbTotalEntites = entites.count();
-		
-		entites = entites.orderBy(T_Entite.NOM);
-		
-		if(urlParameters.containsKey("search[value]")) {
-			String searchPattern = String.format("%%%s%%", urlParameters.get("search[value]").toUpperCase());
-			entites = entites.where(
-					T_Entite.NOM.upper().like(searchPattern)
-					.or(T_Entite.VILLE.upper().like(searchPattern))
-					.or(T_Entite.REFERENCE.upper().like(searchPattern)));
-		}
-		
-		int nbFilteredEntites = entites.count();
-		
-		if(urlParameters.containsKey("length")) {
-			int length = 0;
-			try {
-				length = Integer.parseInt(urlParameters.get("length"));
-			} catch(NumberFormatException e) { }
-			entites = entites.limit(length);
+		if(!urlParameters.containsKey("id")) {
+			int nbTotalEntites = entites.count();
 			
-			if(urlParameters.containsKey("start")) {
-				int offset = -1;
-				try {
-					offset = Integer.parseInt(urlParameters.get("start"));
-				} catch(NumberFormatException e) { }
-				
-				entites = entites.limit(length,offset);
+			entites = entites.orderBy(T_Entite.NOM);
+			
+			if(urlParameters.containsKey("search[value]")) {
+				String searchPattern = String.format("%%%s%%", urlParameters.get("search[value]").toUpperCase());
+				entites = entites.where(
+						T_Entite.NOM.upper().like(searchPattern)
+						.or(T_Entite.VILLE.upper().like(searchPattern))
+						.or(T_Entite.REFERENCE.upper().like(searchPattern)));
 			}
-		}
-		
-		int draw = -1;
-		if(urlParameters.containsKey("draw")) {
+			
+			int nbFilteredEntites = entites.count();
+			
+			if(urlParameters.containsKey("length")) {
+				int length = 0;
+				try {
+					length = Integer.parseInt(urlParameters.get("length"));
+				} catch(NumberFormatException e) { }
+				entites = entites.limit(length);
+				
+				if(urlParameters.containsKey("start")) {
+					int offset = -1;
+					try {
+						offset = Integer.parseInt(urlParameters.get("start"));
+					} catch(NumberFormatException e) { }
+					
+					entites = entites.limit(length,offset);
+				}
+			}
+			
+			int draw = -1;
+			if(urlParameters.containsKey("draw")) {
+				try {
+					draw = Integer.parseInt(urlParameters.get("draw"));
+				} catch(NumberFormatException e) { }
+			}
+			
+			JsDataTables jsDataTables = new JsDataTables();
+			jsDataTables.setDraw(draw);
+			jsDataTables.setRecordsTotal(nbTotalEntites);
+			jsDataTables.setRecordsFiltered(nbFilteredEntites);
+			jsDataTables.setData(entites.asList());
+			
+			return jsDataTables.toJSON();
+		} else if(session.getRequestMethod() == HttpMethod.GET) { //Lecture
+			String idEntiteStr = urlParameters.get("id");
+			UUID idEntite = null;
 			try {
-				draw = Integer.parseInt(urlParameters.get("draw"));
-			} catch(NumberFormatException e) { }
+				idEntite = UUID.fromString(idEntiteStr);
+			} catch(IllegalArgumentException e) {
+			}
+			
+			if(idEntite != null) {
+				Entite entite = entites.where(T_Entite.ID_ENTITE.equalTo(idEntite)).first();
+				if(entite != null) {
+					JsonParser parser = new JsonParser();
+					parser.setPrettyPrinting(true);
+					return parser.parseValue(entite);
+				}
+			}
+		} else if(session.getRequestMethod() == HttpMethod.PUT) { //Update
+			boolean sucess = false;
+			try {
+				String jsonEntity = session.readContentAsString(Charset.forName("UTF-8"));
+				
+				ObjectMapper jsonMapper = new ObjectMapper();
+				Entite entite = jsonMapper.readValue(jsonEntity, Entite.class);
+				entite.save();
+
+				/*String idEntiteStr = jsonObject.getString("idEntite");
+				if(idEntiteStr != null) {
+					UUID idEntite = UUID.fromString(idEntiteStr);
+					
+					if(jsonObject.has("adresse")) {
+						Entite entite = QResults.from(Entite.class).where(T_Entite.ID_ENTITE.equalTo(idEntite)).first();
+						String adresse = jsonObject.getString("adresse");
+
+						entite.setAdresse(adresse);
+						entite.save();
+					}
+				}*/
+				
+				sucess = true;
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+			} catch (ObjectPersistenceException e) {
+				e.printStackTrace();
+			}
+			
+			return "{\"success\":" + sucess + "}";
+		} else if(session.getRequestMethod() == HttpMethod.POST) { //Insert
+			
 		}
 		
-		JsDataTables jsDataTables = new JsDataTables();
-		jsDataTables.setDraw(draw);
-		jsDataTables.setRecordsTotal(nbTotalEntites);
-		jsDataTables.setRecordsFiltered(nbFilteredEntites);
-		jsDataTables.setData(entites.asList());
-		
-		return jsDataTables.toJSON();
+		return null;
 	}
 }

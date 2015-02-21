@@ -115,7 +115,7 @@ public class ProfileModel {
 		Sessions clientSession = new Sessions(session);
 		UserSessionData userSessionData = clientSession.getSessionData();
 		
-		QResults<Profile, Void> profiles = QResults.from(Profile.class);
+		QResults<Profile, Void> profiles = T_Profile.all();
 		
 		if(userSessionData != null) {
 			UUID idUtilisateur = userSessionData.getSessionUser().getIdContact();

@@ -94,6 +94,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.ajdeveloppement.commons.ExceptionUtils;
 import org.ajdeveloppement.webserver.HttpResponse;
@@ -110,6 +112,8 @@ import org.ajdeveloppement.webserver.services.js.ResponseFormatter;
 public class ApiService implements RequestProcessor {
 	
 	private Map<String, Method> endpointsServices = new HashMap<>();
+	
+	private Pattern rgxEntryPoint = Pattern.compile("/api/(?<key>[^/]+)(?:/(?<id>[^/]+))?(?<params>/.+)?", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 	
 	private void discoverJsonServices(Class<?> servicesContainer) {
 		for(Method m : servicesContainer.getMethods()) {
@@ -162,12 +166,27 @@ public class ApiService implements RequestProcessor {
 	@SuppressWarnings("nls")
 	@Override
 	public HttpResponse serve(HttpSession session) {
-		if(session.getRequestUri().startsWith("/api")) {
+		String uri = session.getRequestUri();
+		if(uri.startsWith("/api")) {
 			Map<String,String> urlParameters = session.getUrlParameters();
 			
-			if(urlParameters.containsKey("key")) {
+			String key = null;
+			String id = null;
+			Matcher m = rgxEntryPoint.matcher(uri);
+			if(m.matches()) {
+				key = m.group("key");
+				id = m.group("id");
+			}
+			
+			if(key == null && urlParameters.containsKey("key"))
+				key = urlParameters.get("key");
+			
+			if(id != null && !id.isEmpty())
+				urlParameters.put("id", id);
+			
+			if(key != null) {
 				try {
-					String jsonResponse = invokeJsonService(session, urlParameters.get("key"));
+					String jsonResponse = invokeJsonService(session, key);
 					if(jsonResponse != null)
 						return ResponseFormatter.getGzipedResponseForOutputTemplate(session, jsonResponse, "application/json");
 				} catch (IOException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

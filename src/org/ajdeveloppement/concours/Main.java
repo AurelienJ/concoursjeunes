@@ -131,6 +131,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.crypto.NoSuchPaddingException;
@@ -146,6 +147,7 @@ import javax.xml.bind.JAXBException;
 import org.ajdeveloppement.apps.AppUtilities;
 import org.ajdeveloppement.apps.ApplicationContext;
 import org.ajdeveloppement.commons.AjResourcesReader;
+import org.ajdeveloppement.commons.io.FileUtils;
 import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
@@ -185,10 +187,10 @@ public class Main extends Application {
 		public String SelectFile() {
 			
 			//Date.from(LocalDateTime.now().minusDays(30).toInstant(ZoneOffset.UTC));
-			/*FileChooser chooser = new FileChooser();
+			FileChooser chooser = new FileChooser();
 			File file = chooser.showOpenDialog(null);
 			if(file != null) {
-				File uploadPath = new File(HttpServer.getFileSelector().getBasePath(), "www/images/upload"); //$NON-NLS-1$
+				File uploadPath = new File(httpServer.getFileSelector().getBasePath(), "www/images/upload"); //$NON-NLS-1$
 				if(!uploadPath.exists())
 					uploadPath.mkdirs();
 				try {
@@ -197,7 +199,7 @@ public class Main extends Application {
 					e.printStackTrace();
 				}
 				return "images/upload/" + file.getName(); //$NON-NLS-1$
-			}*/
+			}
 			
 			return null;
 		}
@@ -223,6 +225,7 @@ public class Main extends Application {
 	private static AjResourcesReader staticParameters = new AjResourcesReader(WEBSERVER_CONFIG);
 	
 	private static int webServerListenPort = 0;
+	private static HttpServer httpServer;
 	
 	private double startX = -1;
 	private double startY = -1;
@@ -232,7 +235,13 @@ public class Main extends Application {
 	 */
 	public static void main(String[] args) {
 		System.setProperty("nashorn.option.scripting", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		//JSONConverters.JSONToBean("{ nom: \"hello world!\", entiteParent:{ nom: \"parent\" } }", new Entite());
+		
 		FilesService.setAllowedGzipExt(Arrays.asList(staticParameters.getResourceString(WEBSERVER_STATIC_ALLOWEDGZIPEXT).split(","))); //$NON-NLS-1$
+		
+		String[] servicesOrder = staticParameters.getResourceString(WEBSERVER_SERVICE_ORDER).split(","); //$NON-NLS-1$
+		ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor = new ExtensibleHttpRequestProcessor(servicesOrder);
 		
 		FileSelector fileSelector = null;
 		String fileSelectorFilePath = staticParameters.getResourceString(WEBSERVER_FILESELECTOR_FILE);
@@ -250,9 +259,6 @@ public class Main extends Application {
 			}
 		}
 
-		String[] servicesOrder = staticParameters.getResourceString(WEBSERVER_SERVICE_ORDER).split(","); //$NON-NLS-1$
-		ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor = new ExtensibleHttpRequestProcessor(servicesOrder);
-
 		showSplashScreen();
 		//initErrorManaging();
 		initNetworkManaging();
@@ -268,7 +274,7 @@ public class Main extends Application {
 //
 		initShutdownHook();
 		
-		HttpServer httpServer = new HttpServer(staticParameters.getResourceInteger(WEBSERVER_LISTEN_PORT));
+		httpServer = new HttpServer(staticParameters.getResourceInteger(WEBSERVER_LISTEN_PORT));
 		httpServer.setPkcs12KeyStorePath(staticParameters.getResourceString(WEBSERVER_PKCS12_KEY_STORE_FILE));
 		httpServer.setPkcs12KeyStorePassword(staticParameters.getResourceString(WEBSERVER_PKCS12PASSWORD));
 		httpServer.setCertificateAlias(staticParameters.getResourceString(WEBSERVER_CERTIFICATE_ALIAS));
@@ -380,7 +386,8 @@ public class Main extends Application {
 		webView.getEngine().setOnAlert(event -> System.out.println(event.getData()));
 		System.out.println(webView.getEngine().getUserDataDirectory());
 		
-		webView.getEngine().load("http://localhost:" + webServerListenPort); //$NON-NLS-1$
+		webView.getEngine().load("http://localhost:" + webServerListenPort + "/index.html"); //$NON-NLS-1$ //$NON-NLS-2$
+		//webView.getEngine().load("http://red-team-design.developpez.com/tutoriels/css/donner-style-listes-deroulantes/fichiers/");
 		netscape.javascript.JSObject win = 
                 (netscape.javascript.JSObject) webView.getEngine().executeScript("window"); //$NON-NLS-1$
         win.setMember("app", new Bridge(primaryStage)); //$NON-NLS-1$
