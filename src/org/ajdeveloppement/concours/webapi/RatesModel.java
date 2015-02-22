@@ -1,7 +1,7 @@
 /*
- * Créé le 10 déc. 2012 à 23:02:00 pour ArcCompetition
+ * Créé le 22 févr. 2015 à 12:23:18 pour ArcCompetition
  *
- * Copyright 2002-2012 - Aurélien JEOFFRAY
+ * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,116 +86,68 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.ui.fx;
+package org.ajdeveloppement.concours.webapi;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Worker.State;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import netscape.javascript.JSObject;
-
-import org.ajdeveloppement.concours.ui.fx.controls.BreadcrumbBar;
-import org.ajdeveloppement.concours.ui.webui.WebContentManager;
+import org.ajdeveloppement.commons.net.json.JsonParser;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
+import org.ajdeveloppement.concours.data.Rate;
+import org.ajdeveloppement.concours.data.T_Rate;
+import org.ajdeveloppement.webserver.HttpMethod;
+import org.ajdeveloppement.webserver.HttpSession;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class ArcCompetitionController implements Initializable {
+public class RatesModel {
 
-	@FXML
-	private BreadcrumbBar breadcrumbBar;
-	
-	@FXML
-	private WebView actionPane;
-	
-	@FXML
-	private BorderPane mainpane;
-	
-	/* (non-Javadoc)
-	 * @see javafx.fxml.Initializable#initialize(java.net.URL, java.util.ResourceBundle)
-	 */
-	@Override
-	public void initialize(URL url, ResourceBundle ressource) {
-		final WebEngine webEngine = actionPane.getEngine();
-		webEngine.loadContent(WebContentManager.getContentPage("home")); //$NON-NLS-1$
-		webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
-			@Override
-			public void changed(ObservableValue<? extends State> observable,
-					State oldValue, State newState) {
-				 if (newState == State.SUCCEEDED) {
-                     JSObject win = (JSObject) webEngine.executeScript("window"); //$NON-NLS-1$
-                     win.setMember("app", new WebHandler()); //$NON-NLS-1$
-				 }
+	@SuppressWarnings("nls")
+	@JsonService(key="rates")
+	public static String getRates(HttpSession httpSession) {
+		Map<String,String> urlParameters = httpSession.getUrlParameters();
+		
+		//Sessions clientSession = new Sessions(httpSession);
+		//UserSessionData userSessionData = clientSession.getSessionData();
+		
+		try(SqlContext context = new SqlContext()) {
+			if(httpSession.getRequestMethod() == HttpMethod.GET) {
+				if(urlParameters.containsKey("idprofile")) {
+					String idProfileStr = urlParameters.get("idprofile");
+					UUID idProfile = null;
+					try {
+						idProfile = UUID.fromString(idProfileStr);
+					} catch(IllegalArgumentException e) {
+					}
+					
+					List<Rate> rates = T_Rate.all().useContext(context).where(T_Rate.ID_PROFILE.equalTo(idProfile)).asList();
+					JsonParser parser = new JsonParser();
+					return parser.parseValue(rates);
+				}
 			}
-		});
-		
-		PagesManager.setDisplayPane(mainpane);
-	}
-	
-	/**
-	 * 
-	 */
-	@FXML
-	public void showHelpPage() {
-		showPage("about"); //$NON-NLS-1$
-	}
-	
-	/**
-	 * 
-	 * @param pageId
-	 */
-	public void showPage(String pageId) {
-		Page page = PagesManager.getPage(pageId);
-		if(page != null) {
-			breadcrumbBar.setPath(page.getLocalizedLibelle());
-			
-			mainpane.setCenter(page.getContent());
-		} else {
-			breadcrumbBar.setPath(pageId);
-			mainpane.setCenter(new Label(pageId));
-		}
-	}
-	
-	public class WebHandler {
-		/**
-		 * Affiche la page dont l'id est precisé en parametre
-		 * 
-		 * @param pageId l'id de la page à afficher
-		 */
-		public void showPage(String pageId) {
-			ArcCompetitionController.this.showPage(pageId);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
 		}
 		
-		/**
-		 * Affiche sur la console les informations de débugage
-		 * @param obj
-		 */
-		public void debug(Object obj) {
-			System.out.println(obj);
-		}
-	}
+		/*UUID idEntite = null;
+		
+		if(userSessionData != null) {
+			UUID idUtilisateur = userSessionData.getSessionUser().getIdContact();
+			if(idUtilisateur != null) {
+				List<ManagerProfile> managerProfiles = T_ManagerProfile.all().useContext(context).where(T_ManagerProfile.ID_CONTACT.equalTo(idUtilisateur)).asList();
+				Stream<Entite> entites = managerProfiles.stream().map(mp -> mp.getProfile().getEntite());
 
-	/**
-	 * @return breadcrumbBar
-	 */
-	public BreadcrumbBar getBreadcrumbBar() {
-		return breadcrumbBar;
-	}
-
-	/**
-	 * @param breadcrumbBar breadcrumbBar à définir
-	 */
-	public void setBreadcrumbBar(BreadcrumbBar breadcrumbBar) {
-		this.breadcrumbBar = breadcrumbBar;
+				
+			}
+		}*/
+		
+		
+		
+		return null;
 	}
 
 }

@@ -147,6 +147,7 @@ public class ApiService implements RequestProcessor {
 		discoverJsonServices(ContactsModel.class);
 		discoverJsonServices(EntitiesModel.class);
 		discoverJsonServices(ProfileModel.class);
+		discoverJsonServices(RatesModel.class);
 	}
 
 	/* (non-Javadoc)

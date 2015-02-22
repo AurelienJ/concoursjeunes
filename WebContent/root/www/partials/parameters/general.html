@@ -2,7 +2,7 @@
 
 <section>
 	<h2>Nom du club</h2>
-	<p><a href="#" id="parametersGeneralSelectedClub">Aucun club selectionné</a> <a href="#/entities" id="parametersGeneralClubChoice">Choisir...</a></p>
+	<p><a href="#/entities/{{entity.idEntite}}" id="parametersGeneralSelectedClub" ng-if="entity">{{entity.nom}}</a> <a href="#/entities" id="parametersGeneralClubChoice">Choisir...</a></p>
 </section>
 <section>
 	<h2>Logo du club </h2>

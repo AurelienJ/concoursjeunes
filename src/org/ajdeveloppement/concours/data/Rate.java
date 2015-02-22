@@ -122,8 +122,8 @@ public class Rate implements SqlObjectPersistence {
 	@SqlField(name="ID_TARIF")
 	private UUID idTarif = null;
 	
-	@SqlForeignKey(mappedTo="ID_ENTITE")
-	private Entite entite;
+	@SqlForeignKey(mappedTo="ID_PROFILE")
+	private Profile entite;
 	
 	@SqlField(name="INTITULE")
 	private String intituleTarif = ""; //$NON-NLS-1$

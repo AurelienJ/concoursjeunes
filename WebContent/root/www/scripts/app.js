@@ -3,6 +3,9 @@
  */
 var App = angular.module('ArcCompetitionApp', ['ngRoute', 'datatables', 'ArcCompetitionServices' ]);
 
+var idDefaultProfile = "523151e7-56c0-4433-a60f-12accfdb43b2"; 
+var idDefaultContact = "0da8eec4-91dd-4554-a92e-ddfcde6f50b8";
+
 /** 
  * ROUTES
  */
@@ -46,27 +49,50 @@ App.run(function ($rootScope, $location) {
 /** 
  * Controlleurs
  */
-App.controller("ParametersController", [ '$scope', '$rootScope',
-		'$routeParams', function($scope, $rootScope, $routeParams) {
-			$rootScope.pageTitle = "Paramètres";
+App.controller("ParametersController", [ '$scope', '$rootScope', '$routeParams', 'Profile', 'Contact', 'Entity', 'EntitySelector', 
+	function($scope, $rootScope, $routeParams, Profile, Contact, Entity, EntitySelector) {
+		$rootScope.pageTitle = "Paramètres";
 
-			if ($routeParams.subscreen) {
-				$scope.subscreen = $routeParams.subscreen;
-
-				if ($scope.subscreen == "display") {
-					$scope.langs = [ {
-						code : "fr",
-						label : "français"
-					}, {
-						code : "en",
-						label : "english"
-					} ];
-					$scope.selectedLang = $scope.langs[0];
+		if ($routeParams.subscreen)
+			$scope.subscreen = $routeParams.subscreen;
+		else
+			$scope.subscreen = "general";
+		
+		$scope.profile = Profile.get({ id: idDefaultProfile }, function() {
+			if($scope.profile.idEntite && (!EntitySelector.getSelectedEntity() || EntitySelector.getSelectedEntity() != $scope.profile.idEntite)) {
+				if(!EntitySelector.getSelectedEntity()) {
+					$scope.entity = Entity.get({id: $scope.profile.idEntite});
+					EntitySelector.setSelectedEntity($scope.profile.idEntite);
+				} else {
+					$scope.entity = Entity.get({id: EntitySelector.getSelectedEntity()});
+					$scope.profile.idEntite = EntitySelector.getSelectedEntity();
 				}
-			} else {
-				$scope.subscreen = "general";
+			} else if(EntitySelector.getSelectedEntity()) {
+				$scope.entity =	Entity.get({id: EntitySelector.getSelectedEntity()});
+				$scope.profile.idEntite = EntitySelector.getSelectedEntity();
 			}
-		} ]);
+		});
+		
+		$scope.contact = Contact.get({ id: idDefaultContact });
+		
+		if ($scope.subscreen == "display") {
+			$scope.langs = [ {
+				code : "fr",
+				label : "français"
+			}, {
+				code : "en",
+				label : "english"
+			} ];
+			//$scope.selectedLang = $scope.langs[0];
+		}
+		
+		$scope.valid = function() {
+			$scope.profile.$update();
+			
+			return false;
+		}
+	}
+]);
 
 App.controller("EntitiesController", [
 		'$scope',
@@ -76,9 +102,10 @@ App.controller("EntitiesController", [
 		'DTOptionsBuilder',
 		'DTColumnBuilder',
 		'DTColumnDefBuilder',
+		'EntitySelector',
 		function($scope, $rootScope, $routeParams,
 				$compile, DTOptionsBuilder, DTColumnBuilder,
-				DTColumnDefBuilder) {
+				DTColumnDefBuilder, EntitySelector) {
 			$rootScope.pageTitle = "Entités";
 		
 			var toolbar_prefix = 'fg-toolbar ui-toolbar ui-widget-header ui-helper-clearfix ui-corner-';
@@ -116,7 +143,8 @@ App.controller("EntitiesController", [
 					DTColumnBuilder.newColumn(null).withTitle('Actions').notSortable()
 			            .renderWith(function(data, type, full, meta) {
 			                return '<a href="#/entities/' + data.idEntite + '"><img src="images/edit.png" class="action-button" title="editer"/></a>'
-			                	+ (data.removable ? '<a href="#"><img src="images/del.png" ng-click="delete(\'' + data.idEntite + '\')" class="action-button" title="supprimer"/></a>' : '');
+			                	+ '<a href="#/parameters" ng-click="select(\'' + data.idEntite + '\')"><img src="images/forward.png" class="action-button" title="Séléctionner" /></a>'
+			                	+ (data.removable ? '<a href="#"><img src="images/del.png" ng-click="deleteEntity(\'' + data.idEntite + '\')" class="action-button" title="supprimer"/></a>' : '');
 			            })
 			            ];
 		
@@ -130,9 +158,17 @@ App.controller("EntitiesController", [
 			
 			//entitiesTable.row(this).data()
 			
+			$scope.select = function(idEntity) {
+				EntitySelector.setSelectedEntity(idEntity);
+			};
+			
+			$scope.deleteEntity = function(idEntite) {
+				
+			};
+			
 			$scope.searchChange = function() {
 				table.search($scope.entitiesSearchPattern).draw();
-			}
+			};
 			
 			$scope.$on('event:dataTableLoaded', function(event, loadedDT) {
 			    // loadedDT === {"id": "foobar", "DataTable": oTable, "dataTable": $oTable}
@@ -150,6 +186,8 @@ App.controller("EntitiesController", [
 				path: "entities",
 				name: 'Entités'
 			});
+			
+			
 		}
 ]);
 
@@ -190,5 +228,26 @@ Services.factory('Entity', ['$resource', function($resource) {
 	return $resource("/api/entities/:id", {}, {
 		query: {method: 'GET', isArray: true},
 		update: {method: 'PUT'}
+	});
+}]);
+
+Services.service('EntitySelector', function() {
+	var selectedEntity = null;
+	
+	return {
+		getSelectedEntity: function() { return selectedEntity; },
+		setSelectedEntity: function(entity) { selectedEntity = entity; }
+	}
+});
+
+Services.factory('Profile', ['$resource', function($resource) {
+	return $resource("/api/profiles/:id", {}, {
+		update: {method: 'PUT'}
+	});
+}]);
+
+Services.factory("Contact", ['$resource', function($resource) {
+return $resource("/api/contacts/:id", {}, {
+		
 	});
 }]);

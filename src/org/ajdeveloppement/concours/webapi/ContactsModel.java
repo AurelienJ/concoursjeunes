@@ -88,12 +88,14 @@
  */
 package org.ajdeveloppement.concours.webapi;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.ajdeveloppement.commons.net.json.JsonParser;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.T_Contact;
+import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.HttpSession;
 
 /**
@@ -102,25 +104,37 @@ import org.ajdeveloppement.webserver.HttpSession;
  */
 public class ContactsModel {
 	@SuppressWarnings("nls")
-	@JsonService(key="contact")
+	@JsonService(key="contacts")
 	public static String getContact(HttpSession session) {
 		Map<String, String> urlParameters = session.getUrlParameters();
 		
-		String error = null;
-		UUID idContact = null;
-		if(urlParameters.containsKey("idContact")) {
-			try {
-				idContact = UUID.fromString(urlParameters.get("idContact"));
-			} catch(IllegalArgumentException e) {
-				error = "Invalid idContact UUID";
-			}
-			
-			if(idContact != null) {
-				Contact contact = T_Contact.getInstanceWithPrimaryKey(idContact);;
+		String error = "";
+		
+		if(session.getRequestMethod() == HttpMethod.GET) {
+		
+			if(urlParameters.containsKey("id")) {
+				UUID idContact = null;
+				try {
+					idContact = UUID.fromString(urlParameters.get("id"));
+				} catch(IllegalArgumentException e) {
+					error = "Invalid idContact UUID";
+				}
 				
-				if(contact != null) {
+				if(idContact != null) {
+					Contact contact = T_Contact.getInstanceWithPrimaryKey(idContact);
+					
+					if(contact != null) {
+						JsonParser parser = new JsonParser();
+						return parser.parseValue(contact);
+					}
+					error = "Ther is no contact with id " + idContact.toString();
+				}
+			} else {
+				List<Contact> contacts = T_Contact.all().asList();
+				
+				if(contacts != null) {
 					JsonParser parser = new JsonParser();
-					return parser.parseValue(contact);
+					return parser.parseValue(contacts);
 				}
 			}
 		}

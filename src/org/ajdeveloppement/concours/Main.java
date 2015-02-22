@@ -119,35 +119,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
-import javafx.application.Application;
-import javafx.concurrent.Worker;
-import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.web.WebView;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 import javax.swing.JOptionPane;
-import javax.swing.RepaintManager;
-import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 
 import org.ajdeveloppement.apps.AppUtilities;
 import org.ajdeveloppement.apps.ApplicationContext;
 import org.ajdeveloppement.commons.AjResourcesReader;
-import org.ajdeveloppement.commons.io.FileUtils;
 import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
@@ -168,6 +150,13 @@ import org.ajdeveloppement.webserver.FileSelector;
 import org.ajdeveloppement.webserver.HttpServer;
 import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
 import org.ajdeveloppement.webserver.services.files.FilesService;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Monitor;
+import org.eclipse.swt.widgets.Shell;
 import org.h2.tools.DeleteDbFiles;
 import org.jdesktop.swingx.error.ErrorInfo;
 
@@ -178,33 +167,7 @@ import org.jdesktop.swingx.error.ErrorInfo;
  * @version 2.3
  * 
  */
-public class Main extends Application {
-	public static class Bridge {
-		public Bridge(Stage stage) {
-			//this.stage = stage;
-		}
-		
-		public String SelectFile() {
-			
-			//Date.from(LocalDateTime.now().minusDays(30).toInstant(ZoneOffset.UTC));
-			FileChooser chooser = new FileChooser();
-			File file = chooser.showOpenDialog(null);
-			if(file != null) {
-				File uploadPath = new File(httpServer.getFileSelector().getBasePath(), "www/images/upload"); //$NON-NLS-1$
-				if(!uploadPath.exists())
-					uploadPath.mkdirs();
-				try {
-					FileUtils.copyFile(file, new File(uploadPath, file.getName()));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				return "images/upload/" + file.getName(); //$NON-NLS-1$
-			}
-			
-			return null;
-		}
-	}
-	
+public class Main {
 	private static SplashScreen splash = null;
 	private static AjResourcesReader localisation = new AjResourcesReader("libelle");  //$NON-NLS-1$
 	
@@ -226,17 +189,12 @@ public class Main extends Application {
 	
 	private static int webServerListenPort = 0;
 	private static HttpServer httpServer;
-	
-	private double startX = -1;
-	private double startY = -1;
-	
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		System.setProperty("nashorn.option.scripting", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		//JSONConverters.JSONToBean("{ nom: \"hello world!\", entiteParent:{ nom: \"parent\" } }", new Entite());
 		
 		FilesService.setAllowedGzipExt(Arrays.asList(staticParameters.getResourceString(WEBSERVER_STATIC_ALLOWEDGZIPEXT).split(","))); //$NON-NLS-1$
 		
@@ -296,103 +254,47 @@ public class Main extends Application {
 		
 		System.out.println("Http listen on port: " + webServerListenPort); //$NON-NLS-1$
 		
-		launch(args);
-		
 		hideSplashScreen();
 		
-//		
-//		System.out.println("core loaded");  //$NON-NLS-1$
-//		
-//		showUserInterface();
+		Display display = Display.getDefault();
+		Display.setAppName("ArcCompetition 0.0.1");
+        final Shell shell = new Shell(display, SWT.SHELL_TRIM);
+        shell.setSize(1024, 768);
+        shell.setLayout(new FillLayout());
+       
+        Browser browser = new Browser(shell, SWT.NONE);
+        /*browser.addTitleListener(new TitleListener() {
+            public void changed(TitleEvent event) {
+                shell.setText(event.title);
+             }
+          });*/
+        browser.setBounds(0,0,1024,768);
+        browser.setUrl("http://localhost:" + webServerListenPort + "/index.html");
+        
+        
+        Monitor primary = display.getPrimaryMonitor();
+        Rectangle bounds = primary.getBounds();
+        Rectangle rect = shell.getBounds();
+        
+        int x = bounds.x + (bounds.width - rect.width) / 2;
+        int y = bounds.y + (bounds.height - rect.height) / 2;
+        
+        shell.setLocation(x, y);
+        shell.setText("ArcCompetition 0.0.1");
+        shell.open();
+        
+        
+         
+        while (!shell.isDisposed()) {
+        	if (!display.readAndDispatch())
+        		display.sleep();
+        }
+        
+        display.dispose();
 	}
 	
 	boolean onDrag = false;
 	
-	@Override
-	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("ArcCompetition 0.0.1");
-		//primaryStage.initStyle(StageStyle.TRANSPARENT);
-		
-		Label title = new Label();
-		title.setId("title");
-		title.setText("ArcCompetition 0.0.1");
-		
-		Region spacer = new Region();
-		HBox.setHgrow(spacer, Priority.ALWAYS);
-		
-		Button minButton = new Button();
-		minButton.setId("window-min"); //$NON-NLS-1$
-		minButton.setOnAction(e -> {
-			primaryStage.setIconified(true);
-		});
-		
-		Button maxButton = new Button();
-		maxButton.setId("window-max"); //$NON-NLS-1$
-		maxButton.setOnAction(e -> {
-			primaryStage.setMaximized(!primaryStage.isMaximized());
-		});
-		
-		Button closeButton = new Button();
-		closeButton.setId("window-close"); //$NON-NLS-1$
-		closeButton.setOnAction(e -> {
-			System.exit(0);
-		});
-		
-		HBox header = new HBox(4);
-		header.setMinHeight(30);
-		header.setId("header"); //$NON-NLS-1$
-		header.setAlignment(Pos.CENTER_RIGHT);
-		header.getChildren().addAll(title, spacer,minButton,maxButton,closeButton);
-		header.setOnMouseClicked(e -> {
-			if(e.getClickCount() == 2) {
-				primaryStage.setMaximized(!primaryStage.isMaximized());
-			}
-		});
-		
-		WebView webView = new WebView();
-
-		BorderPane root = new BorderPane();
-		//root.setTop(header);
-		root.setCenter(webView);
-		
-		Scene scene = new Scene(root, 1024, 768);
-		URL appStyleUrl = Main.class.getResource("ui/fx/styles.css"); //$NON-NLS-1$
-		if(appStyleUrl != null)
-			scene.getStylesheets().add(appStyleUrl.toExternalForm()); 
-		
-		primaryStage.setScene(scene);
-		primaryStage.setOnCloseRequest(e -> System.exit(0));
-		primaryStage.show();
-		
-		header.setOnMouseDragged(e -> {
-			if(e.getSceneY() < 40) {
-				if(!onDrag) {
-					startX = primaryStage.getX() - e.getScreenX();
-					startY = primaryStage.getY() - e.getScreenY();
-					
-					onDrag = true;
-				} else {
-					webView.setCursor(Cursor.MOVE);
-					primaryStage.setX(e.getScreenX() + startX);
-					primaryStage.setY(e.getScreenY() + startY);
-				}
-			}
-		});
-		header.setOnMouseReleased(e -> { onDrag = false; });
-
-		Worker<Void> worker = webView.getEngine().getLoadWorker();
-		worker.exceptionProperty().addListener((observableValue, oldThrowable, newThrowable) -> newThrowable.printStackTrace());
-		webView.getEngine().setOnError(event ->	event.getException().getStackTrace());
-		webView.getEngine().setOnAlert(event -> System.out.println(event.getData()));
-		System.out.println(webView.getEngine().getUserDataDirectory());
-		
-		webView.getEngine().load("http://localhost:" + webServerListenPort + "/index.html"); //$NON-NLS-1$ //$NON-NLS-2$
-		//webView.getEngine().load("http://red-team-design.developpez.com/tutoriels/css/donner-style-listes-deroulantes/fichiers/");
-		netscape.javascript.JSObject win = 
-                (netscape.javascript.JSObject) webView.getEngine().executeScript("window"); //$NON-NLS-1$
-        win.setMember("app", new Bridge(primaryStage)); //$NON-NLS-1$
-	}
-
 	/**
 	 * Affiche le splash screen durant le chargement
 	 */
@@ -695,39 +597,6 @@ public class Main extends Application {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
-		});
-	}
-	
-	/**
-	 * Affiche l'interface utilisateur
-	 * 
-	 * @param core la couche métier sous jacente
-	 */
-	private static void showUserInterface() {
-		//Pour débugage de l'EDT
-		//on charge dynamiquement pour ne pas avoir de dépendance dans le byte code et pouvoir livrer
-		//les versions sans le jar associé
-		try {
-			Class<?> swingEdtDebugClass = Class.forName("org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager", false, Main.class.getClassLoader()); //$NON-NLS-1$
-			Object swingEdtDebugImpl = swingEdtDebugClass.getConstructor().newInstance();
-			RepaintManager.setCurrentManager((RepaintManager)swingEdtDebugImpl);
-		} catch(ClassNotFoundException e) {
-		} catch (SecurityException e) {
-		} catch (NoSuchMethodException e) {
-		} catch (IllegalArgumentException e) {
-		} catch (InstantiationException e) {
-		} catch (IllegalAccessException e) {;
-		} catch (InvocationTargetException e) {
-		}
-		SwingUtilities.invokeLater(new Runnable() {
-			@SuppressWarnings("unused")
-			@Override
-			public void run() {
-				//Profile profile = new Profile();
-				//core.addProfile(profile);
-
-				//new ArcCompetitionFrame(profile);
 			}
 		});
 	}

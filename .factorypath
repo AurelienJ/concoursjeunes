@@ -1,5 +1,4 @@
 <factorypath>
     <factorypathentry kind="EXTJAR" id="/developpement/Projets/workspace/ArcCompetition/target/classes" enabled="false" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="IVY_HOME/local/org.ajdeveloppement/ajcommons/2.0.0-1/jars/ajcommons.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="PLUGIN" id="org.eclipse.jst.ws.annotations.core" enabled="false" runInBatchMode="false"/>
 </factorypath>

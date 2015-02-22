@@ -96,11 +96,11 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 
+import org.ajdeveloppement.commons.net.json.JsonExclude;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
@@ -124,11 +124,25 @@ public class Profile implements SqlObjectPersistence {
 	@SqlField(name="INTITULE")
 	private String intitule;
 	
-	@SqlForeignKey(mappedTo="ID_ENTITE")
 	private Entite entite;
+	
+	@SqlField(name="ID_ENTITE")
+	private UUID idEntite;
 	
 	@SqlChildCollection(foreignFields="ID_PROFILE",type=ManagerProfile.class)
 	private List<ManagerProfile> managers;
+	
+	/*@JsonCreator
+	private static Profile create(@JsonProperty("id") UUID idProfile) {
+		Profile profile = T_Profile.getInstanceWithPrimaryKey(idProfile);
+				
+		if(profile == null) {
+			profile = new Profile();
+			profile.setId(idProfile);;
+		}
+		
+		return profile;
+	}*/
 	
 	/**
 	 * @return id
@@ -159,9 +173,26 @@ public class Profile implements SqlObjectPersistence {
 	}
 
 	/**
+	 * @return idEntite
+	 */
+	public UUID getIdEntite() {
+		return idEntite;
+	}
+
+	/**
+	 * @param idEntite idEntite à définir
+	 */
+	public void setIdEntite(UUID idEntite) {
+		this.idEntite = idEntite;
+	}
+
+	/**
 	 * @return entite
 	 */
+	@JsonExclude
 	public Entite getEntite() {
+		if(entite == null && idEntite != null)
+			entite = T_Entite.getInstanceWithPrimaryKey(idEntite);
 		return entite;
 	}
 
@@ -170,7 +201,12 @@ public class Profile implements SqlObjectPersistence {
 	 */
 	public void setEntite(Entite entite) {
 		this.entite = entite;
+		if(entite != null)
+			this.idEntite = entite.getIdEntite();
+		else
+			this.idEntite = null;
 	}
+
 
 	/**
 	 * @return managers

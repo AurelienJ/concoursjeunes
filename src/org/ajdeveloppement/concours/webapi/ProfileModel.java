@@ -88,6 +88,8 @@
  */
 package org.ajdeveloppement.concours.webapi;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -102,41 +104,73 @@ import org.ajdeveloppement.concours.data.Profile;
 import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.data.T_ManagerProfile;
 import org.ajdeveloppement.concours.data.T_Profile;
+import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.HttpSession;
 import org.ajdeveloppement.webserver.services.js.Sessions;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
 public class ProfileModel {
+	
+	@SuppressWarnings("nls")
 	@JsonService(key="profiles")
 	public static String getProfiles(HttpSession session) {
 		Sessions clientSession = new Sessions(session);
 		UserSessionData userSessionData = clientSession.getSessionData();
+		Map<String, String> urlParameters = session.getUrlParameters();
 		
-		QResults<Profile, Void> profiles = T_Profile.all();
-		
-		if(userSessionData != null) {
-			UUID idUtilisateur = userSessionData.getSessionUser().getIdContact();
-			if(idUtilisateur != null) {
-				profiles = profiles.innerJoin(ManagerProfile.class, T_Profile.ID_PROFILE.equalTo(T_ManagerProfile.ID_PROFILE))
-					.where(T_ManagerProfile.ID_CONTACT.equalTo(idUtilisateur));
+		if(session.getRequestMethod() == HttpMethod.GET) { //Lecture
+			JsonParser parser = new JsonParser();
+			parser.setPrettyPrinting(true);
+			
+			QResults<Profile, Void> profiles = T_Profile.all();
+			if(userSessionData != null) {
+				UUID idUtilisateur = userSessionData.getSessionUser().getIdContact();
+				if(idUtilisateur != null) {
+					profiles = profiles.innerJoin(ManagerProfile.class, T_Profile.ID_PROFILE.equalTo(T_ManagerProfile.ID_PROFILE))
+						.where(T_ManagerProfile.ID_CONTACT.equalTo(idUtilisateur));
+				}
 			}
+			
+			if(!urlParameters.containsKey("id")) {
+				return parser.parseValue(List.class, profiles.asList());
+			}
+			
+			String idProfileStr = urlParameters.get("id");
+			UUID idProfile = null;
+			try {
+				idProfile = UUID.fromString(idProfileStr);
+			} catch(IllegalArgumentException e) {
+			}
+			
+			return parser.parseValue(profiles.where(T_Profile.ID_PROFILE.equalTo(idProfile)).first());
+		} else if(session.getRequestMethod() == HttpMethod.PUT) { //MAJ
+			String jsonProfile;
+			try {
+				jsonProfile = session.readContentAsString(Charset.forName("UTF-8"));
+				
+				ObjectMapper jsonMapper = new ObjectMapper();
+				Profile profile = jsonMapper.readValue(jsonProfile, Profile.class);
+				
+				//Pour plus de securité on ne save pas direct on affecte les propiétés voulu.
+				Profile dbProfile = T_Profile.getInstanceWithPrimaryKey(profile.getId());
+				dbProfile.setIdEntite(profile.getIdEntite());
+				dbProfile.save();
+				
+				return jsonProfile;
+			} catch (IOException | ObjectPersistenceException e) {
+				e.printStackTrace();
+				return "{\"success\":false, \"error\": \"" + ExceptionUtils.toString(e).replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r") + "\"}";
+			}
+			
+			
 		}
 		
-		JsonParser parser = new JsonParser();
-		parser.setPrettyPrinting(true);
-		
-		/*parser.addParseValueHandler(Entite.class, (type, value, context) -> {
-			if(value != null) {
-				UUID idEntite = ((Entite)value).getIdEntite();
-				if(idEntite != null)
-					return "\"" + idEntite.toString() + "\"";
-			}
-			return null;
-		});*/
-		return parser.parseValue(List.class, profiles.asList());
+		return null;
 	}
 	
 	@SuppressWarnings("nls")
