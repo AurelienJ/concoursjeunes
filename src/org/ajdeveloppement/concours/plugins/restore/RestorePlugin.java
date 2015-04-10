@@ -299,7 +299,8 @@ public class RestorePlugin {
 				        fos.write(buffer, 0, nbLecture);
 				    }
 				} finally {
-					try { fos.close(); } catch (IOException e) { }
+					if(fos != null)
+						try { fos.close(); } catch (IOException e) { }
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -311,7 +312,8 @@ public class RestorePlugin {
 					null, null, e, Level.SEVERE, null));
 			e.printStackTrace();
 		} finally {
-			try { jis.close(); } catch (IOException e) { }
+			if(jis != null)
+				try { jis.close(); } catch (IOException e) { }
 		}
 
 		//jarFile.delete();

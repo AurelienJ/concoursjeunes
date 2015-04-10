@@ -186,7 +186,7 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	
 	@XmlTransient
 	@SqlField(name="ID_REGLEMENT")
-	private UUID idReglement;
+	private UUID idRule;
 	
 	@XmlTransient
 	@SqlForeignKey(mappedTo="ID_COMPETITION")
@@ -312,23 +312,23 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	 * 
 	 * @return Identifiant du réglement en base
 	 */
-	public UUID getIdReglement() {
-		if(idReglement == null)
-			idReglement = UUID.randomUUID();
-		return idReglement;
+	public UUID getIdRule() {
+		if(idRule == null)
+			idRule = UUID.randomUUID();
+		return idRule;
 	}
 
 	/**
 	 * Définit l'identifiant du réglement en base
 	 * 
-	 * @param idReglement Identifiant du réglement en base
+	 * @param idRule Identifiant du réglement en base
 	 */
-	public void setIdReglement(UUID idReglement) {
-		Object oldValue = this.idReglement;
+	public void setIdRule(UUID idReglement) {
+		Object oldValue = this.idRule;
 		
-		this.idReglement = idReglement;
+		this.idRule = idReglement;
 		
-		pcs.firePropertyChange("idReglement", oldValue, idReglement); //$NON-NLS-1$
+		pcs.firePropertyChange("idRule", oldValue, idReglement); //$NON-NLS-1$
 	}
 
 	/**
@@ -395,6 +395,20 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 		this.reglementType = reglementType;
 		
 		pcs.firePropertyChange("reglementType", oldValue, reglementType); //$NON-NLS-1$
+	}
+
+	/**
+	 * @return competition
+	 */
+	public Competition getCompetition() {
+		return competition;
+	}
+
+	/**
+	 * @param competition competition à définir
+	 */
+	public void setCompetition(Competition competition) {
+		this.competition = competition;
 	}
 
 	/**
@@ -971,8 +985,8 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 			if(entite.getIdEntite() == null)
 				entite.save(session);
 	
-			if(idReglement == null) {
-				idReglement = UUID.randomUUID();
+			if(idRule == null) {
+				idRule = UUID.randomUUID();
 			}
 			
 			SqlContext context = SqlContext.getDefaultContext();
@@ -1001,7 +1015,7 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 		}
 		
 		PersitentCollection.save(tie, session, 
-				Collections.<String, Object>singletonMap(T_Tie.ID_REGLEMENT.getFieldName(), idReglement));
+				Collections.<String, Object>singletonMap(T_Tie.ID_REGLEMENT.getFieldName(), idRule));
 	}
 
 	/**
@@ -1017,7 +1031,7 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 		}
 		
 		PersitentCollection.save(listCriteria, session, 
-				Collections.<String, Object>singletonMap(T_Tie.ID_REGLEMENT.getFieldName(), idReglement));
+				Collections.<String, Object>singletonMap(T_Tie.ID_REGLEMENT.getFieldName(), idRule));
 	}
 	
 	/**
@@ -1027,7 +1041,7 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	 */
 	private void saveSurclassement(Session session) throws ObjectPersistenceException {
 		PersitentCollection.save(surclassements, session, 
-				Collections.<String, Object>singletonMap(T_Tie.ID_REGLEMENT.getFieldName(), idReglement));
+				Collections.<String, Object>singletonMap(T_Tie.ID_REGLEMENT.getFieldName(), idRule));
 	}
 
 	/**
@@ -1037,7 +1051,7 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	 */
 	private void saveDistancesAndBlasons(Session session) throws ObjectPersistenceException {
 //		PersitentCollection.save(listPlacementCriteriaSet, session,
-//				Collections.<String, Object>singletonMap(T_CriteriaSet.ID_REGLEMENT.getFieldName(), idReglement));
+//				Collections.<String, Object>singletonMap(T_CriteriaSet.ID_REGLEMENT.getFieldName(), idRule));
 	}
 	
 	
@@ -1072,10 +1086,10 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	}
 	
 	protected void beforeMarshal(Marshaller marshaller) {
-		if(idReglement == null)
-			idReglement = UUID.randomUUID();
+		if(idRule == null)
+			idRule = UUID.randomUUID();
 		
-		xmlId = idReglement.toString();
+		xmlId = idRule.toString();
 	}
 	
 	/**
@@ -1084,7 +1098,7 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	 * @param parent
 	 */
 	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		idReglement = UUID.fromString(xmlId);
+		idRule = UUID.fromString(xmlId);
 		
 		xmlId = null;
 	}
@@ -1134,7 +1148,7 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	@Override
 	public Rule clone() throws CloneNotSupportedException {
 		Rule clone = (Rule)super.clone();
-		clone.setIdReglement(null);
+		clone.setIdRule(null);
 		
 		//Reinitialisation des D/B
 		clone.setListDistancesEtBlason(new ArrayList<DistancesEtBlason>());

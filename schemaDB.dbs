@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project name="H2" id="Project3219004" database="H2" >
-	<schema name="AJWEBSERVER" catalogname="ARCCOMPETITIONDB" schemaname="AJWEBSERVER" defo="y" >
+<project name="H2" id="Project_3540d6" schema_prefix_table="y" html="y" template="Default" database="H2" >
+	<schema name="AJWEBSERVER" catalogname="ARCCOMPETITIONDB" schemaname="AJWEBSERVER" >
 		<table name="PARAM" >
 			<column name="DBVERSION" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
 			<column name="APPREVISION" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
@@ -13,7 +13,7 @@
 		</table>
 		<table name="REQUEST" >
 			<column name="IDREQUEST" type="bigint" length="19" decimal="0" jt="-5" mandatory="y" >
-				<defo>(NEXT VALUE FOR AJWEBSERVER.SYSTEM_SEQUENCE_1506C3A4_935D_45C9_9045_0C73DD45F1AF)</defo>
+				<defo>(NEXT VALUE FOR AJWEBSERVER.SYSTEM_SEQUENCE_7105FABA_92E8_4531_AEC2_84C912988BC4)</defo>
 			</column>
 			<column name="DATE" type="timestamp" length="23" decimal="10" jt="93" />
 			<column name="METHOD" type="varchar" length="10" decimal="0" jt="12" />
@@ -45,9 +45,17 @@
 				<column name="PATH" />
 			</index>
 		</table>
-		<sequence name="SYSTEM_SEQUENCE_1506C3A4_935D_45C9_9045_0C73DD45F1AF" start="10689" />
+		<table name="SESSIONDATA" >
+			<column name="IDSESSION" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="DATA" type="other" length="2147483647" decimal="0" jt="1111" />
+			<column name="EXPIRATIONDATE" type="timestamp" length="23" decimal="10" jt="93" />
+			<index name="CONSTRAINT_7" unique="PRIMARY_KEY" >
+				<column name="IDSESSION" />
+			</index>
+		</table>
+		<sequence name="SYSTEM_SEQUENCE_7105FABA_92E8_4531_AEC2_84C912988BC4" start="7210" />
 	</schema>
-	<schema name="PUBLIC" catalogname="ARCCOMPETITIONDB" schemaname="PUBLIC" defo="y" >
+	<schema name="PUBLIC" catalogname="ARCCOMPETITIONDB" schemaname="PUBLIC" >
 		<table name="ANCRAGE_BLASON" >
 			<column name="ID_BLASON" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
 			<column name="EMPLACEMENT" type="integer" length="10" decimal="0" jt="4" mandatory="y" />
@@ -155,7 +163,7 @@
 		</table>
 		<table name="CATEGORIE_REGLEMENT" >
 			<column name="NUMCATEGORIE_REGLEMENT" type="integer" length="10" decimal="0" jt="4" mandatory="y" >
-				<defo>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_0E085A3B_41C2_450B_B350_4A941060310F)</defo>
+				<defo>(NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_93F1845B_4EBE_48CB_ACF8_2D8F989D3AFD)</defo>
 			</column>
 			<column name="NOMCATEGORIE" type="varchar" length="128" decimal="0" jt="12" />
 			<index name="CONSTRAINT_A" unique="PRIMARY_KEY" >
@@ -304,6 +312,9 @@
 			<column name="IDENTIFIANT" type="varchar" length="128" decimal="0" jt="12" />
 			<column name="MOT_DE_PASSE" type="varchar" length="255" decimal="0" jt="12" />
 			<column name="TOKEN_IDP_EXTERNE" type="varchar" length="255" decimal="0" jt="12" />
+			<column name="LANGUAGE" type="varchar" length="5" decimal="0" jt="12" />
+			<column name="SURBRILLANCE_EXAEQUO" type="boolean" length="1" decimal="0" jt="16" />
+			<column name="SAISI_NON_CUMULE" type="boolean" length="1" decimal="0" jt="16" />
 			<column name="UPPER_NAME" type="varchar" length="128" decimal="0" jt="12" >
 				<defo>UPPER(NAME)</defo>
 			</column>
@@ -501,6 +512,8 @@
 			<column name="VILLE" type="varchar" length="64" decimal="0" jt="12" />
 			<column name="PAYS" type="varchar" length="2" decimal="0" jt="12" />
 			<column name="NOTE" type="clob" length="2147483647" decimal="0" jt="2005" />
+			<column name="ID_ENTITE_PROPRIETAIRE" type="uuid" length="2147483647" decimal="0" jt="-2" />
+			<column name="LOGO" type="varchar" length="255" decimal="0" jt="12" />
 			<column name="DATEMODIF" type="date" length="8" decimal="0" jt="91" >
 				<defo>CURRENT_DATE()</defo>
 			</column>
@@ -515,6 +528,9 @@
 			</index>
 			<index name="CONSTRAINT_INDEX_7" unique="NORMAL" >
 				<column name="ID_ENTITE_PARENT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_7A" unique="NORMAL" >
+				<column name="ID_ENTITE_PROPRIETAIRE" />
 			</index>
 			<index name="I_ENTITE_NOM" unique="NORMAL" >
 				<column name="NOM" />
@@ -531,6 +547,9 @@
 			<fk name="CONSTRAINT_7A3" to_schema="PUBLIC" to_table="ENTITE" delete_action="restrict" update_action="cascade" >
 				<fk_column name="ID_ENTITE_PARENT" pk="ID_ENTITE" />
 			</fk>
+			<fk name="CONSTRAINT_7A30" to_schema="PUBLIC" to_table="ENTITE" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_ENTITE_PROPRIETAIRE" pk="ID_ENTITE" />
+			</fk>
 		</table>
 		<table name="FEDERATION" >
 			<column name="ID_ENTITE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
@@ -541,6 +560,26 @@
 			</index>
 			<fk name="CONSTRAINT_2C0" to_schema="PUBLIC" to_table="ENTITE" delete_action="restrict" update_action="cascade" >
 				<fk_column name="ID_ENTITE" pk="ID_ENTITE" />
+			</fk>
+		</table>
+		<table name="GESTIONNAIRE_PROFILE" >
+			<column name="ID_CONTACT" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="ID_PROFILE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<index name="CONSTRAINT_AE" unique="PRIMARY_KEY" >
+				<column name="ID_CONTACT" />
+				<column name="ID_PROFILE" />
+			</index>
+			<index name="CONSTRAINT_INDEX_AE" unique="NORMAL" >
+				<column name="ID_CONTACT" />
+			</index>
+			<index name="CONSTRAINT_INDEX_AED" unique="NORMAL" >
+				<column name="ID_PROFILE" />
+			</index>
+			<fk name="CONSTRAINT_AED" to_schema="PUBLIC" to_table="CONTACT" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_CONTACT" pk="ID_CONTACT" />
+			</fk>
+			<fk name="CONSTRAINT_AED9" to_schema="PUBLIC" to_table="PROFILE" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_PROFILE" pk="ID_PROFILE" />
 			</fk>
 		</table>
 		<table name="JEUX_CRITERES_DISCRIMINANT" >
@@ -618,7 +657,7 @@
 				<defo>RANDOM_UUID()</defo>
 			</column>
 			<column name="INTITULE" type="varchar" length="128" decimal="0" jt="12" mandatory="y" />
-			<column name="ID_ENTITE" type="uuid" length="2147483647" decimal="0" jt="-2" mandatory="y" />
+			<column name="ID_ENTITE" type="uuid" length="2147483647" decimal="0" jt="-2" />
 			<index name="CONSTRAINT_1" unique="PRIMARY_KEY" >
 				<column name="ID_PROFILE" />
 			</index>
@@ -648,20 +687,27 @@
 				<defo>&#039;TARGET&#039;</defo>
 			</column>
 			<column name="REMOVABLE" type="boolean" length="1" decimal="0" jt="16" />
+			<column name="ID_COMPETITION" type="uuid" length="2147483647" decimal="0" jt="-2" />
 			<index name="CONSTRAINT_AF" unique="PRIMARY_KEY" >
 				<column name="ID_REGLEMENT" />
 			</index>
-			<index name="CONSTRAINT_INDEX_A" unique="NORMAL" >
+			<index name="CONSTRAINT_AF17_INDEX_3" unique="NORMAL" >
+				<column name="NUMCATEGORIE_REGLEMENT" />
+			</index>
+			<index name="CONSTRAINT_AF1_INDEX_3" unique="NORMAL" >
 				<column name="ID_ENTITE" />
 			</index>
-			<index name="CONSTRAINT_INDEX_AF" unique="NORMAL" >
-				<column name="NUMCATEGORIE_REGLEMENT" />
+			<index name="CONSTRAINT_INDEX_A" unique="NORMAL" >
+				<column name="ID_COMPETITION" />
 			</index>
 			<index name="I_NOM_REGLEMENT" unique="NORMAL" >
 				<column name="NOM" />
 			</index>
 			<fk name="CONSTRAINT_AF17" to_schema="PUBLIC" to_table="CATEGORIE_REGLEMENT" delete_action="restrict" update_action="cascade" >
 				<fk_column name="NUMCATEGORIE_REGLEMENT" pk="NUMCATEGORIE_REGLEMENT" />
+			</fk>
+			<fk name="CONSTRAINT_AF17C" to_schema="PUBLIC" to_table="COMPETITION" delete_action="cascade" update_action="cascade" >
+				<fk_column name="ID_COMPETITION" pk="ID_COMPETITION" />
 			</fk>
 			<fk name="CONSTRAINT_AF1" to_schema="PUBLIC" to_table="ENTITE" delete_action="restrict" update_action="cascade" >
 				<fk_column name="ID_ENTITE" pk="ID_ENTITE" />
@@ -759,106 +805,96 @@
 				<column name="UPPER_NAME" />
 			</index>
 		</table>
-		<sequence name="SYSTEM_SEQUENCE_0E085A3B_41C2_450B_B350_4A941060310F" start="1" />
+		<sequence name="SYSTEM_SEQUENCE_93F1845B_4EBE_48CB_ACF8_2D8F989D3AFD" start="1" />
 	</schema>
-	<connector name="H2" database="H2" driver_class="org.h2.Driver" driver_jar="h2-1.3.176.jar" url="jdbc:h2:file:/var/lib/ArcCompetition/base/arccompetitiondb;AUTO_SERVER=true" host="localhost" port="-1" instance="/var/lib/ArcCompetition/base/arccompetitiondb" user="sa" schema_mapping="" />
-	<layout id="Layout3371094" name="AJWEBSERVER" show_relation_columns="y" >
-		<entity schema="AJWEBSERVER" name="PARAM" color="b2cdf7" x="240" y="45" />
-		<entity schema="AJWEBSERVER" name="REQUEST" color="b2cdf7" x="45" y="45" />
-		<entity schema="AJWEBSERVER" name="RESOURCES" color="b2cdf7" x="420" y="45" />
+	<connector name="H2" database="H2" driver_class="org.h2.Driver" driver_jar="h2-1.3.176.jar" url="jdbc:h2:/home/aurelien/.ArcCompetition/base/arccompetitiondb;AUTO_SERVER=true" host="localhost" port="-1" instance="/home/aurelien/.ArcCompetition/base/arccompetitiondb;AUTO_SERVER=true" user="sa" schema_mapping="" />
+	<layout id="Layout_3af8dc" name="AJWEBSERVER" show_relation_columns="y" >
+		<entity schema="AJWEBSERVER" name="PARAM" color="b2cdf7" x="240" y="195" />
+		<entity schema="AJWEBSERVER" name="REQUEST" color="b2cdf7" x="45" y="195" />
+		<entity schema="AJWEBSERVER" name="RESOURCES" color="b2cdf7" x="420" y="195" />
+		<entity schema="AJWEBSERVER" name="SESSIONDATA" color="b2cdf7" x="240" y="45" />
 	</layout>
-	<layout id="Layout3371103" name="PUBLIC" show_relation_columns="y" >
-		<entity schema="PUBLIC" name="ANCRAGE_BLASON" color="f5d9b5" x="1080" y="720" />
-		<entity schema="PUBLIC" name="ARCHER" color="c0f5b5" x="240" y="825" />
-		<entity schema="PUBLIC" name="BLASON" color="f5d9b5" x="870" y="720" />
-		<entity schema="PUBLIC" name="BLASON_DISTANCE_BLASONS" color="f5d9b5" x="1260" y="720" />
-		<entity schema="PUBLIC" name="CATEGORIE_REGLEMENT" color="f5d9b5" x="45" y="450" />
-		<entity schema="PUBLIC" name="CODE_POSTAL" color="b5b5f5" x="1365" y="120" />
-		<entity schema="PUBLIC" name="COMPETITION" color="c0f5b5" x="75" y="1155" />
-		<entity schema="PUBLIC" name="CONCURRENT" color="c0f5b5" x="450" y="825" />
-		<entity schema="PUBLIC" name="CONTACT" color="b5b5f5" x="645" y="225" />
-		<entity schema="PUBLIC" name="CRITERE_CLASSEMENT" color="cbb5f5" x="870" y="1245" />
-		<entity schema="PUBLIC" name="CRITERE_DISCRIMINANT" color="cbb5f5" x="1140" y="1245" />
-		<entity schema="PUBLIC" name="DEPARTAGE" color="f5d9b5" x="330" y="585" />
-		<entity schema="PUBLIC" name="DISTANCE_BLASONS" color="f5d9b5" x="1080" y="555" />
-		<entity schema="PUBLIC" name="ELEMENT_CRITERE_DISCRIMINANT" color="cbb5f5" x="1455" y="1050" />
-		<entity schema="PUBLIC" name="ELEMENT_JEUX_CRITERES_DISCRIMINANT" color="cbb5f5" x="1140" y="1095" />
-		<entity schema="PUBLIC" name="ENTITE" color="c0f5b5" x="510" y="1380" />
-		<entity schema="PUBLIC" name="JEUX_CRITERES_DISCRIMINANT" color="cbb5f5" x="1455" y="1245" />
-		<entity schema="PUBLIC" name="JEUX_DISTANCES_BLASONS" color="f5d9b5" x="1260" y="885" />
-		<entity schema="PUBLIC" name="REGLEMENT" color="f5d9b5" x="330" y="270" />
-		<entity schema="PUBLIC" name="REPARTITION_PHASE_FINALE" color="f5d9b5" x="45" y="585" />
-		<entity schema="PUBLIC" name="SCORE_CONCURRENT" color="c0f5b5" x="45" y="825" />
-		<entity schema="PUBLIC" name="PARAM" color="f5d9b5" x="45" y="90" />
-		<entity schema="PUBLIC" name="LIBELLE" color="b5b5f5" x="210" y="90" />
-		<entity schema="PUBLIC" name="VILLE" color="b5b5f5" x="1545" y="120" />
-		<entity schema="PUBLIC" name="COORDINATE" color="b5b5f5" x="825" y="60" />
-		<entity schema="PUBLIC" name="CIVILITY" color="b5b5f5" x="840" y="180" />
-		<entity schema="PUBLIC" name="ASSOCIER_CATEGORIE_CONTACT" color="b5cef5" x="840" y="315" />
-		<entity schema="PUBLIC" name="CATEGORIE_CONTACT" color="b5cef5" x="1080" y="60" />
-		<entity schema="PUBLIC" name="PROFILE" color="b5cef5" x="795" y="1680" />
-		<entity schema="PUBLIC" name="TARIF" color="b5cef5" x="1035" y="1665" />
-		<entity schema="PUBLIC" name="CATEGORIE_TARIF" color="b5cef5" x="780" y="1560" />
-		<entity schema="PUBLIC" name="FEDERATION" color="c0f5b5" x="165" y="1500" />
-		<entity schema="PUBLIC" name="TYPE_EQUIPE" color="c0f5b5" x="90" y="1365" />
-		<entity schema="PUBLIC" name="NIVEAU_COMPETITION" color="c0f5b5" x="300" y="1380" />
-		<group name="Blasons" color="f7f0e6" >
-			<comment>Used by : &#10;   ARCHER&#10;   CRITERE_DISCRIMINANT</comment>
+	<layout id="Layout_3af8ea" name="PUBLIC" show_relation_columns="y" >
+		<entity schema="PUBLIC" name="CODE_POSTAL" color="b3ccf5" x="2175" y="885" />
+		<entity schema="PUBLIC" name="COMPETITION" color="f5d8b3" x="150" y="420" />
+		<entity schema="PUBLIC" name="CONCURRENT" color="bef5b3" x="285" y="690" />
+		<entity schema="PUBLIC" name="LIBELLE" color="b3ccf5" x="2025" y="885" />
+		<entity schema="PUBLIC" name="PARAM" color="b3ccf5" x="1995" y="720" />
+		<entity schema="PUBLIC" name="REPARTITION_PHASE_FINALE" color="b3ccf5" x="2175" y="735" />
+		<entity schema="PUBLIC" name="SCORE_CONCURRENT" color="bef5b3" x="45" y="735" />
+		<entity schema="PUBLIC" name="VILLE" color="b3ccf5" x="2355" y="885" />
+		<entity schema="PUBLIC" name="CONTACT" color="cab3f5" x="60" y="1185" />
+		<entity schema="PUBLIC" name="ARCHER" color="bef5b3" x="60" y="945" />
+		<entity schema="PUBLIC" name="ASSOCIER_CATEGORIE_CONTACT" color="bef5b3" x="60" y="1530" />
+		<entity schema="PUBLIC" name="CATEGORIE_CONTACT" color="bef5b3" x="315" y="1515" />
+		<entity schema="PUBLIC" name="CIVILITY" color="cab3f5" x="330" y="1140" />
+		<entity schema="PUBLIC" name="COORDINATE" color="cab3f5" x="300" y="990" />
+		<entity schema="PUBLIC" name="GESTIONNAIRE_PROFILE" color="cab3f5" x="615" y="1980" />
+		<entity schema="PUBLIC" name="ENTITE" color="cab3f5" x="510" y="45" />
+		<entity schema="PUBLIC" name="PROFILE" color="cab3f5" x="660" y="1695" />
+		<entity schema="PUBLIC" name="TARIF" color="bef5b3" x="705" y="1815" />
+		<entity schema="PUBLIC" name="CATEGORIE_TARIF" color="bef5b3" x="825" y="1815" />
+		<entity schema="PUBLIC" name="FEDERATION" color="bef5b3" x="765" y="210" />
+		<entity schema="PUBLIC" name="CRITERE_CLASSEMENT" color="b3b3f5" x="1005" y="645" />
+		<entity schema="PUBLIC" name="REGLEMENT" color="bef5b3" x="1575" y="930" />
+		<entity schema="PUBLIC" name="JEUX_DISTANCES_BLASONS" color="f5d8b3" x="1005" y="1320" />
+		<entity schema="PUBLIC" name="DISTANCE_BLASONS" color="f5d8b3" x="1005" y="1155" />
+		<entity schema="PUBLIC" name="BLASON_DISTANCE_BLASONS" color="f5d8b3" x="990" y="1020" />
+		<entity schema="PUBLIC" name="CATEGORIE_REGLEMENT" color="bef5b3" x="1605" y="1305" />
+		<entity schema="PUBLIC" name="ANCRAGE_BLASON" color="f5d8b3" x="1275" y="840" />
+		<entity schema="PUBLIC" name="BLASON" color="f5d8b3" x="1035" y="825" />
+		<entity schema="PUBLIC" name="DEPARTAGE" color="b3ccf5" x="1830" y="1170" />
+		<entity schema="PUBLIC" name="TYPE_EQUIPE" color="bef5b3" x="660" y="390" />
+		<entity schema="PUBLIC" name="NIVEAU_COMPETITION" color="f5d8b3" x="375" y="405" />
+		<entity schema="PUBLIC" name="ELEMENT_JEUX_CRITERES_DISCRIMINANT" color="b3b3f5" x="1695" y="495" />
+		<entity schema="PUBLIC" name="ELEMENT_CRITERE_DISCRIMINANT" color="b3b3f5" x="1140" y="465" />
+		<entity schema="PUBLIC" name="CRITERE_DISCRIMINANT" color="b3b3f5" x="1680" y="615" />
+		<entity schema="PUBLIC" name="JEUX_CRITERES_DISCRIMINANT" color="b3b3f5" x="1290" y="645" />
+		<group name="Competition" color="ebf7e9" >
+			<entity schema="PUBLIC" name="SCORE_CONCURRENT" />
+			<entity schema="PUBLIC" name="CONCURRENT" />
+			<entity schema="PUBLIC" name="COMPETITION" />
+			<entity schema="PUBLIC" name="NIVEAU_COMPETITION" />
+		</group>
+		<group name="Divers" color="e9eef7" >
+			<entity schema="PUBLIC" name="CODE_POSTAL" />
+			<entity schema="PUBLIC" name="LIBELLE" />
+			<entity schema="PUBLIC" name="VILLE" />
+			<entity schema="PUBLIC" name="REPARTITION_PHASE_FINALE" />
+			<entity schema="PUBLIC" name="PARAM" />
+		</group>
+		<group name="ENTITE" color="eee9f7" >
+			<entity schema="PUBLIC" name="ENTITE" />
+			<entity schema="PUBLIC" name="FEDERATION" />
+		</group>
+		<group name="Reglement" color="ebf7e9" >
+			<entity schema="PUBLIC" name="CATEGORIE_REGLEMENT" />
+			<entity schema="PUBLIC" name="REGLEMENT" />
 			<entity schema="PUBLIC" name="ANCRAGE_BLASON" />
 			<entity schema="PUBLIC" name="BLASON" />
 			<entity schema="PUBLIC" name="BLASON_DISTANCE_BLASONS" />
-			<entity schema="PUBLIC" name="DISTANCE_BLASONS" />
-			<entity schema="PUBLIC" name="JEUX_DISTANCES_BLASONS" />
-			<callout x="885" y="585" pointer="SV" />
-		</group>
-		<group name="ARCHER" color="e9f7e6" >
-			<entity schema="PUBLIC" name="ARCHER" />
-			<entity schema="PUBLIC" name="SCORE_CONCURRENT" />
-			<entity schema="PUBLIC" name="CONCURRENT" />
-		</group>
-		<group name="Profile" color="e6edf7" >
-			<entity schema="PUBLIC" name="PROFILE" />
-			<entity schema="PUBLIC" name="CATEGORIE_TARIF" />
-			<entity schema="PUBLIC" name="TARIF" />
-		</group>
-		<group name="Contact" color="e6e6f7" >
-			<comment>Used by : &#10;   ARCHER&#10;   CATEGORIE_CONTACT</comment>
-			<entity schema="PUBLIC" name="COORDINATE" />
-			<entity schema="PUBLIC" name="CIVILITY" />
-			<entity schema="PUBLIC" name="CONTACT" />
-			<entity schema="PUBLIC" name="ASSOCIER_CATEGORIE_CONTACT" />
-			<entity schema="PUBLIC" name="CATEGORIE_CONTACT" />
-			<callout x="645" y="45" pointer="SV" />
-		</group>
-		<group name="CRITERE_DISCRIMINANT" color="ece6f7" >
-			<comment>Used by : &#10;   ARCHER&#10;   CATEGORIE_CONTACT</comment>
-			<entity schema="PUBLIC" name="CRITERE_DISCRIMINANT" />
 			<entity schema="PUBLIC" name="CRITERE_CLASSEMENT" />
-			<entity schema="PUBLIC" name="JEUX_CRITERES_DISCRIMINANT" />
-			<entity schema="PUBLIC" name="ELEMENT_JEUX_CRITERES_DISCRIMINANT" />
-			<entity schema="PUBLIC" name="ELEMENT_CRITERE_DISCRIMINANT" />
-			<callout x="915" y="1080" pointer="SV" />
-		</group>
-		<group name="Réglement" color="f7f0e6" >
-			<comment>Used by : &#10;   ANCRAGE_BLASON&#10;   CRITERE_DISCRIMINANT&#10;   TYPE_EQUIPE</comment>
-			<entity schema="PUBLIC" name="REPARTITION_PHASE_FINALE" />
+			<entity schema="PUBLIC" name="CRITERE_DISCRIMINANT" />
 			<entity schema="PUBLIC" name="DEPARTAGE" />
-			<entity schema="PUBLIC" name="CATEGORIE_REGLEMENT" />
-			<entity schema="PUBLIC" name="REGLEMENT" />
-			<callout x="90" y="300" pointer="SV" />
+			<entity schema="PUBLIC" name="DISTANCE_BLASONS" />
+			<entity schema="PUBLIC" name="ELEMENT_CRITERE_DISCRIMINANT" />
+			<entity schema="PUBLIC" name="ELEMENT_JEUX_CRITERES_DISCRIMINANT" />
+			<entity schema="PUBLIC" name="JEUX_CRITERES_DISCRIMINANT" />
+			<entity schema="PUBLIC" name="JEUX_DISTANCES_BLASONS" />
 		</group>
-		<group name="Compétition" color="e9f7e6" >
-			<comment>Used by : &#10;   ARCHER&#10;   CATEGORIE_CONTACT&#10;   CODE_POSTAL&#10;   CRITERE_DISCRIMINANT&#10;   REPARTITION_PHASE_FINALE</comment>
-			<entity schema="PUBLIC" name="TYPE_EQUIPE" />
-			<entity schema="PUBLIC" name="FEDERATION" />
-			<entity schema="PUBLIC" name="ENTITE" />
-			<entity schema="PUBLIC" name="NIVEAU_COMPETITION" />
-			<entity schema="PUBLIC" name="COMPETITION" />
-			<callout x="465" y="1095" pointer="SV" />
+		<group name="Personnes" color="c4e0f9" >
+			<entity schema="PUBLIC" name="CONTACT" />
+			<entity schema="PUBLIC" name="ARCHER" />
+			<entity schema="PUBLIC" name="CATEGORIE_CONTACT" />
+			<entity schema="PUBLIC" name="CIVILITY" />
+			<entity schema="PUBLIC" name="ASSOCIER_CATEGORIE_CONTACT" />
+			<entity schema="PUBLIC" name="COORDINATE" />
 		</group>
-		<group name="Ville" color="c4e0f9" >
-			<entity schema="PUBLIC" name="VILLE" />
-			<entity schema="PUBLIC" name="CODE_POSTAL" />
+		<group name="Profile" color="c4e0f9" >
+			<entity schema="PUBLIC" name="TARIF" />
+			<entity schema="PUBLIC" name="CATEGORIE_TARIF" />
+			<entity schema="PUBLIC" name="PROFILE" />
+			<entity schema="PUBLIC" name="GESTIONNAIRE_PROFILE" />
 		</group>
 	</layout>
 </project>

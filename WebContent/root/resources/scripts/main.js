@@ -37,7 +37,7 @@ register(["/", "/index.htm", "/index.html"], (function(global) {
 		}
 	}
 })(this));*/
-load(basePath + "/scripts/index.js");
+//load(basePath + "/scripts/index.js");
 
 //end service
 

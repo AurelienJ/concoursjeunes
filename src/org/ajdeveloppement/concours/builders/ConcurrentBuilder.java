@@ -182,7 +182,7 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 				if(!ApplicationCore.dbConnection.isClosed()) {
 					try (PreparedStatement pstmt = ApplicationCore.dbConnection.prepareStatement(sql)) {
 						pstmt.setString(1, concurrent.getIdContact().toString());
-						pstmt.setObject(2, reglement.getIdReglement());
+						pstmt.setObject(2, reglement.getIdRule());
 					
 						try (ResultSet rsCriteriaSet = pstmt.executeQuery()) {
 							if(rsCriteriaSet.first()) {

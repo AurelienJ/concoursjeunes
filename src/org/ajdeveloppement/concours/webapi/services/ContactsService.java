@@ -1,7 +1,7 @@
 /*
- * Créé le 29 déc. 2013 à 15:45:26 pour ArcCompetition
+ * Créé le 7 avr. 2015 à 16:15:30 pour ArcCompetition
  *
- * Copyright 2002-2013 - Aurélien JEOFFRAY
+ * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,191 +86,142 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.data;
+package org.ajdeveloppement.concours.webapi.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-
-import org.ajdeveloppement.commons.net.json.JsonExclude;
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.data.Civility;
+import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.Coordinate;
+import org.ajdeveloppement.concours.data.T_Civility;
+import org.ajdeveloppement.concours.data.T_Contact;
+import org.ajdeveloppement.concours.data.T_Coordinate;
+import org.ajdeveloppement.concours.webapi.adapters.CivilityAdapter;
+import org.ajdeveloppement.concours.webapi.adapters.ContactAdapter;
+import org.ajdeveloppement.concours.webapi.adapters.CoordinateAdapter;
+import org.ajdeveloppement.concours.webapi.models.CivilityModelView;
+import org.ajdeveloppement.concours.webapi.models.ContactModelView;
+import org.ajdeveloppement.concours.webapi.models.CoordinateModelView;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@SqlTable(name="PROFILE",disableCache=true)
-@SqlPrimaryKey(fields="ID_PROFILE",generatedidField=@SqlGeneratedIdField(name="ID_PROFILE"))
-public class Profile implements SqlObjectPersistence {
-	
-	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
-	@XmlID
-	@XmlAttribute(name="id")
-	private String xmlId;
-	
-	@SqlField(name="ID_PROFILE")
-	private UUID id;
-	
-	@SqlField(name="INTITULE")
-	private String intitule;
-	
-	private Entite entite;
-	
-	@SqlField(name="ID_ENTITE")
-	private UUID idEntite;
-	
-	@SqlChildCollection(foreignFields="ID_PROFILE",type=ManagerProfile.class)
-	private List<ManagerProfile> managers;
-	
-	/**
-	 * @return id
-	 */
-	public UUID getId() {
-		return id;
-	}
+public class ContactsService {
 
 	/**
-	 * @param id id à définir
-	 */
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return initule
-	 */
-	public String getIntitule() {
-		return intitule;
-	}
-
-	/**
-	 * @param initule initule à définir
-	 */
-	public void setIntitule(String initule) {
-		this.intitule = initule;
-	}
-
-	/**
-	 * @return idEntite
-	 */
-	public UUID getIdEntite() {
-		return idEntite;
-	}
-
-	/**
-	 * @param idEntite idEntite à définir
-	 */
-	public void setIdEntite(UUID idEntite) {
-		this.idEntite = idEntite;
-	}
-
-	/**
-	 * @return entite
-	 */
-	@JsonExclude
-	public Entite getEntite() {
-		if(entite == null && idEntite != null)
-			entite = T_Entite.getInstanceWithPrimaryKey(idEntite);
-		return entite;
-	}
-
-	/**
-	 * @param entite entite à définir
-	 */
-	public void setEntite(Entite entite) {
-		this.entite = entite;
-		if(entite != null)
-			this.idEntite = entite.getIdEntite();
-		else
-			this.idEntite = null;
-	}
-
-
-	/**
-	 * @return managers
-	 */
-	public List<ManagerProfile> getManagers() {
-		if(managers == null) {
-			managers = QResults.from(ManagerProfile.class)
-					.where(T_ManagerProfile.ID_PROFILE.equalTo(id))
-					.asList();
-			if(managers == null)
-				managers = new ArrayList<>();
-		}
-		return managers;
-	}
-
-	/**
-	 * @param managers managers à définir
-	 */
-	public void setManagers(List<ManagerProfile> managers) {
-		this.managers = managers;
-	}
-	
-	public boolean addManager(Contact manager) {
-		return getManagers().add(new ManagerProfile(manager, this));
-	}
-	
-	public boolean removeManager(Contact manager) {
-		return getManagers().remove(new ManagerProfile(manager, this));
-	}
-	
-	/**
-	 * For JAXB Usage only. Do not use.
 	 * 
-	 * @param marshaller
 	 */
-	protected void beforeMarshal(Marshaller marshaller) {
-		if(id == null)
-			id = UUID.randomUUID();
-		xmlId = id.toString();
-		
-		entite.beforeMarshal(marshaller);
+	public ContactsService() {
 	}
 	
-	@SuppressWarnings("nls")
-	public String toJSON() {
-		return String.format("{\"id\":\"%s\",\"intitule\":\"%s\",\"entite\":\"%s\"}", id, intitule, entite.getIdEntite());
+	public int countAllContacts() {
+		return T_Contact.all().count();
+	}
+	
+	public int countWithFilter(QFilter filter) {
+		return T_Contact.all().where(filter).count();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
+	public List<ContactModelView> getAllContacts() {
+		List<Contact> contacts = T_Contact.all().orderBy(T_Contact.NAME, T_Contact.FIRSTNAME).asList();
+		
+		if(contacts != null) {
+			ContactAdapter contactAdapter = new ContactAdapter();
+			return contacts.stream().map(c -> contactAdapter.toModelView(c)).collect(Collectors.toList());
+		}
+		
+		return null;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	
+	public List<ContactModelView> getContactsForEntite(UUID idEntite) {
+		List<Contact> contacts = T_Contact.all().where(T_Contact.ID_ENTITE.equalTo(idEntite)).asList();
+		
+		if(contacts != null) {
+			ContactAdapter contactAdapter = new ContactAdapter();
+			return contacts.stream().map(c -> contactAdapter.toModelView(c)).collect(Collectors.toList());
+		}
+		
+		return null;
+	}
+	
+	public List<ContactModelView> getContactWithFilter(QFilter filter) {
+		return getContactWithFilter(filter, 0, -1);
+	}
+	
+	public List<ContactModelView> getContactWithFilter(QFilter filter, int limit, int offset) {
+		QResults<Contact, Void> contactsQuery = T_Contact.all().where(filter).orderBy(T_Contact.NAME, T_Contact.FIRSTNAME);
+		if(limit > 0) {
+			if(offset > -1)
+				contactsQuery = contactsQuery.limit(limit, offset);
+			else
+				contactsQuery = contactsQuery.limit(limit);
+		}
+		
+		List<Contact> contacts = contactsQuery.asList();
+		
+		if(contacts != null) {
+			ContactAdapter contactAdapter = new ContactAdapter();
+			return contacts.stream().map(c -> contactAdapter.toModelView(c)).collect(Collectors.toList());
+		}
+		
+		return null;
+	}
+	
+	public ContactModelView getContactById(UUID idContact) {
+		Contact contact = T_Contact.getInstanceWithPrimaryKey(idContact);
+		
+		if(contact != null) {
+			ContactAdapter contactAdapter = new ContactAdapter();
+			return contactAdapter.toModelView(contact);
+		}
+		
+		return null;
+	}
+	
+	public void createOrUpdateContact(ContactModelView modelViewContact) throws ObjectPersistenceException {
+		Contact contact = null;
+		if(modelViewContact.getIdContact() != null)
+			contact = T_Contact.getInstanceWithPrimaryKey(modelViewContact.getIdContact());
+		
+		if(contact == null)
+			contact = new Contact();
+		
+		ContactAdapter contactAdapter = new ContactAdapter(contact);
+		contact = contactAdapter.toModel(modelViewContact);
+		
+		contact.save();
+		if(!contact.getIdContact().equals(modelViewContact.getIdContact()))
+			modelViewContact.setIdContact(contact.getIdContact());
+	}
+	
+	public boolean deleteContact(UUID idContact) throws ObjectPersistenceException {
+		Contact contact = T_Contact.getInstanceWithPrimaryKey(idContact);
+		if(contact != null) {
+			contact.delete();
+			
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Profile other = (Profile) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+		}
+		
+		return false;
+	}
+	
+	public List<CoordinateModelView> getCoordinateForIdContact(UUID idContact) {
+		List<Coordinate> coordinates = T_Coordinate.all().where(T_Coordinate.ID_CONTACT.equalTo(idContact)).asList();
+		
+		CoordinateAdapter adapter = new CoordinateAdapter();
+		return coordinates.stream().map(c -> adapter.toModelView(c)).collect(Collectors.toList());
+	}
+	
+	public List<CivilityModelView> getAllCivilities() {
+		List<Civility> civilites = T_Civility.all().asList();
+		CivilityAdapter adapter = new CivilityAdapter();
+		
+		return civilites.stream().map(c -> adapter.toModelView(c)).collect(Collectors.toList());
 	}
 }

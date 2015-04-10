@@ -1,7 +1,7 @@
 /*
- * Créé le 29 déc. 2013 à 15:45:26 pour ArcCompetition
+ * Créé le 9 avr. 2015 à 17:05:03 pour ArcCompetition
  *
- * Copyright 2002-2013 - Aurélien JEOFFRAY
+ * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,191 +86,107 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.data;
+package org.ajdeveloppement.concours.webapi.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-
-import org.ajdeveloppement.commons.net.json.JsonExclude;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Rule;
+import org.ajdeveloppement.concours.data.RulesCategory;
+import org.ajdeveloppement.concours.data.T_Entite;
+import org.ajdeveloppement.concours.data.T_Rule;
+import org.ajdeveloppement.concours.data.T_RulesCategory;
+import org.ajdeveloppement.concours.webapi.adapters.RuleAdapter;
+import org.ajdeveloppement.concours.webapi.models.RuleModelView;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@SqlTable(name="PROFILE",disableCache=true)
-@SqlPrimaryKey(fields="ID_PROFILE",generatedidField=@SqlGeneratedIdField(name="ID_PROFILE"))
-public class Profile implements SqlObjectPersistence {
-	
-	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
-	@XmlID
-	@XmlAttribute(name="id")
-	private String xmlId;
-	
-	@SqlField(name="ID_PROFILE")
-	private UUID id;
-	
-	@SqlField(name="INTITULE")
-	private String intitule;
-	
-	private Entite entite;
-	
-	@SqlField(name="ID_ENTITE")
-	private UUID idEntite;
-	
-	@SqlChildCollection(foreignFields="ID_PROFILE",type=ManagerProfile.class)
-	private List<ManagerProfile> managers;
-	
-	/**
-	 * @return id
-	 */
-	public UUID getId() {
-		return id;
-	}
+public class RuleService {
 
 	/**
-	 * @param id id à définir
-	 */
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return initule
-	 */
-	public String getIntitule() {
-		return intitule;
-	}
-
-	/**
-	 * @param initule initule à définir
-	 */
-	public void setIntitule(String initule) {
-		this.intitule = initule;
-	}
-
-	/**
-	 * @return idEntite
-	 */
-	public UUID getIdEntite() {
-		return idEntite;
-	}
-
-	/**
-	 * @param idEntite idEntite à définir
-	 */
-	public void setIdEntite(UUID idEntite) {
-		this.idEntite = idEntite;
-	}
-
-	/**
-	 * @return entite
-	 */
-	@JsonExclude
-	public Entite getEntite() {
-		if(entite == null && idEntite != null)
-			entite = T_Entite.getInstanceWithPrimaryKey(idEntite);
-		return entite;
-	}
-
-	/**
-	 * @param entite entite à définir
-	 */
-	public void setEntite(Entite entite) {
-		this.entite = entite;
-		if(entite != null)
-			this.idEntite = entite.getIdEntite();
-		else
-			this.idEntite = null;
-	}
-
-
-	/**
-	 * @return managers
-	 */
-	public List<ManagerProfile> getManagers() {
-		if(managers == null) {
-			managers = QResults.from(ManagerProfile.class)
-					.where(T_ManagerProfile.ID_PROFILE.equalTo(id))
-					.asList();
-			if(managers == null)
-				managers = new ArrayList<>();
-		}
-		return managers;
-	}
-
-	/**
-	 * @param managers managers à définir
-	 */
-	public void setManagers(List<ManagerProfile> managers) {
-		this.managers = managers;
-	}
-	
-	public boolean addManager(Contact manager) {
-		return getManagers().add(new ManagerProfile(manager, this));
-	}
-	
-	public boolean removeManager(Contact manager) {
-		return getManagers().remove(new ManagerProfile(manager, this));
-	}
-	
-	/**
-	 * For JAXB Usage only. Do not use.
 	 * 
-	 * @param marshaller
 	 */
-	protected void beforeMarshal(Marshaller marshaller) {
-		if(id == null)
-			id = UUID.randomUUID();
-		xmlId = id.toString();
-		
-		entite.beforeMarshal(marshaller);
+	public RuleService() {
+	}
+	
+	
+	
+	private List<RuleModelView> asModelViewList(List<Rule> rules) {
+		RuleAdapter adapter = new RuleAdapter();
+		return rules.stream().map(r -> adapter.toModelView(r)).collect(Collectors.toList());
 	}
 	
 	@SuppressWarnings("nls")
-	public String toJSON() {
-		return String.format("{\"id\":\"%s\",\"intitule\":\"%s\",\"entite\":\"%s\"}", id, intitule, entite.getIdEntite());
+	private QResults<Rule, Void> queryRulesByGlobalSearchValue(String search, int length, int offset) {
+		return T_Rule.all()
+				.leftJoin(RulesCategory.class, T_Rule.NUMCATEGORIE_REGLEMENT.equalTo(T_RulesCategory.NUMCATEGORIE_REGLEMENT))
+				.leftJoin(Entite.class, T_Rule.ID_ENTITE.equalTo(T_Entite.ID_ENTITE))
+				.where(T_Rule.NOM.like("%" + search + "%")
+						.or(T_RulesCategory.NOMCATEGORIE.like("%" + search + "%"))
+						.or(T_Entite.NOM.like("%" + search + "%")))
+				.limit(length, offset);
+	}
+	
+	public int countAllRules() {
+		return T_Rule.all().count();
+	}
+	
+	
+	public int countRulesByGlobalSearchValue(String search) {
+		return queryRulesByGlobalSearchValue(search, -1, -1).count();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
+	public List<RuleModelView> getAllRules() {
+		List<Rule> rules = T_Rule.all().where(T_Rule.ID_COMPETITION.isNull()).asList();
+		
+		return asModelViewList(rules);
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Profile other = (Profile) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+	
+	public List<RuleModelView> getRulesByGlobalSearchValue(String search, int length, int offset) {
+		return asModelViewList(queryRulesByGlobalSearchValue(search, length, offset).asList());
+	}
+	
+	public List<RuleModelView> getRulesForEntity(UUID idEntity) {
+		if(idEntity != null) {
+			List<Rule> rules = T_Rule.all().where(T_Rule.ID_ENTITE.equalTo(idEntity)).asList();
+			
+			return asModelViewList(rules);
+		}
+		
+		return null;
+	}
+	
+	public List<RuleModelView> getRulesForCompetition(UUID idCompetition) {
+		if(idCompetition != null) {
+			List<Rule> rules = T_Rule.all().where(T_Rule.ID_COMPETITION.equalTo(idCompetition)).asList();
+			
+			return asModelViewList(rules);
+		}
+		
+		return null;
+	}
+	
+	public RuleModelView getRuleById(UUID idRule) {
+		Rule rule = T_Rule.getInstanceWithPrimaryKey(idRule);
+		RuleAdapter adapter = new RuleAdapter();
+		
+		return adapter.toModelView(rule);
+	}
+	
+	public void createOrUpdateRule(RuleModelView ruleModelView) {
+		Rule rule = null;
+		if(ruleModelView.getIdRule() != null)
+			rule = T_Rule.getInstanceWithPrimaryKey(ruleModelView.getIdRule());
+		
+		RuleAdapter adapter = new RuleAdapter(rule);
+		rule = adapter.toModel(ruleModelView);
+		
+		if(rule.getIdRule() != ruleModelView.getIdRule())
+			ruleModelView.setIdRule(rule.getIdRule());
 	}
 }

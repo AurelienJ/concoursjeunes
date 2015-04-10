@@ -1,7 +1,7 @@
 /*
- * Créé le 29 déc. 2013 à 15:45:26 pour ArcCompetition
+ * Créé le 7 avr. 2015 à 10:07:22 pour ArcCompetition
  *
- * Copyright 2002-2013 - Aurélien JEOFFRAY
+ * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,191 +86,124 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.data;
+package org.ajdeveloppement.concours.webapi.services;
 
-import java.util.ArrayList;
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-
-import org.ajdeveloppement.commons.net.json.JsonExclude;
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.ManagerProfile;
+import org.ajdeveloppement.concours.data.Profile;
+import org.ajdeveloppement.concours.data.Rate;
+import org.ajdeveloppement.concours.data.T_Contact;
+import org.ajdeveloppement.concours.data.T_Entite;
+import org.ajdeveloppement.concours.data.T_ManagerProfile;
+import org.ajdeveloppement.concours.data.T_Profile;
+import org.ajdeveloppement.concours.data.T_Rate;
+import org.ajdeveloppement.concours.webapi.adapters.ProfileAdapter;
+import org.ajdeveloppement.concours.webapi.helpers.ModelViewMapper;
+import org.ajdeveloppement.concours.webapi.models.ProfileModelView;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@SqlTable(name="PROFILE",disableCache=true)
-@SqlPrimaryKey(fields="ID_PROFILE",generatedidField=@SqlGeneratedIdField(name="ID_PROFILE"))
-public class Profile implements SqlObjectPersistence {
-	
-	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
-	@XmlID
-	@XmlAttribute(name="id")
-	private String xmlId;
-	
-	@SqlField(name="ID_PROFILE")
-	private UUID id;
-	
-	@SqlField(name="INTITULE")
-	private String intitule;
-	
-	private Entite entite;
-	
-	@SqlField(name="ID_ENTITE")
-	private UUID idEntite;
-	
-	@SqlChildCollection(foreignFields="ID_PROFILE",type=ManagerProfile.class)
-	private List<ManagerProfile> managers;
+public class ProfilesService {
+
 	
 	/**
-	 * @return id
-	 */
-	public UUID getId() {
-		return id;
-	}
-
-	/**
-	 * @param id id à définir
-	 */
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return initule
-	 */
-	public String getIntitule() {
-		return intitule;
-	}
-
-	/**
-	 * @param initule initule à définir
-	 */
-	public void setIntitule(String initule) {
-		this.intitule = initule;
-	}
-
-	/**
-	 * @return idEntite
-	 */
-	public UUID getIdEntite() {
-		return idEntite;
-	}
-
-	/**
-	 * @param idEntite idEntite à définir
-	 */
-	public void setIdEntite(UUID idEntite) {
-		this.idEntite = idEntite;
-	}
-
-	/**
-	 * @return entite
-	 */
-	@JsonExclude
-	public Entite getEntite() {
-		if(entite == null && idEntite != null)
-			entite = T_Entite.getInstanceWithPrimaryKey(idEntite);
-		return entite;
-	}
-
-	/**
-	 * @param entite entite à définir
-	 */
-	public void setEntite(Entite entite) {
-		this.entite = entite;
-		if(entite != null)
-			this.idEntite = entite.getIdEntite();
-		else
-			this.idEntite = null;
-	}
-
-
-	/**
-	 * @return managers
-	 */
-	public List<ManagerProfile> getManagers() {
-		if(managers == null) {
-			managers = QResults.from(ManagerProfile.class)
-					.where(T_ManagerProfile.ID_PROFILE.equalTo(id))
-					.asList();
-			if(managers == null)
-				managers = new ArrayList<>();
-		}
-		return managers;
-	}
-
-	/**
-	 * @param managers managers à définir
-	 */
-	public void setManagers(List<ManagerProfile> managers) {
-		this.managers = managers;
-	}
-	
-	public boolean addManager(Contact manager) {
-		return getManagers().add(new ManagerProfile(manager, this));
-	}
-	
-	public boolean removeManager(Contact manager) {
-		return getManagers().remove(new ManagerProfile(manager, this));
-	}
-	
-	/**
-	 * For JAXB Usage only. Do not use.
 	 * 
-	 * @param marshaller
 	 */
-	protected void beforeMarshal(Marshaller marshaller) {
-		if(id == null)
-			id = UUID.randomUUID();
-		xmlId = id.toString();
-		
-		entite.beforeMarshal(marshaller);
+	public ProfilesService() {
 	}
 	
-	@SuppressWarnings("nls")
-	public String toJSON() {
-		return String.format("{\"id\":\"%s\",\"intitule\":\"%s\",\"entite\":\"%s\"}", id, intitule, entite.getIdEntite());
+	/**
+	 * Return rates associate to a profile
+	 * 
+	 * @param idProfile id of rates profile
+	 * @return the rates of profile
+	 */
+	public List<Rate> getRatesForIdProfile(UUID idProfile) {
+		return T_Rate.all().where(T_Rate.ID_PROFILE.equalTo(idProfile)).asList();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
+	/**
+	 * Return all profiles
+	 * 
+	 * @return all profiles
 	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
+	public List<ProfileModelView> getAllProfiles() {
+		ProfileAdapter adapter = new ProfileAdapter();
+		return T_Profile.all().asList().stream().map(p -> adapter.toModelView(p)).collect(Collectors.toList());
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
+	
+	/**
+	 * Return all profiles associate with a user identified by id. Or all profiles if id is null
+	 * 
+	 * @return all profiles associate with a user identified by id. Or all profiles if id is null
 	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Profile other = (Profile) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+	public List<ProfileModelView> getUserProfiles(UUID idUser) {
+		QResults<Profile, Void> profiles = T_Profile.all();
+		if(idUser != null) {
+			profiles = profiles.innerJoin(ManagerProfile.class, T_Profile.ID_PROFILE.equalTo(T_ManagerProfile.ID_PROFILE))
+				.where(T_ManagerProfile.ID_CONTACT.equalTo(idUser));
+		}
+		ProfileAdapter adapter = new ProfileAdapter();
+		return profiles.asList().stream().map(p -> adapter.toModelView(p)).collect(Collectors.toList());
+	}
+	
+	public ProfileModelView getProfileById(UUID idProfile) {
+		Profile profile = T_Profile.getInstanceWithPrimaryKey(idProfile);
+		if(profile != null) {
+			ProfileAdapter adapter = new ProfileAdapter();
+			return adapter.toModelView(profile);
+		}
+		
+		return null;
+	}
+	
+	public void createOrUpdateProfile(ProfileModelView profileModelView) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ObjectPersistenceException {
+		Profile dbProfile = null;
+		if(profileModelView.getId() != null)
+			dbProfile = T_Profile.getInstanceWithPrimaryKey(profileModelView.getId());
+		
+		if(dbProfile == null)
+			dbProfile = new Profile();
+		
+		ModelViewMapper.mapModelViewToModel(profileModelView, dbProfile);
+		
+		dbProfile.save();
+		
+		if(profileModelView.getId() != dbProfile.getId()) {
+			profileModelView.setId(profileModelView.getId());
+		}
+	}
+	
+	public void addManagerToProfile(UUID idProfile, UUID idContact) throws ObjectPersistenceException {
+		if(idProfile != null && idContact != null) {
+			Profile profile = T_Profile.getInstanceWithPrimaryKey(idProfile);
+			if(profile != null) {
+				Contact contact = T_Contact.getInstanceWithPrimaryKey(idContact);
+				profile.addManager(contact);
+				profile.save();
+			}
+		}
+	}
+	
+	public void setProfileEntity(UUID idProfile, UUID idEntite) throws ObjectPersistenceException {
+		if(idProfile != null) {
+			Profile profile = T_Profile.getInstanceWithPrimaryKey(idProfile);
+			if(profile != null) {
+				Entite entite = T_Entite.getInstanceWithPrimaryKey(idEntite);
+				profile.setEntite(entite);
+				profile.save();
+			}
+		}
 	}
 }

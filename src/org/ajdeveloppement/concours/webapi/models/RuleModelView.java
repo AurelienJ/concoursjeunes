@@ -1,7 +1,7 @@
 /*
- * Créé le 29 déc. 2013 à 15:45:26 pour ArcCompetition
+ * Créé le 9 avr. 2015 à 16:48:12 pour ArcCompetition
  *
- * Copyright 2002-2013 - Aurélien JEOFFRAY
+ * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,78 +86,203 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.data;
+package org.ajdeveloppement.concours.webapi.models;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-
-import org.ajdeveloppement.commons.net.json.JsonExclude;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.concours.data.Rule.TypeReglement;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@SqlTable(name="PROFILE",disableCache=true)
-@SqlPrimaryKey(fields="ID_PROFILE",generatedidField=@SqlGeneratedIdField(name="ID_PROFILE"))
-public class Profile implements SqlObjectPersistence {
+public class RuleModelView {
+
+	private UUID idRule;
 	
-	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
-	@XmlID
-	@XmlAttribute(name="id")
-	private String xmlId;
+	private UUID IdCompetition;
 	
-	@SqlField(name="ID_PROFILE")
-	private UUID id;
-	
-	@SqlField(name="INTITULE")
-	private String intitule;
-	
-	private Entite entite;
-	
-	@SqlField(name="ID_ENTITE")
+	private String name = "default"; //$NON-NLS-1$
+
+	private String description = ""; //$NON-NLS-1$
+
+	private int nbSerie = 2;
+
+	private int nbVoleeParSerie = 6;
+
+	private int nbFlecheParVolee = 3;
+
+	private int nbPointsParFleche = 10;
+
+	private int nbMembresEquipe = 4;
+
+	private int nbMembresRetenu = 3;
+
+	private boolean officialReglement = false;
+
 	private UUID idEntite;
+
+	private int idCategory;
+
+	private String reglementType = TypeReglement.TARGET.toString();
+
+	private boolean removable = true;
 	
-	@SqlChildCollection(foreignFields="ID_PROFILE",type=ManagerProfile.class)
-	private List<ManagerProfile> managers;
-	
+	private String libelleEntite;
+	private String libelleCategorie;
+
 	/**
-	 * @return id
+	 * @return idRule
 	 */
-	public UUID getId() {
-		return id;
+	public UUID getIdRule() {
+		return idRule;
 	}
 
 	/**
-	 * @param id id à définir
+	 * @param idRule idRule à définir
 	 */
-	public void setId(UUID id) {
-		this.id = id;
+	public void setIdRule(UUID idReglement) {
+		this.idRule = idReglement;
 	}
 
 	/**
-	 * @return initule
+	 * @return idCompetition
 	 */
-	public String getIntitule() {
-		return intitule;
+	public UUID getIdCompetition() {
+		return IdCompetition;
 	}
 
 	/**
-	 * @param initule initule à définir
+	 * @param idCompetition idCompetition à définir
 	 */
-	public void setIntitule(String initule) {
-		this.intitule = initule;
+	public void setIdCompetition(UUID idCompetition) {
+		IdCompetition = idCompetition;
+	}
+
+	/**
+	 * @return name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name name à définir
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @return description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description description à définir
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return nbSerie
+	 */
+	public int getNbSerie() {
+		return nbSerie;
+	}
+
+	/**
+	 * @param nbSerie nbSerie à définir
+	 */
+	public void setNbSerie(int nbSerie) {
+		this.nbSerie = nbSerie;
+	}
+
+	/**
+	 * @return nbVoleeParSerie
+	 */
+	public int getNbVoleeParSerie() {
+		return nbVoleeParSerie;
+	}
+
+	/**
+	 * @param nbVoleeParSerie nbVoleeParSerie à définir
+	 */
+	public void setNbVoleeParSerie(int nbVoleeParSerie) {
+		this.nbVoleeParSerie = nbVoleeParSerie;
+	}
+
+	/**
+	 * @return nbFlecheParVolee
+	 */
+	public int getNbFlecheParVolee() {
+		return nbFlecheParVolee;
+	}
+
+	/**
+	 * @param nbFlecheParVolee nbFlecheParVolee à définir
+	 */
+	public void setNbFlecheParVolee(int nbFlecheParVolee) {
+		this.nbFlecheParVolee = nbFlecheParVolee;
+	}
+
+	/**
+	 * @return nbPointsParFleche
+	 */
+	public int getNbPointsParFleche() {
+		return nbPointsParFleche;
+	}
+
+	/**
+	 * @param nbPointsParFleche nbPointsParFleche à définir
+	 */
+	public void setNbPointsParFleche(int nbPointsParFleche) {
+		this.nbPointsParFleche = nbPointsParFleche;
+	}
+
+	/**
+	 * @return nbMembresEquipe
+	 */
+	public int getNbMembresEquipe() {
+		return nbMembresEquipe;
+	}
+
+	/**
+	 * @param nbMembresEquipe nbMembresEquipe à définir
+	 */
+	public void setNbMembresEquipe(int nbMembresEquipe) {
+		this.nbMembresEquipe = nbMembresEquipe;
+	}
+
+	/**
+	 * @return nbMembresRetenu
+	 */
+	public int getNbMembresRetenu() {
+		return nbMembresRetenu;
+	}
+
+	/**
+	 * @param nbMembresRetenu nbMembresRetenu à définir
+	 */
+	public void setNbMembresRetenu(int nbMembresRetenu) {
+		this.nbMembresRetenu = nbMembresRetenu;
+	}
+
+	/**
+	 * @return officialReglement
+	 */
+	public boolean isOfficialReglement() {
+		return officialReglement;
+	}
+
+	/**
+	 * @param officialReglement officialReglement à définir
+	 */
+	public void setOfficialReglement(boolean officialReglement) {
+		this.officialReglement = officialReglement;
 	}
 
 	/**
@@ -175,102 +300,73 @@ public class Profile implements SqlObjectPersistence {
 	}
 
 	/**
-	 * @return entite
+	 * @return idCategory
 	 */
-	@JsonExclude
-	public Entite getEntite() {
-		if(entite == null && idEntite != null)
-			entite = T_Entite.getInstanceWithPrimaryKey(idEntite);
-		return entite;
+	public int getIdCategory() {
+		return idCategory;
 	}
 
 	/**
-	 * @param entite entite à définir
+	 * @param idCategory idCategory à définir
 	 */
-	public void setEntite(Entite entite) {
-		this.entite = entite;
-		if(entite != null)
-			this.idEntite = entite.getIdEntite();
-		else
-			this.idEntite = null;
-	}
-
-
-	/**
-	 * @return managers
-	 */
-	public List<ManagerProfile> getManagers() {
-		if(managers == null) {
-			managers = QResults.from(ManagerProfile.class)
-					.where(T_ManagerProfile.ID_PROFILE.equalTo(id))
-					.asList();
-			if(managers == null)
-				managers = new ArrayList<>();
-		}
-		return managers;
+	public void setIdCategory(int idCategory) {
+		this.idCategory = idCategory;
 	}
 
 	/**
-	 * @param managers managers à définir
+	 * @return reglementType
 	 */
-	public void setManagers(List<ManagerProfile> managers) {
-		this.managers = managers;
+	public String getReglementType() {
+		return reglementType;
 	}
-	
-	public boolean addManager(Contact manager) {
-		return getManagers().add(new ManagerProfile(manager, this));
-	}
-	
-	public boolean removeManager(Contact manager) {
-		return getManagers().remove(new ManagerProfile(manager, this));
-	}
-	
+
 	/**
-	 * For JAXB Usage only. Do not use.
-	 * 
-	 * @param marshaller
+	 * @param reglementType reglementType à définir
 	 */
-	protected void beforeMarshal(Marshaller marshaller) {
-		if(id == null)
-			id = UUID.randomUUID();
-		xmlId = id.toString();
-		
-		entite.beforeMarshal(marshaller);
-	}
-	
-	@SuppressWarnings("nls")
-	public String toJSON() {
-		return String.format("{\"id\":\"%s\",\"intitule\":\"%s\",\"entite\":\"%s\"}", id, intitule, entite.getIdEntite());
+	public void setReglementType(String reglementType) {
+		this.reglementType = reglementType;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
+	/**
+	 * @return removable
 	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
+	public boolean isRemovable() {
+		return removable;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
+	/**
+	 * @param removable removable à définir
 	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Profile other = (Profile) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+	public void setRemovable(boolean removable) {
+		this.removable = removable;
 	}
+
+	/**
+	 * @return libelleEntite
+	 */
+	public String getLibelleEntite() {
+		return libelleEntite;
+	}
+
+	/**
+	 * @param libelleEntite libelleEntite à définir
+	 */
+	public void setLibelleEntite(String libelleEntite) {
+		this.libelleEntite = libelleEntite;
+	}
+
+	/**
+	 * @return libelleCategorie
+	 */
+	public String getLibelleCategorie() {
+		return libelleCategorie;
+	}
+
+	/**
+	 * @param libelleCategorie libelleCategorie à définir
+	 */
+	public void setLibelleCategorie(String libelleCategorie) {
+		this.libelleCategorie = libelleCategorie;
+	}
+
 }

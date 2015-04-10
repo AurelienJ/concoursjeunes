@@ -1,7 +1,7 @@
 /*
- * Créé le 29 déc. 2013 à 15:45:26 pour ArcCompetition
+ * Créé le 4 août 2014 à 13:42:52 pour ArcCompetition
  *
- * Copyright 2002-2013 - Aurélien JEOFFRAY
+ * Copyright 2002-2014 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,191 +86,113 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.data;
+package org.ajdeveloppement.concours.webapi.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-
-import org.ajdeveloppement.commons.net.json.JsonExclude;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.commons.ExceptionUtils;
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.webapi.HttpContext;
+import org.ajdeveloppement.concours.webapi.UserSessionData;
+import org.ajdeveloppement.concours.webapi.annotations.Body;
+import org.ajdeveloppement.concours.webapi.annotations.JsonService;
+import org.ajdeveloppement.concours.webapi.annotations.JsonServiceId;
+import org.ajdeveloppement.concours.webapi.annotations.WebApiController;
+import org.ajdeveloppement.concours.webapi.helpers.HttpSessionHelper;
+import org.ajdeveloppement.concours.webapi.helpers.JsonHelper;
+import org.ajdeveloppement.concours.webapi.models.ProfileModelView;
+import org.ajdeveloppement.concours.webapi.services.ProfilesService;
+import org.ajdeveloppement.webserver.HttpMethod;
+import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
+import org.ajdeveloppement.webserver.HttpReturnCode.Success;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@SqlTable(name="PROFILE",disableCache=true)
-@SqlPrimaryKey(fields="ID_PROFILE",generatedidField=@SqlGeneratedIdField(name="ID_PROFILE"))
-public class Profile implements SqlObjectPersistence {
+@WebApiController
+public class ProfileController {
 	
-	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
-	@XmlID
-	@XmlAttribute(name="id")
-	private String xmlId;
-	
-	@SqlField(name="ID_PROFILE")
-	private UUID id;
-	
-	@SqlField(name="INTITULE")
-	private String intitule;
-	
-	private Entite entite;
-	
-	@SqlField(name="ID_ENTITE")
-	private UUID idEntite;
-	
-	@SqlChildCollection(foreignFields="ID_PROFILE",type=ManagerProfile.class)
-	private List<ManagerProfile> managers;
-	
-	/**
-	 * @return id
-	 */
-	public UUID getId() {
-		return id;
-	}
-
-	/**
-	 * @param id id à définir
-	 */
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return initule
-	 */
-	public String getIntitule() {
-		return intitule;
-	}
-
-	/**
-	 * @param initule initule à définir
-	 */
-	public void setIntitule(String initule) {
-		this.intitule = initule;
-	}
-
-	/**
-	 * @return idEntite
-	 */
-	public UUID getIdEntite() {
-		return idEntite;
-	}
-
-	/**
-	 * @param idEntite idEntite à définir
-	 */
-	public void setIdEntite(UUID idEntite) {
-		this.idEntite = idEntite;
-	}
-
-	/**
-	 * @return entite
-	 */
-	@JsonExclude
-	public Entite getEntite() {
-		if(entite == null && idEntite != null)
-			entite = T_Entite.getInstanceWithPrimaryKey(idEntite);
-		return entite;
-	}
-
-	/**
-	 * @param entite entite à définir
-	 */
-	public void setEntite(Entite entite) {
-		this.entite = entite;
-		if(entite != null)
-			this.idEntite = entite.getIdEntite();
-		else
-			this.idEntite = null;
-	}
-
-
-	/**
-	 * @return managers
-	 */
-	public List<ManagerProfile> getManagers() {
-		if(managers == null) {
-			managers = QResults.from(ManagerProfile.class)
-					.where(T_ManagerProfile.ID_PROFILE.equalTo(id))
-					.asList();
-			if(managers == null)
-				managers = new ArrayList<>();
-		}
-		return managers;
-	}
-
-	/**
-	 * @param managers managers à définir
-	 */
-	public void setManagers(List<ManagerProfile> managers) {
-		this.managers = managers;
-	}
-	
-	public boolean addManager(Contact manager) {
-		return getManagers().add(new ManagerProfile(manager, this));
-	}
-	
-	public boolean removeManager(Contact manager) {
-		return getManagers().remove(new ManagerProfile(manager, this));
-	}
-	
-	/**
-	 * For JAXB Usage only. Do not use.
-	 * 
-	 * @param marshaller
-	 */
-	protected void beforeMarshal(Marshaller marshaller) {
-		if(id == null)
-			id = UUID.randomUUID();
-		xmlId = id.toString();
+	@JsonService(key="profiles")
+	public static String getProfiles(HttpContext context, @JsonServiceId UUID id) {
+		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getSession());
 		
-		entite.beforeMarshal(marshaller);
+		ProfilesService service = new ProfilesService();
+		
+		UUID idUtilisateur = null;
+		if(userSessionData != null)
+			idUtilisateur = userSessionData.getSessionUser().getIdContact();
+		
+		if(id == null)
+			return JsonHelper.toJson(service.getUserProfiles(idUtilisateur));
+		
+		return JsonHelper.toJson(service.getProfileById(id));
+	}
+	
+	@JsonService(key="profiles", methods=HttpMethod.PUT)
+	public static String updateProfile(HttpContext context, @Body ProfileModelView profileModelView) {
+		try {
+			if(profileModelView != null) {
+				ProfilesService service = new ProfilesService();
+				
+				service.createOrUpdateProfile(profileModelView);
+				
+				return JsonHelper.toJson(profileModelView);
+			}
+		} catch (ObjectPersistenceException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException e) {
+			e.printStackTrace();
+			context.setReturnCode(ServerError.InternalServerError);
+			return JsonHelper.getFailSuccessResponse(ExceptionUtils.toString(e));
+		}
+		
+		return null;
 	}
 	
 	@SuppressWarnings("nls")
-	public String toJSON() {
-		return String.format("{\"id\":\"%s\",\"intitule\":\"%s\",\"entite\":\"%s\"}", id, intitule, entite.getIdEntite());
+	@JsonService(key="profiles", methods=HttpMethod.POST)
+	public static String createProfile(HttpContext context, @Body ProfileModelView profileModelView) {		
+		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getSession());
+		
+		String error = "";
+		
+		if(userSessionData != null && userSessionData.getSessionUser() != null 
+				&& profileModelView != null) {
+			
+			ProfilesService service = new ProfilesService();
+			
+			try {
+				service.createOrUpdateProfile(profileModelView);
+				
+				Contact sessionUser = userSessionData.getSessionUser();
+				if(sessionUser != null) {
+					service.addManagerToProfile(profileModelView.getId(), sessionUser.getIdContact());
+				}
+				
+				context.setReturnCode(Success.CREATED);
+				return JsonHelper.toJson(profileModelView);
+			} catch (IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | IntrospectionException
+					| ObjectPersistenceException e) {
+				e.printStackTrace();
+				error = ExceptionUtils.toString(e);
+				context.setReturnCode(ServerError.InternalServerError);
+			}
+		}
+		
+		return JsonHelper.getFailSuccessResponse(error);
 	}
+	
+	@JsonService(key="profiles/rates")
+	public static String getRates(HttpContext context, @JsonServiceId(0) UUID idProfile, @JsonServiceId(1) UUID idRate) {
+		
+		if(idProfile != null) {
+			ProfilesService service = new ProfilesService();
+			return JsonHelper.toJson(service.getRatesForIdProfile(idProfile));
+		}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Profile other = (Profile) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+		return null;
 	}
 }

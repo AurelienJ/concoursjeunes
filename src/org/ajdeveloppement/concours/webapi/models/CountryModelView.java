@@ -1,7 +1,7 @@
 /*
- * Créé le 7 août 2014 à 15:48:21 pour ArcCompetition
+ * Créé le 8 avr. 2015 à 12:06:54 pour ArcCompetition
  *
- * Copyright 2002-2014 - Aurélien JEOFFRAY
+ * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,59 +86,111 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi;
-
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.ajdeveloppement.commons.net.json.JsonParser;
-import org.ajdeveloppement.concours.data.Contact;
-import org.ajdeveloppement.concours.data.T_Contact;
-import org.ajdeveloppement.webserver.HttpMethod;
-import org.ajdeveloppement.webserver.HttpSession;
+package org.ajdeveloppement.concours.webapi.models;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class ContactsModel {
-	@SuppressWarnings("nls")
-	@JsonService(key="contacts")
-	public static String getContact(HttpSession session) {
-		Map<String, String> urlParameters = session.getUrlParameters();
+public class CountryModelView {
+
+	private String iso;
+	private String code;
+	private String libelle;
+	
+	
+	public CountryModelView() {
 		
-		String error = "";
-		
-		if(session.getRequestMethod() == HttpMethod.GET) {
-		
-			if(urlParameters.containsKey("id")) {
-				UUID idContact = null;
-				try {
-					idContact = UUID.fromString(urlParameters.get("id"));
-				} catch(IllegalArgumentException e) {
-					error = "Invalid idContact UUID";
-				}
-				
-				if(idContact != null) {
-					Contact contact = T_Contact.getInstanceWithPrimaryKey(idContact);
-					
-					if(contact != null) {
-						JsonParser parser = new JsonParser();
-						return parser.parseValue(contact);
-					}
-					error = "Ther is no contact with id " + idContact.toString();
-				}
-			} else {
-				List<Contact> contacts = T_Contact.all().asList();
-				
-				if(contacts != null) {
-					JsonParser parser = new JsonParser();
-					return parser.parseValue(contacts);
-				}
-			}
-		}
-		
-		return "{\"success\":false,\"error\":\"" + error.replace("\"", "\\\"") + "\"}";
 	}
+	
+	/**
+	 * @param iso
+	 * @param code
+	 * @param libelle
+	 */
+	public CountryModelView(String iso, String code, String libelle) {
+		this.iso = iso;
+		this.code = code;
+		this.libelle = libelle;
+	}
+	/**
+	 * @return iso
+	 */
+	public String getIso() {
+		return iso;
+	}
+	/**
+	 * @param iso iso à définir
+	 */
+	public void setIso(String iso) {
+		this.iso = iso;
+	}
+	/**
+	 * @return code
+	 */
+	public String getCode() {
+		return code;
+	}
+	/**
+	 * @param code code à définir
+	 */
+	public void setCode(String code) {
+		this.code = code;
+	}
+	/**
+	 * @return libelle
+	 */
+	public String getLibelle() {
+		return libelle;
+	}
+	/**
+	 * @param libelle libelle à définir
+	 */
+	public void setLibelle(String libelle) {
+		this.libelle = libelle;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((iso == null) ? 0 : iso.hashCode());
+		result = prime * result + ((libelle == null) ? 0 : libelle.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CountryModelView other = (CountryModelView) obj;
+		if (code == null) {
+			if (other.code != null)
+				return false;
+		} else if (!code.equals(other.code))
+			return false;
+		if (iso == null) {
+			if (other.iso != null)
+				return false;
+		} else if (!iso.equals(other.iso))
+			return false;
+		if (libelle == null) {
+			if (other.libelle != null)
+				return false;
+		} else if (!libelle.equals(other.libelle))
+			return false;
+		return true;
+	}
+
 }

@@ -1,7 +1,7 @@
 /*
- * Créé le 29 déc. 2013 à 15:45:26 pour ArcCompetition
+ * Créé le 4 août 2014 à 13:36:13 pour ArcCompetition
  *
- * Copyright 2002-2013 - Aurélien JEOFFRAY
+ * Copyright 2002-2014 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,191 +86,116 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.data;
+package org.ajdeveloppement.concours.webapi.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-
-import org.ajdeveloppement.commons.net.json.JsonExclude;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+import org.ajdeveloppement.commons.ExceptionUtils;
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.QFilter;
+import org.ajdeveloppement.concours.data.T_Entite;
+import org.ajdeveloppement.concours.webapi.HttpContext;
+import org.ajdeveloppement.concours.webapi.annotations.Body;
+import org.ajdeveloppement.concours.webapi.annotations.JsonService;
+import org.ajdeveloppement.concours.webapi.annotations.JsonServiceId;
+import org.ajdeveloppement.concours.webapi.annotations.UrlParameter;
+import org.ajdeveloppement.concours.webapi.annotations.WebApiController;
+import org.ajdeveloppement.concours.webapi.helpers.JsonHelper;
+import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
+import org.ajdeveloppement.concours.webapi.models.JsDataTables;
+import org.ajdeveloppement.concours.webapi.services.EntiteService;
+import org.ajdeveloppement.webserver.HttpMethod;
+import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
+import org.ajdeveloppement.webserver.HttpReturnCode.Success;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@SqlTable(name="PROFILE",disableCache=true)
-@SqlPrimaryKey(fields="ID_PROFILE",generatedidField=@SqlGeneratedIdField(name="ID_PROFILE"))
-public class Profile implements SqlObjectPersistence {
-	
-	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
-	@XmlID
-	@XmlAttribute(name="id")
-	private String xmlId;
-	
-	@SqlField(name="ID_PROFILE")
-	private UUID id;
-	
-	@SqlField(name="INTITULE")
-	private String intitule;
-	
-	private Entite entite;
-	
-	@SqlField(name="ID_ENTITE")
-	private UUID idEntite;
-	
-	@SqlChildCollection(foreignFields="ID_PROFILE",type=ManagerProfile.class)
-	private List<ManagerProfile> managers;
+@WebApiController
+public class EntitiesController {
 	
 	/**
-	 * @return id
-	 */
-	public UUID getId() {
-		return id;
-	}
-
-	/**
-	 * @param id id à définir
-	 */
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return initule
-	 */
-	public String getIntitule() {
-		return intitule;
-	}
-
-	/**
-	 * @param initule initule à définir
-	 */
-	public void setIntitule(String initule) {
-		this.intitule = initule;
-	}
-
-	/**
-	 * @return idEntite
-	 */
-	public UUID getIdEntite() {
-		return idEntite;
-	}
-
-	/**
-	 * @param idEntite idEntite à définir
-	 */
-	public void setIdEntite(UUID idEntite) {
-		this.idEntite = idEntite;
-	}
-
-	/**
-	 * @return entite
-	 */
-	@JsonExclude
-	public Entite getEntite() {
-		if(entite == null && idEntite != null)
-			entite = T_Entite.getInstanceWithPrimaryKey(idEntite);
-		return entite;
-	}
-
-	/**
-	 * @param entite entite à définir
-	 */
-	public void setEntite(Entite entite) {
-		this.entite = entite;
-		if(entite != null)
-			this.idEntite = entite.getIdEntite();
-		else
-			this.idEntite = null;
-	}
-
-
-	/**
-	 * @return managers
-	 */
-	public List<ManagerProfile> getManagers() {
-		if(managers == null) {
-			managers = QResults.from(ManagerProfile.class)
-					.where(T_ManagerProfile.ID_PROFILE.equalTo(id))
-					.asList();
-			if(managers == null)
-				managers = new ArrayList<>();
-		}
-		return managers;
-	}
-
-	/**
-	 * @param managers managers à définir
-	 */
-	public void setManagers(List<ManagerProfile> managers) {
-		this.managers = managers;
-	}
-	
-	public boolean addManager(Contact manager) {
-		return getManagers().add(new ManagerProfile(manager, this));
-	}
-	
-	public boolean removeManager(Contact manager) {
-		return getManagers().remove(new ManagerProfile(manager, this));
-	}
-	
-	/**
-	 * For JAXB Usage only. Do not use.
+	 * Retourne la liste des entités eventuellement filtré
+	 * au format "http://datatables.net" (Json)
 	 * 
-	 * @param marshaller
+	 * @param session la requete Http de filtrage
+	 * @return réponse json avec la liste des entités trouvé
 	 */
-	protected void beforeMarshal(Marshaller marshaller) {
-		if(id == null)
-			id = UUID.randomUUID();
-		xmlId = id.toString();
+	@SuppressWarnings("nls")
+	@JsonService(key="entitiesDataTable")
+	public static String getEntitiesDataTable(HttpContext context,
+			@UrlParameter("search[value]") String searchValue,
+			@UrlParameter("length") int length,
+			@UrlParameter("start") int start,
+			@UrlParameter("draw") int draw) {	
+		EntiteService service = new EntiteService();
 		
-		entite.beforeMarshal(marshaller);
+		int nbTotalEntites = service.countAllEntities();
+		
+		QFilter filter = null;
+		if(searchValue != null && !searchValue.isEmpty()) {
+			String searchPattern = String.format("%%%s%%", searchValue.toUpperCase());
+			filter = T_Entite.NOM.upper().like(searchPattern)
+					.or(T_Entite.VILLE.upper().like(searchPattern))
+					.or(T_Entite.REFERENCE.upper().like(searchPattern));
+		}
+		
+		int nbFilteredEntites =  nbTotalEntites;
+		if(filter != null)
+			nbFilteredEntites = service.countEntitiesWithFilter(filter);
+		
+		int offset = -1;
+		if(length > 0)
+			offset = start;
+				
+		JsDataTables jsDataTables = new JsDataTables();
+		jsDataTables.setDraw(draw);
+		jsDataTables.setRecordsTotal(nbTotalEntites);
+		jsDataTables.setRecordsFiltered(nbFilteredEntites);
+		jsDataTables.setData(service.getEntitiesWithFilter(filter, length, offset));
+		
+		return jsDataTables.toJSON();
 	}
 	
-	@SuppressWarnings("nls")
-	public String toJSON() {
-		return String.format("{\"id\":\"%s\",\"intitule\":\"%s\",\"entite\":\"%s\"}", id, intitule, entite.getIdEntite());
-	}
+	@JsonService(key="entities",methods=HttpMethod.GET)
+	public static String getEntities(HttpContext context, @JsonServiceId UUID id) {
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
+		EntiteService service = new EntiteService();
+		if(id != null) {
+			EntiteModelView entite = service.getEntiteById(id);
+			if(entite != null) {
+				return JsonHelper.toJson(entite);
+			}
+		} else {
+			return JsonHelper.toJson(service.getAllEntities());
+		}
+		
+		return null;
 	}
+	
+	@JsonService(key="entities",methods={HttpMethod.PUT, HttpMethod.POST})
+	public static String createOrUpdateEntity(HttpContext context, @Body EntiteModelView entiteModelView) {
+		boolean success = true;
+		String error = null;
+		try {
+			EntiteService service = new EntiteService();
+			service.createOrUpdateEntite(entiteModelView);
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Profile other = (Profile) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+			if(context.getSession().getRequestMethod() == HttpMethod.POST)
+				context.setReturnCode(Success.CREATED);
+			
+			return JsonHelper.toJson(entiteModelView);
+		} catch (IllegalArgumentException | ObjectPersistenceException e) {
+			e.printStackTrace();
+			error = ExceptionUtils.toString(e);
+			context.setReturnCode(ServerError.InternalServerError);
+			success = false;
+		}
+		
+		if(!success)
+			return JsonHelper.getFailSuccessResponse(error);
+		
+		return null;
 	}
 }

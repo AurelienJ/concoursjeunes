@@ -192,7 +192,7 @@ public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, R
 		Criterion criterion = null;
 		
 		if(!doNotUseCache)
-			criterion = Cache.get(Criterion.class, codeCritere, reglement.getIdReglement());
+			criterion = Cache.get(Criterion.class, codeCritere, reglement.getIdRule());
 		
 		if(criterion == null) {
 			criterion = new Criterion();

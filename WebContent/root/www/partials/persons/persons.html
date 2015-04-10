@@ -1,0 +1,37 @@
+<h1>Recherche / Sélection d'une personne</h1>
+
+<div class="search-operations">
+<section id="personsSearch">
+<header>Rechercher</header>
+<input type="search" id="personsSearchInput" ng-model="personsSearchPattern" ng-change="searchChange()"/>
+</section>
+
+<section id="personsFilter">
+<header>Filtres</header>
+Fédérations:<br />
+<select id="personsFilterFederation">
+<option>FFTA</option>
+</select>
+</section>
+</div>
+
+<div class="search-results">
+<span id="personsAction">
+<a href="#"><img src="images/add.png" /> Ajouter</a>
+</span>
+<table id="personsResultsTable" class="display search-results-table" datatable dt-options="dtOptions" dt-columns="dtColumns" dt-column-defs="dtColumnDefs">
+	<thead>
+	<tr>
+		<th>Nom</th>
+		<th>Ville</th>
+		<th>Actions</th>
+	</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+</div>
+<div id="personsValidation" class="validationPanel">
+	<a href="#" id="personsSelect" class="buttonScreenValid">Selectionner</a>
+	<a href="#" id="personsCancel" class="buttonScreenCancel">Annuler</a>
+</div>

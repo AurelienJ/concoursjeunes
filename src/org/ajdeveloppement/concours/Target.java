@@ -95,9 +95,9 @@ import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
-import org.ajdeveloppement.concours.data.Face;
 import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.data.DistancesEtBlason;
+import org.ajdeveloppement.concours.data.Face;
 import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.event.TargetEvent;
 import org.ajdeveloppement.concours.event.TargetListener;
@@ -406,22 +406,23 @@ public class Target implements PropertyChangeListener {
 			if(concurrents[i] != null) {
 				DistancesEtBlason db = DistancesEtBlason.getDistancesEtBlasonForConcurrent(reglement, concurrents[i]);
 				Face otherBlason = db.getTargetFace();
-				
-				if(blason.getNbArcher() > 2 || (otherBlason != null && otherBlason.getNbArcher() > 2)) {
-					if(otherBlason == null || !otherBlason.equals(blason)) {
-						placable = false;
-						break;
-					}
-				} else if(blason.getNbArcher() > 1) {
-					if(!((!otherBlason.equals(blason) && !blason.isOver(position, otherBlason, i))
-							|| otherBlason.equals(blason))) {
-						placable = false;
-						break;
-					}
-				} else {
-					if(blason.isOver(position, otherBlason, i)) {
-						placable = false;
-						break;
+				if(otherBlason != null) {
+					if(blason.getNbArcher() > 2 || (otherBlason != null && otherBlason.getNbArcher() > 2)) {
+						if(otherBlason == null || !otherBlason.equals(blason)) {
+							placable = false;
+							break;
+						}
+					} else if(blason.getNbArcher() > 1) {
+						if(!((!otherBlason.equals(blason) && !blason.isOver(position, otherBlason, i))
+								|| otherBlason.equals(blason))) {
+							placable = false;
+							break;
+						}
+					} else {
+						if(blason.isOver(position, otherBlason, i)) {
+							placable = false;
+							break;
+						}
 					}
 				}
 			}

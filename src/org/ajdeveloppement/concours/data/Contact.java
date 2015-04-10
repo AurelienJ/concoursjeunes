@@ -157,7 +157,7 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	private Civility civility;
 	
 	@SqlField(name="ADDRESS")
-	private String adress;
+	private String address;
 	
 	@SqlField(name="ZIP_CODE")
 	private String zipCode;
@@ -331,8 +331,8 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	 * 
 	 * @return the post address of contact
 	 */
-	public String getAdress() {
-		return adress;
+	public String getAddress() {
+		return address;
 	}
 
 	/**
@@ -340,10 +340,10 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	 * 
 	 * @param adress the post address of contact
 	 */
-	public void setAdress(String adress) {
-		Object oldValue = this.adress;
+	public void setAddress(String adress) {
+		Object oldValue = this.address;
 		
-		this.adress = adress;
+		this.address = adress;
 		
 		pcs.firePropertyChange("adress", oldValue, adress); //$NON-NLS-1$
 	}

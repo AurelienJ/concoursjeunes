@@ -277,9 +277,9 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 				if(rs != null) {
 					foreignKeys = resultSetLoadHelper.load(reglement, rs);
 					
-					idReglement = reglement.getIdReglement();
+					idReglement = reglement.getIdRule();
 				} else {
-					reglement.setIdReglement(idReglement);
+					reglement.setIdRule(idReglement);
 					
 					foreignKeys = loadHelper.load(reglement);
 				}

@@ -1,0 +1,34 @@
+<h1>Détail d'une personne</h1>
+
+<section class="formulaire">
+	<h2>Identité</h2>
+	
+	<label for="personCivility">Civilité</label><select id="personCivility" ng-model="person.idCivility">
+		<option ng-repeat="civility in civilities" value="{{civility.idCivility}}">civility.abreviation</option>
+	</select>
+	<label for="personName">Nom</label><input type="text" placeholder="Nom" id="personName" ng-model="person.name"/>
+	<label for="personFirstName">Prenom</label><input type="text" placeholder="Prenom" id="personFirstName" ng-model="person.firstName"/>
+	
+</section>
+
+<section class="formulaire">
+	<h2>Coordonnées</h2>
+	
+	<label for="personAddress">Adresse</label><textarea rows="4" placeholder="Adresse" id="personAddress" ng-model="person.address"></textarea>
+	<label for="personZipCode">Code postal</label><input type="text" placeholder="Code postal" id="personZipCode" ng-model="person.zipCode"/>
+	<label for="personCity">Ville</label><input placeholder="Ville" id="personCity" ng-model="person.city" />
+	<label for="personCountry">Pays</label><select id="personCountry" ng-model="person.countryCode">
+		<option ng-repeat="country in countries" value="{{country.code}}" ng-selected="country.code.toUpperCase() == person.countryCode.toUpperCase()">{{country.libelle}}</option>
+	</select>
+</section>
+
+<section class="formulaire">
+	<h2>Divers</h2>
+	
+	<label for="personNotes">Notes</label><textarea rows="8" placeholder="Notes" id="personNotes" ng-model="person.note"></textarea>
+</section>
+
+<div id="entityValidation" class="validationPanel">
+	<a href="" id="entityValid" class="buttonScreenValid" ng-click="valid()">Valider</a>
+	<a href="" id="entityCancel" class="buttonScreenCancel" ng-click="cancel()">Annuler</a>
+</div>

@@ -1,5 +1,5 @@
 /*
- * Créé le 22 févr. 2015 à 12:23:18 pour ArcCompetition
+ * Créé le 7 avr. 2015 à 14:15:06 pour ArcCompetition
  *
  * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
@@ -86,68 +86,26 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi;
-
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.ajdeveloppement.commons.net.json.JsonParser;
-import org.ajdeveloppement.commons.persistence.sql.SqlContext;
-import org.ajdeveloppement.concours.data.Rate;
-import org.ajdeveloppement.concours.data.T_Rate;
-import org.ajdeveloppement.webserver.HttpMethod;
-import org.ajdeveloppement.webserver.HttpSession;
+package org.ajdeveloppement.concours.webapi.adapters;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class RatesModel {
-
-	@SuppressWarnings("nls")
-	@JsonService(key="rates")
-	public static String getRates(HttpSession httpSession) {
-		Map<String,String> urlParameters = httpSession.getUrlParameters();
-		
-		//Sessions clientSession = new Sessions(httpSession);
-		//UserSessionData userSessionData = clientSession.getSessionData();
-		
-		try(SqlContext context = new SqlContext()) {
-			if(httpSession.getRequestMethod() == HttpMethod.GET) {
-				if(urlParameters.containsKey("idprofile")) {
-					String idProfileStr = urlParameters.get("idprofile");
-					UUID idProfile = null;
-					try {
-						idProfile = UUID.fromString(idProfileStr);
-					} catch(IllegalArgumentException e) {
-					}
-					
-					List<Rate> rates = T_Rate.all().useContext(context).where(T_Rate.ID_PROFILE.equalTo(idProfile)).asList();
-					JsonParser parser = new JsonParser();
-					return parser.parseValue(rates);
-				}
-			}
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
-		
-		/*UUID idEntite = null;
-		
-		if(userSessionData != null) {
-			UUID idUtilisateur = userSessionData.getSessionUser().getIdContact();
-			if(idUtilisateur != null) {
-				List<ManagerProfile> managerProfiles = T_ManagerProfile.all().useContext(context).where(T_ManagerProfile.ID_CONTACT.equalTo(idUtilisateur)).asList();
-				Stream<Entite> entites = managerProfiles.stream().map(mp -> mp.getProfile().getEntite());
-
-				
-			}
-		}*/
-		
-		
-		
-		return null;
-	}
-
+public interface ModelViewAdapter<Model, ModelView> {
+	/**
+	 * Convert model to modelview
+	 * 
+	 * @param model
+	 * @return
+	 */
+	ModelView toModelView(Model model);
+	
+	/**
+	 * Import modelview data in model
+	 * 
+	 * @param modelView
+	 * @return
+	 */
+	Model toModel(ModelView modelView);
 }

@@ -1,7 +1,7 @@
 /*
- * Créé le 29 déc. 2013 à 15:45:26 pour ArcCompetition
+ * Créé le 7 avr. 2015 à 10:13:50 pour ArcCompetition
  *
- * Copyright 2002-2013 - Aurélien JEOFFRAY
+ * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,191 +86,91 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.data;
+package org.ajdeveloppement.concours.webapi.helpers;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-
-import org.ajdeveloppement.commons.net.json.JsonExclude;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@SqlTable(name="PROFILE",disableCache=true)
-@SqlPrimaryKey(fields="ID_PROFILE",generatedidField=@SqlGeneratedIdField(name="ID_PROFILE"))
-public class Profile implements SqlObjectPersistence {
-	
-	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
-	@XmlID
-	@XmlAttribute(name="id")
-	private String xmlId;
-	
-	@SqlField(name="ID_PROFILE")
-	private UUID id;
-	
-	@SqlField(name="INTITULE")
-	private String intitule;
-	
-	private Entite entite;
-	
-	@SqlField(name="ID_ENTITE")
-	private UUID idEntite;
-	
-	@SqlChildCollection(foreignFields="ID_PROFILE",type=ManagerProfile.class)
-	private List<ManagerProfile> managers;
-	
-	/**
-	 * @return id
-	 */
-	public UUID getId() {
-		return id;
-	}
+public class Converter {
 
 	/**
-	 * @param id id à définir
-	 */
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return initule
-	 */
-	public String getIntitule() {
-		return intitule;
-	}
-
-	/**
-	 * @param initule initule à définir
-	 */
-	public void setIntitule(String initule) {
-		this.intitule = initule;
-	}
-
-	/**
-	 * @return idEntite
-	 */
-	public UUID getIdEntite() {
-		return idEntite;
-	}
-
-	/**
-	 * @param idEntite idEntite à définir
-	 */
-	public void setIdEntite(UUID idEntite) {
-		this.idEntite = idEntite;
-	}
-
-	/**
-	 * @return entite
-	 */
-	@JsonExclude
-	public Entite getEntite() {
-		if(entite == null && idEntite != null)
-			entite = T_Entite.getInstanceWithPrimaryKey(idEntite);
-		return entite;
-	}
-
-	/**
-	 * @param entite entite à définir
-	 */
-	public void setEntite(Entite entite) {
-		this.entite = entite;
-		if(entite != null)
-			this.idEntite = entite.getIdEntite();
-		else
-			this.idEntite = null;
-	}
-
-
-	/**
-	 * @return managers
-	 */
-	public List<ManagerProfile> getManagers() {
-		if(managers == null) {
-			managers = QResults.from(ManagerProfile.class)
-					.where(T_ManagerProfile.ID_PROFILE.equalTo(id))
-					.asList();
-			if(managers == null)
-				managers = new ArrayList<>();
-		}
-		return managers;
-	}
-
-	/**
-	 * @param managers managers à définir
-	 */
-	public void setManagers(List<ManagerProfile> managers) {
-		this.managers = managers;
-	}
-	
-	public boolean addManager(Contact manager) {
-		return getManagers().add(new ManagerProfile(manager, this));
-	}
-	
-	public boolean removeManager(Contact manager) {
-		return getManagers().remove(new ManagerProfile(manager, this));
-	}
-	
-	/**
-	 * For JAXB Usage only. Do not use.
+	 * Parse an UUID string to UUID object. Return null if parse fail
 	 * 
-	 * @param marshaller
+	 * @param uuid
+	 * @return
 	 */
-	protected void beforeMarshal(Marshaller marshaller) {
-		if(id == null)
-			id = UUID.randomUUID();
-		xmlId = id.toString();
+	public static UUID parseUUID(String uuid) {
+		UUID uid = null;
+		try {
+			return UUID.fromString(uuid);
+		} catch(IllegalArgumentException e) {
+		}
 		
-		entite.beforeMarshal(marshaller);
+		return null;
+	}
+
+	public static int parseInt(String number) {
+		try {
+			return Integer.parseInt(number);
+		} catch(NumberFormatException e) { }
+		
+		return 0;
 	}
 	
-	@SuppressWarnings("nls")
-	public String toJSON() {
-		return String.format("{\"id\":\"%s\",\"intitule\":\"%s\",\"entite\":\"%s\"}", id, intitule, entite.getIdEntite());
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Profile other = (Profile) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+	@SuppressWarnings("unchecked")
+	public static <T> T parse(Class<T> type, String value) {
+		T returnValue = (T)null;
+		if (Boolean.class == type || Boolean.TYPE == type) {
+			returnValue = (T)Boolean.valueOf(value);
+		} else if (Byte.class == type || Byte.TYPE == type) {
+			try {
+				returnValue = (T)Byte.valueOf(value);
+			} catch(NumberFormatException e) {
+				returnValue = (T)Byte.valueOf((byte)0);
+			}
+		} else if (Short.class == type || Short.TYPE == type) {
+			try {
+				returnValue =  (T)Short.valueOf(value);
+			} catch(NumberFormatException e) {
+				returnValue = (T)Short.valueOf((short)0);
+			}
+		} else if (Integer.class == type || Integer.TYPE == type) {
+			try {
+				returnValue =  (T)Integer.valueOf(value);
+			} catch(NumberFormatException e) {
+				returnValue = (T)Integer.valueOf(0);
+			}
+		} else if (Long.class == type || Long.TYPE == type) {
+			try {
+				returnValue =  (T)Long.valueOf(value);
+			} catch(NumberFormatException e) {
+				returnValue = (T)Long.valueOf(0);
+			}
+		} else if (Float.class == type || Float.TYPE == type) {
+			try {
+				returnValue =  (T)Float.valueOf(value);
+			} catch(NumberFormatException e) {
+				returnValue = (T)Float.valueOf(0);
+			}
+		} else if (Double.class == type || Double.TYPE == type) {
+			try {
+				returnValue =  (T)Double.valueOf(value);
+			} catch(NumberFormatException e) {
+				returnValue = (T)Double.valueOf(0);
+			}
+		} else if (Character.class == type || Character.TYPE == type) {
+			if(value.length() > 0)
+				returnValue = (T)Character.valueOf(value.charAt(0));
+		} else if (UUID.class == type) {
+			try {
+				returnValue = (T)UUID.fromString(value);
+			} catch(IllegalArgumentException e) { }
+		}
+		else if (String.class == type)
+			returnValue = (T)value;
+		return returnValue;
 	}
 }

@@ -1,6 +1,6 @@
 <h1>Recherche / Sélection d'une entités</h1>
 
-<div id="entitiesOperations">
+<div class="search-operations">
 <section id="entitiesSearch">
 <header>Rechercher</header>
 <input type="search" id="entitiesSearchInput" ng-model="entitiesSearchPattern" ng-change="searchChange()"/>
@@ -15,11 +15,11 @@ Fédérations:<br />
 </section>
 </div>
 
-<div id="entitiesResults">
+<div class="search-results">
 <span id="entitiesAction">
 <a href="#"><img src="images/add.png" /> Ajouter</a>
 </span>
-<table id="entitiesResultsTable" class="display" datatable dt-options="dtOptions" dt-columns="dtColumns" dt-column-defs="dtColumnDefs">
+<table id="entitiesResultsTable" class="display search-results-table" datatable dt-options="dtOptions" dt-columns="dtColumns" dt-column-defs="dtColumnDefs">
 	<thead>
 	<tr>
 		<th>Nom</th>

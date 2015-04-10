@@ -1,8 +1,8 @@
-#entitiesOperations {
+.search-operations {
 	float: left;
 }
 
-#entitiesOperations > section {
+.search-operations > section {
 	border-color: black;
 	border-style: solid;
 	border-width: 1px;
@@ -15,12 +15,12 @@
 	padding: 5px;
 }
 
-#entitiesOperations > section > header {
+.search-operations > section > header {
 	font-size: x-large;
 	padding-bottom: 10px;
 }
 
-#entitiesOperations input, #entitiesOperations select {
+.search-operations input, .search-operations select {
 	border-color: black;
 	border-style: solid;
 	border-width: 1px;
@@ -28,7 +28,7 @@
 	width: 100%;
 }
 
-#entitiesResults {
+.search-results {
 	overflow: auto;
 	height: 80vh;
 	
@@ -53,6 +53,6 @@
 	
 	cursor: default;
 }*/
-#entitiesResultsTable {
+.search-results-table {
 	border: 0;
 }

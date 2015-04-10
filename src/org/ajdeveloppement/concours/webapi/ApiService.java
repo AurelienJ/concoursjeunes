@@ -89,15 +89,30 @@
 package org.ajdeveloppement.concours.webapi;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.ajdeveloppement.commons.ExceptionUtils;
+import org.ajdeveloppement.concours.webapi.annotations.Body;
+import org.ajdeveloppement.concours.webapi.annotations.JsonService;
+import org.ajdeveloppement.concours.webapi.annotations.JsonServiceId;
+import org.ajdeveloppement.concours.webapi.annotations.UrlParameter;
+import org.ajdeveloppement.concours.webapi.controllers.ContactsController;
+import org.ajdeveloppement.concours.webapi.controllers.EntitiesController;
+import org.ajdeveloppement.concours.webapi.controllers.ProfileController;
+import org.ajdeveloppement.concours.webapi.controllers.ReferencesController;
+import org.ajdeveloppement.concours.webapi.controllers.RulesController;
+import org.ajdeveloppement.concours.webapi.helpers.Converter;
+import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.HttpResponse;
 import org.ajdeveloppement.webserver.HttpReturnCode;
 import org.ajdeveloppement.webserver.HttpServer;
@@ -105,49 +120,114 @@ import org.ajdeveloppement.webserver.HttpSession;
 import org.ajdeveloppement.webserver.services.RequestProcessor;
 import org.ajdeveloppement.webserver.services.js.ResponseFormatter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * @author Aurélien JEOFFRAY
  *
  */
 public class ApiService implements RequestProcessor {
 	
-	private Map<String, Method> endpointsServices = new HashMap<>();
+	private Map<String, Map<HttpMethod, Method>> endpointsServices = new HashMap<>();
 	
-	private Pattern rgxEntryPoint = Pattern.compile("/api/(?<key>[^/]+)(?:/(?<id>[^/]+))?(?<params>/.+)?", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+	private static Pattern rgxEntryPoint = Pattern.compile("/api/(?<key>[^/]+)(?:/(?<id>[^/]+))?(?<params>/.+)?/?", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+	private static Pattern rgxSubEntryPoint = Pattern.compile("/(?<key>[^/]+)(?:/(?<id>[^/]+))?(?<params>/.+)?/?", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 	
+	/**
+	 * Discover endpoint api service in a service container class.
+	 * An endpoint service method is a static method with first parameters {@link HttpContext}
+	 * and an annotation {@link JsonService}
+	 * 
+	 * @param servicesContainer the container taht contains service endpoint method
+	 */
 	private void discoverJsonServices(Class<?> servicesContainer) {
 		for(Method m : servicesContainer.getMethods()) {
 			JsonService endPoint = m.getAnnotation(JsonService.class);
 			if(endPoint != null 
 					&& Modifier.isStatic(m.getModifiers()) 
-					&& m.getParameterCount() == 1 && m.getParameterTypes()[0] == HttpSession.class
-					&& m.getReturnType() == String.class) {
-				endpointsServices.put(endPoint.key(), m);
+					&& m.getParameterCount() >= 1 && m.getParameterTypes()[0] == HttpContext.class
+					&& m.getReturnType() == String.class) {			
+				if(!endpointsServices.containsKey(endPoint.key()))
+					endpointsServices.put(endPoint.key(), new HashMap<HttpMethod, Method>());
+				
+				for(HttpMethod method : endPoint.methods())
+					endpointsServices.get(endPoint.key()).put(method, m);
 			}
 		}
 	}
 	
-	private String invokeJsonService(HttpSession session, String endPointKey) 
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	private String invokeJsonService(HttpContext context, String endPointKey, String[] ids) 
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
 		String jsonResponse = null;
-		
-		Method methodService = endpointsServices.get(endPointKey);
-		if(methodService != null) {
-			jsonResponse = (String)methodService.invoke(null, session);
+
+		Map<HttpMethod, Method> serviceMethod = endpointsServices.get(endPointKey);
+		if(serviceMethod != null) {
+			Method methodService = serviceMethod.get(context.getSession().getRequestMethod());
+			if(methodService != null) {
+				
+				Object[] params = new Object[methodService.getParameterCount()];
+				Arrays.fill(params, null);
+				params[0] = context;
+				
+				int idParameterIndex = 0;
+				for(int i = 1; i < methodService.getParameterCount(); i++) {
+					
+					Parameter parameter =methodService.getParameters()[i];
+					Annotation[] parametersAnnotation = parameter.getAnnotations();
+					
+					Class<?> parameterType = methodService.getParameterTypes()[i];
+					if(parametersAnnotation != null && parametersAnnotation.length > 0) {							
+						if(parameter.isAnnotationPresent(Body.class)) {
+							String jsonEntity = context.getSession().readContentAsString(Charset.forName("UTF-8")); //$NON-NLS-1$
+							
+							ObjectMapper jsonMapper = new ObjectMapper();
+							Object entiteModelView = jsonMapper.readValue(jsonEntity, methodService.getParameterTypes()[i]);
+							
+							params[i] = entiteModelView;
+						} else if(parameter.isAnnotationPresent(UrlParameter.class)) {
+							String key = parameter.getAnnotation(UrlParameter.class).value();
+							if(key.isEmpty())
+								key = parameter.getName();
+							
+							Map<String, String> urlParameters = context.getSession().getUrlParameters();
+							if(urlParameters.containsKey(key)) {
+								String strValue =  urlParameters.get(key);
+								Object typedValue = Converter.parse(parameterType, strValue);
+								params[i] = typedValue;
+							}
+						} else if(parameter.isAnnotationPresent(JsonServiceId.class)) {
+							int index = parameter.getAnnotation(JsonServiceId.class).value();
+							if(index == -1)
+								index = idParameterIndex;
+							
+							if(ids != null && ids.length > index && ids[index] != null)
+								params[i] =  Converter.parse(parameterType, ids[index]);
+							idParameterIndex++;
+						}
+					}
+				}
+				jsonResponse = (String)methodService.invoke(null, params);
+				
+			}
 		}
 		
 		return jsonResponse;
 	}
+	
+	
 	
 	/* (non-Javadoc)
 	 * @see org.ajdeveloppement.webserver.services.RequestProcessor#init()
 	 */
 	@Override
 	public void init(HttpServer server) {
-		discoverJsonServices(ContactsModel.class);
-		discoverJsonServices(EntitiesModel.class);
-		discoverJsonServices(ProfileModel.class);
-		discoverJsonServices(RatesModel.class);
+		//"org.ajdeveloppement.concours.webapi.controllers"
+		discoverJsonServices(ReferencesController.class);
+		
+		discoverJsonServices(ContactsController.class);
+		discoverJsonServices(EntitiesController.class);
+		discoverJsonServices(ProfileController.class);
+		discoverJsonServices(RulesController.class);
 	}
 
 	/* (non-Javadoc)
@@ -155,7 +235,7 @@ public class ApiService implements RequestProcessor {
 	 */
 	@Override
 	public boolean canServe(HttpSession session) {
-		if(session.getRequestUri().startsWith("/api")) //$NON-NLS-1$
+		if(rgxEntryPoint.matcher(session.getRequestUri()).matches())
 			return true;
 		
 		return false;
@@ -168,28 +248,31 @@ public class ApiService implements RequestProcessor {
 	@Override
 	public HttpResponse serve(HttpSession session) {
 		String uri = session.getRequestUri();
-		if(uri.startsWith("/api")) {
+		Matcher m = rgxEntryPoint.matcher(uri);
+		if(m.matches()) {
 			Map<String,String> urlParameters = session.getUrlParameters();
 			
+			KeyIdPair keyIdPair = KeyIdPair.getKeyIdPair(m);
+			
 			String key = null;
-			String id = null;
-			Matcher m = rgxEntryPoint.matcher(uri);
-			if(m.matches()) {
-				key = m.group("key");
-				id = m.group("id");
+			String[] ids = null;
+			if(keyIdPair != null) {
+				key = keyIdPair.getFullKey();
+				ids = new String[] { keyIdPair.getId() };
 			}
 			
-			if(key == null && urlParameters.containsKey("key"))
+			if((key == null || key.isEmpty()) && urlParameters.containsKey("key"))
 				key = urlParameters.get("key");
-			
-			if(id != null && !id.isEmpty())
-				urlParameters.put("id", id);
 			
 			if(key != null) {
 				try {
-					String jsonResponse = invokeJsonService(session, key);
-					if(jsonResponse != null)
-						return ResponseFormatter.getGzipedResponseForOutputTemplate(session, jsonResponse, "application/json");
+					HttpContext context = new HttpContext(session);
+					String jsonResponse = invokeJsonService(context, key, ids);
+					if(jsonResponse != null) {
+						HttpResponse response = ResponseFormatter.getGzipedResponseForOutputTemplate(session, jsonResponse, context.getMimeType());
+						response.setReturnCode(context.getReturnCode());
+						return response;
+					}
 				} catch (IOException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					e.printStackTrace();
 					
@@ -199,5 +282,64 @@ public class ApiService implements RequestProcessor {
 		}
 		
 		return new HttpResponse(HttpReturnCode.ClientError.NotFound, "text/plain; charset=utf-8", "Unknown request"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	private static class KeyIdPair {
+		private String key;
+		private String id;
+		
+		private KeyIdPair nextPair;
+		/**
+		 * @param key
+		 * @param id
+		 */
+		public KeyIdPair(String key, String id) {
+			this.key = key;
+			this.id = id;
+		}
+
+		/**
+		 * @return id
+		 */
+		public String getId() {
+			return id;
+		}
+
+		/**
+		 * @param nextPair nextPair à définir
+		 */
+		public void setNextPair(KeyIdPair nextPair) {
+			this.nextPair = nextPair;
+		}
+		
+		@SuppressWarnings("nls")
+		public String getFullKey() {
+			String key = this.key;
+			if(nextPair != null) {
+				key += "/" + nextPair.getFullKey();
+			}
+			
+			return key;
+		}
+		
+		@SuppressWarnings("nls")
+		public static KeyIdPair getKeyIdPair(Matcher matcher) {
+			KeyIdPair keyIdPair = null;
+			if(matcher.matches()) {
+				String key = matcher.group("key");
+				String id = matcher.group("id");
+				String params = matcher.group("params");
+				KeyIdPair nextPair = null;
+				if(params != null && !params.isEmpty()) {
+					Matcher subRoute = rgxSubEntryPoint.matcher(params);
+					nextPair = getKeyIdPair(subRoute);
+				}
+				
+				keyIdPair = new KeyIdPair(key, id);
+				keyIdPair.setNextPair(nextPair);
+			}
+			
+			return keyIdPair;
+		}
 	}
 }

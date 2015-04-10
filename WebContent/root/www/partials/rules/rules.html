@@ -1,0 +1,38 @@
+<h1>Recherche / Sélection d'un réglement</h1>
+
+<div class="search-operations">
+<section id="rulesSearch">
+<header>Rechercher</header>
+<input type="search" id="rulesSearchInput" ng-model="rulesSearchPattern" ng-change="searchChange()"/>
+</section>
+
+<section id="rulesFilter">
+<header>Filtres</header>
+Fédérations:<br />
+<select id="rulesFilterFederation">
+<option>FFTA</option>
+</select>
+</section>
+</div>
+
+<div class="search-results">
+<span id="rulesAction">
+<a href="#"><img src="images/add.png" /> Ajouter</a>
+</span>
+<table id="rulesResultsTable" class="display search-results-table" datatable dt-options="dtOptions" dt-columns="dtColumns" dt-column-defs="dtColumnDefs">
+	<thead>
+	<tr>
+		<th>Nom</th>
+		<th>Categorie</th>
+		<th>Entité</th>
+		<th>Actions</th>
+	</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+</div>
+<div id="rulesValidation" class="validationPanel">
+	<a href="#" id="rulesSelect" class="buttonScreenValid">Selectionner</a>
+	<a href="#" id="rulesCancel" class="buttonScreenCancel">Annuler</a>
+</div>

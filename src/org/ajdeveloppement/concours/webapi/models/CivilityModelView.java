@@ -1,7 +1,7 @@
 /*
- * Créé le 29 déc. 2013 à 15:45:26 pour ArcCompetition
+ * Créé le 8 avr. 2015 à 10:50:22 pour ArcCompetition
  *
- * Copyright 2002-2013 - Aurélien JEOFFRAY
+ * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,191 +86,79 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.data;
+package org.ajdeveloppement.concours.webapi.models;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-
-import org.ajdeveloppement.commons.net.json.JsonExclude;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@SqlTable(name="PROFILE",disableCache=true)
-@SqlPrimaryKey(fields="ID_PROFILE",generatedidField=@SqlGeneratedIdField(name="ID_PROFILE"))
-public class Profile implements SqlObjectPersistence {
+public class CivilityModelView {
+
+	private UUID idCivility;
 	
-	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
-	@XmlID
-	@XmlAttribute(name="id")
-	private String xmlId;
+	private String abreviation;
 	
-	@SqlField(name="ID_PROFILE")
-	private UUID id;
+	private String libelle;
 	
-	@SqlField(name="INTITULE")
-	private String intitule;
-	
-	private Entite entite;
-	
-	@SqlField(name="ID_ENTITE")
-	private UUID idEntite;
-	
-	@SqlChildCollection(foreignFields="ID_PROFILE",type=ManagerProfile.class)
-	private List<ManagerProfile> managers;
-	
+	private boolean morale = false;
+
 	/**
-	 * @return id
+	 * @return idCivility
 	 */
-	public UUID getId() {
-		return id;
+	public UUID getIdCivility() {
+		return idCivility;
 	}
 
 	/**
-	 * @param id id à définir
+	 * @param idCivility idCivility à définir
 	 */
-	public void setId(UUID id) {
-		this.id = id;
+	public void setIdCivility(UUID idCivility) {
+		this.idCivility = idCivility;
 	}
 
 	/**
-	 * @return initule
+	 * @return abreviation
 	 */
-	public String getIntitule() {
-		return intitule;
+	public String getAbreviation() {
+		return abreviation;
 	}
 
 	/**
-	 * @param initule initule à définir
+	 * @param abreviation abreviation à définir
 	 */
-	public void setIntitule(String initule) {
-		this.intitule = initule;
+	public void setAbreviation(String abreviation) {
+		this.abreviation = abreviation;
 	}
 
 	/**
-	 * @return idEntite
+	 * @return libelle
 	 */
-	public UUID getIdEntite() {
-		return idEntite;
+	public String getLibelle() {
+		return libelle;
 	}
 
 	/**
-	 * @param idEntite idEntite à définir
+	 * @param libelle libelle à définir
 	 */
-	public void setIdEntite(UUID idEntite) {
-		this.idEntite = idEntite;
+	public void setLibelle(String libelle) {
+		this.libelle = libelle;
 	}
 
 	/**
-	 * @return entite
+	 * @return morale
 	 */
-	@JsonExclude
-	public Entite getEntite() {
-		if(entite == null && idEntite != null)
-			entite = T_Entite.getInstanceWithPrimaryKey(idEntite);
-		return entite;
+	public boolean isMorale() {
+		return morale;
 	}
 
 	/**
-	 * @param entite entite à définir
+	 * @param morale morale à définir
 	 */
-	public void setEntite(Entite entite) {
-		this.entite = entite;
-		if(entite != null)
-			this.idEntite = entite.getIdEntite();
-		else
-			this.idEntite = null;
+	public void setMorale(boolean morale) {
+		this.morale = morale;
 	}
 
-
-	/**
-	 * @return managers
-	 */
-	public List<ManagerProfile> getManagers() {
-		if(managers == null) {
-			managers = QResults.from(ManagerProfile.class)
-					.where(T_ManagerProfile.ID_PROFILE.equalTo(id))
-					.asList();
-			if(managers == null)
-				managers = new ArrayList<>();
-		}
-		return managers;
-	}
-
-	/**
-	 * @param managers managers à définir
-	 */
-	public void setManagers(List<ManagerProfile> managers) {
-		this.managers = managers;
-	}
 	
-	public boolean addManager(Contact manager) {
-		return getManagers().add(new ManagerProfile(manager, this));
-	}
-	
-	public boolean removeManager(Contact manager) {
-		return getManagers().remove(new ManagerProfile(manager, this));
-	}
-	
-	/**
-	 * For JAXB Usage only. Do not use.
-	 * 
-	 * @param marshaller
-	 */
-	protected void beforeMarshal(Marshaller marshaller) {
-		if(id == null)
-			id = UUID.randomUUID();
-		xmlId = id.toString();
-		
-		entite.beforeMarshal(marshaller);
-	}
-	
-	@SuppressWarnings("nls")
-	public String toJSON() {
-		return String.format("{\"id\":\"%s\",\"intitule\":\"%s\",\"entite\":\"%s\"}", id, intitule, entite.getIdEntite());
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Profile other = (Profile) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
 }

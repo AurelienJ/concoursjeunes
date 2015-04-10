@@ -1,7 +1,7 @@
 /*
- * Créé le 1 août 2014 à 14:54:20 pour ArcCompetition
+ * Créé le 8 avr. 2015 à 19:09:31 pour ArcCompetition
  *
- * Copyright 2002-2014 - Aurélien JEOFFRAY
+ * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,91 +86,19 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi;
+package org.ajdeveloppement.concours.webapi.annotations;
 
-import java.util.List;
-
-import org.ajdeveloppement.commons.net.json.JsonParser;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class JsDataTables {
-	private int draw = 0;
-	private long recordsTotal = 0;
-	private long recordsFiltered = 0;
-	private List<?> data;
-	private String error;
-	
-	public JsDataTables() {
-		
-	}
-	
-	/**
-	 * @return draw
-	 */
-	public int getDraw() {
-		return draw;
-	}
-	/**
-	 * @param draw draw à définir
-	 */
-	public void setDraw(int draw) {
-		this.draw = draw;
-	}
-	/**
-	 * @return recordsTotal
-	 */
-	public long getRecordsTotal() {
-		return recordsTotal;
-	}
-	/**
-	 * @param recordsTotal recordsTotal à définir
-	 */
-	public void setRecordsTotal(long recordsTotal) {
-		this.recordsTotal = recordsTotal;
-	}
-	/**
-	 * @return recordsFiltered
-	 */
-	public long getRecordsFiltered() {
-		return recordsFiltered;
-	}
-	/**
-	 * @param recordsFiltered recordsFiltered à définir
-	 */
-	public void setRecordsFiltered(long recordsFiltered) {
-		this.recordsFiltered = recordsFiltered;
-	}
-	/**
-	 * @return data
-	 */
-	public List<?> getData() {
-		return data;
-	}
-	/**
-	 * @param data data à définir
-	 */
-	public void setData(List<?> data) {
-		this.data = data;
-	}
-	/**
-	 * @return error
-	 */
-	public String getError() {
-		return error;
-	}
-	/**
-	 * @param error error à définir
-	 */
-	public void setError(String error) {
-		this.error = error;
-	}
-	
-	public String toJSON() {
-		JsonParser parser = new JsonParser();
-		parser.setPrettyPrinting(true);
-		return parser.parseValue(this);
-	}
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
+public @interface UrlParameter {
+	public String value() default "";
 }
