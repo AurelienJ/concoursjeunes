@@ -94,8 +94,8 @@ import java.lang.reflect.InvocationTargetException;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.T_Civility;
 import org.ajdeveloppement.concours.data.T_Entite;
-import org.ajdeveloppement.concours.webapi.helpers.ModelViewMapper;
 import org.ajdeveloppement.concours.webapi.models.ContactModelView;
+import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
 
 /**
  * @author Aurélien JEOFFRAY

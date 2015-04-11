@@ -138,18 +138,23 @@ import org.ajdeveloppement.commons.security.SecureSiteAuthenticationStore;
 import org.ajdeveloppement.commons.ui.SwingURLAuthenticator;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.Profile;
-import org.ajdeveloppement.concours.db.UpgradeDatabaseEventListener;
 import org.ajdeveloppement.concours.exceptions.ExceptionHandlingEventQueue;
 import org.ajdeveloppement.concours.plugins.Plugin.Type;
 import org.ajdeveloppement.concours.plugins.PluginEntry;
 import org.ajdeveloppement.concours.plugins.PluginLoader;
 import org.ajdeveloppement.concours.plugins.PluginMetadata;
+import org.ajdeveloppement.concours.webapi.controllers.ContactsController;
+import org.ajdeveloppement.concours.webapi.controllers.EntitiesController;
+import org.ajdeveloppement.concours.webapi.controllers.ProfileController;
+import org.ajdeveloppement.concours.webapi.controllers.ReferencesController;
+import org.ajdeveloppement.concours.webapi.controllers.RulesController;
 import org.ajdeveloppement.swingxext.error.WebErrorReporter;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
 import org.ajdeveloppement.webserver.FileSelector;
 import org.ajdeveloppement.webserver.HttpServer;
 import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
 import org.ajdeveloppement.webserver.services.files.FilesService;
+import org.ajdeveloppement.webserver.services.webapi.ApiService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.graphics.Rectangle;
@@ -217,7 +222,6 @@ public class Main {
 			}
 		}
 
-		showSplashScreen();
 		//initErrorManaging();
 		initNetworkManaging();
 		initCore();
@@ -252,10 +256,15 @@ public class Main {
 			e.printStackTrace();
 		}
 		
+		ApiService webApiService = extensibleHttpRequestProcessor.getService(ApiService.class);
+		webApiService.discoverJsonServices(ReferencesController.class);
+		webApiService.discoverJsonServices(ProfileController.class);
+		webApiService.discoverJsonServices(ContactsController.class);
+		webApiService.discoverJsonServices(EntitiesController.class);
+		webApiService.discoverJsonServices(RulesController.class);
+		
 		System.out.println("Http listen on port: " + webServerListenPort); //$NON-NLS-1$
-		
-		hideSplashScreen();
-		
+				
 		Display display = Display.getDefault();
 		Display.setAppName("ArcCompetition 0.0.1");
         final Shell shell = new Shell(display, SWT.SHELL_TRIM);
@@ -294,43 +303,6 @@ public class Main {
 	}
 	
 	boolean onDrag = false;
-	
-	/**
-	 * Affiche le splash screen durant le chargement
-	 */
-	private static void showSplashScreen() {
-		splash = SplashScreen.getSplashScreen();
-		if(splash != null) {
-			try {
-				splash.setImageURL(new URL("file:" + ApplicationCore.staticParameters.getResourceString("path.ressources")  //$NON-NLS-1$//$NON-NLS-2$
-					+ File.separator
-					+ ApplicationCore.staticParameters.getResourceString("file.image.splashscreen"))); //$NON-NLS-1$
-				
-				UpgradeDatabaseEventListener.setSplashScreen(splash);
-			} catch (NullPointerException e1) {
-				e1.printStackTrace();
-			} catch (IllegalStateException e1) {
-				e1.printStackTrace();
-			} catch (MalformedURLException e1) {
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
-	}
-	
-	/**
-	 * Ferme le splash screen
-	 */
-	private static void hideSplashScreen() {	
-		if(splash != null) {
-			try {
-				splash.close();
-				UpgradeDatabaseEventListener.setSplashScreen(null);
-			} catch (IllegalStateException e) {
-			}
-		}
-	}
 	
 	/**
 	 * Initialise la gestion des erreurs

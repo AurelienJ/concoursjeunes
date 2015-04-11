@@ -107,8 +107,8 @@ import org.ajdeveloppement.concours.data.T_ManagerProfile;
 import org.ajdeveloppement.concours.data.T_Profile;
 import org.ajdeveloppement.concours.data.T_Rate;
 import org.ajdeveloppement.concours.webapi.adapters.ProfileAdapter;
-import org.ajdeveloppement.concours.webapi.helpers.ModelViewMapper;
 import org.ajdeveloppement.concours.webapi.models.ProfileModelView;
+import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
 
 /**
  * @author Aurélien JEOFFRAY

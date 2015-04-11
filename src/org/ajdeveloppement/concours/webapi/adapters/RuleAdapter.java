@@ -95,8 +95,8 @@ import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.T_Competition;
 import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.data.T_RulesCategory;
-import org.ajdeveloppement.concours.webapi.helpers.ModelViewMapper;
 import org.ajdeveloppement.concours.webapi.models.RuleModelView;
+import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
 
 /**
  * @author Aurélien JEOFFRAY

@@ -90,14 +90,14 @@ package org.ajdeveloppement.concours.webapi.controllers;
 
 import java.util.UUID;
 
-import org.ajdeveloppement.concours.webapi.HttpContext;
-import org.ajdeveloppement.concours.webapi.annotations.JsonService;
-import org.ajdeveloppement.concours.webapi.annotations.JsonServiceId;
-import org.ajdeveloppement.concours.webapi.annotations.UrlParameter;
-import org.ajdeveloppement.concours.webapi.annotations.WebApiController;
-import org.ajdeveloppement.concours.webapi.helpers.JsonHelper;
 import org.ajdeveloppement.concours.webapi.models.JsDataTables;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
+import org.ajdeveloppement.webserver.services.webapi.HttpContext;
+import org.ajdeveloppement.webserver.services.webapi.annotations.JsonService;
+import org.ajdeveloppement.webserver.services.webapi.annotations.JsonServiceId;
+import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
+import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
+import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 
 /**
  * @author Aurélien JEOFFRAY

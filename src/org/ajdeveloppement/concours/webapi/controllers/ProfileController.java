@@ -95,19 +95,19 @@ import java.util.UUID;
 import org.ajdeveloppement.commons.ExceptionUtils;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Contact;
-import org.ajdeveloppement.concours.webapi.HttpContext;
 import org.ajdeveloppement.concours.webapi.UserSessionData;
-import org.ajdeveloppement.concours.webapi.annotations.Body;
-import org.ajdeveloppement.concours.webapi.annotations.JsonService;
-import org.ajdeveloppement.concours.webapi.annotations.JsonServiceId;
-import org.ajdeveloppement.concours.webapi.annotations.WebApiController;
-import org.ajdeveloppement.concours.webapi.helpers.HttpSessionHelper;
-import org.ajdeveloppement.concours.webapi.helpers.JsonHelper;
 import org.ajdeveloppement.concours.webapi.models.ProfileModelView;
 import org.ajdeveloppement.concours.webapi.services.ProfilesService;
 import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
 import org.ajdeveloppement.webserver.HttpReturnCode.Success;
+import org.ajdeveloppement.webserver.services.webapi.HttpContext;
+import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
+import org.ajdeveloppement.webserver.services.webapi.annotations.JsonService;
+import org.ajdeveloppement.webserver.services.webapi.annotations.JsonServiceId;
+import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
+import org.ajdeveloppement.webserver.services.webapi.helpers.HttpSessionHelper;
+import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 
 /**
  * @author Aurélien JEOFFRAY

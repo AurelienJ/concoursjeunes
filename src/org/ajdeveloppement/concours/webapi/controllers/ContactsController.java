@@ -94,19 +94,19 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QField;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.concours.data.T_Contact;
-import org.ajdeveloppement.concours.webapi.HttpContext;
-import org.ajdeveloppement.concours.webapi.annotations.Body;
-import org.ajdeveloppement.concours.webapi.annotations.JsonService;
-import org.ajdeveloppement.concours.webapi.annotations.JsonServiceId;
-import org.ajdeveloppement.concours.webapi.annotations.UrlParameter;
-import org.ajdeveloppement.concours.webapi.annotations.WebApiController;
-import org.ajdeveloppement.concours.webapi.helpers.JsonHelper;
 import org.ajdeveloppement.concours.webapi.models.ContactModelView;
 import org.ajdeveloppement.concours.webapi.models.JsDataTables;
 import org.ajdeveloppement.concours.webapi.services.ContactsService;
 import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.HttpReturnCode.ClientError;
 import org.ajdeveloppement.webserver.HttpReturnCode.Success;
+import org.ajdeveloppement.webserver.services.webapi.HttpContext;
+import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
+import org.ajdeveloppement.webserver.services.webapi.annotations.JsonService;
+import org.ajdeveloppement.webserver.services.webapi.annotations.JsonServiceId;
+import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
+import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
+import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 
 /**
  * @author Aurélien JEOFFRAY

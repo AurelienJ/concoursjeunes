@@ -92,8 +92,8 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.ajdeveloppement.concours.data.Profile;
-import org.ajdeveloppement.concours.webapi.helpers.ModelViewMapper;
 import org.ajdeveloppement.concours.webapi.models.ProfileModelView;
+import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
 
 /**
  * @author Aurélien JEOFFRAY

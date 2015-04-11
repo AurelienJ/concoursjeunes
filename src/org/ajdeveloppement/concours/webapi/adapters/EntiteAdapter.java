@@ -93,8 +93,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.T_Entite;
-import org.ajdeveloppement.concours.webapi.helpers.ModelViewMapper;
 import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
+import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
 
 /**
  * @author Aurélien JEOFFRAY
