@@ -90,10 +90,15 @@ package org.ajdeveloppement.concours.webapi.models;
 
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
+
 /**
  * @author Aurélien JEOFFRAY
  *
  */
+@XmlRootElement
 public class EntiteModelView {
 
 	private UUID idEntite;
@@ -123,14 +128,16 @@ public class EntiteModelView {
 	/**
 	 * @return idEntite
 	 */
-	public UUID getIdEntite() {
+	@ModelViewBindedProperty("idEntite")
+	public UUID getId() {
 		return idEntite;
 	}
 
 	/**
 	 * @param idEntite idEntite à définir
 	 */
-	public void setIdEntite(UUID idEntite) {
+	@ModelViewBindedProperty("idEntite")
+	public void setId(UUID idEntite) {
 		this.idEntite = idEntite;
 	}
 

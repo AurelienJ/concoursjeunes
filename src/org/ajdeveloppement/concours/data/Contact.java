@@ -588,7 +588,7 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	 */
 	public List<ManagerProfile> getManagedProfiles() {
 		if(managedProfiles == null) {
-			managedProfiles = QResults.from(ManagerProfile.class)
+			managedProfiles = T_ManagerProfile.all()
 					.where(T_ManagerProfile.ID_CONTACT.equalTo(idContact))
 					.asList();
 			if(managedProfiles == null)

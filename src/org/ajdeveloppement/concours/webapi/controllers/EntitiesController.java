@@ -94,6 +94,7 @@ import org.ajdeveloppement.commons.ExceptionUtils;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.concours.data.T_Entite;
+import org.ajdeveloppement.concours.webapi.lifetime.LifeManager;
 import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
 import org.ajdeveloppement.concours.webapi.models.JsDataTables;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
@@ -124,12 +125,12 @@ public class EntitiesController {
 	 */
 	@SuppressWarnings("nls")
 	@JsonService(key="entitiesDataTable")
-	public static String getEntitiesDataTable(HttpContext context,
+	public static JsDataTables getEntitiesDataTable(HttpContext context,
 			@UrlParameter("search[value]") String searchValue,
 			@UrlParameter("length") int length,
 			@UrlParameter("start") int start,
 			@UrlParameter("draw") int draw) {	
-		EntiteService service = new EntiteService();
+		EntiteService service = LifeManager.get(EntiteService.class);
 		
 		int nbTotalEntites = service.countAllEntities();
 		
@@ -155,37 +156,37 @@ public class EntitiesController {
 		jsDataTables.setRecordsFiltered(nbFilteredEntites);
 		jsDataTables.setData(service.getEntitiesWithFilter(filter, length, offset));
 		
-		return jsDataTables.toJSON();
+		return jsDataTables;
 	}
 	
 	@JsonService(key="entities",methods=HttpMethod.GET)
-	public static String getEntities(HttpContext context, @JsonServiceId UUID id) {
+	public static Object getEntities(HttpContext context, @JsonServiceId UUID id) {
 
-		EntiteService service = new EntiteService();
+		EntiteService service = LifeManager.get(EntiteService.class);
 		if(id != null) {
 			EntiteModelView entite = service.getEntiteById(id);
 			if(entite != null) {
-				return JsonHelper.toJson(entite);
+				return entite;
 			}
 		} else {
-			return JsonHelper.toJson(service.getAllEntities());
+			return service.getAllEntities();
 		}
 		
 		return null;
 	}
 	
 	@JsonService(key="entities",methods={HttpMethod.PUT, HttpMethod.POST})
-	public static String createOrUpdateEntity(HttpContext context, @Body EntiteModelView entiteModelView) {
+	public static Object createOrUpdateEntity(HttpContext context, @Body EntiteModelView entiteModelView) {
 		boolean success = true;
 		String error = null;
 		try {
-			EntiteService service = new EntiteService();
+			EntiteService service = LifeManager.get(EntiteService.class);
 			service.createOrUpdateEntite(entiteModelView);
 
-			if(context.getSession().getRequestMethod() == HttpMethod.POST)
+			if(context.getHttpRequest().getRequestMethod() == HttpMethod.POST)
 				context.setReturnCode(Success.CREATED);
 			
-			return JsonHelper.toJson(entiteModelView);
+			return entiteModelView;
 		} catch (IllegalArgumentException | ObjectPersistenceException e) {
 			e.printStackTrace();
 			error = ExceptionUtils.toString(e);

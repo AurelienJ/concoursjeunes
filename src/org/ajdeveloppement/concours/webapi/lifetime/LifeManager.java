@@ -1,5 +1,5 @@
 /*
- * Créé le 7 avr. 2015 à 14:21:28 pour ArcCompetition
+ * Créé le 19 avr. 2015 à 12:18:43 pour ArcCompetition
  *
  * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
@@ -86,70 +86,34 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi.adapters;
+package org.ajdeveloppement.concours.webapi.lifetime;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
-
-import org.ajdeveloppement.concours.data.Contact;
-import org.ajdeveloppement.concours.data.T_Civility;
-import org.ajdeveloppement.concours.data.T_Entite;
-import org.ajdeveloppement.concours.webapi.models.ContactModelView;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class ContactAdapter implements ModelViewAdapter<Contact,ContactModelView> {
-
-	private Contact reference;
+public class LifeManager {
 	
-	public ContactAdapter() {
-		
-	}
+	private static Map<Class<?>, LifeTime<?>> components = new HashMap<>();
 	
-	public ContactAdapter(Contact model) {
-		reference = model;
+	public static <T> void addComponents(Class<T> type, LifeTime<T> lifeTime) {
+		addComponents(type, lifeTime, new DefaultComponentsFactory<T>());
 	}
 	
-	@Override
-	public ContactModelView toModelView(Contact model) {
-		ContactModelView contactModelView = new ContactModelView();
-		try {
-			ModelViewMapper.mapModelToViewModel(model, contactModelView);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
-			e.printStackTrace();
-		}
-		
-		contactModelView.setId(model.getIdContact());
-		if(model.getCivility() != null)
-			contactModelView.setIdCivility(model.getCivility().getIdCivility());
-		if(model.getEntite() != null)
-			contactModelView.setIdEntite(model.getEntite().getIdEntite());
-		
-		return contactModelView;
+	public static <T> void addComponents(Class<T> type, LifeTime<T> lifeTime, ComponentsFactory<T> factory) {
+		lifeTime.init(type, factory);
+		components.put(type, lifeTime);
 	}
-
-	@Override
-	public Contact toModel(ContactModelView modelView) {
-		if(reference == null)
-			reference = new Contact();
-		try {
-			ModelViewMapper.mapModelViewToModel(modelView, reference);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
-			e.printStackTrace();
-		}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T get(Class<T> type) {
+		LifeTime<T> lifeTime = (LifeTime<T>)components.get(type);
+		if(lifeTime != null)
+			return lifeTime.get();
 		
-		if(modelView.getIdCivility() != null)
-			reference.setCivility(T_Civility.getInstanceWithPrimaryKey(modelView.getIdCivility()));
-		
-		if(modelView.getIdEntite() != null)
-			reference.setEntite(T_Entite.getInstanceWithPrimaryKey(modelView.getIdCivility()));
-		
-		return reference;
+		return null;
 	}
-
 }

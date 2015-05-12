@@ -1,5 +1,5 @@
 /*
- * Créé le 7 avr. 2015 à 14:21:28 pour ArcCompetition
+ * Créé le 12 mai 2015 à 14:23:32 pour ArcCompetition
  *
  * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
@@ -86,70 +86,43 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi.adapters;
+package org.ajdeveloppement.concours.webapi.models;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
-
-import org.ajdeveloppement.concours.data.Contact;
-import org.ajdeveloppement.concours.data.T_Civility;
-import org.ajdeveloppement.concours.data.T_Entite;
-import org.ajdeveloppement.concours.webapi.models.ContactModelView;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class ContactAdapter implements ModelViewAdapter<Contact,ContactModelView> {
+public class RulesCategoryModelView {
+	private int id;
+	
+	private String name;
 
-	private Contact reference;
-	
-	public ContactAdapter() {
-		
-	}
-	
-	public ContactAdapter(Contact model) {
-		reference = model;
-	}
-	
-	@Override
-	public ContactModelView toModelView(Contact model) {
-		ContactModelView contactModelView = new ContactModelView();
-		try {
-			ModelViewMapper.mapModelToViewModel(model, contactModelView);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
-			e.printStackTrace();
-		}
-		
-		contactModelView.setId(model.getIdContact());
-		if(model.getCivility() != null)
-			contactModelView.setIdCivility(model.getCivility().getIdCivility());
-		if(model.getEntite() != null)
-			contactModelView.setIdEntite(model.getEntite().getIdEntite());
-		
-		return contactModelView;
+	/**
+	 * @return id
+	 */
+	public int getId() {
+		return id;
 	}
 
-	@Override
-	public Contact toModel(ContactModelView modelView) {
-		if(reference == null)
-			reference = new Contact();
-		try {
-			ModelViewMapper.mapModelViewToModel(modelView, reference);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
-			e.printStackTrace();
-		}
-		
-		if(modelView.getIdCivility() != null)
-			reference.setCivility(T_Civility.getInstanceWithPrimaryKey(modelView.getIdCivility()));
-		
-		if(modelView.getIdEntite() != null)
-			reference.setEntite(T_Entite.getInstanceWithPrimaryKey(modelView.getIdCivility()));
-		
-		return reference;
+	/**
+	 * @param id id à définir
+	 */
+	public void setId(int id) {
+		this.id = id;
 	}
 
+	/**
+	 * @return name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name name à définir
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 }

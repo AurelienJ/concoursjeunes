@@ -113,7 +113,7 @@ public class CoordinateAdapter implements ModelViewAdapter<Coordinate, Coordinat
 	@Override
 	public CoordinateModelView toModelView(Coordinate model) {
 		CoordinateModelView coordinateModelView = new CoordinateModelView();
-		coordinateModelView.setIdCoordinate(model.getIdCoordinate());
+		coordinateModelView.setId(model.getIdCoordinate());
 		if(model.getContact() != null)
 			coordinateModelView.setIdContact(model.getContact().getIdContact());
 		coordinateModelView.setCoordinateType(model.getCoordinateType().getValue());
@@ -127,7 +127,7 @@ public class CoordinateAdapter implements ModelViewAdapter<Coordinate, Coordinat
 		if(reference == null)
 			reference = new Coordinate();
 		
-		reference.setIdCoordinate(modelView.getIdCoordinate());
+		reference.setIdCoordinate(modelView.getId());
 		reference.setCoordinateType(Coordinate.Type.valueOf(modelView.getCoordinateType()));
 		reference.setValue(modelView.getValue());
 		if(modelView.getIdContact() != null)

@@ -1,5 +1,5 @@
 /*
- * Créé le 7 avr. 2015 à 14:21:28 pour ArcCompetition
+ * Créé le 19 avr. 2015 à 17:11:45 pour ArcCompetition
  *
  * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
@@ -86,70 +86,50 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi.adapters;
-
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
-
-import org.ajdeveloppement.concours.data.Contact;
-import org.ajdeveloppement.concours.data.T_Civility;
-import org.ajdeveloppement.concours.data.T_Entite;
-import org.ajdeveloppement.concours.webapi.models.ContactModelView;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
+package org.ajdeveloppement.concours.webapi.models;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class ContactAdapter implements ModelViewAdapter<Contact,ContactModelView> {
-
-	private Contact reference;
-	
-	public ContactAdapter() {
-		
+public class AuthenticationModelView {
+	private String login;
+	private String password;
+	private String idpToken;
+	/**
+	 * @return login
+	 */
+	public String getLogin() {
+		return login;
 	}
-	
-	public ContactAdapter(Contact model) {
-		reference = model;
+	/**
+	 * @param login login à définir
+	 */
+	public void setLogin(String login) {
+		this.login = login;
 	}
-	
-	@Override
-	public ContactModelView toModelView(Contact model) {
-		ContactModelView contactModelView = new ContactModelView();
-		try {
-			ModelViewMapper.mapModelToViewModel(model, contactModelView);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
-			e.printStackTrace();
-		}
-		
-		contactModelView.setId(model.getIdContact());
-		if(model.getCivility() != null)
-			contactModelView.setIdCivility(model.getCivility().getIdCivility());
-		if(model.getEntite() != null)
-			contactModelView.setIdEntite(model.getEntite().getIdEntite());
-		
-		return contactModelView;
+	/**
+	 * @return password
+	 */
+	public String getPassword() {
+		return password;
 	}
-
-	@Override
-	public Contact toModel(ContactModelView modelView) {
-		if(reference == null)
-			reference = new Contact();
-		try {
-			ModelViewMapper.mapModelViewToModel(modelView, reference);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
-			e.printStackTrace();
-		}
-		
-		if(modelView.getIdCivility() != null)
-			reference.setCivility(T_Civility.getInstanceWithPrimaryKey(modelView.getIdCivility()));
-		
-		if(modelView.getIdEntite() != null)
-			reference.setEntite(T_Entite.getInstanceWithPrimaryKey(modelView.getIdCivility()));
-		
-		return reference;
+	/**
+	 * @param password password à définir
+	 */
+	public void setPassword(String password) {
+		this.password = password;
 	}
-
+	/**
+	 * @return idpToken
+	 */
+	public String getIdpToken() {
+		return idpToken;
+	}
+	/**
+	 * @param idpToken idpToken à définir
+	 */
+	public void setIdpToken(String idpToken) {
+		this.idpToken = idpToken;
+	}
 }

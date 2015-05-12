@@ -90,11 +90,18 @@ package org.ajdeveloppement.concours.webapi.adapters;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.T_Competition;
 import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.data.T_RulesCategory;
+import org.ajdeveloppement.concours.data.Tie;
 import org.ajdeveloppement.concours.webapi.models.RuleModelView;
 import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
 
@@ -121,6 +128,8 @@ public class RuleAdapter implements ModelViewAdapter<Rule, RuleModelView> {
 		
 		try {
 			ModelViewMapper.mapModelToViewModel(model, modelView);
+			
+			modelView.setDepartages(model.getTie().stream().map(t -> t.getFieldName()).collect(Collectors.joining(",")));
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | IntrospectionException e) {
 			e.printStackTrace();
@@ -139,6 +148,7 @@ public class RuleAdapter implements ModelViewAdapter<Rule, RuleModelView> {
 		return modelView;
 	}
 
+	@SuppressWarnings("nls")
 	@Override
 	public Rule toModel(RuleModelView modelView) {
 		if(model == null)
@@ -146,9 +156,29 @@ public class RuleAdapter implements ModelViewAdapter<Rule, RuleModelView> {
 		
 		try {
 			ModelViewMapper.mapModelViewToModel(modelView, model);
+			if(modelView.getDepartages() != null) {
+				List<String> departages = Arrays.asList(modelView.getDepartages().split(","));
+				
+				//Stream<Tie> tieStream = model.getTie().stream();
+	
+				List<Tie> ties = new ArrayList<Tie>();
+				for(String departage : departages) {
+					Optional<Tie> optTie = model.getTie().stream().filter(t -> t.getFieldName().equals(departage)).findFirst();
+					Tie tie = null;
+					if(optTie.isPresent())
+						tie = optTie.get();
+					else {
+						tie = new Tie();
+						tie.setFieldName(departage);
+					}
+	
+					ties.add(tie);
+				}
+				model.setTie(ties);
+			}
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | IntrospectionException e) {
-			e.printStackTrace();
+			throw new UncheckedException(e);
 		}
 		model.setCategory(T_RulesCategory.getInstanceWithPrimaryKey(modelView.getIdCategory()));
 		if(modelView.getIdCompetition() != null)

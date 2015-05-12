@@ -88,13 +88,17 @@
  */
 package org.ajdeveloppement.concours.webapi.controllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QField;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.concours.data.T_Contact;
+import org.ajdeveloppement.concours.webapi.lifetime.LifeManager;
+import org.ajdeveloppement.concours.webapi.models.CivilityModelView;
 import org.ajdeveloppement.concours.webapi.models.ContactModelView;
+import org.ajdeveloppement.concours.webapi.models.CoordinateModelView;
 import org.ajdeveloppement.concours.webapi.models.JsDataTables;
 import org.ajdeveloppement.concours.webapi.services.ContactsService;
 import org.ajdeveloppement.webserver.HttpMethod;
@@ -124,13 +128,13 @@ public class ContactsController {
 	 */
 	@SuppressWarnings("nls")
 	@JsonService(key="contactsDataTable")
-	public static String getContactsDataTable(HttpContext context, 
+	public static JsDataTables getContactsDataTable(HttpContext context, 
 			@UrlParameter("search[value]") String searchValue,
 			@UrlParameter("length") int length,
 			@UrlParameter("start") int start,
 			@UrlParameter("draw") int draw) {
 		
-		ContactsService service = new ContactsService();
+		ContactsService service = LifeManager.get(ContactsService.class);
 		
 		int nbTotalContacts = service.countAllContacts();
 		
@@ -156,66 +160,65 @@ public class ContactsController {
 		jsDataTables.setRecordsFiltered(nbFilteredContacts);
 		jsDataTables.setData(service.getContactWithFilter(filter, length, offset));
 		
-		return jsDataTables.toJSON();
+		return jsDataTables;
 	}
 	
 	@SuppressWarnings("nls")
 	@JsonService(key="contacts")
-	public static String getContact(HttpContext context, @JsonServiceId UUID id) {
+	public static Object getContact(HttpContext context, @JsonServiceId UUID id) {
 		String error = "";
 		
-		ContactsService service = new ContactsService();
+		ContactsService service = LifeManager.get(ContactsService.class);
 		
 		if(id != null) {
 
 			ContactModelView contact = service.getContactById(id);
 			
 			if(contact != null) {
-				return JsonHelper.toJson(contact);
+				return contact;
 			}
 			context.setReturnCode(ClientError.NotFound);
 			error = "There is no contact with id: " + id.toString();
 		} else {
-			return JsonHelper.toJson(service.getAllContacts());
+			return service.getAllContacts();
 		}
 		
 		return JsonHelper.getFailSuccessResponse(error);
 	}
 	
 	@JsonService(key="contacts", methods={HttpMethod.PUT, HttpMethod.POST})
-	public static String createOrUpdateContact(HttpContext context, @Body ContactModelView contactModelView) throws ObjectPersistenceException {
+	public static ContactModelView createOrUpdateContact(HttpContext context, @Body ContactModelView contactModelView) throws ObjectPersistenceException {
 		
 		if(contactModelView != null) {
-			ContactsService service = new ContactsService();
+			ContactsService service = LifeManager.get(ContactsService.class);
 			service.createOrUpdateContact(contactModelView);
 			
-			if(context.getSession().getRequestMethod() == HttpMethod.POST)
+			if(context.getHttpRequest().getRequestMethod() == HttpMethod.POST)
 				context.setReturnCode(Success.CREATED);
-			return JsonHelper.toJson(contactModelView);
+			return contactModelView;
 		}
 		return null;
 	}
 	
-	@SuppressWarnings("nls")
 	@JsonService(key="contacts/coordinates")
-	public static String getCoordinate(HttpContext context, @JsonServiceId(0) UUID idContact, @JsonServiceId(1) UUID idCoordinate) {
+	public static List<CoordinateModelView> getCoordinate(HttpContext context, @JsonServiceId(0) UUID idContact, @JsonServiceId(1) UUID idCoordinate) {
 		if(idContact != null) {
-			ContactsService service = new ContactsService();
+			ContactsService service = LifeManager.get(ContactsService.class);
 			
-			return JsonHelper.toJson(service.getCoordinateForIdContact(idContact));
+			return service.getCoordinateForIdContact(idContact);
 		}
 		
 		context.setReturnCode(ClientError.NotFound);
-		return JsonHelper.getFailSuccessResponse("Invalid idContact");
+		return null;
 	}
 	
 	@JsonService(key="civilities")
-	public static String getCivilities(HttpContext context, @JsonServiceId UUID id) {
-		ContactsService service = new ContactsService();
+	public static List<CivilityModelView> getCivilities(HttpContext context, @JsonServiceId UUID id) {
+		ContactsService service = LifeManager.get(ContactsService.class);
 		if(id != null) {
 
 		} else {
-			return JsonHelper.toJson(service.getAllCivilities());
+			return service.getAllCivilities();
 		}
 		
 		return null;

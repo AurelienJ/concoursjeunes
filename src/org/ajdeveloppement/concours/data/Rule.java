@@ -156,8 +156,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @SqlTable(name="REGLEMENT")
 @SqlPrimaryKey(fields="ID_REGLEMENT", generatedidField=@SqlGeneratedIdField(name="ID_REGLEMENT",type=Types.JAVA_OBJECT))
 public class Rule implements SqlObjectPersistence, Cloneable {
-	//private static StoreHelper<Rule> helper = SqlStoreHelperFactory.getStoreHelper(Rule.class);
-	
+
 	/**
 	 * Type de réglement
 	 */
@@ -229,6 +228,7 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	private List<CriteriaSet> listPlacementCriteriaSet = new ArrayList<>();
 	@XmlElementWrapper(name="departages",required=true)
     @XmlElement(name="departage")
+	@SqlChildCollection(foreignFields="ID_REGLEMENT", type=Tie.class)
 	private List<Tie> tie = new ArrayList<>();
 	
 	@SqlChildCollection(foreignFields="ID_REGLEMENT", type=RankingCriterion.class)

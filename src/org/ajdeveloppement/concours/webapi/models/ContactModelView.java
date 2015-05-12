@@ -90,6 +90,8 @@ package org.ajdeveloppement.concours.webapi.models;
 
 import java.util.UUID;
 
+import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
+
 /**
  * @author Aurélien JEOFFRAY
  *
@@ -124,14 +126,16 @@ public class ContactModelView {
 	/**
 	 * @return idContact
 	 */
-	public UUID getIdContact() {
+	@ModelViewBindedProperty("idContact")
+	public UUID getId() {
 		return idContact;
 	}
 
 	/**
 	 * @param idContact idContact à définir
 	 */
-	public void setIdContact(UUID idContact) {
+	@ModelViewBindedProperty("idContact")
+	public void setId(UUID idContact) {
 		this.idContact = idContact;
 	}
 

@@ -4,6 +4,11 @@
 
 var Services = angular.module('ArcCompetitionServices', ['ngResource']);
 
+Services.factory('Authenticate',['$resource', function($resource) {
+	return $resource("/api/authenticate", {}, {
+	});
+}]);
+
 Services.factory('Country',['$resource', function($resource) {
 	return $resource("/api/countries/:id", {}, {
 	});
@@ -55,5 +60,16 @@ Services.service('ContactSelector', function() {
 Services.factory("Rules", ['$resource', function($resource) {
 	return $resource("/api/rules/:id", {}, {
 		update: {method: 'PUT'}
+	});
+}]);
+
+Services.factory("RulesCategories", ['$resource', function($resource) {
+	return $resource("/api/rulesCategories/:id", {}, {
+		update: {method: 'PUT'}
+	});
+}]);
+
+Services.factory("AvailableEntitiesForRulesCreation", ['$resource', function($resource) {
+	return $resource("/api/availableEntitiesForRulesCreation", {}, {
 	});
 }]);

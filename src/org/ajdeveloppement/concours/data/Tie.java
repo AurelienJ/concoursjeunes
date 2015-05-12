@@ -88,6 +88,7 @@
  */
 package org.ajdeveloppement.concours.data;
 
+import java.sql.Types;
 import java.util.UUID;
 
 import javax.xml.bind.Marshaller;
@@ -101,6 +102,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 
@@ -110,7 +112,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="DEPARTAGE")
-@SqlPrimaryKey(fields="ID_DEPARTAGE")
+@SqlPrimaryKey(fields="ID_DEPARTAGE", generatedidField=@SqlGeneratedIdField(name="ID_DEPARTAGE",type=Types.OTHER))
 public class Tie implements SqlObjectPersistence,Cloneable {
 	
 	//private static StoreHelper<Tie> helper = SqlStoreHelperFactory.getStoreHelper(Tie.class);

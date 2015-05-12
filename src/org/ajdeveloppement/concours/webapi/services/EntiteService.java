@@ -149,8 +149,8 @@ public class EntiteService {
 	public void createOrUpdateEntite(EntiteModelView entiteModelView) throws ObjectPersistenceException {
 		if(entiteModelView != null) {
 			Entite entite = null;
-			if(entiteModelView.getIdEntite() != null)
-				entite = T_Entite.getInstanceWithPrimaryKey(entiteModelView.getIdEntite());
+			if(entiteModelView.getId() != null)
+				entite = T_Entite.getInstanceWithPrimaryKey(entiteModelView.getId());
 			
 			if(entite == null)
 				entite = new Entite();
@@ -160,8 +160,8 @@ public class EntiteService {
 			
 			entite.save();
 			
-			if(entite.getIdEntite() != entiteModelView.getIdEntite())
-				entiteModelView.setIdEntite(entite.getIdEntite());
+			if(entite.getIdEntite() != entiteModelView.getId())
+				entiteModelView.setId(entite.getIdEntite());
 		}
 	}
 }

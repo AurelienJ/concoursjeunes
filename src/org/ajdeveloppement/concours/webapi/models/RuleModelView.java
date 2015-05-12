@@ -90,6 +90,7 @@ package org.ajdeveloppement.concours.webapi.models;
 
 import java.util.UUID;
 
+import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.Rule.TypeReglement;
 
 /**
@@ -124,12 +125,14 @@ public class RuleModelView {
 
 	private int idCategory;
 
-	private String reglementType = TypeReglement.TARGET.toString();
+	private Rule.TypeReglement reglementType = TypeReglement.TARGET;
 
 	private boolean removable = true;
 	
 	private String libelleEntite;
 	private String libelleCategorie;
+	
+	private String departages;
 
 	/**
 	 * @return idRule
@@ -316,14 +319,14 @@ public class RuleModelView {
 	/**
 	 * @return reglementType
 	 */
-	public String getReglementType() {
+	public Rule.TypeReglement getReglementType() {
 		return reglementType;
 	}
 
 	/**
 	 * @param reglementType reglementType à définir
 	 */
-	public void setReglementType(String reglementType) {
+	public void setReglementType(Rule.TypeReglement reglementType) {
 		this.reglementType = reglementType;
 	}
 
@@ -367,6 +370,20 @@ public class RuleModelView {
 	 */
 	public void setLibelleCategorie(String libelleCategorie) {
 		this.libelleCategorie = libelleCategorie;
+	}
+
+	/**
+	 * @return departages
+	 */
+	public String getDepartages() {
+		return departages;
+	}
+
+	/**
+	 * @param departages departages à définir
+	 */
+	public void setDepartages(String departages) {
+		this.departages = departages;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Créé le 7 avr. 2015 à 14:21:28 pour ArcCompetition
+ * Créé le 12 mai 2015 à 14:25:30 pour ArcCompetition
  *
  * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
@@ -91,65 +91,51 @@ package org.ajdeveloppement.concours.webapi.adapters;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.ajdeveloppement.concours.data.Contact;
-import org.ajdeveloppement.concours.data.T_Civility;
-import org.ajdeveloppement.concours.data.T_Entite;
-import org.ajdeveloppement.concours.webapi.models.ContactModelView;
+import org.ajdeveloppement.commons.UncheckedException;
+import org.ajdeveloppement.concours.data.RulesCategory;
+import org.ajdeveloppement.concours.webapi.models.RulesCategoryModelView;
 import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class ContactAdapter implements ModelViewAdapter<Contact,ContactModelView> {
-
-	private Contact reference;
+public class RulesCategoryAdapter implements ModelViewAdapter<RulesCategory, RulesCategoryModelView> {
 	
-	public ContactAdapter() {
+	private RulesCategory model;
+
+	public RulesCategoryAdapter() {
 		
 	}
 	
-	public ContactAdapter(Contact model) {
-		reference = model;
+	public RulesCategoryAdapter(RulesCategory model) {
+		this.model = model;
 	}
 	
 	@Override
-	public ContactModelView toModelView(Contact model) {
-		ContactModelView contactModelView = new ContactModelView();
+	public RulesCategoryModelView toModelView(RulesCategory model) {
+		RulesCategoryModelView modelView = new RulesCategoryModelView();
 		try {
-			ModelViewMapper.mapModelToViewModel(model, contactModelView);
+			ModelViewMapper.mapModelToViewModel(model, modelView);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | IntrospectionException e) {
-			e.printStackTrace();
+			throw new UncheckedException(e);
 		}
-		
-		contactModelView.setId(model.getIdContact());
-		if(model.getCivility() != null)
-			contactModelView.setIdCivility(model.getCivility().getIdCivility());
-		if(model.getEntite() != null)
-			contactModelView.setIdEntite(model.getEntite().getIdEntite());
-		
-		return contactModelView;
+		return modelView;
 	}
 
 	@Override
-	public Contact toModel(ContactModelView modelView) {
-		if(reference == null)
-			reference = new Contact();
+	public RulesCategory toModel(RulesCategoryModelView modelView) {
+		if(model == null)
+			model = new RulesCategory();
 		try {
-			ModelViewMapper.mapModelViewToModel(modelView, reference);
+			ModelViewMapper.mapModelViewToModel(modelView, model);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | IntrospectionException e) {
-			e.printStackTrace();
+			throw new UncheckedException(e);
 		}
 		
-		if(modelView.getIdCivility() != null)
-			reference.setCivility(T_Civility.getInstanceWithPrimaryKey(modelView.getIdCivility()));
-		
-		if(modelView.getIdEntite() != null)
-			reference.setEntite(T_Entite.getInstanceWithPrimaryKey(modelView.getIdCivility()));
-		
-		return reference;
+		return model;
 	}
 
 }

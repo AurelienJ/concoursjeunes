@@ -1,8 +1,8 @@
 /** 
  * Controlleurs
  */
-App.controller("ParametersController", [ '$scope', '$rootScope', '$routeParams', 'Profile', 'Contact', 'Entity', 'EntitySelector', 
-	function($scope, $rootScope, $routeParams, Profile, Contact, Entity, EntitySelector) {
+App.controller("ParametersController", [ '$scope', '$rootScope', '$routeParams', 'Restangular', 'EntitySelector', 
+	function($scope, $rootScope, $routeParams, Restangular, EntitySelector) {
 		$rootScope.pageTitle = "Paramètres";
 
 		if ($routeParams.subscreen)
@@ -10,22 +10,32 @@ App.controller("ParametersController", [ '$scope', '$rootScope', '$routeParams',
 		else
 			$scope.subscreen = "general";
 		
-		$scope.profile = Profile.get({ id: idDefaultProfile }, function() {
-			if($scope.profile.idEntite && (!EntitySelector.getSelectedEntity() || EntitySelector.getSelectedEntity() != $scope.profile.idEntite)) {
+		 Restangular.one('profiles', idDefaultProfile).get().then(function(profile) {
+			$scope.profile = profile;
+			
+			if(profile.idEntite && (!EntitySelector.getSelectedEntity() || EntitySelector.getSelectedEntity() != profile.idEntite)) {
 				if(!EntitySelector.getSelectedEntity()) {
-					$scope.entity = Entity.get({id: $scope.profile.idEntite});
-					EntitySelector.setSelectedEntity($scope.profile.idEntite);
+					Restangular.one('entities', profile.idEntite).get().then(function(entity) {
+						 $scope.entity = entity;
+					});
+					EntitySelector.setSelectedEntity(profile.idEntite);
 				} else {
-					$scope.entity = Entity.get({id: EntitySelector.getSelectedEntity()});
+					Restangular.one('entities', EntitySelector.getSelectedEntity()).get().then(function(entity) {
+						 $scope.entity = entity;
+					});
 					$scope.profile.idEntite = EntitySelector.getSelectedEntity();
 				}
 			} else if(EntitySelector.getSelectedEntity()) {
-				$scope.entity =	Entity.get({id: EntitySelector.getSelectedEntity()});
+				Restangular.one('entities', EntitySelector.getSelectedEntity()).get().then(function(entity) {
+					 $scope.entity = entity;
+				});
 				$scope.profile.idEntite = EntitySelector.getSelectedEntity();
 			}
 		});
 		
-		$scope.contact = Contact.get({ id: idDefaultContact });
+		Restangular.one('contacts', idDefaultContact).get().then(function(contact) {
+			 $scope.contact = contact;
+		});
 		
 		if ($scope.subscreen == "display") {
 			$scope.langs = [ {
@@ -39,7 +49,7 @@ App.controller("ParametersController", [ '$scope', '$rootScope', '$routeParams',
 		}
 		
 		$scope.valid = function() {
-			$scope.profile.$update();
+			$scope.profile.save();
 			
 			return false;
 		}
@@ -94,9 +104,9 @@ App.controller("EntitiesController", [
 					DTColumnBuilder.newColumn('ville', 'Ville'),
 					DTColumnBuilder.newColumn(null).withTitle('Actions').notSortable()
 			            .renderWith(function(data, type, full, meta) {
-			                return '<a href="#/entities/' + data.idEntite + '"><img src="images/edit.png" class="action-button" title="editer"/></a>'
-			                	+ '<a href="#/parameters" ng-click="select(\'' + data.idEntite + '\')"><img src="images/forward.png" class="action-button" title="Séléctionner" /></a>'
-			                	+ (data.removable ? '<a href="#"><img src="images/del.png" ng-click="deleteEntity(\'' + data.idEntite + '\')" class="action-button" title="supprimer"/></a>' : '');
+			                return '<a href="#/entities/' + data.id + '"><img src="images/edit.png" class="action-button" title="editer"/></a>'
+			                	+ '<a href="#/parameters" ng-click="select(\'' + data.id + '\')"><img src="images/forward.png" class="action-button" title="Séléctionner" /></a>'
+			                	+ (data.removable ? '<a href="#"><img src="images/del.png" ng-click="deleteEntity(\'' + data.id + '\')" class="action-button" title="supprimer"/></a>' : '');
 			            })
 			            ];
 		
@@ -143,9 +153,16 @@ App.controller("EntitiesController", [
 		}
 ]);
 
-App.controller("EntityController", ['$scope', '$rootScope', '$route', '$routeParams','$compile','$http', '$location', 'Entity',
-	function($scope, $rootScope, $route, $routeParams, $compile, $http, $location, Entity) {
-		$scope.entity = Entity.get({id: $routeParams.id });
+App.controller("EntityController", ['$scope', '$rootScope', '$route', '$routeParams','$compile','$http', '$location', 'Restangular',
+	function($scope, $rootScope, $route, $routeParams, $compile, $http, $location, Restangular) {
+		Restangular.one("entities", $routeParams.id).get().then(function(entity) {
+			 $scope.entity = entity;
+			 
+			 $rootScope.breadcrumb.push({
+					path: "entities/" + $routeParams.id,
+					name: entity.nom
+				});
+		});
 		
 		$scope.cancel = function() {
 			$rootScope.breadcrumb.pop();
@@ -154,19 +171,13 @@ App.controller("EntityController", ['$scope', '$rootScope', '$route', '$routePar
 		};
 		
 		$scope.valid = function() {
-			$scope.entity.$update({id: $routeParams.id });
+			$scope.entity.id = $routeParams.id;
+			$scope.entity.save();
 			
 			$rootScope.breadcrumb.pop();
 			var previous = $rootScope.breadcrumb[$rootScope.breadcrumb.length-1];
 			$location.path(previous.path);
 		};
-		
-		$scope.entity.$promise.then(function(entity) {
-			$rootScope.breadcrumb.push({
-				path: "entities/" + $routeParams.id,
-				name: entity.nom
-			});
-		});
 	}
 ]);
 
@@ -340,8 +351,8 @@ App.controller("RulesController", [
  	
  		$scope.dtColumns = [
  				DTColumnBuilder.newColumn('name', 'Nom'),
- 				DTColumnBuilder.newColumn('category', 'Catégorie'),
- 				DTColumnBuilder.newColumn('entity', 'Entité'),
+ 				DTColumnBuilder.newColumn('libelleCategorie', 'Catégorie'),
+ 				DTColumnBuilder.newColumn('libelleEntite', 'Entité'),
  				DTColumnBuilder.newColumn(null).withTitle('Actions').notSortable()
  		            .renderWith(function(data, type, full, meta) {
  		                return '<a href="#/rules/' + data.idRule + '"><img src="images/edit.png" class="action-button" title="editer"/></a>'
@@ -390,3 +401,45 @@ App.controller("RulesController", [
    			});
    		}
    ]);
+
+App.controller("RuleController", ['$scope', '$rootScope', '$route', '$routeParams','$compile','$http', '$location', 
+                                  'Rules','RulesCategories','AvailableEntitiesForRulesCreation',
+	function($scope, $rootScope, $route, $routeParams, $compile, $http, $location, 
+			Rules, RulesCategories, AvailableEntitiesForRulesCreation) {
+		if($routeParams.id != "add") {
+			$scope.rule = Rules.get({id: $routeParams.id });
+			$scope.rule.$promise.then(function(rule) {
+				$rootScope.breadcrumb.push({
+					path: "rules/" + $routeParams.id,
+					name: rule.name
+				});
+			});
+		} else {
+			$rootScope.breadcrumb.push({
+				path: "rules/add",
+				name: "Nouveau réglement"
+			});
+		}
+		$scope.entities = AvailableEntitiesForRulesCreation.query();
+		$scope.categories = RulesCategories.query();
+			
+		$scope.cancel = function() {
+			$rootScope.breadcrumb.pop();
+			var previous = $rootScope.breadcrumb[$rootScope.breadcrumb.length-1];
+			$location.path(previous.path);
+		};
+		
+		$scope.valid = function() {
+			if($routeParams.id == "add")
+				Rules.save($scope.rule);
+			else
+				$scope.rule.$update({id: $routeParams.id });
+			
+			
+			$rootScope.breadcrumb.pop();
+			var previous = $rootScope.breadcrumb[$rootScope.breadcrumb.length-1];
+			$location.path(previous.path);
+		};
+		
+	}
+]);

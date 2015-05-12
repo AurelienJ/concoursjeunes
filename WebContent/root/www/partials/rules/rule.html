@@ -1,0 +1,30 @@
+<h1>Reglement</h1>
+
+<section class="formulaire">
+	<h2>Général</h2>
+	<p>
+	<label for="ruleName">Nom:</label><input type="text" placeholder="Nom" id="ruleName" ng-model="rule.name"/>
+	<label for="ruleDescription">Description:</label><textarea placeholder="Description" id="ruleDescription" ng-model="rule.description"></textarea>
+	<label for="ruleDescription">Associé à:</label><select ng-model="rule.idEntite">
+		<option ng-repeat="entity in entities" value="{{entity.idEntite}}">{{entity.libelle}}</option>
+	</select>
+	<label for="ruleCategory">Categorie:</label><select ng-model="rule.idCategory">
+		<option ng-repeat="category in categories" value="{{category.id}}">{{category.name}}</option>
+	</select>
+	</p>
+	
+	<p>
+	<label for="ruleNbSerie">Nombre de série:</label><input type="text" id="ruleNbSerie" ng-model="rule.nbSerie"/>
+	<label for="ruleNbVoleeParSerie">Nb de volée par série:</label><input type="text" id="ruleNbVoleeParSerie" ng-model="rule.nbVoleeParSerie"/>
+	<label for="ruleNbFlecheParVolee">Nb de flèche par volée:</label><input type="text" id="ruleNbFlecheParVolee" ng-model="rule.nbFlecheParVolee"/>
+	<label for="ruleNbMembresEquipe">Taille maximum équipe:</label><input type="text" id="ruleNbMembresEquipe" ng-model="rule.nbMembresEquipe"/>
+	<label for="ruleNbMembresRetenu">Nb de membre retenu:</label><input type="text" id="ruleNbMembresRetenu" ng-model="rule.nbMembresRetenu"/>
+	<label for="ruleDepartages">Departages:</label><input type="text" id="ruleDepartages" ng-model="rule.departages"/>
+	</p>
+	
+</section>
+
+<div id="ruleValidation" class="validationPanel">
+	<a href="" id="entityValid" class="buttonScreenValid" ng-click="valid()">Valider</a>
+	<a href="" id="entityCancel" class="buttonScreenCancel" ng-click="cancel()">Annuler</a>
+</div>

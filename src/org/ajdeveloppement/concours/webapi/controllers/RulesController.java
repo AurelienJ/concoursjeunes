@@ -88,15 +88,30 @@
  */
 package org.ajdeveloppement.concours.webapi.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.ajdeveloppement.commons.ExceptionUtils;
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Profile;
+import org.ajdeveloppement.concours.webapi.UserSessionData;
+import org.ajdeveloppement.concours.webapi.lifetime.LifeManager;
 import org.ajdeveloppement.concours.webapi.models.JsDataTables;
+import org.ajdeveloppement.concours.webapi.models.RuleModelView;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
+import org.ajdeveloppement.webserver.HttpMethod;
+import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
+import org.ajdeveloppement.webserver.HttpReturnCode.Success;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
+import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
 import org.ajdeveloppement.webserver.services.webapi.annotations.JsonService;
 import org.ajdeveloppement.webserver.services.webapi.annotations.JsonServiceId;
 import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
+import org.ajdeveloppement.webserver.services.webapi.helpers.HttpSessionHelper;
 import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 
 /**
@@ -107,12 +122,12 @@ import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 public class RulesController {
 
 	@JsonService(key="rulesDataTable")
-	public static String getRulesDataTable(HttpContext context,
+	public static JsDataTables getRulesDataTable(HttpContext context,
 			@UrlParameter("search[value]") String searchValue,
 			@UrlParameter("length") int length,
 			@UrlParameter("start") int start,
 			@UrlParameter("draw") int draw) {
-		RuleService service = new RuleService();
+		RuleService service = LifeManager.get(RuleService.class);
 		
 		int nbTotalRules = service.countAllRules();
 		int nbFilteredRules = nbTotalRules;
@@ -129,17 +144,73 @@ public class RulesController {
 		jsDataTables.setRecordsFiltered(nbFilteredRules);
 		jsDataTables.setData(service.getRulesByGlobalSearchValue(searchValue, length, offset));
 		
-		return jsDataTables.toJSON();
+		return jsDataTables;
+	}
+	
+	@JsonService(key="rulesCategories")
+	public static Object getRulesCategories(HttpContext context, @JsonServiceId int idRuleCategory) {
+		RuleService service = LifeManager.get(RuleService.class);
+		
+		if(idRuleCategory == 0)
+			return service.getAllRulesCategories();
+		
+		return service.getRulesCategoryById(idRuleCategory);
 	}
 	
 	@JsonService(key="rules")
-	public static String getRules(HttpContext context, @JsonServiceId UUID idRule) {
-		RuleService service = new RuleService();
+	public static Object getRules(HttpContext context, @JsonServiceId UUID idRule) {
+		RuleService service = LifeManager.get(RuleService.class);
 		
 		if(idRule == null)
-			return JsonHelper.toJson(service.getAllRules());
+			return service.getAllRules();
 		
-		return JsonHelper.toJson(service.getRuleById(idRule));
+		return service.getRuleById(idRule);
 	}
 
+	@JsonService(key="rules",methods={HttpMethod.PUT, HttpMethod.POST})
+	public static Object createOrUpdateRule(HttpContext context, @Body RuleModelView modelView) {
+		//UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getSession());
+		RuleService service = LifeManager.get(RuleService.class);
+		
+		//UUID idUtilisateur = null;
+		//if(userSessionData != null)
+		//	idUtilisateur = userSessionData.getSessionUser().getIdContact();
+		
+		try {
+			service.createOrUpdateRule(modelView);
+		} catch (ObjectPersistenceException e) {
+			context.setReturnCode(ServerError.InternalServerError);
+			return JsonHelper.getFailSuccessResponse(ExceptionUtils.toString(e));
+		}
+		
+		if(context.getHttpRequest().getRequestMethod() == HttpMethod.POST)
+			context.setReturnCode(Success.CREATED);
+		
+		return modelView;
+	}
+	
+	@SuppressWarnings("nls")
+	@JsonService(key="availableEntitiesForRulesCreation")
+	public static String getAvailableEntitiesForRulesCreation(HttpContext context) {
+		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
+		//RuleService service = LifeManager.get(RuleService.class);
+		
+		List<Entite> entites = new ArrayList<Entite>();
+		if(userSessionData != null) {
+			Profile profile = userSessionData.getSessionProfile();
+			if(profile != null && profile.getEntite() != null) {
+				entites.add(profile.getEntite());
+				Entite parent = profile.getEntite().getEntiteParent();
+				while(parent !=  null) {
+					entites.add(parent);
+					
+					parent = parent.getEntiteParent();
+				}
+				
+				return "[" + entites.stream().map(e -> "{ \"idEntite\": \"" + e.getIdEntite() + "\", \"libelle\":\"" + e.getNom() + "\"}").collect(Collectors.joining(",")) + "]";
+			}
+		}
+		
+		return null;
+	}
 }

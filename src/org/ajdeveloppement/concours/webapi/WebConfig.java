@@ -1,5 +1,5 @@
 /*
- * Créé le 7 avr. 2015 à 14:21:28 pour ArcCompetition
+ * Créé le 19 avr. 2015 à 12:14:44 pour ArcCompetition
  *
  * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
@@ -86,70 +86,48 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi.adapters;
+package org.ajdeveloppement.concours.webapi;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
-
-import org.ajdeveloppement.concours.data.Contact;
-import org.ajdeveloppement.concours.data.T_Civility;
-import org.ajdeveloppement.concours.data.T_Entite;
-import org.ajdeveloppement.concours.webapi.models.ContactModelView;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
+import org.ajdeveloppement.concours.webapi.controllers.ContactsController;
+import org.ajdeveloppement.concours.webapi.controllers.EntitiesController;
+import org.ajdeveloppement.concours.webapi.controllers.ProfileController;
+import org.ajdeveloppement.concours.webapi.controllers.ReferencesController;
+import org.ajdeveloppement.concours.webapi.controllers.RulesController;
+import org.ajdeveloppement.concours.webapi.lifetime.LifeManager;
+import org.ajdeveloppement.concours.webapi.lifetime.SingletonLifeTime;
+import org.ajdeveloppement.concours.webapi.services.ContactsService;
+import org.ajdeveloppement.concours.webapi.services.EntiteService;
+import org.ajdeveloppement.concours.webapi.services.ProfilesService;
+import org.ajdeveloppement.concours.webapi.services.ReferenceService;
+import org.ajdeveloppement.concours.webapi.services.RuleService;
+import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
+import org.ajdeveloppement.webserver.services.webapi.ApiService;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class ContactAdapter implements ModelViewAdapter<Contact,ContactModelView> {
-
-	private Contact reference;
+public class WebConfig {
 	
-	public ContactAdapter() {
-		
-	}
-	
-	public ContactAdapter(Contact model) {
-		reference = model;
+	private static void initLifeUnits() {
+		LifeManager.addComponents(ReferenceService.class, new SingletonLifeTime<ReferenceService>());
+		LifeManager.addComponents(ContactsService.class, new SingletonLifeTime<ContactsService>());
+		LifeManager.addComponents(EntiteService.class, new SingletonLifeTime<EntiteService>());
+		LifeManager.addComponents(ProfilesService.class, new SingletonLifeTime<ProfilesService>());
+		LifeManager.addComponents(RuleService.class, new SingletonLifeTime<RuleService>());
 	}
 	
-	@Override
-	public ContactModelView toModelView(Contact model) {
-		ContactModelView contactModelView = new ContactModelView();
-		try {
-			ModelViewMapper.mapModelToViewModel(model, contactModelView);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
-			e.printStackTrace();
-		}
-		
-		contactModelView.setId(model.getIdContact());
-		if(model.getCivility() != null)
-			contactModelView.setIdCivility(model.getCivility().getIdCivility());
-		if(model.getEntite() != null)
-			contactModelView.setIdEntite(model.getEntite().getIdEntite());
-		
-		return contactModelView;
+	private static void initControllers(ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor) {
+		ApiService webApiService = extensibleHttpRequestProcessor.getService(ApiService.class);
+		webApiService.discoverJsonServices(ReferencesController.class);
+		webApiService.discoverJsonServices(ProfileController.class);
+		webApiService.discoverJsonServices(ContactsController.class);
+		webApiService.discoverJsonServices(EntitiesController.class);
+		webApiService.discoverJsonServices(RulesController.class);
 	}
-
-	@Override
-	public Contact toModel(ContactModelView modelView) {
-		if(reference == null)
-			reference = new Contact();
-		try {
-			ModelViewMapper.mapModelViewToModel(modelView, reference);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
-			e.printStackTrace();
-		}
-		
-		if(modelView.getIdCivility() != null)
-			reference.setCivility(T_Civility.getInstanceWithPrimaryKey(modelView.getIdCivility()));
-		
-		if(modelView.getIdEntite() != null)
-			reference.setEntite(T_Entite.getInstanceWithPrimaryKey(modelView.getIdCivility()));
-		
-		return reference;
+	
+	public static void init(ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor) {
+		initLifeUnits();
+		initControllers(extensibleHttpRequestProcessor);
 	}
-
 }

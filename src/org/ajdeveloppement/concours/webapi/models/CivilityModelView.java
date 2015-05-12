@@ -90,6 +90,8 @@ package org.ajdeveloppement.concours.webapi.models;
 
 import java.util.UUID;
 
+import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
+
 /**
  * @author Aurélien JEOFFRAY
  *
@@ -107,14 +109,16 @@ public class CivilityModelView {
 	/**
 	 * @return idCivility
 	 */
-	public UUID getIdCivility() {
+	@ModelViewBindedProperty("idCivility")
+	public UUID getId() {
 		return idCivility;
 	}
 
 	/**
 	 * @param idCivility idCivility à définir
 	 */
-	public void setIdCivility(UUID idCivility) {
+	@ModelViewBindedProperty("idCivility")
+	public void setId(UUID idCivility) {
 		this.idCivility = idCivility;
 	}
 

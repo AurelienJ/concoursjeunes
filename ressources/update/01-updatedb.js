@@ -27,6 +27,14 @@ if(dbVersion == 0) {
 		sql.executeUpdate("ALTER TABLE AJWEBSERVER.Request ADD Referer VARCHAR(255)");
 	if(dbVersion < 35)
 		sql.executeScript("../sql/ImportClubFFTA.sql",true);
+	/*if(dbVersion < 36) {
+		sql.executeUpdate("INSERT INTO CATEGORIE_REGLEMENT (NUMCATEGORIE_REGLEMENT, NOMCATEGORIE) VALUES (1, 'Salle')");
+		sql.executeUpdate("INSERT INTO CATEGORIE_REGLEMENT (NUMCATEGORIE_REGLEMENT, NOMCATEGORIE) VALUES (2, 'Exterieur')");
+		sql.executeUpdate("INSERT INTO CATEGORIE_REGLEMENT (NUMCATEGORIE_REGLEMENT, NOMCATEGORIE) VALUES (3, 'Jeunes')");
+		sql.executeUpdate("INSERT INTO CATEGORIE_REGLEMENT (NUMCATEGORIE_REGLEMENT, NOMCATEGORIE) VALUES (4, 'Autres')");
+	}*/
+	if(dbVersion < 37)
+		sql.executeUpdate("ALTER TABLE DEPARTAGE ALTER ID_DEPARTAGE UUID NOT NULL DEFAULT RANDOM_UUID()");
 }
 
 //sql.executeScript("01-create_db-webserver.sql",true);

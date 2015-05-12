@@ -38,7 +38,6 @@
 	<import file="plugins/build-ArcCompetitionUpdate.xml"/>
 	<import file="plugins/build-ResultArcImport.xml"/>
 	<import file="plugins/build-FFTAImport.xml"/>
-	<import file="plugins/build-PhoenixPlugin.xml"/>
 	<import file="plugins/build-BackupRestorePlugin.xml"/>
 	<import file="plugins/build-ScriptExt.xml"/>
 

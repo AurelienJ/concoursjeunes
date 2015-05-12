@@ -91,6 +91,7 @@ package org.ajdeveloppement.concours.webapi.models;
 import java.util.UUID;
 
 import org.ajdeveloppement.concours.data.Coordinate.Type;
+import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -109,14 +110,16 @@ public class CoordinateModelView {
 	/**
 	 * @return idCoordinate
 	 */
-	public UUID getIdCoordinate() {
+	@ModelViewBindedProperty("idCoordinate")
+	public UUID getId() {
 		return idCoordinate;
 	}
 
 	/**
 	 * @param idCoordinate idCoordinate à définir
 	 */
-	public void setIdCoordinate(UUID idCoordinate) {
+	@ModelViewBindedProperty("idCoordinate")
+	public void setId(UUID idCoordinate) {
 		this.idCoordinate = idCoordinate;
 	}
 

@@ -143,18 +143,13 @@ import org.ajdeveloppement.concours.plugins.Plugin.Type;
 import org.ajdeveloppement.concours.plugins.PluginEntry;
 import org.ajdeveloppement.concours.plugins.PluginLoader;
 import org.ajdeveloppement.concours.plugins.PluginMetadata;
-import org.ajdeveloppement.concours.webapi.controllers.ContactsController;
-import org.ajdeveloppement.concours.webapi.controllers.EntitiesController;
-import org.ajdeveloppement.concours.webapi.controllers.ProfileController;
-import org.ajdeveloppement.concours.webapi.controllers.ReferencesController;
-import org.ajdeveloppement.concours.webapi.controllers.RulesController;
+import org.ajdeveloppement.concours.webapi.WebConfig;
 import org.ajdeveloppement.swingxext.error.WebErrorReporter;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
 import org.ajdeveloppement.webserver.FileSelector;
 import org.ajdeveloppement.webserver.HttpServer;
 import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
 import org.ajdeveloppement.webserver.services.files.FilesService;
-import org.ajdeveloppement.webserver.services.webapi.ApiService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.graphics.Rectangle;
@@ -256,12 +251,7 @@ public class Main {
 			e.printStackTrace();
 		}
 		
-		ApiService webApiService = extensibleHttpRequestProcessor.getService(ApiService.class);
-		webApiService.discoverJsonServices(ReferencesController.class);
-		webApiService.discoverJsonServices(ProfileController.class);
-		webApiService.discoverJsonServices(ContactsController.class);
-		webApiService.discoverJsonServices(EntitiesController.class);
-		webApiService.discoverJsonServices(RulesController.class);
+		WebConfig.init(extensibleHttpRequestProcessor);
 		
 		System.out.println("Http listen on port: " + webServerListenPort); //$NON-NLS-1$
 				

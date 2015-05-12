@@ -186,8 +186,8 @@ public class ContactsService {
 	
 	public void createOrUpdateContact(ContactModelView modelViewContact) throws ObjectPersistenceException {
 		Contact contact = null;
-		if(modelViewContact.getIdContact() != null)
-			contact = T_Contact.getInstanceWithPrimaryKey(modelViewContact.getIdContact());
+		if(modelViewContact.getId() != null)
+			contact = T_Contact.getInstanceWithPrimaryKey(modelViewContact.getId());
 		
 		if(contact == null)
 			contact = new Contact();
@@ -196,8 +196,8 @@ public class ContactsService {
 		contact = contactAdapter.toModel(modelViewContact);
 		
 		contact.save();
-		if(!contact.getIdContact().equals(modelViewContact.getIdContact()))
-			modelViewContact.setIdContact(contact.getIdContact());
+		if(!contact.getIdContact().equals(modelViewContact.getId()))
+			modelViewContact.setId(contact.getIdContact());
 	}
 	
 	public boolean deleteContact(UUID idContact) throws ObjectPersistenceException {

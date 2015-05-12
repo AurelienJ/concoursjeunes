@@ -89,6 +89,7 @@
 package org.ajdeveloppement.concours.webapi;
 
 import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.Profile;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -96,6 +97,7 @@ import org.ajdeveloppement.concours.data.Contact;
  */
 public class UserSessionData {
 	private Contact sessionUser;
+	private Profile sessionProfile;
 
 	/**
 	 * @return sessionUser
@@ -109,6 +111,20 @@ public class UserSessionData {
 	 */
 	public void setSessionUser(Contact sessionUser) {
 		this.sessionUser = sessionUser;
+	}
+
+	/**
+	 * @return sessionProfile
+	 */
+	public Profile getSessionProfile() {
+		return sessionProfile;
+	}
+
+	/**
+	 * @param sessionProfile sessionProfile à définir
+	 */
+	public void setSessionProfile(Profile sessionProfile) {
+		this.sessionProfile = sessionProfile;
 	}
 	
 	

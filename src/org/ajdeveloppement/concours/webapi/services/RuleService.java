@@ -88,10 +88,13 @@
  */
 package org.ajdeveloppement.concours.webapi.services;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.ajdeveloppement.commons.UncheckedException;
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Rule;
@@ -100,7 +103,9 @@ import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.data.T_Rule;
 import org.ajdeveloppement.concours.data.T_RulesCategory;
 import org.ajdeveloppement.concours.webapi.adapters.RuleAdapter;
+import org.ajdeveloppement.concours.webapi.adapters.RulesCategoryAdapter;
 import org.ajdeveloppement.concours.webapi.models.RuleModelView;
+import org.ajdeveloppement.concours.webapi.models.RulesCategoryModelView;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -178,7 +183,8 @@ public class RuleService {
 		return adapter.toModelView(rule);
 	}
 	
-	public void createOrUpdateRule(RuleModelView ruleModelView) {
+	@SuppressWarnings("nls")
+	public void createOrUpdateRule(RuleModelView ruleModelView) throws ObjectPersistenceException {
 		Rule rule = null;
 		if(ruleModelView.getIdRule() != null)
 			rule = T_Rule.getInstanceWithPrimaryKey(ruleModelView.getIdRule());
@@ -186,7 +192,34 @@ public class RuleService {
 		RuleAdapter adapter = new RuleAdapter(rule);
 		rule = adapter.toModel(ruleModelView);
 		
+		if(ruleModelView.getDepartages() != null) {
+			//Suppression de tous les départages qui n'existe plus
+			List<String> departages = Arrays.asList(ruleModelView.getDepartages().split(","));
+			rule.getTie().stream().filter(t -> !departages.contains(t.getFieldName())).forEach(t -> {
+				try {
+					t.delete();
+				} catch (Exception e) {
+					throw new UncheckedException(e);
+				}
+			});
+			rule.getTie().removeIf(t -> !departages.contains(t.getFieldName()));
+		}
+		
 		if(rule.getIdRule() != ruleModelView.getIdRule())
 			ruleModelView.setIdRule(rule.getIdRule());
+		
+		rule.save();
+	}
+	
+	public List<RulesCategoryModelView> getAllRulesCategories() {
+		RulesCategoryAdapter adapter = new RulesCategoryAdapter();
+		
+		return T_RulesCategory.all().asList().stream().map(r -> adapter.toModelView(r)).collect(Collectors.toList());
+	}
+	
+	public RulesCategoryModelView getRulesCategoryById(int id) {
+		RulesCategoryAdapter adapter = new RulesCategoryAdapter();
+		
+		return adapter.toModelView(T_RulesCategory.getInstanceWithPrimaryKey(id));
 	}
 }
