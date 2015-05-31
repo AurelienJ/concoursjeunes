@@ -91,13 +91,13 @@ package org.ajdeveloppement.concours.webapi.controllers;
 import java.util.List;
 import java.util.UUID;
 
+import org.ajdeveloppement.commons.lifetime.LifeManager;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.ManagerProfile;
 import org.ajdeveloppement.concours.data.Profile;
 import org.ajdeveloppement.concours.data.T_Contact;
 import org.ajdeveloppement.concours.data.T_ManagerProfile;
 import org.ajdeveloppement.concours.webapi.UserSessionData;
-import org.ajdeveloppement.concours.webapi.lifetime.LifeManager;
 import org.ajdeveloppement.concours.webapi.models.AuthenticationModelView;
 import org.ajdeveloppement.concours.webapi.models.CountryModelView;
 import org.ajdeveloppement.concours.webapi.services.ReferenceService;
@@ -105,7 +105,8 @@ import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.services.js.Sessions;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
-import org.ajdeveloppement.webserver.services.webapi.annotations.JsonService;
+import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
+import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService.Type;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
 import org.ajdeveloppement.webserver.services.webapi.helpers.HttpSessionHelper;
 import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
@@ -117,14 +118,14 @@ import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 @WebApiController
 public class ReferencesController {
 
-	@JsonService(key="countries")
+	@HttpService(key="countries", type=Type.JSON)
 	public static List<CountryModelView> getCountries(HttpContext context) {
 		ReferenceService service = LifeManager.get(ReferenceService.class);
 		
 		return service.getCountries();
 	}
 	
-	@JsonService(key="authenticate",methods=HttpMethod.POST)
+	@HttpService(key="authenticate",methods=HttpMethod.POST, type=Type.JSON)
 	public static String authenticate(HttpContext context,@Body AuthenticationModelView authenticationData) {
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
 		//Pour debug: devra être adapté lors du développement réel

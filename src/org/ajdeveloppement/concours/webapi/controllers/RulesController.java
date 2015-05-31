@@ -94,11 +94,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.ajdeveloppement.commons.ExceptionUtils;
+import org.ajdeveloppement.commons.lifetime.LifeManager;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Profile;
 import org.ajdeveloppement.concours.webapi.UserSessionData;
-import org.ajdeveloppement.concours.webapi.lifetime.LifeManager;
 import org.ajdeveloppement.concours.webapi.models.JsDataTables;
 import org.ajdeveloppement.concours.webapi.models.RuleModelView;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
@@ -107,7 +107,8 @@ import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
 import org.ajdeveloppement.webserver.HttpReturnCode.Success;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
-import org.ajdeveloppement.webserver.services.webapi.annotations.JsonService;
+import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
+import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService.Type;
 import org.ajdeveloppement.webserver.services.webapi.annotations.JsonServiceId;
 import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
@@ -121,7 +122,7 @@ import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 @WebApiController
 public class RulesController {
 
-	@JsonService(key="rulesDataTable")
+	@HttpService(key="rulesDataTable", type=Type.JSON)
 	public static JsDataTables getRulesDataTable(HttpContext context,
 			@UrlParameter("search[value]") String searchValue,
 			@UrlParameter("length") int length,
@@ -147,7 +148,7 @@ public class RulesController {
 		return jsDataTables;
 	}
 	
-	@JsonService(key="rulesCategories")
+	@HttpService(key="rulesCategories", type=Type.JSON)
 	public static Object getRulesCategories(HttpContext context, @JsonServiceId int idRuleCategory) {
 		RuleService service = LifeManager.get(RuleService.class);
 		
@@ -157,7 +158,7 @@ public class RulesController {
 		return service.getRulesCategoryById(idRuleCategory);
 	}
 	
-	@JsonService(key="rules")
+	@HttpService(key="rules", type=Type.JSON)
 	public static Object getRules(HttpContext context, @JsonServiceId UUID idRule) {
 		RuleService service = LifeManager.get(RuleService.class);
 		
@@ -167,7 +168,7 @@ public class RulesController {
 		return service.getRuleById(idRule);
 	}
 
-	@JsonService(key="rules",methods={HttpMethod.PUT, HttpMethod.POST})
+	@HttpService(key="rules",methods={HttpMethod.PUT, HttpMethod.POST}, type=Type.JSON)
 	public static Object createOrUpdateRule(HttpContext context, @Body RuleModelView modelView) {
 		//UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getSession());
 		RuleService service = LifeManager.get(RuleService.class);
@@ -190,7 +191,7 @@ public class RulesController {
 	}
 	
 	@SuppressWarnings("nls")
-	@JsonService(key="availableEntitiesForRulesCreation")
+	@HttpService(key="availableEntitiesForRulesCreation", type=Type.JSON)
 	public static String getAvailableEntitiesForRulesCreation(HttpContext context) {
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
 		//RuleService service = LifeManager.get(RuleService.class);

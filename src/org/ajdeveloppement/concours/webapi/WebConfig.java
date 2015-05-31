@@ -88,13 +88,13 @@
  */
 package org.ajdeveloppement.concours.webapi;
 
+import org.ajdeveloppement.commons.lifetime.LifeManager;
+import org.ajdeveloppement.commons.lifetime.SingletonLifeTime;
 import org.ajdeveloppement.concours.webapi.controllers.ContactsController;
 import org.ajdeveloppement.concours.webapi.controllers.EntitiesController;
 import org.ajdeveloppement.concours.webapi.controllers.ProfileController;
 import org.ajdeveloppement.concours.webapi.controllers.ReferencesController;
 import org.ajdeveloppement.concours.webapi.controllers.RulesController;
-import org.ajdeveloppement.concours.webapi.lifetime.LifeManager;
-import org.ajdeveloppement.concours.webapi.lifetime.SingletonLifeTime;
 import org.ajdeveloppement.concours.webapi.services.ContactsService;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
 import org.ajdeveloppement.concours.webapi.services.ProfilesService;
@@ -102,6 +102,7 @@ import org.ajdeveloppement.concours.webapi.services.ReferenceService;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
 import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
 import org.ajdeveloppement.webserver.services.webapi.ApiService;
+import org.ajdeveloppement.webserver.services.webapi.Container;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -119,11 +120,15 @@ public class WebConfig {
 	
 	private static void initControllers(ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor) {
 		ApiService webApiService = extensibleHttpRequestProcessor.getService(ApiService.class);
-		webApiService.discoverJsonServices(ReferencesController.class);
-		webApiService.discoverJsonServices(ProfileController.class);
-		webApiService.discoverJsonServices(ContactsController.class);
-		webApiService.discoverJsonServices(EntitiesController.class);
-		webApiService.discoverJsonServices(RulesController.class);
+		
+		Container container = new Container();
+		container.discoverServices(ReferencesController.class);
+		container.discoverServices(ProfileController.class);
+		container.discoverServices(ContactsController.class);
+		container.discoverServices(EntitiesController.class);
+		container.discoverServices(RulesController.class);
+		
+		webApiService.addContainer("*", container);
 	}
 	
 	public static void init(ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor) {

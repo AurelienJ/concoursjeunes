@@ -94,11 +94,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.ajdeveloppement.commons.ExceptionUtils;
+import org.ajdeveloppement.commons.lifetime.LifeManager;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.Rate;
 import org.ajdeveloppement.concours.webapi.UserSessionData;
-import org.ajdeveloppement.concours.webapi.lifetime.LifeManager;
 import org.ajdeveloppement.concours.webapi.models.ProfileModelView;
 import org.ajdeveloppement.concours.webapi.services.ProfilesService;
 import org.ajdeveloppement.webserver.HttpMethod;
@@ -106,7 +106,8 @@ import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
 import org.ajdeveloppement.webserver.HttpReturnCode.Success;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
-import org.ajdeveloppement.webserver.services.webapi.annotations.JsonService;
+import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
+import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService.Type;
 import org.ajdeveloppement.webserver.services.webapi.annotations.JsonServiceId;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
 import org.ajdeveloppement.webserver.services.webapi.helpers.HttpSessionHelper;
@@ -119,7 +120,7 @@ import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 @WebApiController
 public class ProfileController {
 	
-	@JsonService(key="profiles")
+	@HttpService(key="profiles", type=Type.JSON)
 	public static Object getProfiles(HttpContext context, @JsonServiceId UUID id) {
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
 		
@@ -135,7 +136,7 @@ public class ProfileController {
 		return service.getProfileById(id);
 	}
 	
-	@JsonService(key="profiles", methods=HttpMethod.PUT)
+	@HttpService(key="profiles", methods=HttpMethod.PUT, type=Type.JSON)
 	public static Object updateProfile(HttpContext context, @Body ProfileModelView profileModelView) {
 		try {
 			if(profileModelView != null) {
@@ -155,7 +156,7 @@ public class ProfileController {
 	}
 	
 	@SuppressWarnings("nls")
-	@JsonService(key="profiles", methods=HttpMethod.POST)
+	@HttpService(key="profiles", methods=HttpMethod.POST, type=Type.JSON)
 	public static Object createProfile(HttpContext context, @Body ProfileModelView profileModelView) {		
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
 		
@@ -188,7 +189,7 @@ public class ProfileController {
 		return JsonHelper.getFailSuccessResponse(error);
 	}
 	
-	@JsonService(key="profiles/rates")
+	@HttpService(key="profiles/rates", type=Type.JSON)
 	public static List<Rate> getRates(HttpContext context, @JsonServiceId(0) UUID idProfile, @JsonServiceId(1) UUID idRate) {
 		
 		if(idProfile != null) {

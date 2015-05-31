@@ -91,10 +91,10 @@ package org.ajdeveloppement.concours.webapi.controllers;
 import java.util.UUID;
 
 import org.ajdeveloppement.commons.ExceptionUtils;
+import org.ajdeveloppement.commons.lifetime.LifeManager;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.concours.data.T_Entite;
-import org.ajdeveloppement.concours.webapi.lifetime.LifeManager;
 import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
 import org.ajdeveloppement.concours.webapi.models.JsDataTables;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
@@ -103,7 +103,8 @@ import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
 import org.ajdeveloppement.webserver.HttpReturnCode.Success;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
-import org.ajdeveloppement.webserver.services.webapi.annotations.JsonService;
+import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
+import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService.Type;
 import org.ajdeveloppement.webserver.services.webapi.annotations.JsonServiceId;
 import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
@@ -124,7 +125,7 @@ public class EntitiesController {
 	 * @return réponse json avec la liste des entités trouvé
 	 */
 	@SuppressWarnings("nls")
-	@JsonService(key="entitiesDataTable")
+	@HttpService(key="entitiesDataTable", type=Type.JSON)
 	public static JsDataTables getEntitiesDataTable(HttpContext context,
 			@UrlParameter("search[value]") String searchValue,
 			@UrlParameter("length") int length,
@@ -159,7 +160,7 @@ public class EntitiesController {
 		return jsDataTables;
 	}
 	
-	@JsonService(key="entities",methods=HttpMethod.GET)
+	@HttpService(key="entities",methods=HttpMethod.GET, type=Type.JSON)
 	public static Object getEntities(HttpContext context, @JsonServiceId UUID id) {
 
 		EntiteService service = LifeManager.get(EntiteService.class);
@@ -175,7 +176,7 @@ public class EntitiesController {
 		return null;
 	}
 	
-	@JsonService(key="entities",methods={HttpMethod.PUT, HttpMethod.POST})
+	@HttpService(key="entities",methods={HttpMethod.PUT, HttpMethod.POST}, type=Type.JSON)
 	public static Object createOrUpdateEntity(HttpContext context, @Body EntiteModelView entiteModelView) {
 		boolean success = true;
 		String error = null;
