@@ -13,7 +13,7 @@
         <dependencies>
             <dependency org="org.ajdeveloppement" name="ajcommons" rev="[2.0,)"/> 
             <dependency org="org.ajdeveloppement" name="ajcommons-ext" rev="2.0.0"/>
-            <dependency org="org.ajdeveloppement" name="ajcommons-webserver" rev="[0.0,)"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-webserver" rev="[0.1,)"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-swingx-ext" rev="1.0.0"/>
             <dependency org="com.h2database" name="h2" rev="1.3.176" conf="runtime->default" />
             <dependency org="org.tinyjee.jgraphx" name="jgraphx" rev="2.3.0.5" />
