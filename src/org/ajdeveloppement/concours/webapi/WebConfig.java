@@ -100,6 +100,7 @@ import org.ajdeveloppement.concours.webapi.services.EntiteService;
 import org.ajdeveloppement.concours.webapi.services.ProfilesService;
 import org.ajdeveloppement.concours.webapi.services.ReferenceService;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
+import org.ajdeveloppement.webserver.HttpServer;
 import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
 import org.ajdeveloppement.webserver.services.webapi.ApiService;
 import org.ajdeveloppement.webserver.services.webapi.Container;
@@ -131,8 +132,8 @@ public class WebConfig {
 		webApiService.addContainer("*", container);
 	}
 	
-	public static void init(ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor) {
+	public static void init(HttpServer server, String baseContainer) {
 		initLifeUnits();
-		initControllers(extensibleHttpRequestProcessor);
+		initControllers((ExtensibleHttpRequestProcessor)server.getRequestProcessor());
 	}
 }

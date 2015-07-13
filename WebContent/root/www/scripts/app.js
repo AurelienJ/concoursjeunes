@@ -46,7 +46,7 @@ App.config([ '$routeProvider','RestangularProvider', function($routeProvider, Re
 /**
  * Global Events
  */
-App.run(function ($rootScope, $location, Authenticate, Restangular) {
+App.run(['$rootScope', '$location', 'Authenticate', 'Restangular', function ($rootScope, $location, Authenticate, Restangular) {
 	
 	//Restangular.setBaseUrl(BaseUrlCalculator.calculate());
 
@@ -64,4 +64,4 @@ App.run(function ($rootScope, $location, Authenticate, Restangular) {
     };
 
     $rootScope.breadcrumb = [];
-});
+}]);

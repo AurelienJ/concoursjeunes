@@ -251,7 +251,11 @@ public class Main {
 			e.printStackTrace();
 		}
 		
-		WebConfig.init(extensibleHttpRequestProcessor);
+		String baseContainer = ""; //$NON-NLS-1$
+		if(fileSelector != null)
+			baseContainer = fileSelector.getBasePath().toString();
+		
+		WebConfig.init(httpServer, baseContainer);
 		
 		System.out.println("Http listen on port: " + webServerListenPort); //$NON-NLS-1$
 				
