@@ -1,10 +1,11 @@
 App.controller("RuleController", ['$scope', '$rootScope', '$route', '$routeParams','$compile','$http', '$location', 
-                                  'Rules','RulesCategories','AvailableEntitiesForRulesCreation',
+                                  'Restangular',
 	function($scope, $rootScope, $route, $routeParams, $compile, $http, $location, 
-			Rules, RulesCategories, AvailableEntitiesForRulesCreation) {
+			Restangular) {
 		if($routeParams.id != "add") {
-			$scope.rule = Rules.get({id: $routeParams.id });
-			$scope.rule.$promise.then(function(rule) {
+			Restangular.one("rules", $routeParams.id).get().then(function(rule) {
+				$scope.rule = rule;
+				
 				$rootScope.breadcrumb.push({
 					path: "rules/" + $routeParams.id,
 					name: rule.name
@@ -16,8 +17,14 @@ App.controller("RuleController", ['$scope', '$rootScope', '$route', '$routeParam
 				name: "Nouveau réglement"
 			});
 		}
-		$scope.entities = AvailableEntitiesForRulesCreation.query();
-		$scope.categories = RulesCategories.query();
+		
+		Restangular.all("availableEntitiesForRulesCreation").getList().then(function(entities) {
+			$scope.entities = entities;
+		});
+		
+		Restangular.all("rulesCategories").getList().then(function(categories) {
+			$scope.categories = categories;
+		});
 			
 		$scope.cancel = function() {
 			$rootScope.breadcrumb.pop();

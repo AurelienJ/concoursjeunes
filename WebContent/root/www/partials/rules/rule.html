@@ -6,7 +6,7 @@
 	<label for="ruleName">Nom:</label><input type="text" placeholder="Nom" id="ruleName" ng-model="rule.name"/>
 	<label for="ruleDescription">Description:</label><textarea placeholder="Description" id="ruleDescription" ng-model="rule.description"></textarea>
 	<label for="ruleDescription">Associé à:</label><select ng-model="rule.idEntite">
-		<option ng-repeat="entity in entities" value="{{entity.idEntite}}">{{entity.libelle}}</option>
+		<option ng-repeat="entity in entities" value="{{entity.id}}">{{entity.nom}}</option>
 	</select>
 	<label for="ruleCategory">Categorie:</label><select ng-model="rule.idCategory">
 		<option ng-repeat="category in categories" value="{{category.id}}">{{category.name}}</option>

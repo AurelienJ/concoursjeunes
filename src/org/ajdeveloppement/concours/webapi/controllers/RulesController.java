@@ -99,6 +99,7 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Profile;
 import org.ajdeveloppement.concours.webapi.UserSessionData;
+import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
 import org.ajdeveloppement.concours.webapi.models.JsDataTables;
 import org.ajdeveloppement.concours.webapi.models.RuleModelView;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
@@ -190,9 +191,8 @@ public class RulesController {
 		return modelView;
 	}
 	
-	@SuppressWarnings("nls")
 	@HttpService(key="availableEntitiesForRulesCreation", type=Type.JSON)
-	public static String getAvailableEntitiesForRulesCreation(HttpContext context) {
+	public static List<EntiteModelView> getAvailableEntitiesForRulesCreation(HttpContext context) {
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
 		//RuleService service = LifeManager.get(RuleService.class);
 		
@@ -207,8 +207,13 @@ public class RulesController {
 					
 					parent = parent.getEntiteParent();
 				}
-				
-				return "[" + entites.stream().map(e -> "{ \"idEntite\": \"" + e.getIdEntite() + "\", \"libelle\":\"" + e.getNom() + "\"}").collect(Collectors.joining(",")) + "]";
+				return entites.stream().map(e -> {
+					EntiteModelView entite = new EntiteModelView();
+					entite.setId(e.getIdEntite());
+					entite.setNom(e.getNom());
+					
+					return entite;
+				}).collect(Collectors.toList());
 			}
 		}
 		

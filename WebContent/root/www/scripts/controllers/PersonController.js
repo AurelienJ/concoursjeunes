@@ -1,8 +1,16 @@
-App.controller("PersonController", ['$scope', '$rootScope', '$route', '$routeParams','$compile','$http', '$location', 'Contact', 'Civility', 'Country',
-	function($scope, $rootScope, $route, $routeParams, $compile, $http, $location, Contact, Civility, Country) {
-		$scope.person = Contact.get({id: $routeParams.id });
-		$scope.civilities = Civility.query();
-		$scope.countries = Country.query();
+App.controller("PersonController", ['$scope', '$rootScope', '$route', '$routeParams','$compile','$http', '$location', 'Restangular',
+	function($scope, $rootScope, $route, $routeParams, $compile, $http, $location, Restangular) {
+		Restangular.one("contacts", $routeParams.id).get().then(function(contact) {
+			$scope.person = contact;
+		});
+		
+		Restangular.all("civilities").getList().then(function(civilities) {
+			$scope.civilities = civilities;
+		})
+		
+		Restangular.all("countries").getList().then(function(countries) {
+			$scope.countries = countries;
+		})
 		
 		$scope.cancel = function() {
 			$rootScope.breadcrumb.pop();

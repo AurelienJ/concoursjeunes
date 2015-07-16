@@ -46,13 +46,14 @@ App.config([ '$routeProvider','RestangularProvider', function($routeProvider, Re
 /**
  * Global Events
  */
-App.run(['$rootScope', '$location', 'Authenticate', 'Restangular', function ($rootScope, $location, Authenticate, Restangular) {
+App.run(['$rootScope', '$location', 'Restangular', function ($rootScope, $location, Restangular) {
 	
 	//Restangular.setBaseUrl(BaseUrlCalculator.calculate());
 
     var history = [];
     
-    Authenticate.save({idpToken: idDefaultContact});
+    var authenticate = Restangular.all("authenticate");
+    authenticate.post({idpToken: idDefaultContact});
 
     $rootScope.$on('$routeChangeSuccess', function() {
         history.push($location.$$path);
@@ -65,3 +66,5 @@ App.run(['$rootScope', '$location', 'Authenticate', 'Restangular', function ($ro
 
     $rootScope.breadcrumb = [];
 }]);
+
+var Services = angular.module('ArcCompetitionServices', ['ngResource']);
