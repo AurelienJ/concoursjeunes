@@ -9,8 +9,8 @@
  *
  * FRANCAIS:
  *
- * Ce logiciel est un programme informatique servant à gérer les compétions de type
- * spécial jeunes de tir à l'Arc. 
+ * Ce logiciel est un programme informatique servant à gérer les compétions
+ * de tir à l'Arc. 
  *
  * Ce logiciel est régi par la licence CeCILL soumise au droit français et
  * respectant les principes de diffusion des logiciels libres. Vous pouvez
@@ -90,11 +90,13 @@ package org.ajdeveloppement.concours.webapi;
 
 import org.ajdeveloppement.commons.lifetime.LifeManager;
 import org.ajdeveloppement.commons.lifetime.SingletonLifeTime;
+import org.ajdeveloppement.concours.webapi.controllers.CompetitionsController;
 import org.ajdeveloppement.concours.webapi.controllers.ContactsController;
 import org.ajdeveloppement.concours.webapi.controllers.EntitiesController;
 import org.ajdeveloppement.concours.webapi.controllers.ProfileController;
 import org.ajdeveloppement.concours.webapi.controllers.ReferencesController;
 import org.ajdeveloppement.concours.webapi.controllers.RulesController;
+import org.ajdeveloppement.concours.webapi.services.CompetitionsService;
 import org.ajdeveloppement.concours.webapi.services.ContactsService;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
 import org.ajdeveloppement.concours.webapi.services.ProfilesService;
@@ -111,14 +113,22 @@ import org.ajdeveloppement.webserver.services.webapi.Container;
  */
 public class WebConfig {
 	
+	/**
+	 * Declare LifeUnits service
+	 */
 	private static void initLifeUnits() {
-		LifeManager.addComponents(ReferenceService.class, new SingletonLifeTime<ReferenceService>());
-		LifeManager.addComponents(ContactsService.class, new SingletonLifeTime<ContactsService>());
-		LifeManager.addComponents(EntiteService.class, new SingletonLifeTime<EntiteService>());
-		LifeManager.addComponents(ProfilesService.class, new SingletonLifeTime<ProfilesService>());
-		LifeManager.addComponents(RuleService.class, new SingletonLifeTime<RuleService>());
+		LifeManager.addComponents(ReferenceService.class, new SingletonLifeTime<>());
+		LifeManager.addComponents(ContactsService.class, new SingletonLifeTime<>());
+		LifeManager.addComponents(EntiteService.class, new SingletonLifeTime<>());
+		LifeManager.addComponents(ProfilesService.class, new SingletonLifeTime<>());
+		LifeManager.addComponents(RuleService.class, new SingletonLifeTime<>());
+		LifeManager.addComponents(CompetitionsService.class, new SingletonLifeTime<>());
 	}
 	
+	/**
+	 * Declare WebApi controllers
+	 * @param extensibleHttpRequestProcessor
+	 */
 	private static void initControllers(ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor) {
 		ApiService webApiService = extensibleHttpRequestProcessor.getService(ApiService.class);
 		
@@ -128,8 +138,10 @@ public class WebConfig {
 		container.discoverServices(ContactsController.class);
 		container.discoverServices(EntitiesController.class);
 		container.discoverServices(RulesController.class);
+		container.discoverServices(CompetitionsController.class);
 		
-		webApiService.addContainer("*", container);
+		//Controllers accessible sans distinction de nom d'hote et sans alias
+		webApiService.addContainer("*", container); //$NON-NLS-1$
 	}
 	
 	public static void init(HttpServer server, String baseContainer) {

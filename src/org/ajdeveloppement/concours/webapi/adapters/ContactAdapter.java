@@ -9,8 +9,8 @@
  *
  * FRANCAIS:
  *
- * Ce logiciel est un programme informatique servant à gérer les compétions de type
- * spécial jeunes de tir à l'Arc. 
+ * Ce logiciel est un programme informatique servant à gérer les compétions
+ * de tir à l'Arc. 
  *
  * Ce logiciel est régi par la licence CeCILL soumise au droit français et
  * respectant les principes de diffusion des logiciels libres. Vous pouvez
@@ -91,6 +91,7 @@ package org.ajdeveloppement.concours.webapi.adapters;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 
+import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.T_Civility;
 import org.ajdeveloppement.concours.data.T_Entite;
@@ -120,7 +121,7 @@ public class ContactAdapter implements ModelViewAdapter<Contact,ContactModelView
 			ModelViewMapper.mapModelToViewModel(model, contactModelView);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | IntrospectionException e) {
-			e.printStackTrace();
+			throw new UncheckedException(e);
 		}
 		
 		contactModelView.setId(model.getIdContact());

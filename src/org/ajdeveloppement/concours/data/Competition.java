@@ -9,8 +9,8 @@
  *
  * FRANCAIS:
  *
- * Ce logiciel est un programme informatique servant à gérer les compétions de type
- * spécial jeunes de tir à l'Arc. 
+ * Ce logiciel est un programme informatique servant à gérer les compétions
+ * de tir à l'Arc. 
  *
  * Ce logiciel est régi par la licence CeCILL soumise au droit français et
  * respectant les principes de diffusion des logiciels libres. Vous pouvez
@@ -107,8 +107,7 @@ import org.ajdeveloppement.concours.Judge;
 @SqlPrimaryKey(fields="ID_COMPETITION")
 public class Competition implements SqlObjectPersistence {
 	
-	//private static StoreHelper<Competition> helper = SqlStoreHelperFactory.getStoreHelper(Competition.class);
-	
+
 	@SqlField(name="ID_COMPETITION")
 	private UUID idCompetition;
 	
@@ -118,7 +117,7 @@ public class Competition implements SqlObjectPersistence {
 	@SqlField(name="LIEU")
 	private String lieuCompetition;
 	
-	@SqlForeignKey(mappedTo="ID_NIVEAU_COMPETITION")
+	@SqlForeignKey(mappedTo={"ID_NIVEAU_COMPETITION","ID_ENTITE"})
 	private CompetitionLevel competitionLevel;
 	
 	@SqlField(name="DATE_DEBUT")

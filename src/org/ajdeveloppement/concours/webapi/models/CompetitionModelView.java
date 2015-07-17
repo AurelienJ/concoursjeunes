@@ -1,5 +1,5 @@
 /*
- * Créé le 7 avr. 2015 à 14:18:08 pour ArcCompetition
+ * Créé le 17 juil. 2015 à 11:28:01 pour ArcCompetition
  *
  * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
@@ -88,241 +88,154 @@
  */
 package org.ajdeveloppement.concours.webapi.models;
 
+import java.util.Date;
 import java.util.UUID;
-
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class ContactModelView {
-	private UUID idContact;
+public class CompetitionModelView {
+	private UUID idCompetition;
+
+	private UUID idOrganisateur;
 	
-	private String name;
+	private String lieuCompetition;
 	
-	private String firstName;
-
-	private UUID idCivility;
+	private UUID idCompetitionLevel;
+	private UUID idEntiteCompetitionLevel;
 	
-	private String address;
+	private Date dateDebutConcours;
 	
-	private String zipCode;
+	private Date dateFinConcours;
 	
-	private String city;
-	
-	private String countryCode;
-	
-	private String note;
-	
-	private UUID idEntite;
-	
-	private String login;
-	
-	private String language;
-	
-	private boolean highlightExAequo;
-	
+	private boolean gestionDuel = true;
+
+	private UUID idReglement;
+
 	/**
-	 * @return idContact
+	 * @return idCompetition
 	 */
-	@ModelViewBindedProperty("idContact")
-	public UUID getId() {
-		return idContact;
+	public UUID getIdCompetition() {
+		return idCompetition;
 	}
 
 	/**
-	 * @param idContact idContact à définir
+	 * @param idCompetition idCompetition à définir
 	 */
-	@ModelViewBindedProperty("idContact")
-	public void setId(UUID idContact) {
-		this.idContact = idContact;
+	public void setIdCompetition(UUID idCompetition) {
+		this.idCompetition = idCompetition;
 	}
 
 	/**
-	 * @return name
+	 * @return idOrganisateur
 	 */
-	public String getName() {
-		return name;
+	public UUID getIdOrganisateur() {
+		return idOrganisateur;
 	}
 
 	/**
-	 * @param name name à définir
+	 * @param idOrganisateur idOrganisateur à définir
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setIdOrganisateur(UUID idOrganisateur) {
+		this.idOrganisateur = idOrganisateur;
 	}
 
 	/**
-	 * @return firstName
+	 * @return lieuCompetition
 	 */
-	public String getFirstName() {
-		return firstName;
+	public String getLieuCompetition() {
+		return lieuCompetition;
 	}
 
 	/**
-	 * @param firstName firstName à définir
+	 * @param lieuCompetition lieuCompetition à définir
 	 */
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setLieuCompetition(String lieuCompetition) {
+		this.lieuCompetition = lieuCompetition;
 	}
 
 	/**
-	 * @return idCivility
+	 * @return idCompetitionLevel
 	 */
-	public UUID getIdCivility() {
-		return idCivility;
+	public UUID getIdCompetitionLevel() {
+		return idCompetitionLevel;
 	}
 
 	/**
-	 * @param idCivility idCivility à définir
+	 * @param idCompetitionLevel idCompetitionLevel à définir
 	 */
-	public void setIdCivility(UUID idCivility) {
-		this.idCivility = idCivility;
+	public void setIdCompetitionLevel(UUID idCompetitionLevel) {
+		this.idCompetitionLevel = idCompetitionLevel;
 	}
 
 	/**
-	 * @return adress
+	 * @return idEntiteCompetitionLevel
 	 */
-	public String getAddress() {
-		return address;
+	public UUID getIdEntiteCompetitionLevel() {
+		return idEntiteCompetitionLevel;
 	}
 
 	/**
-	 * @param adress adress à définir
+	 * @param idEntiteCompetitionLevel idEntiteCompetitionLevel à définir
 	 */
-	public void setAddress(String address) {
-		this.address = address;
+	public void setIdEntiteCompetitionLevel(UUID idEntiteCompetitionLevel) {
+		this.idEntiteCompetitionLevel = idEntiteCompetitionLevel;
 	}
 
 	/**
-	 * @return zipCode
+	 * @return dateDebutConcours
 	 */
-	public String getZipCode() {
-		return zipCode;
+	public Date getDateDebutConcours() {
+		return dateDebutConcours;
 	}
 
 	/**
-	 * @param zipCode zipCode à définir
+	 * @param dateDebutConcours dateDebutConcours à définir
 	 */
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
+	public void setDateDebutConcours(Date dateDebutConcours) {
+		this.dateDebutConcours = dateDebutConcours;
 	}
 
 	/**
-	 * @return city
+	 * @return dateFinConcours
 	 */
-	public String getCity() {
-		if(city == null)
-			return ""; //$NON-NLS-1$
-		return city;
+	public Date getDateFinConcours() {
+		return dateFinConcours;
 	}
 
 	/**
-	 * @param city city à définir
+	 * @param dateFinConcours dateFinConcours à définir
 	 */
-	public void setCity(String city) {
-		this.city = city;
+	public void setDateFinConcours(Date dateFinConcours) {
+		this.dateFinConcours = dateFinConcours;
 	}
 
 	/**
-	 * @return countryCode
+	 * @return gestionDuel
 	 */
-	public String getCountryCode() {
-		return countryCode;
+	public boolean isGestionDuel() {
+		return gestionDuel;
 	}
 
 	/**
-	 * @param countryCode countryCode à définir
+	 * @param gestionDuel gestionDuel à définir
 	 */
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
+	public void setGestionDuel(boolean gestionDuel) {
+		this.gestionDuel = gestionDuel;
 	}
 
 	/**
-	 * @return note
+	 * @return idReglement
 	 */
-	public String getNote() {
-		return note;
+	public UUID getIdReglement() {
+		return idReglement;
 	}
 
 	/**
-	 * @param note note à définir
+	 * @param idReglement idReglement à définir
 	 */
-	public void setNote(String note) {
-		this.note = note;
+	public void setIdReglement(UUID idReglement) {
+		this.idReglement = idReglement;
 	}
-
-	/**
-	 * @return idEntite
-	 */
-	public UUID getIdEntite() {
-		return idEntite;
-	}
-
-	/**
-	 * @param idEntite idEntite à définir
-	 */
-	public void setIdEntite(UUID idEntite) {
-		this.idEntite = idEntite;
-	}
-
-	/**
-	 * @return login
-	 */
-	public String getLogin() {
-		return login;
-	}
-
-	/**
-	 * @param login login à définir
-	 */
-	public void setLogin(String login) {
-		this.login = login;
-	}
-
-	/**
-	 * @return language
-	 */
-	public String getLanguage() {
-		return language;
-	}
-
-	/**
-	 * @param language language à définir
-	 */
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-
-	/**
-	 * @return highlightExAequo
-	 */
-	public boolean isHighlightExAequo() {
-		return highlightExAequo;
-	}
-
-	/**
-	 * @param highlightExAequo highlightExAequo à définir
-	 */
-	public void setHighlightExAequo(boolean highlightExAequo) {
-		this.highlightExAequo = highlightExAequo;
-	}
-
-	/**
-	 * @return uncumuledInput
-	 */
-	public boolean isUncumuledInput() {
-		return uncumuledInput;
-	}
-
-	/**
-	 * @param uncumuledInput uncumuledInput à définir
-	 */
-	public void setUncumuledInput(boolean uncumuledInput) {
-		this.uncumuledInput = uncumuledInput;
-	}
-
-	private boolean uncumuledInput;
-
 }
