@@ -2,6 +2,10 @@ App.controller("PersonController", ['$scope', '$rootScope', '$route', '$routePar
 	function($scope, $rootScope, $route, $routeParams, $compile, $http, $location, Restangular) {
 		Restangular.one("contacts", $routeParams.id).get().then(function(contact) {
 			$scope.person = contact;
+			$rootScope.breadcrumb.push({
+				path: "persons/" + $routeParams.id,
+				name: contact.name + " " +contact.firstName
+			});
 		});
 		
 		Restangular.all("civilities").getList().then(function(civilities) {
@@ -15,22 +19,17 @@ App.controller("PersonController", ['$scope', '$rootScope', '$route', '$routePar
 		$scope.cancel = function() {
 			$rootScope.breadcrumb.pop();
 			var previous = $rootScope.breadcrumb[$rootScope.breadcrumb.length-1];
-			$location.path(previous.path);
+			if(previous)
+				$location.path(previous.path);
 		};
 		
 		$scope.valid = function() {
-			$scope.person.$update({id: $routeParams.id });
+			$scope.person.save();
 			
 			$rootScope.breadcrumb.pop();
 			var previous = $rootScope.breadcrumb[$rootScope.breadcrumb.length-1];
-			$location.path(previous.path);
+			if(previous)
+				$location.path(previous.path);
 		};
-		
-		$scope.person.$promise.then(function(contact) {
-			$rootScope.breadcrumb.push({
-				path: "persons/" + $routeParams.id,
-				name: contact.name + " " +contact.firstName
-			});
-		});
 	}
 ]);

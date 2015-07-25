@@ -46,9 +46,9 @@ App.controller("PersonsController", [
 				DTColumnBuilder.newColumn('city', 'Ville'),
 				DTColumnBuilder.newColumn(null).withTitle('Actions').notSortable()
 		            .renderWith(function(data, type, full, meta) {
-		                return '<a href="#/persons/' + data.idContact + '"><img src="images/edit.png" class="action-button" title="editer"/></a>'
-		                	+ '<a href="#/parameters" ng-click="select(\'' + data.idContact + '\')"><img src="images/forward.png" class="action-button" title="Séléctionner" /></a>'
-		                	+ (data.removable ? '<a href="#"><img src="images/del.png" ng-click="deleteContact(\'' + data.idContact + '\')" class="action-button" title="supprimer"/></a>' : '');
+		                return '<a href="#/persons/' + data.id + '"><img src="images/edit.png" class="action-button" title="editer"/></a>'
+		                	+ '<a href="#/parameters" ng-click="select(\'' + data.id + '\')"><img src="images/forward.png" class="action-button" title="Séléctionner" /></a>'
+		                	+ (data.removable ? '<a href="#"><img src="images/del.png" ng-click="deleteContact(\'' + data.id + '\')" class="action-button" title="supprimer"/></a>' : '');
 		            })
 		            ];
 	

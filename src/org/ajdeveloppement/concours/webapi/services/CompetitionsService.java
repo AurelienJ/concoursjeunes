@@ -90,12 +90,11 @@ package org.ajdeveloppement.concours.webapi.services;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.data.Competition;
 import org.ajdeveloppement.concours.data.T_Competition;
-import org.ajdeveloppement.concours.webapi.adapters.CompetitionAdapter;
+import org.ajdeveloppement.concours.webapi.adapters.ModelViewAdapterHelper;
 import org.ajdeveloppement.concours.webapi.models.CompetitionModelView;
 
 /**
@@ -104,11 +103,7 @@ import org.ajdeveloppement.concours.webapi.models.CompetitionModelView;
  */
 public class CompetitionsService {
 	
-	private List<CompetitionModelView> asModelViewList(List<Competition> competitions) {
-		CompetitionAdapter adapter = new CompetitionAdapter();
-		
-		return competitions.stream().map(r -> adapter.toModelView(r)).collect(Collectors.toList());
-	}
+	
 	
 	/**
 	 * Return all competitions
@@ -118,7 +113,7 @@ public class CompetitionsService {
 	public List<CompetitionModelView> getAllCompetition() {
 		QResults<Competition, Void> competitions = T_Competition.all();
 		
-		return asModelViewList(competitions.asList());
+		return ModelViewAdapterHelper.asModelViewList(CompetitionModelView.class, competitions.asList());
 	}
 	
 	/**
@@ -131,7 +126,7 @@ public class CompetitionsService {
 		QResults<Competition, Void> competitions = T_Competition.all().where(
 				T_Competition.ID_ENTITE.equalTo(idEntity));
 		
-		return asModelViewList(competitions.asList());
+		return ModelViewAdapterHelper.asModelViewList(CompetitionModelView.class, competitions.asList());
 	}
 	
 	/**
@@ -144,7 +139,7 @@ public class CompetitionsService {
 		QResults<Competition, Void> competitions = T_Competition.all().where(
 				T_Competition.ID_REGLEMENT.equalTo(idRule));
 		
-		return asModelViewList(competitions.asList());
+		return ModelViewAdapterHelper.asModelViewList(CompetitionModelView.class, competitions.asList());
 	}
 	
 	/**
@@ -157,6 +152,6 @@ public class CompetitionsService {
 		QResults<Competition, Void> competitions = T_Competition.all().where(
 				T_Competition.ID_ORGANISATEUR.equalTo(idEntity));
 		
-		return asModelViewList(competitions.asList());
+		return ModelViewAdapterHelper.asModelViewList(CompetitionModelView.class, competitions.asList());
 	}
 }

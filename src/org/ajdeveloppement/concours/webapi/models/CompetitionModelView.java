@@ -91,10 +91,14 @@ package org.ajdeveloppement.concours.webapi.models;
 import java.util.Date;
 import java.util.UUID;
 
+import org.ajdeveloppement.concours.webapi.adapters.CompetitionAdapter;
+import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
+
 /**
  * @author Aurélien JEOFFRAY
  *
  */
+@Adapter(CompetitionAdapter.class)
 public class CompetitionModelView {
 	private UUID idCompetition;
 

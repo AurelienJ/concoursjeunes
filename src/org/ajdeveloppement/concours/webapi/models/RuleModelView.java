@@ -92,11 +92,14 @@ import java.util.UUID;
 
 import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.Rule.TypeReglement;
+import org.ajdeveloppement.concours.webapi.adapters.RuleAdapter;
+import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
+@Adapter(RuleAdapter.class)
 public class RuleModelView {
 
 	private UUID idRule;

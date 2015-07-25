@@ -1,5 +1,5 @@
 /*
- * Créé le 8 avr. 2015 à 10:50:22 pour ArcCompetition
+ * Créé le 22 juil. 2015 à 11:48:51 pour ArcCompetition
  *
  * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
@@ -86,86 +86,21 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi.models;
+package org.ajdeveloppement.concours.webapi.adapters.annotations;
 
-import java.util.UUID;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.ajdeveloppement.concours.webapi.adapters.CivilityAdapter;
-import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
+import org.ajdeveloppement.concours.webapi.adapters.ModelViewAdapter;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@Adapter(CivilityAdapter.class)
-public class CivilityModelView {
-
-	private UUID idCivility;
-	
-	private String abreviation;
-	
-	private String libelle;
-	
-	private boolean morale = false;
-
-	/**
-	 * @return idCivility
-	 */
-	@ModelViewBindedProperty("idCivility")
-	public UUID getId() {
-		return idCivility;
-	}
-
-	/**
-	 * @param idCivility idCivility à définir
-	 */
-	@ModelViewBindedProperty("idCivility")
-	public void setId(UUID idCivility) {
-		this.idCivility = idCivility;
-	}
-
-	/**
-	 * @return abreviation
-	 */
-	public String getAbreviation() {
-		return abreviation;
-	}
-
-	/**
-	 * @param abreviation abreviation à définir
-	 */
-	public void setAbreviation(String abreviation) {
-		this.abreviation = abreviation;
-	}
-
-	/**
-	 * @return libelle
-	 */
-	public String getLibelle() {
-		return libelle;
-	}
-
-	/**
-	 * @param libelle libelle à définir
-	 */
-	public void setLibelle(String libelle) {
-		this.libelle = libelle;
-	}
-
-	/**
-	 * @return morale
-	 */
-	public boolean isMorale() {
-		return morale;
-	}
-
-	/**
-	 * @param morale morale à définir
-	 */
-	public void setMorale(boolean morale) {
-		this.morale = morale;
-	}
-
-	
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+public @interface Adapter {
+	Class<? extends ModelViewAdapter<?, ?>> value();
 }

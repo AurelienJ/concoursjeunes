@@ -91,12 +91,15 @@ package org.ajdeveloppement.concours.webapi.models;
 import java.util.UUID;
 
 import org.ajdeveloppement.concours.data.Coordinate.Type;
+import org.ajdeveloppement.concours.webapi.adapters.CoordinateAdapter;
+import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
 import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
+@Adapter(CoordinateAdapter.class)
 public class CoordinateModelView {
 
 	private UUID idCoordinate = null;

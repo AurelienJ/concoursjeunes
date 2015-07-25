@@ -88,11 +88,14 @@
  */
 package org.ajdeveloppement.concours.webapi.models;
 
+import org.ajdeveloppement.concours.webapi.adapters.RulesCategoryAdapter;
+import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
+@Adapter(RulesCategoryAdapter.class)
 public class RulesCategoryModelView {
 	private int id;
 	

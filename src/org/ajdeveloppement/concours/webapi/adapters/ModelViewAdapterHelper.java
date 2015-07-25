@@ -1,5 +1,5 @@
 /*
- * Créé le 8 avr. 2015 à 10:50:22 pour ArcCompetition
+ * Créé le 22 juil. 2015 à 12:16:12 pour ArcCompetition
  *
  * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
@@ -86,86 +86,45 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi.models;
+package org.ajdeveloppement.concours.webapi.adapters;
 
-import java.util.UUID;
-
-import org.ajdeveloppement.concours.webapi.adapters.CivilityAdapter;
-import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@Adapter(CivilityAdapter.class)
-public class CivilityModelView {
-
-	private UUID idCivility;
+public class ModelViewAdapterHelper {
 	
-	private String abreviation;
+	/**
+	 * Convert a model's list as modelview list where modelview type is modelViewType parameters
+	 * 
+	 * @param modelViewType
+	 * @param models
+	 * @return
+	 */
+	public static <Model, ModelView> List<ModelView> asModelViewList(Class<ModelView> modelViewType,
+			List<Model> models) {
+		ModelViewAdapter<Model, ModelView> adapter = ModelViewAdapterFactory.getAdapter(modelViewType);
+		if(adapter != null)
+			return models.stream().map(r -> adapter.toModelView(r)).collect(Collectors.toList());
+		
+		return null;
+	}
 	
-	private String libelle;
-	
-	private boolean morale = false;
-
 	/**
-	 * @return idCivility
+	 * Convert model instance as modelView instance
+	 * 
+	 * @param modelViewType
+	 * @param model
+	 * @return
 	 */
-	@ModelViewBindedProperty("idCivility")
-	public UUID getId() {
-		return idCivility;
+	public static <Model, ModelView> ModelView asModelView(Class<ModelView> modelViewType, Model model) {
+		ModelViewAdapter<Model, ModelView> adapter = ModelViewAdapterFactory.getAdapter(modelViewType);
+		if(adapter != null)
+			return adapter.toModelView(model);
+		
+		return null;
 	}
-
-	/**
-	 * @param idCivility idCivility à définir
-	 */
-	@ModelViewBindedProperty("idCivility")
-	public void setId(UUID idCivility) {
-		this.idCivility = idCivility;
-	}
-
-	/**
-	 * @return abreviation
-	 */
-	public String getAbreviation() {
-		return abreviation;
-	}
-
-	/**
-	 * @param abreviation abreviation à définir
-	 */
-	public void setAbreviation(String abreviation) {
-		this.abreviation = abreviation;
-	}
-
-	/**
-	 * @return libelle
-	 */
-	public String getLibelle() {
-		return libelle;
-	}
-
-	/**
-	 * @param libelle libelle à définir
-	 */
-	public void setLibelle(String libelle) {
-		this.libelle = libelle;
-	}
-
-	/**
-	 * @return morale
-	 */
-	public boolean isMorale() {
-		return morale;
-	}
-
-	/**
-	 * @param morale morale à définir
-	 */
-	public void setMorale(boolean morale) {
-		this.morale = morale;
-	}
-
-	
 }

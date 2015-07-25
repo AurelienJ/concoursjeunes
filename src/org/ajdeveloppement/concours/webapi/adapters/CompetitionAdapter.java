@@ -114,7 +114,7 @@ public class CompetitionAdapter implements ModelViewAdapter<Competition, Competi
 	public CompetitionAdapter(Competition model) {
 		reference = model;
 	}
-
+	
 	@Override
 	public CompetitionModelView toModelView(Competition model) {
 		CompetitionModelView modelView = new CompetitionModelView();

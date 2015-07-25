@@ -90,7 +90,6 @@ package org.ajdeveloppement.concours.webapi.services;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
@@ -101,50 +100,60 @@ import org.ajdeveloppement.concours.data.Coordinate;
 import org.ajdeveloppement.concours.data.T_Civility;
 import org.ajdeveloppement.concours.data.T_Contact;
 import org.ajdeveloppement.concours.data.T_Coordinate;
-import org.ajdeveloppement.concours.webapi.adapters.CivilityAdapter;
 import org.ajdeveloppement.concours.webapi.adapters.ContactAdapter;
-import org.ajdeveloppement.concours.webapi.adapters.CoordinateAdapter;
+import org.ajdeveloppement.concours.webapi.adapters.ModelViewAdapterHelper;
 import org.ajdeveloppement.concours.webapi.models.CivilityModelView;
 import org.ajdeveloppement.concours.webapi.models.ContactModelView;
 import org.ajdeveloppement.concours.webapi.models.CoordinateModelView;
 
 /**
+ * Manipulation of Contacts Service
+ * 
  * @author Aurélien JEOFFRAY
  *
  */
 public class ContactsService {
-
-	/**
-	 * 
-	 */
-	public ContactsService() {
-	}
 	
+	/**
+	 * return total numbers of contacts in database
+	 * 
+	 * @return total numbers of contacts in database
+	 */
 	public int countAllContacts() {
 		return T_Contact.all().count();
 	}
 	
+	/**
+	 * return numbers of contacts corresponding at filter query
+	 * 
+	 * @param filter the contact's filter
+	 * @return numbers of contacts corresponding at filter query
+	 */
 	public int countWithFilter(QFilter filter) {
 		return T_Contact.all().where(filter).count();
 	}
 
+	/**
+	 * Return all contacts
+	 * 
+	 * @return
+	 */
 	public List<ContactModelView> getAllContacts() {
 		List<Contact> contacts = T_Contact.all().orderBy(T_Contact.NAME, T_Contact.FIRSTNAME).asList();
 		
-		if(contacts != null) {
-			ContactAdapter contactAdapter = new ContactAdapter();
-			return contacts.stream().map(c -> contactAdapter.toModelView(c)).collect(Collectors.toList());
-		}
-		
-		return null;
+		return ModelViewAdapterHelper.asModelViewList(ContactModelView.class, contacts);
 	}
 	
+	/**
+	 * 
+	 * @param idEntite
+	 * @return
+	 */
 	public List<ContactModelView> getContactsForEntite(UUID idEntite) {
 		List<Contact> contacts = T_Contact.all().where(T_Contact.ID_ENTITE.equalTo(idEntite)).asList();
 		
 		if(contacts != null) {
-			ContactAdapter contactAdapter = new ContactAdapter();
-			return contacts.stream().map(c -> contactAdapter.toModelView(c)).collect(Collectors.toList());
+			return ModelViewAdapterHelper.asModelViewList(ContactModelView.class, contacts);
 		}
 		
 		return null;
@@ -156,19 +165,13 @@ public class ContactsService {
 	
 	public List<ContactModelView> getContactWithFilter(QFilter filter, int limit, int offset) {
 		QResults<Contact, Void> contactsQuery = T_Contact.all().where(filter).orderBy(T_Contact.NAME, T_Contact.FIRSTNAME);
-		if(limit > 0) {
-			if(offset > -1)
-				contactsQuery = contactsQuery.limit(limit, offset);
-			else
-				contactsQuery = contactsQuery.limit(limit);
-		}
+		if(limit > 0)
+			contactsQuery = contactsQuery.limit(limit, offset);
 		
 		List<Contact> contacts = contactsQuery.asList();
 		
-		if(contacts != null) {
-			ContactAdapter contactAdapter = new ContactAdapter();
-			return contacts.stream().map(c -> contactAdapter.toModelView(c)).collect(Collectors.toList());
-		}
+		if(contacts != null)
+			return ModelViewAdapterHelper.asModelViewList(ContactModelView.class, contacts);
 		
 		return null;
 	}
@@ -177,8 +180,7 @@ public class ContactsService {
 		Contact contact = T_Contact.getInstanceWithPrimaryKey(idContact);
 		
 		if(contact != null) {
-			ContactAdapter contactAdapter = new ContactAdapter();
-			return contactAdapter.toModelView(contact);
+			return ModelViewAdapterHelper.asModelView(ContactModelView.class, contact);
 		}
 		
 		return null;
@@ -188,9 +190,6 @@ public class ContactsService {
 		Contact contact = null;
 		if(modelViewContact.getId() != null)
 			contact = T_Contact.getInstanceWithPrimaryKey(modelViewContact.getId());
-		
-		if(contact == null)
-			contact = new Contact();
 		
 		ContactAdapter contactAdapter = new ContactAdapter(contact);
 		contact = contactAdapter.toModel(modelViewContact);
@@ -214,14 +213,12 @@ public class ContactsService {
 	public List<CoordinateModelView> getCoordinateForIdContact(UUID idContact) {
 		List<Coordinate> coordinates = T_Coordinate.all().where(T_Coordinate.ID_CONTACT.equalTo(idContact)).asList();
 		
-		CoordinateAdapter adapter = new CoordinateAdapter();
-		return coordinates.stream().map(c -> adapter.toModelView(c)).collect(Collectors.toList());
+		return ModelViewAdapterHelper.asModelViewList(CoordinateModelView.class, coordinates);
 	}
 	
 	public List<CivilityModelView> getAllCivilities() {
 		List<Civility> civilites = T_Civility.all().asList();
-		CivilityAdapter adapter = new CivilityAdapter();
 		
-		return civilites.stream().map(c -> adapter.toModelView(c)).collect(Collectors.toList());
+		return ModelViewAdapterHelper.asModelViewList(CivilityModelView.class, civilites);
 	}
 }

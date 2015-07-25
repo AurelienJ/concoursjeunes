@@ -1,5 +1,5 @@
 /*
- * Créé le 8 avr. 2015 à 10:50:22 pour ArcCompetition
+ * Créé le 22 juil. 2015 à 11:59:17 pour ArcCompetition
  *
  * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
@@ -86,86 +86,60 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi.models;
+package org.ajdeveloppement.concours.webapi.adapters;
 
-import java.util.UUID;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
-import org.ajdeveloppement.concours.webapi.adapters.CivilityAdapter;
+import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@Adapter(CivilityAdapter.class)
-public class CivilityModelView {
-
-	private UUID idCivility;
+public class ModelViewAdapterFactory {
 	
-	private String abreviation;
+	/**
+	 * Return Adapter associate with a modelview type
+	 * 
+	 * @param modelViewType the modelview type class
+	 * @return the associated adapter
+	 */
+	public static <Model, ModelView> ModelViewAdapter<Model, ModelView> getAdapter(Class<ModelView> modelViewType) {
+		return getAdapter(modelViewType, null);
+	}
 	
-	private String libelle;
-	
-	private boolean morale = false;
-
 	/**
-	 * @return idCivility
+	 * Return Adapter associate with a modelview type and initiate with a model instance
+	 * 
+	 * @param modelViewType the modelview type class
+	 * @param modelInstance the model instance
+	 * @return the associated adapter
 	 */
-	@ModelViewBindedProperty("idCivility")
-	public UUID getId() {
-		return idCivility;
+	@SuppressWarnings("unchecked")
+	public static <Model, ModelView> ModelViewAdapter<Model, ModelView> getAdapter(Class<ModelView> modelViewType, Model modelInstance) {
+		if(modelViewType == null)
+			return null;
+		
+		Adapter adapterClassAnnotation = modelViewType.getAnnotation(Adapter.class);
+		if(adapterClassAnnotation != null && adapterClassAnnotation.value() != null) {
+			Class<? extends ModelViewAdapter<?, ?>> adapterClass = adapterClassAnnotation.value();
+			try {
+				if(modelInstance != null) {
+					Constructor<?> adapterConstructor = adapterClass.getConstructor(modelInstance.getClass());
+					if(adapterConstructor != null) {
+						return (ModelViewAdapter<Model, ModelView>)adapterConstructor.newInstance(modelInstance);
+					}
+				}
+				
+				return (ModelViewAdapter<Model, ModelView>)adapterClassAnnotation.value().newInstance();
+			} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException 
+					| IllegalArgumentException | InvocationTargetException e) {
+				throw new UncheckedException(e);
+			}
+		}
+		
+		return null;
 	}
-
-	/**
-	 * @param idCivility idCivility à définir
-	 */
-	@ModelViewBindedProperty("idCivility")
-	public void setId(UUID idCivility) {
-		this.idCivility = idCivility;
-	}
-
-	/**
-	 * @return abreviation
-	 */
-	public String getAbreviation() {
-		return abreviation;
-	}
-
-	/**
-	 * @param abreviation abreviation à définir
-	 */
-	public void setAbreviation(String abreviation) {
-		this.abreviation = abreviation;
-	}
-
-	/**
-	 * @return libelle
-	 */
-	public String getLibelle() {
-		return libelle;
-	}
-
-	/**
-	 * @param libelle libelle à définir
-	 */
-	public void setLibelle(String libelle) {
-		this.libelle = libelle;
-	}
-
-	/**
-	 * @return morale
-	 */
-	public boolean isMorale() {
-		return morale;
-	}
-
-	/**
-	 * @param morale morale à définir
-	 */
-	public void setMorale(boolean morale) {
-		this.morale = morale;
-	}
-
-	
 }

@@ -90,10 +90,14 @@ package org.ajdeveloppement.concours.webapi.models;
 
 import java.util.UUID;
 
+import org.ajdeveloppement.concours.webapi.adapters.ProfileAdapter;
+import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
+
 /**
  * @author Aurélien JEOFFRAY
  *
  */
+@Adapter(ProfileAdapter.class)
 public class ProfileModelView {
 
 	private UUID id;

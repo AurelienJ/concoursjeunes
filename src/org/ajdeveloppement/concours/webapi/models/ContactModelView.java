@@ -90,12 +90,15 @@ package org.ajdeveloppement.concours.webapi.models;
 
 import java.util.UUID;
 
+import org.ajdeveloppement.concours.webapi.adapters.ContactAdapter;
+import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
 import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
+@Adapter(ContactAdapter.class)
 public class ContactModelView {
 	private UUID idContact;
 	
