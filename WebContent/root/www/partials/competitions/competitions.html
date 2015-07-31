@@ -1,0 +1,37 @@
+<h1>Recherche / Sélection d'une competition</h1>
+
+<div class="search-operations">
+<section id="competitionsSearch">
+<header>Rechercher</header>
+<input type="search" id="competitionsSearchInput" ng-model="competitionsSearchPattern" ng-change="searchChange()"/>
+</section>
+
+<section id="competitionsFilter">
+<header>Filtres</header>
+Fédérations:<br />
+<select id="competitionsFilterFederation">
+<option>FFTA</option>
+</select>
+</section>
+</div>
+
+<div class="search-results">
+<span id="competitionsAction">
+<a href="#"><img src="images/add.png" /> Ajouter</a>
+</span>
+<table id="competitionsResultsTable" class="display search-results-table" datatable dt-options="dtOptions" dt-columns="dtColumns" dt-column-defs="dtColumnDefs">
+	<thead>
+	<tr>
+		<th>Nom</th>
+		<th>Ville</th>
+		<th>Actions</th>
+	</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+</div>
+<div id="competitionsValidation" class="validationPanel">
+	<a href="#" id="competitionsSelect" class="buttonScreenValid">Selectionner</a>
+	<a href="#" id="competitionsCancel" class="buttonScreenCancel">Annuler</a>
+</div>

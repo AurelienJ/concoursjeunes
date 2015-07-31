@@ -20,6 +20,9 @@ App.config([ '$routeProvider','RestangularProvider', function($routeProvider, Re
 	}).when('/parameters/:subscreen', {
 		templateUrl : 'partials/parameters/parameters.html',
 		controller : 'ParametersController'
+	}).when('/competitions', {
+		templateUrl : 'partials/competitions/competitions.html',
+		controller : 'CompetitionsController'
 	}).when('/persons', {
 		templateUrl : 'partials/persons/persons.html',
 		controller : 'PersonsController'

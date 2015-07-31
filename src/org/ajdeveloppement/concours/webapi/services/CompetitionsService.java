@@ -91,6 +91,7 @@ package org.ajdeveloppement.concours.webapi.services;
 import java.util.List;
 import java.util.UUID;
 
+import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.data.Competition;
 import org.ajdeveloppement.concours.data.T_Competition;
@@ -103,15 +104,47 @@ import org.ajdeveloppement.concours.webapi.models.CompetitionModelView;
  */
 public class CompetitionsService {
 	
+	/**
+	 * Return total number of competitions
+	 * 
+	 * @return
+	 */
+	public int countAllCompetitions() {
+		return T_Competition.all().count();
+	}
 	
+	/**
+	 * Return the numbers of competitions corresponding to filter
+	 * 
+	 * @param filter
+	 * @return
+	 */
+	public int countCompetitionsWithFilter(QFilter filter) {
+		return T_Competition.all().where(filter).count();
+	}
 	
 	/**
 	 * Return all competitions
 	 * 
 	 * @return
 	 */
-	public List<CompetitionModelView> getAllCompetition() {
+	public List<CompetitionModelView> getAllCompetitions() {
 		QResults<Competition, Void> competitions = T_Competition.all();
+		
+		return ModelViewAdapterHelper.asModelViewList(CompetitionModelView.class, competitions.asList());
+	}
+	
+	/**
+	 * Return all competitions that match filter
+	 * 
+	 * @param filter
+	 * @return
+	 */
+	public List<CompetitionModelView> getCompetitionsForFilter(QFilter filter, int length, int offset) {
+		QResults<Competition, Void> competitions = T_Competition.all().where(filter);
+		if(length > 0) {
+			competitions = competitions.limit(length, offset);
+		}
 		
 		return ModelViewAdapterHelper.asModelViewList(CompetitionModelView.class, competitions.asList());
 	}
@@ -123,10 +156,7 @@ public class CompetitionsService {
 	 * @return
 	 */
 	public List<CompetitionModelView> getCompetitionsForEntity(UUID idEntity) {
-		QResults<Competition, Void> competitions = T_Competition.all().where(
-				T_Competition.ID_ENTITE.equalTo(idEntity));
-		
-		return ModelViewAdapterHelper.asModelViewList(CompetitionModelView.class, competitions.asList());
+		return getCompetitionsForFilter(T_Competition.ID_ENTITE.equalTo(idEntity), 0, -1);
 	}
 	
 	/**
@@ -136,10 +166,7 @@ public class CompetitionsService {
 	 * @return
 	 */
 	public List<CompetitionModelView> getCompetitionsForRule(UUID idRule) {
-		QResults<Competition, Void> competitions = T_Competition.all().where(
-				T_Competition.ID_REGLEMENT.equalTo(idRule));
-		
-		return ModelViewAdapterHelper.asModelViewList(CompetitionModelView.class, competitions.asList());
+		return getCompetitionsForFilter(T_Competition.ID_REGLEMENT.equalTo(idRule), 0, -1);
 	}
 	
 	/**
@@ -149,9 +176,6 @@ public class CompetitionsService {
 	 * @return
 	 */
 	public List<CompetitionModelView> getCompetitionsForOrganisator(UUID idEntity) {
-		QResults<Competition, Void> competitions = T_Competition.all().where(
-				T_Competition.ID_ORGANISATEUR.equalTo(idEntity));
-		
-		return ModelViewAdapterHelper.asModelViewList(CompetitionModelView.class, competitions.asList());
+		return getCompetitionsForFilter(T_Competition.ID_ORGANISATEUR.equalTo(idEntity), 0, -1);
 	}
 }
