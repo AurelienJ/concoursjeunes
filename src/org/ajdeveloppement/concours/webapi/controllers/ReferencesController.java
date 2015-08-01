@@ -102,7 +102,6 @@ import org.ajdeveloppement.concours.webapi.models.AuthenticationModelView;
 import org.ajdeveloppement.concours.webapi.models.CountryModelView;
 import org.ajdeveloppement.concours.webapi.services.ReferenceService;
 import org.ajdeveloppement.webserver.HttpMethod;
-import org.ajdeveloppement.webserver.services.js.Sessions;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
@@ -143,8 +142,7 @@ public class ReferencesController {
 					userSessionData.setSessionUser(utilisateur);
 					userSessionData.setSessionProfile(profile);
 					
-					Sessions clientSession = new Sessions(context.getHttpRequest());
-					clientSession.putSessionData(userSessionData);
+					HttpSessionHelper.putUserSessionData(context.getHttpRequest(), userSessionData);
 				}
 			}
 		}
