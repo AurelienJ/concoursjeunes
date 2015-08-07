@@ -117,7 +117,7 @@ public class Competition implements SqlObjectPersistence {
 	@SqlField(name="LIEU")
 	private String lieuCompetition;
 	
-	@SqlForeignKey(mappedTo={"ID_NIVEAU_COMPETITION","ID_ENTITE"})
+	@SqlForeignKey(mappedTo={"ID_NIVEAU_COMPETITION"})
 	private CompetitionLevel competitionLevel;
 	
 	@SqlField(name="DATE_DEBUT")

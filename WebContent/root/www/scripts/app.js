@@ -23,6 +23,9 @@ App.config([ '$routeProvider','RestangularProvider', function($routeProvider, Re
 	}).when('/competitions', {
 		templateUrl : 'partials/competitions/competitions.html',
 		controller : 'CompetitionsController'
+	}).when('/competitions/:id', {
+		templateUrl : 'partials/competitions/competition.html',
+		controller : 'CompetitionController'
 	}).when('/persons', {
 		templateUrl : 'partials/persons/persons.html',
 		controller : 'PersonsController'

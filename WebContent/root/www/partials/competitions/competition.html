@@ -1,0 +1,22 @@
+<h1>Détail d'une competition</h1>
+
+<section class="formulaire">
+	<h2>Informations</h2>
+	
+	<label for="competitionLocation">Lieu</label><input type="text" placeholder="Lieu de la competition" id="competitionLocation" ng-model="competition.location"/>
+	<label for="competitionStartDate">Date de début</label><input type="date" placeholder="Date de début" id="competitionStartDate" ng-model="competition.startDate" />
+	<label for="competitionEndDate">Date de fin</label><input type="date" placeholder="Date de fin" id="competitionEndDate" ng-model="competition.endDate"/>
+</section>
+
+<section class="formulaire">
+	<h2>Options</h2>
+	
+	<label for="competitionNbDepart">Nombre de départ</label><input type="number" placeholder="ex: 2 si 1 depart le matin et 1 l'après midi" id="competitionNbDepart" ng-model="competition.nbDepart"/>
+	<label for="competitionNbTarget">Nombre de cible</label><input type="number" placeholder="Nombre de cible disponible" id="competitionNbTarget" ng-model="competition.nbTarget" />
+	<label for="competitionRythme">Rythme de tir</label><input type="date" placeholder="AB, ABC ou AB/CD" id="competitionRythme" ng-model="competition.rythme"/>
+</section>
+
+<div id="entityValidation" class="validationPanel">
+	<a href="" id="entityValid" class="buttonScreenValid" ng-click="valid()">Valider</a>
+	<a href="" id="entityCancel" class="buttonScreenCancel" ng-click="cancel()">Annuler</a>
+</div>

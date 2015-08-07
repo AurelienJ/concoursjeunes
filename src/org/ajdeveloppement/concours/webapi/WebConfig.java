@@ -90,12 +90,7 @@ package org.ajdeveloppement.concours.webapi;
 
 import org.ajdeveloppement.commons.lifetime.LifeManager;
 import org.ajdeveloppement.commons.lifetime.SingletonLifeTime;
-import org.ajdeveloppement.concours.webapi.controllers.CompetitionsController;
-import org.ajdeveloppement.concours.webapi.controllers.ContactsController;
-import org.ajdeveloppement.concours.webapi.controllers.EntitiesController;
-import org.ajdeveloppement.concours.webapi.controllers.ProfileController;
-import org.ajdeveloppement.concours.webapi.controllers.ReferencesController;
-import org.ajdeveloppement.concours.webapi.controllers.RulesController;
+import org.ajdeveloppement.concours.webapi.controllers.ControllersCollection;
 import org.ajdeveloppement.concours.webapi.services.CompetitionsService;
 import org.ajdeveloppement.concours.webapi.services.ContactsService;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
@@ -133,12 +128,9 @@ public class WebConfig {
 		ApiService webApiService = extensibleHttpRequestProcessor.getService(ApiService.class);
 		
 		Container container = new Container();
-		container.discoverServices(ReferencesController.class);
-		container.discoverServices(ProfileController.class);
-		container.discoverServices(ContactsController.class);
-		container.discoverServices(EntitiesController.class);
-		container.discoverServices(RulesController.class);
-		container.discoverServices(CompetitionsController.class);
+		for(Class<?> controller : ControllersCollection.getControllers()) {
+			container.discoverServices(controller);
+		}
 		
 		//Controllers accessible sans distinction de nom d'hote et sans alias
 		webApiService.addContainer("*", container); //$NON-NLS-1$
