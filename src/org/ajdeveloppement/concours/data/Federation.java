@@ -98,7 +98,6 @@ import javax.xml.bind.annotation.XmlElement;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
@@ -184,7 +183,7 @@ public class Federation extends Entite implements SqlObjectPersistence {
 		this.nomFederation = nomFederation;
 	}
 
-	private void checkAlreadyExists() throws ObjectPersistenceException {
+	private void checkAlreadyExists(SqlContext context) throws ObjectPersistenceException {
 		try {
 			UUID nullableIdFederation = QResults.from(Federation.class).where(
 					T_Federation.SIGLE.equalTo(sigleFederation)
@@ -194,7 +193,8 @@ public class Federation extends Entite implements SqlObjectPersistence {
 			if(nullableIdFederation != null) {
 				setIdEntite(nullableIdFederation);
 				
-				Cache.put(this);
+				if(context != null)
+					context.getCache().put(this);
 			}
 		} catch(SQLException e) {
 			throw new ObjectPersistenceException(e);
@@ -207,19 +207,20 @@ public class Federation extends Entite implements SqlObjectPersistence {
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
 		if(Session.canExecute(session, this)) {
-
-			checkAlreadyExists();
 			
 			SqlContext context = SqlContext.getDefaultContext();
 			if(session instanceof SqlSession)
 				context = ((SqlSession)session).getContext();
+
+			checkAlreadyExists(context);
 			
 			StoreHelper<Federation> helper = SqlStoreHelperCache.getHelper(Federation.class, context);
 			helper.save(this);
 			
 			Session.addProcessedObject(session,this);
 			
-			Cache.put(this);
+			if(context != null)
+				context.getCache().put(this);
 		}
 	}
 	

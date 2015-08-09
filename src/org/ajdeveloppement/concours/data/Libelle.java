@@ -94,7 +94,6 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistence;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlSession;
@@ -215,7 +214,8 @@ public class Libelle implements SqlObjectPersistence {
 			if(helper != null) {
 				helper.save(this);
 				
-				Cache.put(this);
+				if(context != null)
+					context.getCache().put(this);
 				
 				Session.addProcessedObject(session, this);
 				

@@ -97,6 +97,7 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.ApplicationCore;
@@ -128,8 +129,8 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 	 * @param reglement reglement le reglement appliqué à l'archer pour le qualifier en concurrent
 	 * @return le concurrent produit
 	 */
-	public static Concurrent getConcurrent(ResultSet resultSet, Rule reglement) {
-		return getConcurrent(null, resultSet, reglement);
+	public static Concurrent getConcurrent(ResultSet resultSet, Rule reglement, SqlContext context) {
+		return getConcurrent(null, resultSet, reglement, context);
 	}
 	
 	/**
@@ -141,7 +142,7 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 	 * @return le concurrent construit
 	 */
 	public static Concurrent getConcurrent(UUID idArcher, Rule reglement) {
-		return getConcurrent(idArcher, null, reglement);
+		return getConcurrent(idArcher, null, reglement, SqlContext.getDefaultContext());
 	}
 	
 	/**
@@ -153,7 +154,7 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 	 * @param reglement le reglement appliqué
 	 * @return l'archer construit
 	 */
-	private static Concurrent getConcurrent(UUID idArcher, ResultSet resultSet, Rule reglement) {
+	private static Concurrent getConcurrent(UUID idArcher, ResultSet resultSet, Rule reglement, SqlContext context) {
 		Concurrent concurrent = new Concurrent();
 
 		try {
@@ -167,13 +168,13 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 			UUID idCivility = (UUID)foreignKeyValue.get(Contact.class).get(T_Contact.ID_CIVILITY.getFieldName());
 			if(idCivility != null) {
 				DefaultSqlBuilder<Civility, Void> sqlBuilder = new DefaultSqlBuilder<>(Civility.class);
-				concurrent.setCivility(sqlBuilder.get(null, null, idCivility));
+				concurrent.setCivility(sqlBuilder.get(SqlContext.getDefaultContext(), null, null, idCivility));
 			}
 			
 			UUID idEntite = (UUID)foreignKeyValue.get(Contact.class).get(T_Contact.ID_ENTITE.getFieldName());
 			if(idEntite != null) {
 				DefaultSqlBuilder<Entite, Void> sqlBuilder = new DefaultSqlBuilder<>(Entite.class);
-				concurrent.setEntite(sqlBuilder.get(null, null, idEntite));
+				concurrent.setEntite(sqlBuilder.get(SqlContext.getDefaultContext(), null, null, idEntite));
 			}
 
 			if(reglement != null) {
@@ -187,7 +188,7 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 						try (ResultSet rsCriteriaSet = pstmt.executeQuery()) {
 							if(rsCriteriaSet.first()) {
 								differentiationCriteria = CriteriaSetBuilder
-										.getCriteriaSet(rsCriteriaSet.getInt("NUMCRITERIASET")); //$NON-NLS-1$
+										.getCriteriaSet(rsCriteriaSet.getInt("NUMCRITERIASET"), context); //$NON-NLS-1$
 							} else {
 //								differentiationCriteria = new CriteriaSet(reglement);
 //								for(Criterion key : reglement.getListCriteria()) {
@@ -248,13 +249,13 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 	}
 
 	@Override
-	public Concurrent get(ResultSet rs, SqlLoadingSessionCache sessionCache, Rule binderRessourcesMap)
+	public Concurrent get(ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache, Rule binderRessourcesMap)
 			throws ObjectPersistenceException {
-		return getConcurrent(rs, binderRessourcesMap);
+		return getConcurrent(rs, binderRessourcesMap, context);
 	}
 
 	@Override
-	public Concurrent get(SqlLoadingSessionCache sessionCache,
+	public Concurrent get(SqlContext context, SqlLoadingSessionCache sessionCache,
 			Rule binderRessourcesMap, Object... primaryKeyValues)
 			throws ObjectPersistenceException {
 		// TODO Raccord de méthode auto-généré

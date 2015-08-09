@@ -95,9 +95,9 @@ import java.util.UUID;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.data.Libelle;
@@ -120,7 +120,7 @@ public class LibelleBuilder implements ResultSetRowToObjectBinder<Libelle, Void>
 	 * @throws ObjectPersistenceException
 	 */
 	public static Libelle getLibelle(UUID idLibelle, String lang) throws ObjectPersistenceException {
-		return getLibelle(idLibelle, lang, null);
+		return getLibelle(idLibelle, lang, null, SqlContext.getDefaultContext());
 	}
 	
 	/**
@@ -130,11 +130,11 @@ public class LibelleBuilder implements ResultSetRowToObjectBinder<Libelle, Void>
 	 * @return le libellé construit à partir du jeux de résultat
 	 * @throws ObjectPersistenceException
 	 */
-	public static Libelle getLibelle(ResultSet rs) throws ObjectPersistenceException {
-		return  getLibelle(null, null, rs);
+	public static Libelle getLibelle(ResultSet rs, SqlContext context) throws ObjectPersistenceException {
+		return  getLibelle(null, null, rs, context);
 	}
 	
-	private static Libelle getLibelle(UUID idLibelle, String lang, ResultSet rs)
+	private static Libelle getLibelle(UUID idLibelle, String lang, ResultSet rs, SqlContext context)
 			throws ObjectPersistenceException{
 		Object[] pkValues = new Object[] { idLibelle, lang };
 		if(rs != null) {
@@ -145,7 +145,7 @@ public class LibelleBuilder implements ResultSetRowToObjectBinder<Libelle, Void>
 			}
 		}
 		
-		Libelle libelle = Cache.get(Libelle.class, pkValues);
+		Libelle libelle = context.getCache().get(Libelle.class, pkValues);
 		if(libelle == null) {
 			libelle = new Libelle();
 			
@@ -160,9 +160,9 @@ public class LibelleBuilder implements ResultSetRowToObjectBinder<Libelle, Void>
 	}
 
 	@Override
-	public Libelle get(ResultSet rs, SqlLoadingSessionCache sessionCache,
+	public Libelle get(ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache,
 			Void binderRessourcesMap) throws ObjectPersistenceException {
-		return getLibelle(rs);
+		return getLibelle(rs, context);
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class LibelleBuilder implements ResultSetRowToObjectBinder<Libelle, Void>
 	 * @param primaryKeyValues la clé primaire du libellé à retourner: param1: id de libellé, param2: localisation du libellé
 	 */
 	@Override
-	public Libelle get(SqlLoadingSessionCache sessionCache,
+	public Libelle get(SqlContext context, SqlLoadingSessionCache sessionCache,
 			Void binderRessourcesMap, Object... primaryKeyValues)
 			throws ObjectPersistenceException {
 		

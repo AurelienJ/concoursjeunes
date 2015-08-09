@@ -98,6 +98,7 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.data.Distance;
@@ -237,13 +238,13 @@ public class DistancesEtBlasonBuilder implements ResultSetRowToObjectBinder<Dist
 	}
 
 	@Override
-	public DistancesEtBlason get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap)
+	public DistancesEtBlason get(ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap)
 			throws ObjectPersistenceException {
 		return getDistancesEtBlason(rs, sessionCache);
 	}
 
 	@Override
-	public DistancesEtBlason get(SqlLoadingSessionCache sessionCache,
+	public DistancesEtBlason get(SqlContext context, SqlLoadingSessionCache sessionCache,
 			Void binderRessourcesMap, Object... primaryKeyValues)
 			throws ObjectPersistenceException {
 		// TODO Raccord de méthode auto-généré

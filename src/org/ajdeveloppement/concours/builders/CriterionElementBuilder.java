@@ -95,6 +95,7 @@ import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.data.Criterion;
@@ -170,14 +171,14 @@ public class CriterionElementBuilder implements ResultSetRowToObjectBinder<Crite
 	}
 
 	@Override
-	public CriterionElement get(ResultSet rs,
+	public CriterionElement get(ResultSet rs, SqlContext context,
 			SqlLoadingSessionCache sessionCache, Criterion binderRessourcesMap)
 			throws ObjectPersistenceException {
 		return getCriterionElement(binderRessourcesMap, rs);
 	}
 
 	@Override
-	public CriterionElement get(SqlLoadingSessionCache sessionCache,
+	public CriterionElement get(SqlContext context, SqlLoadingSessionCache sessionCache,
 			Criterion binderRessourcesMap, Object... primaryKeyValues)
 			throws ObjectPersistenceException {
 		// TODO Raccord de méthode auto-généré

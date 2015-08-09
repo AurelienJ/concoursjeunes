@@ -101,7 +101,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
@@ -480,7 +479,8 @@ public class Face implements SqlObjectPersistence {
 			if(helper != null) {
 				helper.save(this);
 
-				Cache.put(this);
+				if(context != null)
+					context.getCache().put(this);
 				
 				Session.addProcessedObject(session, this);
 				

@@ -93,9 +93,9 @@ import java.util.Map;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.data.CriteriaSet;
@@ -119,8 +119,8 @@ public class CriteriaSetBuilder implements ResultSetRowToObjectBinder<CriteriaSe
 	 * @return le jeux de critères concerné
 	 * @throws ObjectPersistenceException 
 	 */
-	public static CriteriaSet getCriteriaSet(int numCriteriaSet) throws ObjectPersistenceException {
-		return getCriteriaSet(null, numCriteriaSet, false, null);
+	public static CriteriaSet getCriteriaSet(int numCriteriaSet, SqlContext context) throws ObjectPersistenceException {
+		return getCriteriaSet(null, numCriteriaSet, false, context, null);
 	}
 	
 	/**
@@ -133,8 +133,8 @@ public class CriteriaSetBuilder implements ResultSetRowToObjectBinder<CriteriaSe
 	 * @return le jeux de critères concerné
 	 * @throws ObjectPersistenceException 
 	 */
-	public static CriteriaSet getCriteriaSet(int numCriteriaSet, boolean doNotUseCache, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		return getCriteriaSet(null, numCriteriaSet, false, null);
+	public static CriteriaSet getCriteriaSet(int numCriteriaSet, boolean doNotUseCache, SqlContext context, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		return getCriteriaSet(null, numCriteriaSet, false, context, sessionCache);
 	}
 	
 	/**
@@ -143,12 +143,13 @@ public class CriteriaSetBuilder implements ResultSetRowToObjectBinder<CriteriaSe
 	 * @return le jeux de critères concerné
 	 * @throws ObjectPersistenceException
 	 */
-	public static CriteriaSet getCriteriaSet(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		return getCriteriaSet(rs, 0, false, null);
+	public static CriteriaSet getCriteriaSet(ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		return getCriteriaSet(rs, 0, false, context, sessionCache);
 	}
 	
 	
-	private static CriteriaSet getCriteriaSet(ResultSet rs, int numCriteriaSet, boolean doNotUseCache, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+	private static CriteriaSet getCriteriaSet(ResultSet rs, int numCriteriaSet, boolean doNotUseCache, 
+			SqlContext context, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		if(rs != null) {
 //			try {
 //				numCriteriaSet = T_CriteriaSet.NUMCRITERIASET.getValue(rs);
@@ -159,7 +160,7 @@ public class CriteriaSetBuilder implements ResultSetRowToObjectBinder<CriteriaSe
 		
 		CriteriaSet criteriaSet = null;
 		if(!doNotUseCache)
-			criteriaSet = Cache.get(CriteriaSet.class, numCriteriaSet);
+			criteriaSet = context.getCache().get(CriteriaSet.class, numCriteriaSet);
 		else {
 			if(sessionCache == null)
 				sessionCache = new SqlLoadingSessionCache();
@@ -190,19 +191,19 @@ public class CriteriaSetBuilder implements ResultSetRowToObjectBinder<CriteriaSe
 //					.asList());
 
 			if(!doNotUseCache)
-				Cache.put(criteriaSet);
+				context.getCache().put(criteriaSet);
 		}
 		return criteriaSet;
 	}
 
 	@Override
-	public CriteriaSet get(ResultSet rs, SqlLoadingSessionCache sessionCache,
+	public CriteriaSet get(ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache,
 			Void binderRessourcesMap) throws ObjectPersistenceException {
-		return getCriteriaSet(rs, sessionCache);
+		return getCriteriaSet(rs, context, sessionCache);
 	}
 
 	@Override
-	public CriteriaSet get(SqlLoadingSessionCache sessionCache,
+	public CriteriaSet get(SqlContext context, SqlLoadingSessionCache sessionCache,
 			Void binderRessourcesMap, Object... primaryKeyValues)
 			throws ObjectPersistenceException {
 		// TODO Raccord de méthode auto-généré

@@ -133,6 +133,7 @@ import org.ajdeveloppement.apps.localisation.LocalizationHandler;
 import org.ajdeveloppement.apps.localisation.Localizator;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.ui.GridbagComposer;
 import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.Profile;
@@ -663,7 +664,7 @@ public class EntiteListDialog extends JDialog implements ActionListener, MouseLi
 			try {
 				if(rs.absolute(index + 1)) {
 					DefaultSqlBuilder<Entite, Void> sqlBuilder = new DefaultSqlBuilder<>(Entite.class);
-					entite = sqlBuilder.get(rs, null, null);;
+					entite = sqlBuilder.get(rs, SqlContext.getDefaultContext(), null, null);;
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();

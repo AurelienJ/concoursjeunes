@@ -96,9 +96,9 @@ import java.util.UUID;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.data.Ancrage;
@@ -125,7 +125,7 @@ public class FaceBuilder implements ResultSetRowToObjectBinder<Face,Void> {
 	 * @throws ObjectPersistenceException
 	 */
 	public static Face getBlason(UUID idBlason) throws ObjectPersistenceException {
-		return getBlason(idBlason, null, null);
+		return getBlason(idBlason, null, SqlContext.getDefaultContext(), null);
 	}
 	
 	/**
@@ -138,19 +138,19 @@ public class FaceBuilder implements ResultSetRowToObjectBinder<Face,Void> {
 	 * @throws ObjectPersistenceException retourné si le jeux de résultat ne contient pas l'ensemble<br>
 	 * des champs de la table BLASONS 
 	 */
-	public static Face getBlason(ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+	public static Face getBlason(ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		if(rs == null)
 			return null;
 		
-		return getBlason(null, rs, sessionCache);
+		return getBlason(null, rs, context, sessionCache);
 	}
 	
-	private static Face getBlason(UUID idBlason, ResultSet rs, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+	private static Face getBlason(UUID idBlason, ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
 		try {
 			if(rs != null)
 				idBlason = T_Face.ID_BLASON.getValue(rs);
 			
-			Face blason = Cache.get(Face.class, idBlason);
+			Face blason = context.getCache().get(Face.class, idBlason);
 			if(blason == null) {
 				blason = new Face();
 				
@@ -162,7 +162,7 @@ public class FaceBuilder implements ResultSetRowToObjectBinder<Face,Void> {
 					loadHelper.load(blason);
 				}
 				
-				Cache.put(blason);
+				context.getCache().put(blason);
 			}
 			
 			return blason;
@@ -212,12 +212,12 @@ public class FaceBuilder implements ResultSetRowToObjectBinder<Face,Void> {
 	}
 
 	@Override
-	public Face get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap) throws ObjectPersistenceException {
-		return getBlason(rs, sessionCache);
+	public Face get(ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap) throws ObjectPersistenceException {
+		return getBlason(rs, context, sessionCache);
 	}
 
 	@Override
-	public Face get(SqlLoadingSessionCache sessionCache,
+	public Face get(SqlContext context, SqlLoadingSessionCache sessionCache,
 			Void binderRessourcesMap, Object... primaryKeyValues)
 			throws ObjectPersistenceException {
 		return getBlason((UUID)primaryKeyValues[0]);

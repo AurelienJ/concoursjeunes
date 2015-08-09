@@ -104,7 +104,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlContext;
@@ -361,7 +360,8 @@ public class CriteriaSet implements SqlObjectPersistence,Cloneable {
 			StoreHelper<CriteriaSet> helper = SqlStoreHelperCache.getHelper(CriteriaSet.class, context);
 			helper.save(this, Collections.<String, Object>singletonMap("IDCRITERIASET", uid)); //$NON-NLS-1$
 			
-			Cache.put(this);
+			if(context != null)
+				context.getCache().put(this);
 			
 			Session.addProcessedObject(session, this);
 			

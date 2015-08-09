@@ -114,7 +114,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
@@ -996,7 +995,8 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 			StoreHelper<Rule> helper = SqlStoreHelperCache.getHelper(Rule.class, context);
 			helper.save(this);
 			
-			Cache.put(this);
+			if(context != null)
+				context.getCache().put(this);
 			
 			Session.addProcessedObject(session,this);
 	
@@ -1077,7 +1077,8 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 				StoreHelper<Rule> helper = SqlStoreHelperCache.getHelper(Rule.class, context);
 				helper.delete(this);
 				
-				Cache.remove(this);
+				if(context != null)
+					context.getCache().remove(this);
 				
 				Session.addProcessedObject(session, this);
 			}

@@ -100,10 +100,10 @@ import java.util.UUID;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache.Key;
@@ -161,7 +161,7 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 	 * @throws ObjectPersistenceException 
 	 */
 	public static Rule getReglement(UUID idReglement) throws ObjectPersistenceException {
-		return getReglement(idReglement, null, false, null);
+		return getReglement(idReglement, null, false, SqlContext.getDefaultContext(), null);
 	}
 	
 	/**
@@ -182,7 +182,7 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 	 * @throws ObjectPersistenceException 
 	 */
 	public static Rule getReglement(UUID idReglement, boolean doNotUseCache) throws ObjectPersistenceException {
-		return getReglement(idReglement, null, doNotUseCache, null);
+		return getReglement(idReglement, null, doNotUseCache, SqlContext.getDefaultContext(), null);
 	}
 	
 	/**
@@ -203,8 +203,8 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 	 * @return le régalement construit à partir du numéro
 	 * @throws ObjectPersistenceException 
 	 */
-	public static Rule getReglement(UUID idReglement, boolean doNotUseCache, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		return getReglement(idReglement, null, doNotUseCache, sessionCache);
+	public static Rule getReglement(UUID idReglement, boolean doNotUseCache, SqlContext context, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
+		return getReglement(idReglement, null, doNotUseCache, context, sessionCache);
 	}
 	
 	/**
@@ -216,9 +216,9 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 	 * @return le réglement construit à partir du jeux de résultat
 	 * @throws ObjectPersistenceException
 	 */
-	public static Rule getReglement(ResultSet rs)
+	public static Rule getReglement(ResultSet rs, SqlContext context)
 			throws ObjectPersistenceException {
-		return getReglement(null, rs, false, null);
+		return getReglement(null, rs, false, context, null);
 	}
 	
 	/**
@@ -231,9 +231,9 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 	 * @return le réglement construit à partir du jeux de résultat
 	 * @throws ObjectPersistenceException
 	 */
-	public static Rule getReglement(ResultSet rs, SqlLoadingSessionCache sessionCache)
+	public static Rule getReglement(ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache)
 			throws ObjectPersistenceException {
-		return getReglement(null, rs, false, sessionCache);
+		return getReglement(null, rs, false, context, sessionCache);
 	}
 	
 	/**
@@ -246,12 +246,13 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 	 * @return le réglement construit à partir du jeux de résultat
 	 * @throws ObjectPersistenceException
 	 */
-	public static Rule getReglement(ResultSet rs, boolean doNotUseCache)
+	public static Rule getReglement(ResultSet rs, boolean doNotUseCache, SqlContext context)
 			throws ObjectPersistenceException {
-		return getReglement(null, rs, doNotUseCache, null);
+		return getReglement(null, rs, doNotUseCache, context, null);
 	}
 	
-	private static Rule getReglement(UUID idReglement, ResultSet rs, boolean doNotUseCache, SqlLoadingSessionCache sessionCache)
+	private static Rule getReglement(UUID idReglement, ResultSet rs, boolean doNotUseCache, 
+			SqlContext context, SqlLoadingSessionCache sessionCache)
 			throws ObjectPersistenceException {
 		
 		try {
@@ -260,7 +261,7 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 			
 			Rule reglement = null;
 			if(!doNotUseCache) {
-				reglement = Cache.get(Rule.class, idReglement);
+				reglement = context.getCache().get(Rule.class, idReglement);
 			} else {
 				if(sessionCache == null)
 					sessionCache = new SqlLoadingSessionCache();
@@ -285,7 +286,7 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 				}
 				
 				if(!doNotUseCache)
-					Cache.put(reglement);
+					context.getCache().put(reglement);
 				else
 					sessionCache.put(reglement);
 				
@@ -309,7 +310,7 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 							.asResultSet()) {
 
 						while(rsCriterion.next()) {
-							criteria.add(CriterionBuilder.getCriterion(reglement, rsCriterion, doNotUseCache));
+							criteria.add(CriterionBuilder.getCriterion(reglement, rsCriterion, doNotUseCache, context));
 						}
 					}
 					reglement.setListCriteria(criteria);
@@ -345,13 +346,13 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 	}
 
 	@Override
-	public Rule get(ResultSet rs, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap)
+	public Rule get(ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap)
 			throws ObjectPersistenceException {
-		return getReglement(rs, sessionCache);
+		return getReglement(rs, context, sessionCache);
 	}
 
 	@Override
-	public Rule get(SqlLoadingSessionCache sessionCache,
+	public Rule get(SqlContext context, SqlLoadingSessionCache sessionCache,
 			Void binderRessourcesMap, Object... primaryKeyValues)
 			throws ObjectPersistenceException {
 		// TODO Raccord de méthode auto-généré

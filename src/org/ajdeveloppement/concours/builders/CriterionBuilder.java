@@ -94,9 +94,9 @@ import java.util.Map;
 
 import org.ajdeveloppement.commons.persistence.LoadHelper;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.Cache;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.concours.data.Criterion;
@@ -124,8 +124,8 @@ public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, R
 	 * @return le critère correspondant
 	 * @throws ObjectPersistenceException 
 	 */
-	public static Criterion getCriterion(String codeCritere, Rule reglement) throws ObjectPersistenceException {
-		return getCriterion(codeCritere, reglement, null, false);
+	public static Criterion getCriterion(String codeCritere, Rule reglement, SqlContext context) throws ObjectPersistenceException {
+		return getCriterion(codeCritere, reglement, null, false, context);
 	}
 	
 	/**
@@ -138,8 +138,8 @@ public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, R
 	 * @return le critère correspondant
 	 * @throws ObjectPersistenceException 
 	 */
-	public static Criterion getCriterion(String codeCritere, Rule reglement, boolean doNotUseCache) throws ObjectPersistenceException {
-		return getCriterion(codeCritere, reglement, null, doNotUseCache);
+	public static Criterion getCriterion(String codeCritere, Rule reglement, boolean doNotUseCache, SqlContext context) throws ObjectPersistenceException {
+		return getCriterion(codeCritere, reglement, null, doNotUseCache, context);
 	}
 	
 	/**
@@ -151,8 +151,8 @@ public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, R
 	 * @return le critère correspondant
 	 * @throws ObjectPersistenceException 
 	 */
-	public static Criterion getCriterion(Rule reglement, ResultSet rs) throws ObjectPersistenceException {
-		return getCriterion(null, reglement, rs, false);
+	public static Criterion getCriterion(Rule reglement, ResultSet rs, SqlContext context) throws ObjectPersistenceException {
+		return getCriterion(null, reglement, rs, false, context);
 	}
 	
 	/**
@@ -165,8 +165,8 @@ public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, R
 	 * @return le critère correspondant
 	 * @throws ObjectPersistenceException 
 	 */
-	public static Criterion getCriterion(Rule reglement, ResultSet rs, boolean doNotUseCache) throws ObjectPersistenceException {
-		return getCriterion(null, reglement, rs, doNotUseCache);
+	public static Criterion getCriterion(Rule reglement, ResultSet rs, boolean doNotUseCache, SqlContext context) throws ObjectPersistenceException {
+		return getCriterion(null, reglement, rs, doNotUseCache, context);
 	}
 	
 	/**
@@ -180,7 +180,7 @@ public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, R
 	 * @return le critère demandé
 	 * @throws ObjectPersistenceException
 	 */
-	private static Criterion getCriterion(String codeCritere, Rule reglement, ResultSet rs, boolean doNotUseCache) throws ObjectPersistenceException {
+	private static Criterion getCriterion(String codeCritere, Rule reglement, ResultSet rs, boolean doNotUseCache, SqlContext context) throws ObjectPersistenceException {
 		if(rs != null) {
 			try {
 				codeCritere = T_Criterion.CODE.getValue(rs);
@@ -191,8 +191,8 @@ public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, R
 		
 		Criterion criterion = null;
 		
-		if(!doNotUseCache)
-			criterion = Cache.get(Criterion.class, codeCritere, reglement.getIdRule());
+		if(!doNotUseCache && context != null)
+			criterion = context.getCache().get(Criterion.class, codeCritere, reglement.getIdRule());
 		
 		if(criterion == null) {
 			criterion = new Criterion();
@@ -205,8 +205,8 @@ public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, R
 				resultSetLoadHelper.load(criterion, rs);
 			}
 			
-			if(!doNotUseCache)
-				Cache.put(criterion);
+			if(!doNotUseCache&& context != null)
+				context.getCache().put(criterion);
 			
 			criterion.setCriterionElements(CriterionElementManager.getAllCriterionElementsFor(criterion));
 		}
@@ -215,13 +215,13 @@ public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, R
 	}
 
 	@Override
-	public Criterion get(ResultSet rs, SqlLoadingSessionCache sessionCache,
+	public Criterion get(ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache,
 			Rule binderRessourcesMap) throws ObjectPersistenceException {
-		return getCriterion(binderRessourcesMap, rs);
+		return getCriterion(binderRessourcesMap, rs, context);
 	}
 
 	@Override
-	public Criterion get(SqlLoadingSessionCache sessionCache,
+	public Criterion get(SqlContext context, SqlLoadingSessionCache sessionCache,
 			Rule binderRessourcesMap, Object... primaryKeyValues)
 			throws ObjectPersistenceException {
 		// TODO Raccord de méthode auto-généré
