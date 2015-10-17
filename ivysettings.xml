@@ -12,7 +12,7 @@
 		        <ivy pattern="${user.home}/.ivy2/local/[organisation]/[module]/[revision]/[type]s/[module].[ext]" />
 		        <artifact pattern="${user.home}/.ivy2/local/[organisation]/[module]/[revision]/[type]s/[module].[ext]" />
 		    </filesystem>
-            <ibiblio name="ajdev" root="http://kimsufi.ajdeveloppement.org/ivy/"/>
+            <ibiblio name="ajdev" root="http://kimsufi.ajdeveloppement.org/ivy/local/org.ajdeveloppement/"/>
             <ibiblio name="swt-repo" m2compatible="true" root="https://swt-repo.googlecode.com/svn/repo/" />
             <ibiblio name="maven2" m2compatible="true"/>
             <ibiblio name="central" m2compatible="true"/>
