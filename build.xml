@@ -54,7 +54,8 @@
 			sourcepath="${projet.pack.dir}/src"
 			destdir="docs"
 			classpath="${compilclasspath}">
-			<link href="http://java.sun.com/javase/6/docs/api/" />
+			<classpath refid="main.classpath" />
+			<link href="http://docs.oracle.com/javase/8/docs/api/" />
 			<link href="http://arccompetion.ajdeveloppement.org/docs/"/>
 		</javadoc>
 		<echo message="Fin de la generation de la doc..."/>

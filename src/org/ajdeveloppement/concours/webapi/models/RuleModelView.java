@@ -147,8 +147,8 @@ public class RuleModelView {
 	/**
 	 * @param idRule idRule à définir
 	 */
-	public void setIdRule(UUID idReglement) {
-		this.idRule = idReglement;
+	public void setIdRule(UUID idRule) {
+		this.idRule = idRule;
 	}
 
 	/**
