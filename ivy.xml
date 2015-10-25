@@ -9,6 +9,7 @@
 		    <conf name="windows64" extends="runtime" description="Windows 64bits dependencies"/>
 		    <conf name="macosx" extends="runtime" description="Mac OX X 64bits dependencies"/>
 		    <conf name="linux" extends="runtime" description="Linux 64bits dependencies"/>
+		    <conf name="all" extends="windows32,windows64,macosx,linux" description="All platform dependencies"/>
 		</configurations>
         <dependencies>
             <dependency org="org.ajdeveloppement" name="ajcommons" rev="[2.0,)"/> 
@@ -30,6 +31,8 @@
             <dependency org="org.eclipse.swt" name="org.eclipse.swt.cocoa.macosx.x86_64" rev="4.4" conf="macosx->default"/>
             <dependency org="org.swinglabs" name="swingx" rev="1.6.1"/>
             <dependency org="ro.isdc.wro4j" name="wro4j-core" rev="1.7.8"/>
-            
+            <dependency org="com.fifesoft" name="rsyntaxtextarea" rev="2.5.8"/>
+            <dependency org="com.fifesoft" name="autocomplete" rev="2.5.8"/>
+            <dependency org="com.fifesoft" name="languagesupport" rev="2.5.8"/>
         </dependencies> 
 </ivy-module> 

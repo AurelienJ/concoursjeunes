@@ -19,9 +19,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ajcommons"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ajcommons-swingx-ext"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ajcommons-ext"/>
-	<classpathentry kind="lib" path="plugins/autocomplete.jar"/>
-	<classpathentry kind="lib" path="plugins/language_support.jar"/>
-	<classpathentry kind="lib" path="plugins/rsyntaxtextarea.jar"/>
 	<classpathentry kind="lib" path="plugins/js.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>

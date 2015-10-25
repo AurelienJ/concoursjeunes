@@ -18,7 +18,7 @@
 		</copy>
 		
 		<taskdef name="revisionscreator" classname="org.ajdeveloppement.updater.ant.RevisionsCreator">
-			<classpath location="lib/ajcommons-2.0.0-SNAPSHOT.jar"/>
+			<classpath refid="main.classpath" />
 		</taskdef>
 
 		<revisionscreator 

@@ -2,17 +2,20 @@
 <ivysettings>
 	<settings defaultResolver="default"/>
     <property name="m2-pattern" value="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]" override="false" />
+    <property name="ivy-pattern" value="${user.home}/.ivy2/local/[organisation]/[module]/[revision]/[type]s/[module].[ext]" override="false" />
     <resolvers>
         <chain name="default">
             <filesystem name="local-maven2" m2compatible="true" >
                 <artifact pattern="${m2-pattern}"/>
                 <ivy pattern="${m2-pattern}"/>
             </filesystem>
+            
             <filesystem name="local" checkmodified="true">
-		        <ivy pattern="${user.home}/.ivy2/local/[organisation]/[module]/[revision]/[type]s/[module].[ext]" />
-		        <artifact pattern="${user.home}/.ivy2/local/[organisation]/[module]/[revision]/[type]s/[module].[ext]" />
+		        <ivy pattern="${ivy-pattern}" />
+		        <artifact pattern="${ivy-pattern}" />
 		    </filesystem>
-            <ibiblio name="ajdev" root="http://kimsufi.ajdeveloppement.org/ivy/local/org.ajdeveloppement/"/>
+		    
+            <ibiblio name="ajdev" root="http://repos.ajdeveloppement.org/ivy/"/>
             <ibiblio name="swt-repo" m2compatible="true" root="https://swt-repo.googlecode.com/svn/repo/" />
             <ibiblio name="maven2" m2compatible="true"/>
             <ibiblio name="central" m2compatible="true"/>

@@ -34,6 +34,8 @@
 	
 	<property file="packager/version.properties" />
 	<property file="packager/security.properties" />
+	
+	<ivy:cachepath pathid="main.classpath" conf="all" type="jar,bundle"/>
 
 	<import file="plugins/build-ArcCompetitionUpdate.xml"/>
 	<import file="plugins/build-ResultArcImport.xml"/>
@@ -59,7 +61,6 @@
 	</target>
 	
 	<target name="resolve" description="--> retrieve dependencies with ivy">
-		<ivy:cleancache />
         <ivy:retrieve />
     </target>
 
@@ -73,6 +74,7 @@
 		<java classname="org.ajdeveloppement.updater.tools.ChangeLogEditor"
 			classpath="lib/ajcommons-2.0.0-SNAPSHOT.jar"
 			fork="yes">
+			<classpath refid="main.classpath" />
 			<arg value="packager/changelog.xml"/>
 		</java>
 
@@ -173,7 +175,7 @@
 							basedir="${projet.pack.dir}/langpack/zh" />
 		
 		<taskdef name="revisionscreator" classname="org.ajdeveloppement.updater.ant.RevisionsCreator">
-			<classpath location="lib/ajcommons-2.0.0-SNAPSHOT.jar"/>
+			<classpath refid="main.classpath" />
 		</taskdef>
 
 		<revisionscreator 
@@ -207,10 +209,10 @@
 			nowarn="on"
 			debug="true"
 			target="1.8"
-			classpath="${compilclasspath}"
 			>
 			<compilerarg value="-s" />
 			<compilerarg path="${projet.pack.dir}/src" />
+			<classpath refid="main.classpath" />
 		</javac>
 
 		<copy todir="${projet.pack.dir}/bin">
@@ -270,7 +272,7 @@
 	<target name="revisions" description="revisions">
 		<taskdef name="revisionscreator"
 			classname="org.ajdeveloppement.updater.ant.RevisionsCreator">
-			<classpath location="lib/ajcommons-2.0.0-SNAPSHOT.jar"/>
+			<classpath refid="main.classpath" />
 		</taskdef>
 
 		<revisionscreator
@@ -549,7 +551,6 @@
 	<target name="all-system" description="Compilation Multi-systeme">
 		<antcall target="jar" />
 		<antcall target="pack-ArcCompetitionUpdate" />
-		<antcall target="pack-PhoenixPlugin" />
 		<antcall target="pack-ResultArcImport" />
 		<antcall target="pack-FFTAImport" />
 		<antcall target="pack-BackupRestorePlugin" />

@@ -185,6 +185,7 @@ import org.fife.ui.rsyntaxtextarea.ErrorStrip;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.parser.ParserNotice;
+import org.fife.ui.rsyntaxtextarea.parser.ParserNotice.Level;
 import org.fife.ui.rtextarea.Gutter;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.mozilla.javascript.Context;
@@ -660,11 +661,11 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 					g.removeAllTrackingIcons();
 					noticeTableModel.clear();
 					@SuppressWarnings({ "cast", "unchecked" })
-					List<ParserNotice> notices = (List<ParserNotice>)textArea.getParserNotices();
+					List<ParserNotice> notices = textArea.getParserNotices();
 					for (ParserNotice notice : notices) {
 						int line = notice.getLine();
 						Icon icon = null;
-						if(notice.getLevel() == 0)
+						if(notice.getLevel() == Level.ERROR)
 							icon = getIcon("file.icon.script.error"); //$NON-NLS-1$
 						else
 							icon = getIcon("file.icon.script.warning"); //$NON-NLS-1$
@@ -685,7 +686,7 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 		jspScript.setIconRowHeaderEnabled(true);
 		
 		ErrorStrip es = new ErrorStrip(jepScript);
-		es.setLevelThreshold(org.fife.ui.rsyntaxtextarea.parser.ParserNotice.WARNING);
+		es.setLevelThreshold(org.fife.ui.rsyntaxtextarea.parser.ParserNotice.Level.WARNING);
 		JPanel temp = new JPanel(new BorderLayout());
 		temp.add(jspScript);
 		temp.add(es, BorderLayout.LINE_END);
