@@ -104,7 +104,6 @@ Section "Base" SEC0000
     SetOutPath $INSTDIR
     File ArcCompetition.jar
     File /r plugins\ArcCompetitionUpdate\*
-    File /r plugins\PhoenixPlugin\*
     File /r plugins\BackupRestorePlugin\*
     File *.txt
     File windows\arccompetition-applyupdate.exe
