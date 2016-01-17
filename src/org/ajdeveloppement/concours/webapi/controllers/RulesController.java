@@ -109,8 +109,7 @@ import org.ajdeveloppement.webserver.HttpReturnCode.Success;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
-import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService.Type;
-import org.ajdeveloppement.webserver.services.webapi.annotations.JsonServiceId;
+import org.ajdeveloppement.webserver.services.webapi.annotations.HttpServiceId;
 import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
 import org.ajdeveloppement.webserver.services.webapi.helpers.HttpSessionHelper;
@@ -123,7 +122,7 @@ import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 @WebApiController
 public class RulesController {
 
-	@HttpService(key="rulesDataTable", type=Type.JSON)
+	@HttpService(key="rulesDataTable")
 	public static JsDataTables getRulesDataTable(HttpContext context,
 			@UrlParameter("search[value]") String searchValue,
 			@UrlParameter("length") int length,
@@ -149,8 +148,8 @@ public class RulesController {
 		return jsDataTables;
 	}
 	
-	@HttpService(key="rulesCategories", type=Type.JSON)
-	public static Object getRulesCategories(HttpContext context, @JsonServiceId int idRuleCategory) {
+	@HttpService(key="rulesCategories")
+	public static Object getRulesCategories(HttpContext context, @HttpServiceId int idRuleCategory) {
 		RuleService service = LifeManager.get(RuleService.class);
 		
 		if(idRuleCategory == 0)
@@ -159,8 +158,8 @@ public class RulesController {
 		return service.getRulesCategoryById(idRuleCategory);
 	}
 	
-	@HttpService(key="rules", type=Type.JSON)
-	public static Object getRules(HttpContext context, @JsonServiceId UUID idRule) {
+	@HttpService(key="rules")
+	public static Object getRules(HttpContext context, @HttpServiceId UUID idRule) {
 		RuleService service = LifeManager.get(RuleService.class);
 		
 		if(idRule == null)
@@ -169,7 +168,7 @@ public class RulesController {
 		return service.getRuleById(idRule);
 	}
 
-	@HttpService(key="rules",methods={HttpMethod.PUT, HttpMethod.POST}, type=Type.JSON)
+	@HttpService(key="rules",methods={HttpMethod.PUT, HttpMethod.POST})
 	public static Object createOrUpdateRule(HttpContext context, @Body RuleModelView modelView) {
 		//UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getSession());
 		RuleService service = LifeManager.get(RuleService.class);
@@ -191,7 +190,7 @@ public class RulesController {
 		return modelView;
 	}
 	
-	@HttpService(key="availableEntitiesForRulesCreation", type=Type.JSON)
+	@HttpService(key="availableEntitiesForRulesCreation")
 	public static List<EntiteModelView> getAvailableEntitiesForRulesCreation(HttpContext context) {
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
 		//RuleService service = LifeManager.get(RuleService.class);

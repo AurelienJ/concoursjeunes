@@ -90,7 +90,8 @@ package org.ajdeveloppement.concours.webapi.models;
 
 import java.util.List;
 
-import org.ajdeveloppement.commons.net.json.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -168,9 +169,8 @@ public class JsDataTables {
 		this.error = error;
 	}
 	
-	public String toJSON() {
-		JsonParser parser = new JsonParser();
-		parser.setPrettyPrinting(true);
-		return parser.parseValue(this);
+	public String toJSON() throws JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+		return mapper.writeValueAsString(this);
 	}
 }

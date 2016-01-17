@@ -96,7 +96,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 
-import org.ajdeveloppement.commons.net.json.JsonExclude;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
@@ -104,6 +103,8 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -177,7 +178,7 @@ public class Profile implements SqlObjectPersistence {
 	/**
 	 * @return entite
 	 */
-	@JsonExclude
+	@JsonIgnore
 	public Entite getEntite() {
 		if(entite == null && idEntite != null)
 			entite = T_Entite.getInstanceWithPrimaryKey(idEntite);

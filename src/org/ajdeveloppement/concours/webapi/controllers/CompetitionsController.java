@@ -10,7 +10,6 @@ import org.ajdeveloppement.concours.webapi.models.JsDataTables;
 import org.ajdeveloppement.concours.webapi.services.CompetitionsService;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
-import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService.Type;
 import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
 
@@ -22,7 +21,7 @@ public class CompetitionsController {
 	 * @param context
 	 * @return
 	 */
-	@HttpService(key="competitionsDataTable", type=Type.JSON)
+	@HttpService(key="competitionsDataTable")
 	public static JsDataTables getCompetitionsDataTable(HttpContext context,
 			@UrlParameter("search[value]") String searchValue,
 			@UrlParameter("length") int length,
@@ -61,7 +60,7 @@ public class CompetitionsController {
 	 * @param context
 	 * @return
 	 */
-	@HttpService(key="competitions", type=Type.JSON)
+	@HttpService(key="competitions")
 	public static List<CompetitionModelView> getCompetitions(HttpContext context) {
 		CompetitionsService service = LifeManager.get(CompetitionsService.class);
 		

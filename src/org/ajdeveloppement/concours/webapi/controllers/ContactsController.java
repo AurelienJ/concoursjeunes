@@ -107,8 +107,7 @@ import org.ajdeveloppement.webserver.HttpReturnCode.Success;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
-import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService.Type;
-import org.ajdeveloppement.webserver.services.webapi.annotations.JsonServiceId;
+import org.ajdeveloppement.webserver.services.webapi.annotations.HttpServiceId;
 import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
 import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
@@ -128,7 +127,7 @@ public class ContactsController {
 	 * @return réponse json avec la liste des entités trouvé
 	 */
 	@SuppressWarnings("nls")
-	@HttpService(key="contactsDataTable", type=Type.JSON)
+	@HttpService(key="contactsDataTable")
 	public static JsDataTables getContactsDataTable(HttpContext context, 
 			@UrlParameter("search[value]") String searchValue,
 			@UrlParameter("length") int length,
@@ -165,8 +164,8 @@ public class ContactsController {
 	}
 	
 	@SuppressWarnings("nls")
-	@HttpService(key="contacts", type=Type.JSON)
-	public static Object getContact(HttpContext context, @JsonServiceId UUID id) {
+	@HttpService(key="contacts")
+	public static Object getContact(HttpContext context, @HttpServiceId UUID id) {
 		String error = "";
 		
 		ContactsService service = LifeManager.get(ContactsService.class);
@@ -187,7 +186,7 @@ public class ContactsController {
 		return JsonHelper.getFailSuccessResponse(error);
 	}
 	
-	@HttpService(key="contacts", methods={HttpMethod.PUT, HttpMethod.POST}, type=Type.JSON)
+	@HttpService(key="contacts", methods={HttpMethod.PUT, HttpMethod.POST})
 	public static ContactModelView createOrUpdateContact(HttpContext context, @Body ContactModelView contactModelView) throws ObjectPersistenceException {
 		
 		if(contactModelView != null) {
@@ -201,8 +200,8 @@ public class ContactsController {
 		return null;
 	}
 	
-	@HttpService(key="contacts/coordinates", type=Type.JSON)
-	public static List<CoordinateModelView> getCoordinate(HttpContext context, @JsonServiceId(0) UUID idContact, @JsonServiceId(1) UUID idCoordinate) {
+	@HttpService(key="contacts/coordinates")
+	public static List<CoordinateModelView> getCoordinate(HttpContext context, @HttpServiceId(0) UUID idContact, @HttpServiceId(1) UUID idCoordinate) {
 		if(idContact != null) {
 			ContactsService service = LifeManager.get(ContactsService.class);
 			
@@ -213,8 +212,8 @@ public class ContactsController {
 		return null;
 	}
 	
-	@HttpService(key="civilities", type=Type.JSON)
-	public static List<CivilityModelView> getCivilities(HttpContext context, @JsonServiceId UUID id) {
+	@HttpService(key="civilities")
+	public static List<CivilityModelView> getCivilities(HttpContext context, @HttpServiceId UUID id) {
 		ContactsService service = LifeManager.get(ContactsService.class);
 		if(id != null) {
 

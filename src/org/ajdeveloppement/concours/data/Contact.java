@@ -105,7 +105,6 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.net.json.JsonExclude;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
@@ -124,6 +123,8 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
 import org.ajdeveloppement.concours.managers.CivilityManager;
 import org.ajdeveloppement.concours.managers.EntiteManager;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Represent a contact person. This class can be serialised with JAXB.
@@ -445,7 +446,8 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	/**
 	 * @return passwordHash
 	 */
-	@JsonExclude
+	@JsonIgnore
+	@XmlTransient
 	public String getPasswordHash() {
 		return passwordHash;
 	}
@@ -460,7 +462,8 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	/**
 	 * @return idpToken
 	 */
-	@JsonExclude
+	@JsonIgnore
+	@XmlTransient
 	public String getIdpToken() {
 		return idpToken;
 	}
@@ -616,7 +619,8 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	 * 
 	 * @return the identity of contact
 	 */
-	@JsonExclude
+	@JsonIgnore
+	@XmlTransient
 	public String getFullName() {
 		return name + " " + firstName; //$NON-NLS-1$
 	}
@@ -626,7 +630,8 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	 * 
 	 * @return the identity of contact
 	 */
-	@JsonExclude
+	@JsonIgnore
+	@XmlTransient
 	public String getFullNameWithCivility() {
 		return ((civility != null && civility.getAbreviation() != null) ? civility.getAbreviation() + " " : "")  + name + " " + firstName; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}

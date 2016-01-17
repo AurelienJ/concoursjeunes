@@ -105,7 +105,6 @@ import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
-import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService.Type;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
 import org.ajdeveloppement.webserver.services.webapi.helpers.HttpSessionHelper;
 import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
@@ -117,14 +116,14 @@ import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 @WebApiController
 public class ReferencesController {
 
-	@HttpService(key="countries", type=Type.JSON)
+	@HttpService(key="countries")
 	public static List<CountryModelView> getCountries(HttpContext context) {
 		ReferenceService service = LifeManager.get(ReferenceService.class);
 		
 		return service.getCountries();
 	}
 	
-	@HttpService(key="authenticate",methods=HttpMethod.POST, type=Type.JSON)
+	@HttpService(key="authenticate",methods=HttpMethod.POST)
 	public static String authenticate(HttpContext context,@Body AuthenticationModelView authenticationData) {
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
 		//Pour debug: devra être adapté lors du développement réel
