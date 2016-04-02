@@ -94,7 +94,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.ajdeveloppement.concours.webapi.adapters.EntiteAdapter;
 import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
+import org.ajdeveloppement.webserver.services.webapi.helpers.Implementation;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -131,7 +131,7 @@ public class EntiteModelView {
 	/**
 	 * @return idEntite
 	 */
-	@ModelViewBindedProperty("idEntite")
+	@Implementation(method="getIdEntite")
 	public UUID getId() {
 		return idEntite;
 	}
@@ -139,7 +139,7 @@ public class EntiteModelView {
 	/**
 	 * @param idEntite idEntite à définir
 	 */
-	@ModelViewBindedProperty("idEntite")
+	@Implementation(method="setIdEntite")
 	public void setId(UUID idEntite) {
 		this.idEntite = idEntite;
 	}

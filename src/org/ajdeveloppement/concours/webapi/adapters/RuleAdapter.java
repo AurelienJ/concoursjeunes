@@ -131,7 +131,7 @@ public class RuleAdapter implements ModelViewAdapter<Rule, RuleModelView> {
 			
 			modelView.setDepartages(model.getTie().stream().map(t -> t.getFieldName()).collect(Collectors.joining(",")));
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
 		if(model.getCategory() != null) {
@@ -177,7 +177,7 @@ public class RuleAdapter implements ModelViewAdapter<Rule, RuleModelView> {
 				model.setTie(ties);
 			}
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			throw new UncheckedException(e);
 		}
 		model.setCategory(T_RulesCategory.getInstanceWithPrimaryKey(modelView.getIdCategory()));

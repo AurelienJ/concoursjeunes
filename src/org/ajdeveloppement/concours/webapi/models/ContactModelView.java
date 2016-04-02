@@ -92,7 +92,7 @@ import java.util.UUID;
 
 import org.ajdeveloppement.concours.webapi.adapters.ContactAdapter;
 import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
+import org.ajdeveloppement.webserver.services.webapi.helpers.Implementation;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -129,7 +129,7 @@ public class ContactModelView {
 	/**
 	 * @return idContact
 	 */
-	@ModelViewBindedProperty("idContact")
+	@Implementation(method="getIdContact")
 	public UUID getId() {
 		return idContact;
 	}
@@ -137,7 +137,7 @@ public class ContactModelView {
 	/**
 	 * @param idContact idContact à définir
 	 */
-	@ModelViewBindedProperty("idContact")
+	@Implementation(method="setIdContact")
 	public void setId(UUID idContact) {
 		this.idContact = idContact;
 	}

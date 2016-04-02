@@ -116,7 +116,7 @@ public class EntiteAdapter implements ModelViewAdapter<Entite, EntiteModelView> 
 		try {
 			ModelViewMapper.mapModelToViewModel(model, modelView);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
 		if(model.getEntiteParent() != null)
@@ -132,7 +132,7 @@ public class EntiteAdapter implements ModelViewAdapter<Entite, EntiteModelView> 
 		try {
 			ModelViewMapper.mapModelViewToModel(modelView, reference);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
 		

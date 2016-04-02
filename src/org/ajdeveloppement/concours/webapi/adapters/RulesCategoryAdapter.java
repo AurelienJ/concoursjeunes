@@ -118,7 +118,7 @@ public class RulesCategoryAdapter implements ModelViewAdapter<RulesCategory, Rul
 		try {
 			ModelViewMapper.mapModelToViewModel(model, modelView);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			throw new UncheckedException(e);
 		}
 		return modelView;
@@ -131,7 +131,7 @@ public class RulesCategoryAdapter implements ModelViewAdapter<RulesCategory, Rul
 		try {
 			ModelViewMapper.mapModelViewToModel(modelView, model);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			throw new UncheckedException(e);
 		}
 		

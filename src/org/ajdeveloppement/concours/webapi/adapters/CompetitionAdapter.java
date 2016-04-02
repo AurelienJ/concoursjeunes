@@ -122,7 +122,7 @@ public class CompetitionAdapter implements ModelViewAdapter<Competition, Competi
 		try {
 			ModelViewMapper.mapModelToViewModel(model, modelView);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			throw new UncheckedException(e);
 		}
 		
@@ -149,7 +149,7 @@ public class CompetitionAdapter implements ModelViewAdapter<Competition, Competi
 		try {
 			ModelViewMapper.mapModelViewToModel(modelView, reference);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
 		

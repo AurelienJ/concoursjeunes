@@ -120,7 +120,7 @@ public class ContactAdapter implements ModelViewAdapter<Contact,ContactModelView
 		try {
 			ModelViewMapper.mapModelToViewModel(model, contactModelView);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			throw new UncheckedException(e);
 		}
 		
@@ -140,7 +140,7 @@ public class ContactAdapter implements ModelViewAdapter<Contact,ContactModelView
 		try {
 			ModelViewMapper.mapModelViewToModel(modelView, reference);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
 		

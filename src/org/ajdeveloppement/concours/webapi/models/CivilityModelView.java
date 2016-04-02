@@ -92,7 +92,7 @@ import java.util.UUID;
 
 import org.ajdeveloppement.concours.webapi.adapters.CivilityAdapter;
 import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
+import org.ajdeveloppement.webserver.services.webapi.helpers.Implementation;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -112,7 +112,7 @@ public class CivilityModelView {
 	/**
 	 * @return idCivility
 	 */
-	@ModelViewBindedProperty("idCivility")
+	@Implementation(method="getIdCivility")
 	public UUID getId() {
 		return idCivility;
 	}
@@ -120,7 +120,7 @@ public class CivilityModelView {
 	/**
 	 * @param idCivility idCivility à définir
 	 */
-	@ModelViewBindedProperty("idCivility")
+	@Implementation(method="setIdCivility")
 	public void setId(UUID idCivility) {
 		this.idCivility = idCivility;
 	}

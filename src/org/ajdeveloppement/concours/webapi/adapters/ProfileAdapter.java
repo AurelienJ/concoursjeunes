@@ -119,7 +119,7 @@ public class ProfileAdapter implements ModelViewAdapter<Profile, ProfileModelVie
 		try {
 			ModelViewMapper.mapModelToViewModel(model, modelView);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
 		return modelView;
@@ -133,7 +133,7 @@ public class ProfileAdapter implements ModelViewAdapter<Profile, ProfileModelVie
 		try {
 			ModelViewMapper.mapModelViewToModel(modelView, profile);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
 		

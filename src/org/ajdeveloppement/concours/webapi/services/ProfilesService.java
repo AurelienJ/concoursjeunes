@@ -168,7 +168,7 @@ public class ProfilesService {
 		return null;
 	}
 	
-	public void createOrUpdateProfile(ProfileModelView profileModelView) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ObjectPersistenceException {
+	public void createOrUpdateProfile(ProfileModelView profileModelView) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ObjectPersistenceException, NoSuchMethodException, SecurityException {
 		Profile dbProfile = null;
 		if(profileModelView.getId() != null)
 			dbProfile = T_Profile.getInstanceWithPrimaryKey(profileModelView.getId());

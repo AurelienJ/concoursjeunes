@@ -113,7 +113,7 @@ public class CivilityAdapter implements ModelViewAdapter<Civility, CivilityModel
 		try {
 			ModelViewMapper.mapModelToViewModel(model, modelView);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
 		return modelView;

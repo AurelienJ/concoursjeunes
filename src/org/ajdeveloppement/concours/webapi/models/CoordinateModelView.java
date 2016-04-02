@@ -93,7 +93,7 @@ import java.util.UUID;
 import org.ajdeveloppement.concours.data.Coordinate.Type;
 import org.ajdeveloppement.concours.webapi.adapters.CoordinateAdapter;
 import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewBindedProperty;
+import org.ajdeveloppement.webserver.services.webapi.helpers.Implementation;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -113,7 +113,7 @@ public class CoordinateModelView {
 	/**
 	 * @return idCoordinate
 	 */
-	@ModelViewBindedProperty("idCoordinate")
+	@Implementation(method="getIdCoordinate")
 	public UUID getId() {
 		return idCoordinate;
 	}
@@ -121,7 +121,7 @@ public class CoordinateModelView {
 	/**
 	 * @param idCoordinate idCoordinate à définir
 	 */
-	@ModelViewBindedProperty("idCoordinate")
+	@Implementation(method="setIdCoordinate")
 	public void setId(UUID idCoordinate) {
 		this.idCoordinate = idCoordinate;
 	}
