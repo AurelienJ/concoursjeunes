@@ -125,7 +125,7 @@ import org.ajdeveloppement.concours.helpers.LibelleHelper;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="NIVEAU_COMPETITION")
-@SqlPrimaryKey(fields={"ID_NIVEAU_COMPETITION","ID_ENTITE"})
+@SqlPrimaryKey(fields={"ID_NIVEAU_COMPETITION"})
 public class CompetitionLevel implements SqlObjectPersistence {
 	@XmlTransient
 	@SqlField(name="ID_NIVEAU_COMPETITION")

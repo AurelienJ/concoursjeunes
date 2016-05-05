@@ -150,16 +150,6 @@ public class CompetitionsService {
 	}
 	
 	/**
-	 * Return all competitions for entity
-	 * 
-	 * @param idEntity
-	 * @return
-	 */
-	public List<CompetitionModelView> getCompetitionsForEntity(UUID idEntity) {
-		return getCompetitionsForFilter(T_Competition.ID_ENTITE.equalTo(idEntity), 0, -1);
-	}
-	
-	/**
 	 * Return all competitions for rule
 	 * 
 	 * @param idRule

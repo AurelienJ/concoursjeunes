@@ -157,7 +157,7 @@ public class CompetitionAdapter implements ModelViewAdapter<Competition, Competi
 			reference.setOrganisateur(T_Entite.getInstanceWithPrimaryKey(modelView.getIdOrganisateur()));
 		
 		if(modelView.getIdCompetitionLevel() != null)
-			reference.setCompetitionLevel(T_CompetitionLevel.getInstanceWithPrimaryKey(modelView.getIdCompetitionLevel(), modelView.getIdEntiteCompetitionLevel()));
+			reference.setCompetitionLevel(T_CompetitionLevel.getInstanceWithPrimaryKey(modelView.getIdCompetitionLevel()));
 		
 		if(modelView.getIdReglement() != null)
 			reference.setReglement(T_Rule.getInstanceWithPrimaryKey(modelView.getIdReglement()));
