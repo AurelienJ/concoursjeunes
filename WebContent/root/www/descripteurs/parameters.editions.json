@@ -1,6 +1,6 @@
 {
 	"title": "Parametre des éditions",
 	"scripts": [],
-	"mainActiveMenu:" "homeNav",
+	"mainActiveMenu": "homeNav",
 	"mainContent": "parameters.editions"
 }
