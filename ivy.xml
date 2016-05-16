@@ -25,10 +25,10 @@
             </dependency>
             <dependency org="org.jdesktop" name="beansbinding" rev="1.2.1"/>
             <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.4.4"/>
-            <dependency org="org.eclipse.swt" name="org.eclipse.swt.gtk.linux.x86_64" rev="4.4" />
-            <dependency org="org.eclipse.swt" name="org.eclipse.swt.win32.win32.x86_64" rev="4.4" conf="windows64->default" />
-            <dependency org="org.eclipse.swt" name="org.eclipse.swt.win32.win32.x86" rev="4.4" conf="windows32->default" /> 
-            <dependency org="org.eclipse.swt" name="org.eclipse.swt.cocoa.macosx.x86_64" rev="4.4" conf="macosx->default"/>
+            <dependency org="org.eclipse.swt" name="org.eclipse.swt.gtk.linux.x86_64" rev="4.3" />
+            <dependency org="org.eclipse.swt" name="org.eclipse.swt.win32.win32.x86_64" rev="4.3" conf="windows64->default" />
+            <dependency org="org.eclipse.swt" name="org.eclipse.swt.win32.win32.x86" rev="4.3" conf="windows32->default" /> 
+            <dependency org="org.eclipse.swt" name="org.eclipse.swt.cocoa.macosx.x86_64" rev="4.3" conf="macosx->default"/>
             <dependency org="org.swinglabs" name="swingx" rev="1.6.1"/>
             <dependency org="ro.isdc.wro4j" name="wro4j-core" rev="1.7.8"/>
             <dependency org="com.fifesoft" name="rsyntaxtextarea" rev="2.5.8"/>
