@@ -62,7 +62,7 @@
 	</target>
 	
 	<target name="resolve" description="--> retrieve dependencies with ivy">
-        <ivy:retrieve  pattern="[artifact]-[type].[ext]"/>
+        <ivy:retrieve />
     </target>
 
 	<target name="pack_stage1" depends="resolve">
