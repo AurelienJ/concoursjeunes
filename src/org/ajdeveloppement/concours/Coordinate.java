@@ -9,8 +9,8 @@
  *
  * FRANCAIS:
  *
- * Ce logiciel est un programme informatique servant à gérer les compétions de type
- * spécial jeunes de tir à l'Arc. 
+ * Ce logiciel est un programme informatique servant à gérer les compétions
+ * de tir à l'Arc. 
  *
  * Ce logiciel est régi par la licence CeCILL soumise au droit français et
  * respectant les principes de diffusion des logiciels libres. Vous pouvez
