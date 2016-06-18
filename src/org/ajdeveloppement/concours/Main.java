@@ -146,7 +146,7 @@ import org.ajdeveloppement.concours.plugins.PluginMetadata;
 import org.ajdeveloppement.concours.webapi.WebConfig;
 import org.ajdeveloppement.swingxext.error.WebErrorReporter;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
-import org.ajdeveloppement.webserver.FileSelector;
+import org.ajdeveloppement.webserver.ResourcesSelector;
 import org.ajdeveloppement.webserver.HttpServer;
 import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
 import org.ajdeveloppement.webserver.services.files.FilesService;
@@ -201,7 +201,7 @@ public class Main {
 		String[] servicesOrder = staticParameters.getResourceString(WEBSERVER_SERVICE_ORDER).split(","); //$NON-NLS-1$
 		ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor = new ExtensibleHttpRequestProcessor(servicesOrder);
 		
-		FileSelector fileSelector = null;
+		ResourcesSelector fileSelector = null;
 		String fileSelectorFilePath = staticParameters.getResourceString(WEBSERVER_FILESELECTOR_FILE);
 		if(fileSelectorFilePath != null && !fileSelectorFilePath.isEmpty()) {
 			URL fileSelectorURL = staticParameters.getClass().getResource(fileSelectorFilePath);
@@ -209,7 +209,7 @@ public class Main {
 				File fileSelectorFile = new File(fileSelectorURL.getPath());
 				if(fileSelectorFile.exists()) {
 					try {
-						fileSelector = XMLSerializer.loadMarshallStructure(fileSelectorFile, FileSelector.class);
+						fileSelector = XMLSerializer.loadMarshallStructure(fileSelectorFile, ResourcesSelector.class);
 					} catch (JAXBException | IOException e) {
 						e.printStackTrace();
 					}
