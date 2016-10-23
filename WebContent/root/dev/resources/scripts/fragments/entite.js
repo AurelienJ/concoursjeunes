@@ -1,0 +1,1 @@
+pageCache["entite"] = loadTemplate(basePath + "/templates/entite.thtml").output();

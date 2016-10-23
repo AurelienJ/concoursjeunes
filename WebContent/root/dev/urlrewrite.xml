@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<rewriteUrlRules>
+    <!-- <rewriteUrlPatterns>
+        <pattern>^(/index)\.html$</pattern>
+        <replacement>$1.htm</replacement>
+    </rewriteUrlPatterns>
+    <rewriteUrlPatterns>
+        <pattern>^/$</pattern>
+        <replacement>index.htm</replacement>
+    </rewriteUrlPatterns>
+    <rewriteUrlPatterns>
+        <pattern>^/admin/((?!.*(\.html)).*)$</pattern>
+        <replacement>/$1</replacement>
+    </rewriteUrlPatterns> -->
+</rewriteUrlRules>

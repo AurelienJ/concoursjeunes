@@ -1,0 +1,33 @@
+<h1>Détail d'une entité</h1>
+
+<section class="formulaire">
+	<h2>Identité</h2>
+	
+	<label for="entityName">Nom</label><input type="text" placeholder="Nom" id="entityName" />
+	<label for="entityReference">Référence</label><input type="text" placeholder="Référence" id="entityReference" />
+	<label for="entityType">Nom</label><select id="entityType">
+		<option>Club</option>
+	</select>
+	<span class="label">Fédération</span> <a href="#" id="entityFederation" class="input">Choisir...</a>
+</section>
+
+<section class="formulaire">
+	<h2>Coordonnées</h2>
+	
+	<label for="entityAddress">Adresse</label><textarea rows="4" placeholder="Adresse" id="entityAddress"></textarea>
+	<label for="entityZipCode">Code postal</label><input type="text" placeholder="Code postal" id="entityZipCode"/>
+	<label for="entityCountry">Pays</label><select id="entityCountry">
+		<option>France</option>
+	</select>
+</section>
+
+<section class="formulaire">
+	<h2>Divers</h2>
+	
+	<label for="entityNotes">Notes</label><textarea rows="8" placeholder="Notes" id="entityNotes"></textarea>
+</section>
+
+<div id="entityValidation" class="validationPanel">
+	<a href="#" id="entityValid" class="buttonScreenValid">Valider</a>
+	<a href="#" id="entityCancel" class="buttonScreenCancel">Annuler</a>
+</div>

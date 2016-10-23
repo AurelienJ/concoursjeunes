@@ -1,0 +1,25 @@
+.navbar-titre {
+	font-size: 17px;
+	line-height: 50px;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-weight: 300;
+}
+
+.navbar-custom-menu-left {
+	float: left !important;
+}
+
+.logo-panel {
+    position: relative;
+    width: 100%;
+    padding: 10px;
+    overflow: hidden;
+	text-align: center;
+
+	background-color: white;
+}
+
+.logo-panel > .image > img {
+	width: 100%;
+	max-width: 140px;
+}

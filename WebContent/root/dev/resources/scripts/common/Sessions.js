@@ -1,0 +1,1 @@
+var Sessions = Java.type("org.ajdeveloppement.webserver.services.js.Sessions");

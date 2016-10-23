@@ -1,0 +1,75 @@
+		<menu class="mainMenu">
+			<li class="selected">Présentation</li> 
+			<li><a href="actualites-logiciel.html">Actualitées</a></li>
+			<li><a href="">Téléchargement</a></li> 
+			<li><a href="">Contribuer</a></li>
+		</menu>
+		
+		<section>
+			<h1>A propos du logiciel ArcCompetition?</h1>
+			
+			<div id="emphaseapropos">
+				<img src="images/ArcCompetitionV0.png" alt="ArcCompetition Home Screen" id="screenshot1"/>
+				<br />
+				<a href="#">Télécharger	&nbsp;
+				<img alt="windows" src="images/OS_Windows_256x256-32.png" id="windowsicon"/>
+				<img alt="linux" src="images/OS_Linux_256x256-32.png" id="linuxicon"/>
+				<img alt="mac" src="images/OS_Apple_256x256-32.png" id="macicon"/>
+				</a>
+			</div>
+			<p class="miseEnValeur">ArcCompetition est un Logiciel Libre de gestion des compétition de Tir à l'Arc.</p>
+
+			<p>Il a pour objectif à la fois de proposer une alternative libre et de qualité au logiciel distribué
+			par la fédération française de tir à l'arc (F.F.T.A.) ainsi que de proposer une solution logiciel aux clubs
+			et fédérations ne disposant pas d'un tel produit.</p>
+			
+			<p>Il offre une grande liberté de personnalisation permettant de répondre aux besoins les
+			plus spécifique</p>
+			
+			<p>ArcCompetition est compatible avec l'ensemble des systèmes supportant Java 8<p>
+			
+			<p>
+			Il a été testé et est supporté sur les système Windows 7, Windows 8, Fedora 18 (Linux), Ubuntu 13.04 (Linux)<br />
+			Le logiciel est normalement aussi fonctionnel sous Mac OS X, mais, ne disposant pas de ce système,
+			aucun support ne peut être assuré.
+			</p>
+			
+			<p class="miseEnValeur">Configuration Materiel</p>
+			
+			<p>Processeur: Intel Core 2 ou ultérieur<br />
+			Mémoire vive: au moins 256Mo<br />
+			Espace disque: au moins 100Mo<br />
+			Systeme: Windows (Vista, Seven, 8), Linux (Distributions posterieur à 2012). Compatible mais non supporté: Mac OS X 10.8 ou plus
+			</p>
+			
+		</section>
+		
+		<section>
+			<h1>Licence d'utilisation</h1>
+			
+			<p>ArcCompetition est distribué sous licence Open Source CeCILL compatible avec le droit Français 
+			et avec la licence GPL, ce qui signifie que vous avez le droit d'utiliser, recopier, modifier, 
+			rediffuser librement le logiciel sans avoir au préalable à en demander l'autorisation à son auteur.
+			Toutefois, en cas de redistribution du logiciel modifié, vous êtes dans l'obligation de redistribuer
+			les sources du logiciel.</p>
+			
+		</section>
+		
+		<section>
+			<h1>Les fonctionnalitées</h1>
+			
+			<p>Gestion des inscriptions des concurrents, saisie semi-automatique ou par sélection</p>
+		    <p>Gestion de la place libre restante</p>
+		    <p>Placement automatique ou par cliquer-glisser sur le pas de tir</p>
+		    <p>Gestion des équipes de club ou équipes libre</p>
+		    <p>Classement individuel et par équipes</p>
+		    <p>Possibilité de modifier les critères de classement en cours de compétition</p>
+		    <p>Possibilité de créer son propre règlement de compétition</p>
+		    <p>Gestion multi-départ</p>
+		    <p>Gestion de plusieurs concours en parallèle</p>
+		    <p>Gestion multi-club (concept de profils d'utilisation)</p>
+		    <p>Import de la base d'archer à partir de Result'Arc</p>
+		
+		    <p>Mise à jour automatique sur internet (si connexion disponible)</p>
+		    <p>Multi-plateforme (compatible Windows, Linux et Mac OS X)</p>
+		</section>
