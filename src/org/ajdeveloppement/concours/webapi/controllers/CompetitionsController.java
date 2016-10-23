@@ -2,7 +2,6 @@ package org.ajdeveloppement.concours.webapi.controllers;
 
 import java.util.List;
 
-import org.ajdeveloppement.commons.lifetime.LifeManager;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.concours.data.T_Competition;
 import org.ajdeveloppement.concours.webapi.models.CompetitionModelView;
@@ -16,19 +15,26 @@ import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiControlle
 @WebApiController
 public class CompetitionsController {
 	
+	private HttpContext context;
+	
+	private CompetitionsService service;
+	
+	public CompetitionsController(HttpContext context, CompetitionsService service) {
+		this.context = context;
+		this.service = service;
+	}
+	
 	/**
 	 * Renvoie toutes les competitions
 	 * @param context
 	 * @return
 	 */
 	@HttpService(key="competitionsDataTable")
-	public static JsDataTables getCompetitionsDataTable(HttpContext context,
+	public JsDataTables getCompetitionsDataTable(
 			@UrlParameter("search[value]") String searchValue,
 			@UrlParameter("length") int length,
 			@UrlParameter("start") int start,
 			@UrlParameter("draw") int draw) {
-		CompetitionsService service = LifeManager.get(CompetitionsService.class);
-		
 		int nbTotalEntites = service.countAllCompetitions();
 		
 		QFilter filter = null;
@@ -61,9 +67,7 @@ public class CompetitionsController {
 	 * @return
 	 */
 	@HttpService(key="competitions")
-	public static List<CompetitionModelView> getCompetitions(HttpContext context) {
-		CompetitionsService service = LifeManager.get(CompetitionsService.class);
-		
+	public List<CompetitionModelView> getCompetitions() {
 		return service.getAllCompetitions();
 	}
 }

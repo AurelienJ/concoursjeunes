@@ -91,7 +91,6 @@ package org.ajdeveloppement.concours.webapi.controllers;
 import java.util.List;
 import java.util.UUID;
 
-import org.ajdeveloppement.commons.lifetime.LifeManager;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QField;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
@@ -119,6 +118,15 @@ import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 @WebApiController
 public class ContactsController {
 	
+	private HttpContext context;
+	
+	private ContactsService service;
+	
+	private ContactsController(HttpContext context, ContactsService service) {
+		this.context = context;
+		this.service = service;
+	}
+	
 	/**
 	 * Retourne la liste des contacts eventuellement filtré
 	 * au format "http://datatables.net" (Json)
@@ -128,13 +136,11 @@ public class ContactsController {
 	 */
 	@SuppressWarnings("nls")
 	@HttpService(key="contactsDataTable")
-	public static JsDataTables getContactsDataTable(HttpContext context, 
+	public JsDataTables getContactsDataTable( 
 			@UrlParameter("search[value]") String searchValue,
 			@UrlParameter("length") int length,
 			@UrlParameter("start") int start,
 			@UrlParameter("draw") int draw) {
-		
-		ContactsService service = LifeManager.get(ContactsService.class);
 		
 		int nbTotalContacts = service.countAllContacts();
 		
@@ -165,10 +171,8 @@ public class ContactsController {
 	
 	@SuppressWarnings("nls")
 	@HttpService(key="contacts")
-	public static Object getContact(HttpContext context, @HttpServiceId UUID id) {
+	public Object getContact(@HttpServiceId UUID id) {
 		String error = "";
-		
-		ContactsService service = LifeManager.get(ContactsService.class);
 		
 		if(id != null) {
 
@@ -187,10 +191,9 @@ public class ContactsController {
 	}
 	
 	@HttpService(key="contacts", methods={HttpMethod.PUT, HttpMethod.POST})
-	public static ContactModelView createOrUpdateContact(HttpContext context, @Body ContactModelView contactModelView) throws ObjectPersistenceException {
+	public ContactModelView createOrUpdateContact(@Body ContactModelView contactModelView) throws ObjectPersistenceException {
 		
 		if(contactModelView != null) {
-			ContactsService service = LifeManager.get(ContactsService.class);
 			service.createOrUpdateContact(contactModelView);
 			
 			if(context.getHttpRequest().getRequestMethod() == HttpMethod.POST)
@@ -201,10 +204,8 @@ public class ContactsController {
 	}
 	
 	@HttpService(key="contacts/coordinates")
-	public static List<CoordinateModelView> getCoordinate(HttpContext context, @HttpServiceId(0) UUID idContact, @HttpServiceId(1) UUID idCoordinate) {
+	public List<CoordinateModelView> getCoordinate(@HttpServiceId(0) UUID idContact, @HttpServiceId(1) UUID idCoordinate) {
 		if(idContact != null) {
-			ContactsService service = LifeManager.get(ContactsService.class);
-			
 			return service.getCoordinateForIdContact(idContact);
 		}
 		
@@ -213,8 +214,7 @@ public class ContactsController {
 	}
 	
 	@HttpService(key="civilities")
-	public static List<CivilityModelView> getCivilities(HttpContext context, @HttpServiceId UUID id) {
-		ContactsService service = LifeManager.get(ContactsService.class);
+	public List<CivilityModelView> getCivilities(@HttpServiceId UUID id) {
 		if(id != null) {
 
 		} else {

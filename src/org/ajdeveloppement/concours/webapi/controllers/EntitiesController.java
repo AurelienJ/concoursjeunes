@@ -88,10 +88,10 @@
  */
 package org.ajdeveloppement.concours.webapi.controllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.ajdeveloppement.commons.ExceptionUtils;
-import org.ajdeveloppement.commons.lifetime.LifeManager;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.concours.data.T_Entite;
@@ -116,6 +116,13 @@ import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 @WebApiController
 public class EntitiesController {
 	
+	private HttpContext context;
+	private EntiteService service;
+	
+	public EntitiesController(HttpContext context, EntiteService service) {
+		this.context = context;
+		this.service = service;
+	}
 	/**
 	 * Retourne la liste des entités eventuellement filtré
 	 * au format "http://datatables.net" (Json)
@@ -125,13 +132,11 @@ public class EntitiesController {
 	 */
 	@SuppressWarnings("nls")
 	@HttpService(key="entitiesDataTable")
-	public static JsDataTables getEntitiesDataTable(HttpContext context,
+	public JsDataTables getEntitiesDataTable(
 			@UrlParameter("search[value]") String searchValue,
 			@UrlParameter("length") int length,
 			@UrlParameter("start") int start,
 			@UrlParameter("draw") int draw) {	
-		EntiteService service = LifeManager.get(EntiteService.class);
-		
 		int nbTotalEntites = service.countAllEntities();
 		
 		QFilter filter = null;
@@ -160,27 +165,20 @@ public class EntitiesController {
 	}
 	
 	@HttpService(key="entities",methods=HttpMethod.GET)
-	public static Object getEntities(HttpContext context, @HttpServiceId UUID id) {
-
-		EntiteService service = LifeManager.get(EntiteService.class);
-		if(id != null) {
-			EntiteModelView entite = service.getEntiteById(id);
-			if(entite != null) {
-				return entite;
-			}
-		} else {
-			return service.getAllEntities();
-		}
-		
-		return null;
+	public List<EntiteModelView> getEntities() {
+		return service.getAllEntities();
+	}
+	
+	@HttpService(key="entities",methods=HttpMethod.GET)
+	public EntiteModelView getEntities(@HttpServiceId UUID id) {
+		return service.getEntiteById(id);
 	}
 	
 	@HttpService(key="entities",methods={HttpMethod.PUT, HttpMethod.POST})
-	public static Object createOrUpdateEntity(HttpContext context, @Body EntiteModelView entiteModelView) {
+	public Object createOrUpdateEntity(@Body EntiteModelView entiteModelView) {
 		boolean success = true;
 		String error = null;
 		try {
-			EntiteService service = LifeManager.get(EntiteService.class);
 			service.createOrUpdateEntite(entiteModelView);
 
 			if(context.getHttpRequest().getRequestMethod() == HttpMethod.POST)

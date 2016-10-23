@@ -88,56 +88,42 @@
  */
 package org.ajdeveloppement.concours.webapi;
 
-import org.ajdeveloppement.commons.lifetime.LifeManager;
-import org.ajdeveloppement.commons.lifetime.SingletonLifeTime;
-import org.ajdeveloppement.concours.webapi.controllers.ControllersCollection;
 import org.ajdeveloppement.concours.webapi.services.CompetitionsService;
 import org.ajdeveloppement.concours.webapi.services.ContactsService;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
 import org.ajdeveloppement.concours.webapi.services.ProfilesService;
 import org.ajdeveloppement.concours.webapi.services.ReferenceService;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
-import org.ajdeveloppement.webserver.HttpServer;
-import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
-import org.ajdeveloppement.webserver.services.webapi.ApiService;
-import org.ajdeveloppement.webserver.services.webapi.Container;
+import org.ajdeveloppement.webserver.services.webapi.AbstractApiApplication;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class WebConfig {
+public class WebConfig extends AbstractApiApplication {
 	
 	/**
 	 * Declare LifeUnits service
 	 */
-	private static void initLifeUnits() {
-		LifeManager.addComponents(ReferenceService.class, new SingletonLifeTime<>());
-		LifeManager.addComponents(ContactsService.class, new SingletonLifeTime<>());
-		LifeManager.addComponents(EntiteService.class, new SingletonLifeTime<>());
-		LifeManager.addComponents(ProfilesService.class, new SingletonLifeTime<>());
-		LifeManager.addComponents(RuleService.class, new SingletonLifeTime<>());
-		LifeManager.addComponents(CompetitionsService.class, new SingletonLifeTime<>());
+	@Override
+	protected  void initLifeUnits() {
+		webApiService.addSingletonService(ReferenceService.class);
+		webApiService.addSingletonService(ContactsService.class);
+		webApiService.addSingletonService(EntiteService.class);
+		webApiService.addSingletonService(ProfilesService.class);
+		webApiService.addSingletonService(RuleService.class);
+		webApiService.addSingletonService(CompetitionsService.class);
+	}
+
+	@Override
+	protected void stopLifeUnits() {
+		webApiService.removeService(ReferenceService.class);
+		webApiService.removeService(ContactsService.class);
+		webApiService.removeService(EntiteService.class);
+		webApiService.removeService(ProfilesService.class);
+		webApiService.removeService(RuleService.class);
+		webApiService.removeService(CompetitionsService.class);
 	}
 	
-	/**
-	 * Declare WebApi controllers
-	 * @param extensibleHttpRequestProcessor
-	 */
-	private static void initControllers(ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor) {
-		ApiService webApiService = extensibleHttpRequestProcessor.getService(ApiService.class);
-		
-		Container container = new Container();
-		for(Class<?> controller : ControllersCollection.getControllers()) {
-			container.discoverServices(controller);
-		}
-		
-		//Controllers accessible sans distinction de nom d'hote et sans alias
-		webApiService.addContainer("*", container); //$NON-NLS-1$
-	}
 	
-	public static void init(HttpServer server, String baseContainer) {
-		initLifeUnits();
-		initControllers((ExtensibleHttpRequestProcessor)server.getRequestProcessor());
-	}
 }

@@ -94,7 +94,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.ajdeveloppement.commons.ExceptionUtils;
-import org.ajdeveloppement.commons.lifetime.LifeManager;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.Rate;
@@ -119,11 +118,17 @@ import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 @WebApiController
 public class ProfileController {
 	
+	private HttpContext context;
+	private ProfilesService service;
+	
+	private ProfileController(HttpContext context, ProfilesService service) {
+		this.context = context;
+		this.service = service;
+	}
+	
 	@HttpService(key="profiles")
-	public static Object getProfiles(HttpContext context, @HttpServiceId UUID id) {
+	public Object getProfiles(@HttpServiceId UUID id) {
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
-		
-		ProfilesService service = LifeManager.get(ProfilesService.class);
 		
 		UUID idUtilisateur = null;
 		if(userSessionData != null)
@@ -136,11 +141,9 @@ public class ProfileController {
 	}
 	
 	@HttpService(key="profiles", methods=HttpMethod.PUT)
-	public static Object updateProfile(HttpContext context, @Body ProfileModelView profileModelView) {
+	public Object updateProfile(@Body ProfileModelView profileModelView) {
 		try {
 			if(profileModelView != null) {
-				ProfilesService service = LifeManager.get(ProfilesService.class);
-				
 				service.createOrUpdateProfile(profileModelView);
 				
 				return profileModelView;
@@ -156,15 +159,13 @@ public class ProfileController {
 	
 	@SuppressWarnings("nls")
 	@HttpService(key="profiles", methods=HttpMethod.POST)
-	public static Object createProfile(HttpContext context, @Body ProfileModelView profileModelView) {		
+	public Object createProfile(@Body ProfileModelView profileModelView) {		
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
 		
 		String error = "";
 		
 		if(userSessionData != null && userSessionData.getSessionUser() != null 
 				&& profileModelView != null) {
-			
-			ProfilesService service = LifeManager.get(ProfilesService.class);
 			
 			try {
 				service.createOrUpdateProfile(profileModelView);
@@ -189,10 +190,9 @@ public class ProfileController {
 	}
 	
 	@HttpService(key="profiles/rates")
-	public static List<Rate> getRates(HttpContext context, @HttpServiceId(0) UUID idProfile, @HttpServiceId(1) UUID idRate) {
+	public List<Rate> getRates(@HttpServiceId(0) UUID idProfile, @HttpServiceId(1) UUID idRate) {
 		
 		if(idProfile != null) {
-			ProfilesService service = LifeManager.get(ProfilesService.class);
 			return service.getRatesForIdProfile(idProfile);
 		}
 

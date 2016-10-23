@@ -94,7 +94,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.ajdeveloppement.commons.ExceptionUtils;
-import org.ajdeveloppement.commons.lifetime.LifeManager;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Profile;
@@ -121,14 +120,20 @@ import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
  */
 @WebApiController
 public class RulesController {
+	
+	private HttpContext context;
+	private RuleService service;
 
+	public RulesController(HttpContext context, RuleService service) {
+		this.context = context;
+		this.service = service;
+	}
 	@HttpService(key="rulesDataTable")
-	public static JsDataTables getRulesDataTable(HttpContext context,
+	public JsDataTables getRulesDataTable(
 			@UrlParameter("search[value]") String searchValue,
 			@UrlParameter("length") int length,
 			@UrlParameter("start") int start,
 			@UrlParameter("draw") int draw) {
-		RuleService service = LifeManager.get(RuleService.class);
 		
 		int nbTotalRules = service.countAllRules();
 		int nbFilteredRules = nbTotalRules;
@@ -149,9 +154,7 @@ public class RulesController {
 	}
 	
 	@HttpService(key="rulesCategories")
-	public static Object getRulesCategories(HttpContext context, @HttpServiceId int idRuleCategory) {
-		RuleService service = LifeManager.get(RuleService.class);
-		
+	public Object getRulesCategories(@HttpServiceId int idRuleCategory) {
 		if(idRuleCategory == 0)
 			return service.getAllRulesCategories();
 		
@@ -159,9 +162,7 @@ public class RulesController {
 	}
 	
 	@HttpService(key="rules")
-	public static Object getRules(HttpContext context, @HttpServiceId UUID idRule) {
-		RuleService service = LifeManager.get(RuleService.class);
-		
+	public Object getRules(@HttpServiceId UUID idRule) {
 		if(idRule == null)
 			return service.getAllRules();
 		
@@ -169,14 +170,7 @@ public class RulesController {
 	}
 
 	@HttpService(key="rules",methods={HttpMethod.PUT, HttpMethod.POST})
-	public static Object createOrUpdateRule(HttpContext context, @Body RuleModelView modelView) {
-		//UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getSession());
-		RuleService service = LifeManager.get(RuleService.class);
-		
-		//UUID idUtilisateur = null;
-		//if(userSessionData != null)
-		//	idUtilisateur = userSessionData.getSessionUser().getIdContact();
-		
+	public Object createOrUpdateRule( @Body RuleModelView modelView) {
 		try {
 			service.createOrUpdateRule(modelView);
 		} catch (ObjectPersistenceException e) {
@@ -191,9 +185,8 @@ public class RulesController {
 	}
 	
 	@HttpService(key="availableEntitiesForRulesCreation")
-	public static List<EntiteModelView> getAvailableEntitiesForRulesCreation(HttpContext context) {
+	public List<EntiteModelView> getAvailableEntitiesForRulesCreation() {
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
-		//RuleService service = LifeManager.get(RuleService.class);
 		
 		List<Entite> entites = new ArrayList<Entite>();
 		if(userSessionData != null) {

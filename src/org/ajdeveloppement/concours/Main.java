@@ -130,6 +130,7 @@ import javax.xml.bind.JAXBException;
 import org.ajdeveloppement.apps.AppUtilities;
 import org.ajdeveloppement.apps.ApplicationContext;
 import org.ajdeveloppement.commons.AjResourcesReader;
+import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
@@ -143,11 +144,13 @@ import org.ajdeveloppement.concours.plugins.Plugin.Type;
 import org.ajdeveloppement.concours.plugins.PluginEntry;
 import org.ajdeveloppement.concours.plugins.PluginLoader;
 import org.ajdeveloppement.concours.plugins.PluginMetadata;
-import org.ajdeveloppement.concours.webapi.WebConfig;
 import org.ajdeveloppement.swingxext.error.WebErrorReporter;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
-import org.ajdeveloppement.webserver.ResourcesSelector;
+import org.ajdeveloppement.webserver.DefaultDeploymentService;
+import org.ajdeveloppement.webserver.DefaultResourcesSelector;
+import org.ajdeveloppement.webserver.DeploymentService;
 import org.ajdeveloppement.webserver.HttpServer;
+import org.ajdeveloppement.webserver.ResourcesSelector;
 import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
 import org.ajdeveloppement.webserver.services.files.FilesService;
 import org.eclipse.swt.SWT;
@@ -201,21 +204,15 @@ public class Main {
 		String[] servicesOrder = staticParameters.getResourceString(WEBSERVER_SERVICE_ORDER).split(","); //$NON-NLS-1$
 		ExtensibleHttpRequestProcessor extensibleHttpRequestProcessor = new ExtensibleHttpRequestProcessor(servicesOrder);
 		
-		ResourcesSelector fileSelector = null;
-		String fileSelectorFilePath = staticParameters.getResourceString(WEBSERVER_FILESELECTOR_FILE);
-		if(fileSelectorFilePath != null && !fileSelectorFilePath.isEmpty()) {
-			URL fileSelectorURL = staticParameters.getClass().getResource(fileSelectorFilePath);
-			if(fileSelectorURL != null) {
-				File fileSelectorFile = new File(fileSelectorURL.getPath());
-				if(fileSelectorFile.exists()) {
-					try {
-						fileSelector = XMLSerializer.loadMarshallStructure(fileSelectorFile, ResourcesSelector.class);
-					} catch (JAXBException | IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
+		ResourcesSelector fileSelector = getFileSelector();
+		DeploymentService deployment = new DefaultDeploymentService();
+		deployment.setBasePath(fileSelector.getBasePath());
+		try {
+			deployment.deployAll();
+		} catch (IOException e1) {
+			throw new UncheckedException(e1);
 		}
+		fileSelector.setDeploymentService(deployment);
 
 		//initErrorManaging();
 		initNetworkManaging();
@@ -251,11 +248,11 @@ public class Main {
 			e.printStackTrace();
 		}
 		
-		String baseContainer = ""; //$NON-NLS-1$
-		if(fileSelector != null)
-			baseContainer = fileSelector.getBasePath().toString();
+//		String baseContainer = ""; //$NON-NLS-1$
+//		if(fileSelector != null)
+//			baseContainer = fileSelector.getBasePath().toString();
 		
-		WebConfig.init(httpServer, baseContainer);
+//		WebConfig.init(httpServer, baseContainer);
 		
 		System.out.println("Http listen on port: " + webServerListenPort); //$NON-NLS-1$
 				
@@ -294,6 +291,32 @@ public class Main {
         }
         
         display.dispose();
+	}
+	
+	/**
+	 * Return the file selector
+	 * 
+	 * @return the file selector
+	 */
+	private static ResourcesSelector getFileSelector() {
+		ResourcesSelector fileSelector = null;
+		String fileSelectorFilePath = staticParameters.getResourceString(WEBSERVER_FILESELECTOR_FILE);
+		if(fileSelectorFilePath != null && !fileSelectorFilePath.isEmpty()) {
+			URL fileSelectorURL = staticParameters.getClass().getResource(fileSelectorFilePath);
+			if(fileSelectorURL != null) {
+				File fileSelectorFile = new File(fileSelectorURL.getPath());
+				if(fileSelectorFile.exists()) {
+					try {
+						fileSelector = XMLSerializer.loadMarshallStructure(fileSelectorFile, DefaultResourcesSelector.class);
+					} catch (JAXBException | IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		if(fileSelector == null)
+			fileSelector = new DefaultResourcesSelector();
+		return fileSelector;
 	}
 	
 	boolean onDrag = false;

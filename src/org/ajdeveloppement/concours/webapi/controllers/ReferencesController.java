@@ -91,7 +91,6 @@ package org.ajdeveloppement.concours.webapi.controllers;
 import java.util.List;
 import java.util.UUID;
 
-import org.ajdeveloppement.commons.lifetime.LifeManager;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.ManagerProfile;
 import org.ajdeveloppement.concours.data.Profile;
@@ -115,16 +114,22 @@ import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
  */
 @WebApiController
 public class ReferencesController {
+	
+	private HttpContext context;
+	private ReferenceService service;
+	
+	public ReferencesController(HttpContext context, ReferenceService service) {
+		this.context = context;
+		this.service =service;
+	}
 
 	@HttpService(key="countries")
-	public static List<CountryModelView> getCountries(HttpContext context) {
-		ReferenceService service = LifeManager.get(ReferenceService.class);
-		
+	public List<CountryModelView> getCountries() {
 		return service.getCountries();
 	}
 	
 	@HttpService(key="authenticate",methods=HttpMethod.POST)
-	public static String authenticate(HttpContext context,@Body AuthenticationModelView authenticationData) {
+	public String authenticate(@Body AuthenticationModelView authenticationData) {
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
 		//Pour debug: devra être adapté lors du développement réel
 		//de l'authentification

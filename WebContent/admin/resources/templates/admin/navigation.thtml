@@ -1,6 +1,0 @@
-<menu class="mainMenu">
-	<li {selectedInfos}><a href="/admin/global.html">Informations</a></li> 
-	<li {selectedLogs}><a href="/admin/log.html">Logs</a></li>
-	<li {selectedStats}><a href="/admin/stats.html">Statistiques</a></li>
-	<li {selectedBrowser}><a href="/admin/browser.html">Explorateur</a></li>
-</menu>
