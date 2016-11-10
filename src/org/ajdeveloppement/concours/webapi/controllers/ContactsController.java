@@ -98,7 +98,6 @@ import org.ajdeveloppement.concours.data.T_Contact;
 import org.ajdeveloppement.concours.webapi.models.CivilityModelView;
 import org.ajdeveloppement.concours.webapi.models.ContactModelView;
 import org.ajdeveloppement.concours.webapi.models.CoordinateModelView;
-import org.ajdeveloppement.concours.webapi.models.JsDataTables;
 import org.ajdeveloppement.concours.webapi.services.ContactsService;
 import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.HttpReturnCode.ClientError;
@@ -122,51 +121,48 @@ public class ContactsController {
 	
 	private ContactsService service;
 	
-	private ContactsController(HttpContext context, ContactsService service) {
+	public ContactsController(HttpContext context, ContactsService service) {
 		this.context = context;
 		this.service = service;
 	}
 	
-	/**
-	 * Retourne la liste des contacts eventuellement filtré
-	 * au format "http://datatables.net" (Json)
-	 * 
-	 * @param session la requete Http de filtrage
-	 * @return réponse json avec la liste des entités trouvé
-	 */
-	@SuppressWarnings("nls")
-	@HttpService(key="contactsDataTable")
-	public JsDataTables getContactsDataTable( 
-			@UrlParameter("search[value]") String searchValue,
-			@UrlParameter("length") int length,
-			@UrlParameter("start") int start,
-			@UrlParameter("draw") int draw) {
-		
-		int nbTotalContacts = service.countAllContacts();
-		
+	private QFilter getFilter(String search) {
 		QFilter filter = null;
-		if(searchValue != null && !searchValue.isEmpty()) {
+		
+		if(search != null && !search.isEmpty()) {
 			QField<String> fullName = QField.custom("CONCAT(" + T_Contact.NAME.toString() + ", ' ', " + T_Contact.FIRSTNAME.toString() + ")");
 			
-			String searchPattern = String.format("%%%s%%", searchValue.toUpperCase());
+			String searchPattern = String.format("%%%s%%", search.toUpperCase());
 			filter = fullName.upper().like(searchPattern).or(T_Contact.CITY.upper().like(searchPattern));
 		}
+		return filter;
+	}
+	
+	@HttpService(key="countcontacts")
+	public int countContacts(@UrlParameter("search") String search) {
+		QFilter filter = getFilter( search);
 		
-		int nbFilteredContacts = nbTotalContacts;
-		if(filter != null)
-			nbFilteredContacts = service.countWithFilter(filter);
+		return service.countWithFilter(filter);
+	}
+	
+	@HttpService(key="contacts")
+	public List<ContactModelView> getContact(
+			@UrlParameter("search") String search,
+			@UrlParameter("start") int offset,
+			@UrlParameter("length") int length,
+			@UrlParameter("sortBy") String sortBy,
+			@UrlParameter("sortOrder") String sortOrder) {
+		QFilter filter = getFilter( search);
 		
-		int offset = -1;
-		if(length > 0)
-			offset = start;
+		return service.getContactWithFilter(filter, length, offset);
+	}
+	
+	@HttpService(key="entities/contacts")
+	public List<ContactModelView> getContactsForEntity(
+			@HttpServiceId UUID idEntity) {
+		QFilter filter = T_Contact.ID_ENTITE.equalTo(idEntity);
 		
-		JsDataTables jsDataTables = new JsDataTables();
-		jsDataTables.setDraw(draw);
-		jsDataTables.setRecordsTotal(nbTotalContacts);
-		jsDataTables.setRecordsFiltered(nbFilteredContacts);
-		jsDataTables.setData(service.getContactWithFilter(filter, length, offset));
-		
-		return jsDataTables;
+		return service.getContactWithFilter(filter);
 	}
 	
 	@SuppressWarnings("nls")
@@ -183,8 +179,6 @@ public class ContactsController {
 			}
 			context.setReturnCode(ClientError.NotFound);
 			error = "There is no contact with id: " + id.toString();
-		} else {
-			return service.getAllContacts();
 		}
 		
 		return JsonHelper.getFailSuccessResponse(error);
@@ -214,13 +208,7 @@ public class ContactsController {
 	}
 	
 	@HttpService(key="civilities")
-	public List<CivilityModelView> getCivilities(@HttpServiceId UUID id) {
-		if(id != null) {
-
-		} else {
-			return service.getAllCivilities();
-		}
-		
-		return null;
+	public List<CivilityModelView> getCivilities() {
+		return service.getAllCivilities();
 	}
 }

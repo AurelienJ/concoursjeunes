@@ -92,6 +92,7 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.ajdeveloppement.commons.UncheckedException;
+import org.ajdeveloppement.concours.data.Archer;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.T_Civility;
 import org.ajdeveloppement.concours.data.T_Entite;
@@ -123,6 +124,8 @@ public class ContactAdapter implements ModelViewAdapter<Contact,ContactModelView
 				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
 			throw new UncheckedException(e);
 		}
+		if(model instanceof Archer)
+			contactModelView.setType("archer");
 		
 		contactModelView.setId(model.getIdContact());
 		if(model.getCivility() != null)

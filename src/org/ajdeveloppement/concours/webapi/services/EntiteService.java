@@ -88,17 +88,30 @@
  */
 package org.ajdeveloppement.concours.webapi.services;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.QField;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.commons.persistence.sql.ResultRow;
+import org.ajdeveloppement.concours.builders.EntiteBuilder;
 import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Federation;
 import org.ajdeveloppement.concours.data.T_Entite;
+import org.ajdeveloppement.concours.data.T_Federation;
 import org.ajdeveloppement.concours.webapi.adapters.EntiteAdapter;
 import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
+import org.ajdeveloppement.concours.webapi.models.TypeLabel;
+import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -106,10 +119,60 @@ import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
  */
 public class EntiteService {
 
+	private Map<String,QField<?>> orderableField = new HashMap<>();
+	
+	private EntiteBuilder entiteBuilder = new EntiteBuilder();
 	/**
 	 * 
 	 */
 	public EntiteService() {
+		orderableField.put("nom", T_Entite.NOM);
+		orderableField.put("reference", T_Entite.REFERENCE);
+		orderableField.put("ville", T_Entite.VILLE);
+		orderableField.put("category", T_Entite.TYPEENTITE);
+	}
+	
+	/**
+	 * get filter query with given parameters
+	 * 
+	 * @param types
+	 * @param search
+	 * @return
+	 */
+	public QFilter getFilter(String types, UUID childOf, String search) {
+		QFilter filter = null;
+		if(types != null && !types.isEmpty()) {
+			try {
+				@SuppressWarnings("unchecked")
+				List<Integer> typeValues = JsonHelper.fromJson(types, List.class);
+				filter = T_Entite.TYPEENTITE.in(typeValues);
+			} catch (IOException e) {
+				throw new UncheckedException(e);
+			}
+		}
+		
+		if(childOf != null) {
+			QFilter childOfFilter = T_Entite.ID_ENTITE_PARENT.equalTo(childOf);
+			
+			if(filter != null)
+				filter = filter.and(childOfFilter);
+			else
+				filter = childOfFilter;
+		}
+		
+		if(search != null && !search.isEmpty()) {
+			String searchPattern = String.format("%%%s%%", search.toUpperCase());
+			
+			QFilter searchFilter = T_Entite.NOM.upper().like(searchPattern)
+					.or(T_Entite.VILLE.upper().like(searchPattern))
+					.or(T_Entite.REFERENCE.upper().like(searchPattern));
+			
+			if(filter != null)
+				filter = filter.and(searchFilter);
+			else
+				filter = searchFilter;
+		}
+		return filter;
 	}
 	
 	public int countAllEntities() {
@@ -120,16 +183,73 @@ public class EntiteService {
 		return T_Entite.all().where(filter).count();
 	}
 	
+	public TypeLabel[] getTypeEntity() {
+		return new TypeLabel[] {
+			new TypeLabel(Entite.FEDERATION, "Fédération"),
+			new TypeLabel(Entite.LIGUE, "Ligue"),
+			new TypeLabel(Entite.CD, "Comité Départemental"),
+			new TypeLabel(Entite.CLUB, "Club"),
+		};
+	}
+	
 	public List<EntiteModelView> getAllEntities() {
 		EntiteAdapter adapter = new EntiteAdapter();
 		
 		return T_Entite.all().orderBy(T_Entite.NOM).asList().stream().map(e -> adapter.toModelView(e)).collect(Collectors.toList());
 	}
 	
-	public List<EntiteModelView> getEntitiesWithFilter(QFilter filter, int length, int offset) {
+	public List<EntiteModelView> getFederationEntities() {
 		EntiteAdapter adapter = new EntiteAdapter();
 		
-		QResults<Entite, Void> entiteQuery = T_Entite.all().where(filter).orderBy(T_Entite.NOM);
+		return T_Entite.all().where(T_Entite.TYPEENTITE.equalTo(Entite.FEDERATION)).orderBy(T_Entite.NOM).asList().stream().map(e -> adapter.toModelView(e)).collect(Collectors.toList());
+	}
+	
+	public List<EntiteModelView> getClubEntities() {
+		EntiteAdapter adapter = new EntiteAdapter();
+		
+		return T_Entite.all().where(T_Entite.TYPEENTITE.differentOf(Entite.FEDERATION)).orderBy(T_Entite.NOM).asList().stream().map(e -> adapter.toModelView(e)).collect(Collectors.toList());
+	}
+	
+	@SuppressWarnings("nls")
+	public List<EntiteModelView> getEntitiesWithFilter(QFilter filter, int length, int offset, String sortBy, String sortOrder) {
+		EntiteAdapter adapter = new EntiteAdapter();
+		
+		QResults<Entite, Void> entiteQuery = T_Entite.all()
+				.useBuilder(entiteBuilder)
+				.leftJoin(Federation.class, T_Entite.ID_ENTITE.equalTo(T_Federation.ID_ENTITE))
+				.where(filter);
+		
+		if(sortBy == null || sortBy.trim().isEmpty()) {
+			entiteQuery = entiteQuery.orderBy(T_Entite.NOM);
+		} else {
+			try {
+				if(!sortBy.startsWith("["))
+					sortBy = "[" + sortBy + "]";
+				
+				@SuppressWarnings("unchecked")
+				List<String> sortByValues = JsonHelper.fromJson(sortBy, List.class);
+				@SuppressWarnings("unchecked")
+				List<String> sortOrderValues = JsonHelper.fromJson(sortOrder, List.class);
+				if(sortByValues != null && sortByValues.size()>0) {
+					List<QField<?>> orderField = new ArrayList<QField<?>>();
+					int i = 0;
+					for(String val : sortByValues) {
+						QField<?> field = orderableField.get(val);
+						if(field != null) {
+							if(sortOrderValues != null && i < sortOrderValues.size() && sortOrderValues.get(i).equals("desc"))
+								field = field.toOrderByDesc();
+							orderField.add(field);
+						}
+					}
+					entiteQuery = entiteQuery.orderBy(orderField.toArray(new QField<?>[orderField.size()]));
+				}
+				
+				
+			} catch (IOException e) {
+				throw new UncheckedException(e);
+			}
+		}
+		
 		if(length > 0) {
 			if(offset > -1)
 				entiteQuery = entiteQuery.limit(length, offset);
@@ -137,26 +257,59 @@ public class EntiteService {
 				entiteQuery = entiteQuery.limit(length);
 		}
 		
-		return entiteQuery.asList().stream().map(e -> adapter.toModelView(e)).collect(Collectors.toList());
+		List<Entite> entites = entiteQuery.asList();
+		
+//		return entites.stream().map(e -> {
+//			if(e.getType() == Entite.FEDERATION)
+//				e = T_Federation.getInstanceWithPrimaryKey(e.getIdEntite());
+//			return adapter.toModelView(e);
+//		}).collect(Collectors.toList());
+		return entites.stream().map(e -> adapter.toModelView(e)).collect(Collectors.toList());
 	}
 
 	public EntiteModelView getEntiteById(UUID idEntite) {
 		EntiteAdapter adapter = new EntiteAdapter();
 		
-		return adapter.toModelView(T_Entite.getInstanceWithPrimaryKey(idEntite));
+		Entite entite = T_Entite.getInstanceWithPrimaryKey(idEntite);
+		if(entite.getType() == Entite.FEDERATION)
+			entite = T_Federation.getInstanceWithPrimaryKey(idEntite);
+		
+		if(entite != null)
+			return adapter.toModelView(entite);
+		
+		return null;
+	}
+	
+	public String getEntiteNameById(UUID idEntite) throws SQLException {
+		ResultRow resultRow = T_Entite.all().where(T_Entite.ID_ENTITE.equalTo(idEntite))
+				.select(T_Entite.NOM).iterator().next();
+		if(resultRow != null)
+			return resultRow.getValue(T_Entite.NOM);
+		
+		return null;
 	}
 	
 	public void createOrUpdateEntite(EntiteModelView entiteModelView) throws ObjectPersistenceException {
 		if(entiteModelView != null) {
 			Entite entite = null;
-			if(entiteModelView.getId() != null)
-				entite = T_Entite.getInstanceWithPrimaryKey(entiteModelView.getId());
+			if(entiteModelView.getId() != null) {
+				if(entiteModelView.getType() == Entite.FEDERATION)
+					entite = T_Federation.getInstanceWithPrimaryKey(entiteModelView.getId());
+				else
+					entite = T_Entite.getInstanceWithPrimaryKey(entiteModelView.getId());
+			}
 			
-			if(entite == null)
-				entite = new Entite();
+			if(entite == null) {
+				if(entiteModelView.getType() == Entite.FEDERATION)
+					entite = new Federation();
+				else
+					entite = new Entite();
+			}
 			
 			EntiteAdapter adapter = new EntiteAdapter(entite);
 			entite = adapter.toModel(entiteModelView);
+			if(entite instanceof Federation)
+				((Federation)entite).setNomFederation(entite.getNom());
 			
 			entite.save();
 			

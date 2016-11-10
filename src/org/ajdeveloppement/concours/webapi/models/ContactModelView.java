@@ -88,6 +88,7 @@
  */
 package org.ajdeveloppement.concours.webapi.models;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.ajdeveloppement.concours.webapi.adapters.ContactAdapter;
@@ -100,6 +101,8 @@ import org.ajdeveloppement.webserver.services.webapi.helpers.Implementation;
  */
 @Adapter(ContactAdapter.class)
 public class ContactModelView {
+	private String type = "contact";
+	
 	private UUID idContact;
 	
 	private String name;
@@ -126,6 +129,24 @@ public class ContactModelView {
 	
 	private boolean highlightExAequo;
 	
+	private String numLicenceArcher;
+	
+	private Date certificat;
+	
+	/**
+	 * @return type
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * @param type type à définir
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	/**
 	 * @return idContact
 	 */
@@ -140,6 +161,34 @@ public class ContactModelView {
 	@Implementation(method="setIdContact")
 	public void setId(UUID idContact) {
 		this.idContact = idContact;
+	}
+
+	/**
+	 * @return numLicenceArcher
+	 */
+	public String getNumLicenceArcher() {
+		return numLicenceArcher;
+	}
+
+	/**
+	 * @param numLicenceArcher numLicenceArcher à définir
+	 */
+	public void setNumLicenceArcher(String numLicenceArcher) {
+		this.numLicenceArcher = numLicenceArcher;
+	}
+
+	/**
+	 * @return certificat
+	 */
+	public Date getCertificat() {
+		return certificat;
+	}
+
+	/**
+	 * @param certificat certificat à définir
+	 */
+	public void setCertificat(Date certificat) {
+		this.certificat = certificat;
 	}
 
 	/**

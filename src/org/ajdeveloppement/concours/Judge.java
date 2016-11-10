@@ -117,7 +117,7 @@ public class Judge extends Archer {
 		setFirstName(archer.getFirstName());
 		setNumLicenceArcher(archer.getNumLicenceArcher());
 		setEntite(archer.getEntite());
-		setCertificat(archer.isCertificat());
+		setCertificat(archer.getCertificat());
 		setHandicape(archer.isHandicape());
 	}
 

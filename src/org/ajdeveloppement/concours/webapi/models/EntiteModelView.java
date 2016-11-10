@@ -107,6 +107,8 @@ public class EntiteModelView {
 	private UUID idEntite;
 	
 	private String nom;
+	
+	private String sigle;
 
 	private String reference;	
 
@@ -156,6 +158,22 @@ public class EntiteModelView {
 	 */
 	public void setNom(String nom) {
 		this.nom = nom;
+	}
+
+	/**
+	 * @return sigle
+	 */
+	@Implementation(method="getSigleFederation")
+	public String getSigle() {
+		return sigle;
+	}
+
+	/**
+	 * @param sigle sigle à définir
+	 */
+	@Implementation(method="setSigleFederation")
+	public void setSigle(String sigle) {
+		this.sigle = sigle;
 	}
 
 	/**

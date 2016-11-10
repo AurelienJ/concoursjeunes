@@ -92,6 +92,7 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Federation;
 import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
 import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
@@ -126,8 +127,14 @@ public class EntiteAdapter implements ModelViewAdapter<Entite, EntiteModelView> 
 
 	@Override
 	public Entite toModel(EntiteModelView modelView) {
-		if(reference == null)
-			reference = new Entite();
+		if(reference == null) {
+			if(modelView != null && modelView.getType() == Entite.FEDERATION) {
+				reference = new Federation();
+			} else {
+				reference = new Entite();
+			}
+		}
+		
 		
 		try {
 			ModelViewMapper.mapModelViewToModel(modelView, reference);
@@ -136,7 +143,7 @@ public class EntiteAdapter implements ModelViewAdapter<Entite, EntiteModelView> 
 			e.printStackTrace();
 		}
 		
-		if(modelView.getIdEntiteParent() != null)
+		if(modelView != null && modelView.getIdEntiteParent() != null)
 			reference.setEntiteParent(T_Entite.getInstanceWithPrimaryKey(modelView.getIdEntiteParent()));
 		
 		return reference;

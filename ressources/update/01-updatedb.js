@@ -35,6 +35,11 @@ if(dbVersion == 0) {
 	}*/
 	if(dbVersion < 37)
 		sql.executeUpdate("ALTER TABLE DEPARTAGE ALTER ID_DEPARTAGE UUID NOT NULL DEFAULT RANDOM_UUID()");
+	
+	if(dbVersion < 38) {
+		sql.executeUpdate("alter table ARCHER drop column CERTIFMEDICAL");
+		sql.executeUpdate("alter table ARCHER add column CERTIFMEDICAL DATE NULL");
+	}
 }
 
 //sql.executeScript("01-create_db-webserver.sql",true);

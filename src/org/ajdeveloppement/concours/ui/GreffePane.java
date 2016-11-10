@@ -99,6 +99,7 @@ import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -531,7 +532,7 @@ public class GreffePane extends JPanel implements
 				case 6:
 					return concurrent.getInscription() == Concurrent.PAYEE;
 				case 7:
-					return concurrent.isCertificat();
+					return concurrent.getCertificat();
 				case 8:
 					return concurrent.isPresence();
 			}
@@ -547,7 +548,7 @@ public class GreffePane extends JPanel implements
 					concurrent.setInscription(((Boolean)value).booleanValue() ? Concurrent.PAYEE : Concurrent.RESERVEE);
 					break;
 				case 7:
-					concurrent.setCertificat((Boolean)value);
+					concurrent.setCertificat((Date)value);
 					break;
 				case 8:
 					concurrent.setPresence((Boolean)value);

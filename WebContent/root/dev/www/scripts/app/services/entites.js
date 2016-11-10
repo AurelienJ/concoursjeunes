@@ -15,24 +15,110 @@ require('rxjs/add/operator/toPromise');
 var EntitesService = (function () {
     function EntitesService(http) {
         this.http = http;
+        this.entites = new Map();
         this.headers = new http_1.Headers();
         this.headers.append('Content-Type', 'application/json');
         this.headers.append('Accept', 'application/json');
     }
-    EntitesService.prototype.getEntities = function () {
-        var entitiesPromise = this.http.get("api/entities", { headers: this.headers }).toPromise();
-        return entitiesPromise.then(function (res) { return res.json(); }).catch(this.handleError);
+    EntitesService.prototype.getTypeEntite = function () {
+        return this.http.get("api/typeentity", { headers: this.headers })
+            .toPromise().then(function (r) { return r.json(); }).catch(this.handleError);
+    };
+    EntitesService.prototype.countEntities = function (types, childOf, term) {
+        var url = "api/countentities";
+        var params = [];
+        if (types && types.length > 0)
+            params.push("types=" + encodeURI(JSON.stringify(types)));
+        if (childOf)
+            params.push("childOf=" + encodeURI(childOf));
+        if (term)
+            params.push("search=" + encodeURI(term));
+        if (params.length > 0)
+            url += "?" + params.join("&");
+        return this.http.get(url, { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
+    };
+    EntitesService.prototype.getEntities = function (types, childOf, term, sortBy, sortOrder, startOffset, endOffset) {
+        var _this = this;
+        var url = "api/entities";
+        var params = [];
+        if (types && types.length > 0)
+            params.push("types=" + encodeURI(JSON.stringify(types)));
+        if (childOf)
+            params.push("childOf=" + encodeURI(childOf));
+        if (term)
+            params.push("search=" + encodeURI(term));
+        if (sortBy)
+            params.push("sortBy=" + encodeURI(JSON.stringify(sortBy)));
+        if (sortBy && sortOrder)
+            params.push("sortOrder=" + encodeURI(JSON.stringify(sortOrder)));
+        if (startOffset)
+            params.push("start=" + startOffset);
+        if (endOffset)
+            params.push("length=" + (endOffset - (startOffset | 0)));
+        if (params.length > 0)
+            url += "?" + params.join("&");
+        var entitiesPromise = this.http.get(url, { headers: this.headers }).toPromise();
+        return entitiesPromise
+            .then(function (res) { return res.json(); })
+            .then(function (entites) {
+            entites.forEach(function (entite) {
+                _this.entites[entite.id] = entite;
+            });
+            return entites;
+        })
+            .catch(this.handleError);
     };
     EntitesService.prototype.getEntitie = function (id) {
         var _this = this;
-        var entitiePromise = this.http.get("api/entities/" + id, { headers: this.headers }).toPromise();
-        return entitiePromise.then(function (res) { return res.json(); })
-            .then(function (entite) {
-            if (entite.idEntiteParent != null)
-                _this.getEntitie(entite.idEntiteParent).then(function (parent) { return entite.entiteParent = parent; });
-            return entite;
+        if (this.entites && this.entites[id]) {
+            return new Promise(function (resolve, reject) {
+                if (_this.entites[id].idEntiteParent && (!_this.entites[id].entiteParent || _this.entites[id].entiteParent.id != _this.entites[id].idEntiteParent))
+                    _this.getEntitie(_this.entites[id].idEntiteParent).then(function (parent) { return _this.entites[id].entiteParent = parent; });
+                resolve(_this.entites[id]);
+            });
+        }
+        else {
+            var entitiePromise = this.http.get("api/entities/" + id, { headers: this.headers }).toPromise();
+            return entitiePromise.then(function (res) { return res.json(); })
+                .then(function (entite) {
+                if (entite.idEntiteParent != null)
+                    _this.getEntitie(entite.idEntiteParent).then(function (parent) { return entite.entiteParent = parent; });
+                _this.entites[entite.id] = entite;
+                return entite;
+            })
+                .catch(this.handleError);
+        }
+    };
+    EntitesService.prototype.getEntityName = function (id) {
+        return this.http.get("api/entityname/" + id, { headers: this.headers }).toPromise().then(function (r) { return r.text(); });
+    };
+    EntitesService.prototype.saveEntite = function (entite) {
+        var _this = this;
+        var entiteParent = entite.entiteParent;
+        if (entiteParent)
+            entite.idEntiteParent = entiteParent.id;
+        delete entite.entiteParent;
+        var url = "api/entities";
+        var request;
+        if (entite.id)
+            request = this.http.post(url, entite, { headers: this.headers });
+        else
+            request = this.http.put(url, entite, { headers: this.headers });
+        return request.toPromise()
+            .then(function (response) { return response.json(); })
+            .then(function (updatedEntite) {
+            if ((updatedEntite.idEntiteParent && !entiteParent) || updatedEntite.idEntiteParent != entiteParent.id) {
+                _this.getEntitie(updatedEntite.idEntiteParent).then(function (parent) { return updatedEntite.entiteParent = parent; });
+            }
+            else {
+                updatedEntite.entiteParent = entiteParent;
+            }
+            return updatedEntite;
         })
-            .catch(this.handleError);
+            .catch(function (error) {
+            entite.entiteParent = entiteParent;
+            _this.handleError(error);
+        });
     };
     EntitesService.prototype.handleError = function (error) {
         console.error('An error occurred', error);

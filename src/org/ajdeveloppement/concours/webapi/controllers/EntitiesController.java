@@ -88,15 +88,15 @@
  */
 package org.ajdeveloppement.concours.webapi.controllers;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
 import org.ajdeveloppement.commons.ExceptionUtils;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
-import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
-import org.ajdeveloppement.concours.webapi.models.JsDataTables;
+import org.ajdeveloppement.concours.webapi.models.TypeLabel;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
 import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
@@ -123,55 +123,51 @@ public class EntitiesController {
 		this.context = context;
 		this.service = service;
 	}
-	/**
-	 * Retourne la liste des entités eventuellement filtré
-	 * au format "http://datatables.net" (Json)
-	 * 
-	 * @param session la requete Http de filtrage
-	 * @return réponse json avec la liste des entités trouvé
-	 */
-	@SuppressWarnings("nls")
-	@HttpService(key="entitiesDataTable")
-	public JsDataTables getEntitiesDataTable(
-			@UrlParameter("search[value]") String searchValue,
+	
+	
+
+	@HttpService(key="typeentity",methods=HttpMethod.GET)
+	public TypeLabel[] getTypeEntity() {
+		return service.getTypeEntity();
+	}
+	
+	@HttpService(key="countentities")
+	public int countEntities(
+			@UrlParameter("types") String types,
+			@UrlParameter("childOf") UUID childOf,
+			@UrlParameter("search") String search
+			) {
+		
+		QFilter filter = service.getFilter(types, childOf, search);
+		
+		return service.countEntitiesWithFilter(filter);
+	}
+
+	
+	
+	@HttpService(key="entities")
+	public List<EntiteModelView> getEntities(
+			@UrlParameter("types") String types,
+			@UrlParameter("childOf") UUID childOf,
+			@UrlParameter("search") String search,
+			@UrlParameter("start") int offset,
 			@UrlParameter("length") int length,
-			@UrlParameter("start") int start,
-			@UrlParameter("draw") int draw) {	
-		int nbTotalEntites = service.countAllEntities();
+			@UrlParameter("sortBy") String sortBy,
+			@UrlParameter("sortOrder") String sortOrder) {
 		
-		QFilter filter = null;
-		if(searchValue != null && !searchValue.isEmpty()) {
-			String searchPattern = String.format("%%%s%%", searchValue.toUpperCase());
-			filter = T_Entite.NOM.upper().like(searchPattern)
-					.or(T_Entite.VILLE.upper().like(searchPattern))
-					.or(T_Entite.REFERENCE.upper().like(searchPattern));
-		}
+		QFilter filter = service.getFilter(types, childOf, search);
 		
-		int nbFilteredEntites =  nbTotalEntites;
-		if(filter != null)
-			nbFilteredEntites = service.countEntitiesWithFilter(filter);
-		
-		int offset = -1;
-		if(length > 0)
-			offset = start;
-				
-		JsDataTables jsDataTables = new JsDataTables();
-		jsDataTables.setDraw(draw);
-		jsDataTables.setRecordsTotal(nbTotalEntites);
-		jsDataTables.setRecordsFiltered(nbFilteredEntites);
-		jsDataTables.setData(service.getEntitiesWithFilter(filter, length, offset));
-		
-		return jsDataTables;
+		return service.getEntitiesWithFilter(filter, length, offset, sortBy, sortOrder);
 	}
 	
-	@HttpService(key="entities",methods=HttpMethod.GET)
-	public List<EntiteModelView> getEntities() {
-		return service.getAllEntities();
-	}
-	
-	@HttpService(key="entities",methods=HttpMethod.GET)
+	@HttpService(key="entities")
 	public EntiteModelView getEntities(@HttpServiceId UUID id) {
 		return service.getEntiteById(id);
+	}
+	
+	@HttpService(key="entityname")
+	public String getEntityName(@HttpServiceId UUID id) throws SQLException {
+		return service.getEntiteNameById(id);
 	}
 	
 	@HttpService(key="entities",methods={HttpMethod.PUT, HttpMethod.POST})

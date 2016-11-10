@@ -117,7 +117,7 @@ import org.ajdeveloppement.concours.managers.ConcurrentManager;
  * @version 1.0
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="ARCHERS",loadBuilder=ConcurrentBuilder.class)
+@SqlTable(name="ARCHER",loadBuilder=ConcurrentBuilder.class)
 @SqlPrimaryKey(fields="ID_CONTACT")
 @SqlUnmappedFields(fields={"ID_CONTACT","SEXE","CATEGORIE","NIVEAU","ARC","DATENAISS","DATEMODIF"},
 	typeFields={UUID.class, Integer.class, Integer.class, Integer.class, Integer.class, Date.class, Date.class})
@@ -127,8 +127,8 @@ public class Archer extends Contact {
 	@SqlField(name="NUMLICENCEARCHER",sqlType="VARCHAR",size=32)
 	private String numLicenceArcher;
 
-	@SqlField(name="CERTIFMEDICAL",sqlType="BOOLEAN")
-	private boolean certificat      = false;
+	@SqlField(name="CERTIFMEDICAL",sqlType="DATE")
+	private Date certificat;
 	private boolean handicape		= false;
 
 	/**
@@ -169,7 +169,7 @@ public class Archer extends Contact {
 	 * 
 	 * @return true si l'archer possède un certificat, false sinon
 	 */
-	public boolean isCertificat() {
+	public Date getCertificat() {
 		return certificat;
 	}
 
@@ -178,8 +178,8 @@ public class Archer extends Contact {
 	 * 
 	 * @param certificat true si l'archer possède un certificat, false sinon
 	 */
-	public void setCertificat(boolean certificat) {
-		boolean oldValue = this.certificat;
+	public void setCertificat(Date certificat) {
+		Date oldValue = this.certificat;
 		
 		this.certificat = certificat;
 		

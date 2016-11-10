@@ -13,6 +13,11 @@ export interface IEntite {
     nom : string;
 
     /**
+     * Si c'est une fédération son sigle (ex FFTA)
+     */
+    sigle : string;
+
+    /**
      * Identifiant externe de l'entité
      */
     reference : string;

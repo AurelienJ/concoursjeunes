@@ -1,0 +1,6 @@
+org.ajdeveloppement.concours.webapi.controllers.EntitiesController
+org.ajdeveloppement.concours.webapi.controllers.ProfileController
+org.ajdeveloppement.concours.webapi.controllers.RulesController
+org.ajdeveloppement.concours.webapi.controllers.ReferencesController
+org.ajdeveloppement.concours.webapi.controllers.ContactsController
+org.ajdeveloppement.concours.webapi.controllers.CompetitionsController

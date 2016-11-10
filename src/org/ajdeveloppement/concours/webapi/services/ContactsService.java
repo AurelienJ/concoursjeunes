@@ -94,9 +94,12 @@ import java.util.UUID;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.concours.builders.ContactBuilder;
+import org.ajdeveloppement.concours.data.Archer;
 import org.ajdeveloppement.concours.data.Civility;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.Coordinate;
+import org.ajdeveloppement.concours.data.T_Archer;
 import org.ajdeveloppement.concours.data.T_Civility;
 import org.ajdeveloppement.concours.data.T_Contact;
 import org.ajdeveloppement.concours.data.T_Coordinate;
@@ -113,6 +116,8 @@ import org.ajdeveloppement.concours.webapi.models.CoordinateModelView;
  *
  */
 public class ContactsService {
+	
+	private ContactBuilder contactBuilder = new ContactBuilder();
 	
 	/**
 	 * return total numbers of contacts in database
@@ -164,7 +169,10 @@ public class ContactsService {
 	}
 	
 	public List<ContactModelView> getContactWithFilter(QFilter filter, int limit, int offset) {
-		QResults<Contact, Void> contactsQuery = T_Contact.all().where(filter).orderBy(T_Contact.NAME, T_Contact.FIRSTNAME);
+		QResults<Contact, Void> contactsQuery = QResults.from(Contact.class)
+				.useBuilder(contactBuilder)
+				.leftJoin(Archer.class, T_Contact.ID_CONTACT.equalTo(T_Archer.ID_CONTACT))
+				.where(filter).orderBy(T_Contact.NAME, T_Contact.FIRSTNAME);
 		if(limit > 0)
 			contactsQuery = contactsQuery.limit(limit, offset);
 		
@@ -177,7 +185,9 @@ public class ContactsService {
 	}
 	
 	public ContactModelView getContactById(UUID idContact) {
-		Contact contact = T_Contact.getInstanceWithPrimaryKey(idContact);
+		Contact contact = T_Archer.getInstanceWithPrimaryKey(idContact);
+		if(contact == null)
+			contact = T_Contact.getInstanceWithPrimaryKey(idContact);
 		
 		if(contact != null) {
 			return ModelViewAdapterHelper.asModelView(ContactModelView.class, contact);
@@ -188,8 +198,14 @@ public class ContactsService {
 	
 	public void createOrUpdateContact(ContactModelView modelViewContact) throws ObjectPersistenceException {
 		Contact contact = null;
-		if(modelViewContact.getId() != null)
-			contact = T_Contact.getInstanceWithPrimaryKey(modelViewContact.getId());
+		if(modelViewContact.getId() != null) {
+			contact = T_Archer.getInstanceWithPrimaryKey(modelViewContact.getId());
+			if(contact == null)
+				contact = T_Contact.getInstanceWithPrimaryKey(modelViewContact.getId());
+		}
+		
+		if(contact == null && modelViewContact.getType().equals("archer"))
+			contact = new Archer();
 		
 		ContactAdapter contactAdapter = new ContactAdapter(contact);
 		contact = contactAdapter.toModel(modelViewContact);

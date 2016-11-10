@@ -25,8 +25,10 @@
         'rxjs':                      'node_modules/rxjs',
         'angular-in-memory-web-api': 'node_modules/angular-in-memory-web-api',
         'lodash':                    'node_modules/lodash/lodash.min.js',
+        'moment':                    'node_modules/moment/min/moment-with-locales.min.js',
 
         'angular2-datatable': 'node_modules/angular2-datatable',
+        'ng2-bootstrap/ng2-bootstrap': 'node_modules/ng2-bootstrap/bundles/ng2-bootstrap.umd.min.js'
     };
     
     // packages tells the System loader how to load when no filename and/or no extension
@@ -35,7 +37,7 @@
         'rxjs':                       { defaultExtension: 'js' },
         'angular2-cookie':            { defaultExtension: 'js' },
         'angular2-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' },
-        'angular2-datatable':         { main: 'index.js', defaultExtension: 'js' },
+        'angular2-datatable':         { main: 'index.js', defaultExtension: 'js' }
     };
     
 //    var ngPackageNames = [

@@ -161,11 +161,19 @@ public class RulesController {
 		return service.getRulesCategoryById(idRuleCategory);
 	}
 	
+	@HttpService(key="countrules")
+	public Object countRules() {
+		return service.countAllRules();
+
+	}
+	
 	@HttpService(key="rules")
-	public Object getRules(@HttpServiceId UUID idRule) {
-		if(idRule == null)
-			return service.getAllRules();
-		
+	public List<RuleModelView> getRules() {
+		return service.getAllRules();
+	}
+	
+	@HttpService(key="rules")
+	public RuleModelView getRules(@HttpServiceId UUID idRule) {
 		return service.getRuleById(idRule);
 	}
 
