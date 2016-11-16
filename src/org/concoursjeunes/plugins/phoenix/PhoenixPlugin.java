@@ -98,6 +98,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.concours.exceptions.FicheConcoursException;
 import org.concoursjeunes.Ancrage;
 import org.concoursjeunes.ApplicationCore;
 import org.concoursjeunes.Blason;
@@ -215,8 +216,13 @@ public class PhoenixPlugin implements ProfileListener, ApplicationCoreListener {
 								
 								FicheConcours ficheConcours = new FicheConcours(profile, parametre);
 								ficheConcours.setDbUUID(ApplicationCore.dbUUID);
-								for(Concurrent concurrent : ((ConcurrentList)structure[1]).list())
-									ficheConcours.addConcurrent(concurrent, concurrent.getDepart());
+								for(Concurrent concurrent : ((ConcurrentList)structure[1]).list()) {
+									try {
+										ficheConcours.addConcurrent(concurrent, concurrent.getDepart());
+									} catch(FicheConcoursException ex) {
+										
+									}
+								}
 								
 								ficheConcours.setEquipes((EquipeList)structure[2]);
 	
