@@ -112,7 +112,7 @@ public class CivilityModelView {
 	/**
 	 * @return idCivility
 	 */
-	@Implementation(method="getIdCivility")
+	@Implementation(methodModelToView="getIdCivility")
 	public UUID getId() {
 		return idCivility;
 	}
@@ -120,7 +120,7 @@ public class CivilityModelView {
 	/**
 	 * @param idCivility idCivility à définir
 	 */
-	@Implementation(method="setIdCivility")
+	@Implementation(methodModelToView="setIdCivility")
 	public void setId(UUID idCivility) {
 		this.idCivility = idCivility;
 	}

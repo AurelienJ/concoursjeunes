@@ -111,8 +111,8 @@ import javax.swing.event.EventListenerList;
 
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.io.FileUtils;
+import org.ajdeveloppement.commons.persistence.sql.ContextDomain;
 import org.ajdeveloppement.commons.persistence.sql.SqlContext;
-import org.ajdeveloppement.commons.persistence.sql.SqlContext.ContextDomain;
 import org.ajdeveloppement.commons.security.SecurityImporter;
 import org.ajdeveloppement.commons.sql.SqlManager;
 import org.ajdeveloppement.concours.event.ApplicationCoreEvent;

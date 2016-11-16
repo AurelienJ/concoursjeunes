@@ -133,7 +133,7 @@ public class EntiteModelView {
 	/**
 	 * @return idEntite
 	 */
-	@Implementation(method="getIdEntite")
+	@Implementation(methodModelToView="getIdEntite")
 	public UUID getId() {
 		return idEntite;
 	}
@@ -141,7 +141,7 @@ public class EntiteModelView {
 	/**
 	 * @param idEntite idEntite à définir
 	 */
-	@Implementation(method="setIdEntite")
+	@Implementation(methodModelToView="setIdEntite")
 	public void setId(UUID idEntite) {
 		this.idEntite = idEntite;
 	}
@@ -163,7 +163,7 @@ public class EntiteModelView {
 	/**
 	 * @return sigle
 	 */
-	@Implementation(method="getSigleFederation")
+	@Implementation(methodModelToView="getSigleFederation")
 	public String getSigle() {
 		return sigle;
 	}
@@ -171,7 +171,7 @@ public class EntiteModelView {
 	/**
 	 * @param sigle sigle à définir
 	 */
-	@Implementation(method="setSigleFederation")
+	@Implementation(methodModelToView="setSigleFederation")
 	public void setSigle(String sigle) {
 		this.sigle = sigle;
 	}

@@ -150,7 +150,7 @@ public class ContactModelView {
 	/**
 	 * @return idContact
 	 */
-	@Implementation(method="getIdContact")
+	@Implementation(methodModelToView="getIdContact")
 	public UUID getId() {
 		return idContact;
 	}
@@ -158,7 +158,7 @@ public class ContactModelView {
 	/**
 	 * @param idContact idContact à définir
 	 */
-	@Implementation(method="setIdContact")
+	@Implementation(methodModelToView="setIdContact")
 	public void setId(UUID idContact) {
 		this.idContact = idContact;
 	}

@@ -113,7 +113,7 @@ public class CoordinateModelView {
 	/**
 	 * @return idCoordinate
 	 */
-	@Implementation(method="getIdCoordinate")
+	@Implementation(methodModelToView="getIdCoordinate")
 	public UUID getId() {
 		return idCoordinate;
 	}
@@ -121,7 +121,7 @@ public class CoordinateModelView {
 	/**
 	 * @param idCoordinate idCoordinate à définir
 	 */
-	@Implementation(method="setIdCoordinate")
+	@Implementation(methodModelToView="setIdCoordinate")
 	public void setId(UUID idCoordinate) {
 		this.idCoordinate = idCoordinate;
 	}
