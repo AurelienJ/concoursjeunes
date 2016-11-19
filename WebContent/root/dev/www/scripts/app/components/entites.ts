@@ -1,7 +1,7 @@
 ///<reference path="../_references.ts"/>
 import { Component, ViewChild, ElementRef, OnInit, EventEmitter, Pipe, PipeTransform } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { InputData, DataEvent } from 'angular2-datatable'
+import { InputData, DataEvent } from 'angular2-datatable';
 
 import { ITypeLabel } from '../models/ITypeLabel';
 import { IEntite } from '../models/ientite';
@@ -119,7 +119,7 @@ export class EntiteServerSideInputDataFilterPipe implements PipeTransform {
                                                 [disable]="isFederationExclusive" [placeHolder]="'Catégories'"
                                                 (value)="onValueChanged($event)">
                                             <option *ngFor="let typeEntity of typesEntities"
-                                                [value]="typeEntity.id" [attr.selected]="!displayTypes || displayTypes.indexOf(typeEntity.id)>-1 ? 'selected' : null">{{typeEntity.label}}</option>
+                                                [value]="typeEntity.id" [attr.selected]="displayTypes && displayTypes.indexOf(typeEntity.id)>-1 ? 'selected' : null">{{typeEntity.label}}</option>
                                         </select>
                                     </div>
                                     <div class="col-lg-3 form-group pull-right">

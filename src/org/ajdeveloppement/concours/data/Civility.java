@@ -134,7 +134,6 @@ public class Civility implements SqlObjectPersistence {
 	@SqlField(name="MORALE")
 	private boolean morale = false;
 	
-	//@SqlChildCollection(foreignFields="ID_CIVILITY", type=Contact.class)
 	private QResults<Contact, Void> contacts;
 	
 	/**

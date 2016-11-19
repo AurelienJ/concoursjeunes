@@ -86,8 +86,6 @@
  */
 package org.ajdeveloppement.concours.data;
 
-import java.sql.SQLException;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -95,19 +93,10 @@ import java.util.UUID;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlContext;
-import org.ajdeveloppement.commons.persistence.sql.SqlSession;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
-import org.ajdeveloppement.concours.builders.ConcurrentBuilder;
-import org.ajdeveloppement.concours.data.CategoryContact.IdDefaultCategory;
 import org.ajdeveloppement.concours.managers.ConcurrentManager;
 
 /**
@@ -117,18 +106,17 @@ import org.ajdeveloppement.concours.managers.ConcurrentManager;
  * @version 1.0
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="ARCHER",loadBuilder=ConcurrentBuilder.class)
+@SqlTable(name="ARCHER")
 @SqlPrimaryKey(fields="ID_CONTACT")
-@SqlUnmappedFields(fields={"ID_CONTACT","SEXE","CATEGORIE","NIVEAU","ARC","DATENAISS","DATEMODIF"},
+@SqlUnmappedFields(fields={"ID_CONTACT","CATEGORIE","NIVEAU","ARC"},
 	typeFields={UUID.class, Integer.class, Integer.class, Integer.class, Integer.class, Date.class, Date.class})
 public class Archer extends Contact {
-	private static CategoryContact archerCategoryContact = null;
-
 	@SqlField(name="NUMLICENCEARCHER",sqlType="VARCHAR",size=32)
 	private String numLicenceArcher;
 
 	@SqlField(name="CERTIFMEDICAL",sqlType="DATE")
 	private Date certificat;
+	
 	private boolean handicape		= false;
 
 	/**
@@ -221,43 +209,6 @@ public class Archer extends Contact {
 		List<Concurrent> homonyme = ConcurrentManager.getArchersInDatabase(aComparant, null, null);
 
 		return (homonyme.size() > 1);
-	}
-
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			//Avant d'enregistrer, on recherche dans la base si il n'y a pas déjà un enregistrement pour ce contact avec
-			//un autre id
-			try {
-				UUID savedidContact = QResults.from(Archer.class)
-					.where(T_Contact.NAME.equalTo(this.getName())
-							.and(T_Contact.FIRSTNAME.equalTo(this.getFirstName()))
-							.and(T_Archer.NUMLICENCEARCHER.equalTo(this.getNumLicenceArcher())))
-					.singleValue(T_Contact.ID_CONTACT);
-				
-				if(savedidContact != null && !savedidContact.equals(getIdContact()))
-					return;
-			} catch (SQLException e) {
-				throw new ObjectPersistenceException(e);
-			}
-			
-			if(archerCategoryContact == null) {
-				archerCategoryContact = QResults.from(CategoryContact.class)
-					.where(T_CategoryContact.ID_CATEGORIE_CONTACT.equalTo(IdDefaultCategory.BOWMAN.value()))
-					.first();
-			}
-			if(getCategories().indexOf(archerCategoryContact) == -1)
-				addCategoryContact(archerCategoryContact);
-			
-			super.save(session);
-			
-			SqlContext context = SqlContext.getDefaultContext();
-			if(session instanceof SqlSession)
-				context = ((SqlSession)session).getContext();
-			
-			StoreHelper<Archer> helper = SqlStoreHelperCache.getHelper(Archer.class, context);
-			helper.save(this, Collections.<String, Object>singletonMap(T_Archer.ID_CONTACT.getFieldName(), getIdContact()));
-		}
 	}
 	
 	@Override

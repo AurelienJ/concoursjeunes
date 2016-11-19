@@ -98,7 +98,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
@@ -138,7 +137,7 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
      * Critères générique de la table Archer
      */
     public static final String[] CRITERES_TABLE_ARCHERS = {
-    	T_Archer.SEXE.getFieldName(),
+    	T_Contact.SEXE.getFieldName(),
     	T_Archer.CATEGORIE.getFieldName(), 
     	T_Archer.NIVEAU.getFieldName(),
     	T_Archer.ARC.getFieldName()
@@ -155,10 +154,6 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
     @XmlElementWrapper(name="criterionelements",required=true)
     @XmlElement(name="element")
     private List<CriterionElement> criterionElements = new ArrayList<CriterionElement>();
-    
-    @XmlTransient
-    @SqlForeignKey(mappedTo="ID_REGLEMENT")
-    private Rule reglement;
     
     @SqlForeignKey(mappedTo="ID_FEDERATION")
     private Federation federation;
@@ -214,39 +209,6 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
     public void setCode(String code) {
         this.code = code;
     }
-
-    /**
-     * Retourne le règlement associé au critère
-     * 
-	 * @return le règlement associé au critère
-	 */
-	public Rule getReglement() {
-		return reglement;
-	}
-
-	/**
-	 * Associe un règlement au critère
-	 * 
-	 * @param reglement le règlement associé au critère
-	 */
-	public void setReglement(Rule reglement) {
-		if(this.reglement != null && !this.reglement.equals(reglement))
-			this.reglement.removeCriterion(this);
-		
-		this.reglement = reglement;
-	}
-	
-	/**
-	 * Associe un règlement au critère
-	 * 
-	 * @deprecated Remplacé par {@link #setReglement(Rule)}
-	 * 
-	 * @param reglement le règlement associé au critère
-	 */
-	@Deprecated
-	public void setReglementParent(Rule reglement) {
-		setReglement(reglement);
-	}
 
 	/**
 	 * Renvoie le libellé du critère
@@ -311,11 +273,7 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
 				return false;
 		} else if (!code.equals(other.code))
 			return false;
-		if (reglement == null) {
-			if (other.reglement != null)
-				return false;
-		} else if (!reglement.equals(other.reglement))
-			return false;
+		
 		return true;
 	}
 
@@ -327,8 +285,6 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		result = prime * result
-				+ ((reglement == null) ? 0 : reglement.hashCode());
 		return result;
 	}
     
@@ -380,8 +336,6 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
 		if(Session.canExecute(session, this)) {
-			reglement.save(session);
-			
 			SqlContext context = SqlContext.getDefaultContext();
 			if(session instanceof SqlSession)
 				context = ((SqlSession)session).getContext();
@@ -412,8 +366,6 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
 	 * @param parent
 	 */
 	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		if(parent instanceof Rule)
-			reglement = (Rule)parent;
 	}
 
 	/* (non-Javadoc)

@@ -29,6 +29,7 @@ import { NavigatorService } from '../services/navigator';
    
     <!-- Sidebar -->
     <aside class="main-sidebar">
+        <div slimscroll>
         <!-- user panel (Optional) -->
         <div class="logo-panel">
         <div class="image">
@@ -48,7 +49,7 @@ import { NavigatorService } from '../services/navigator';
             </span>
         </div>
         </form>
-
+        
         <ul class="sidebar-menu">
             <li class="header">Gestion</li>
             <li [routerLinkActive]="['active']"><a [routerLink]="['dashboard']" (click)="clearNavigationPaths()"><i class="fa fa-dashboard"></i><span>Tableau de bord</span></a></li>
@@ -63,6 +64,7 @@ import { NavigatorService } from '../services/navigator';
             <li [routerLinkActive]="['active']"><a [routerLink]="['importexport']" (click)="clearNavigationPaths()"><i class="fa fa-exchange"></i><span>Import/Export</span></a></li>
             <li [routerLinkActive]="['active']"><a [routerLink]="['tools']" (click)="clearNavigationPaths()"><i class="fa fa-briefcase"></i><span>Outils</span></a></li>
         </ul>
+        </div>
     </aside>
     <div class="content-wrapper">
         <router-outlet></router-outlet>     

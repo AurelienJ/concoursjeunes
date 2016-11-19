@@ -8,21 +8,82 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require('@angular/core');
+var core_1 = require("@angular/core");
+var router_1 = require("@angular/router");
+var references_1 = require("../services/references");
+var navigator_1 = require("../services/navigator");
+var rules_1 = require("../services/rules");
+var NavigationSnapshot_1 = require("../models/NavigationSnapshot");
+var Rule_1 = require("../models/Rule");
 var RuleComponent = (function () {
-    function RuleComponent() {
+    function RuleComponent(route, router, navigation, references, rulesService) {
+        this.route = route;
+        this.router = router;
+        this.navigation = navigation;
+        this.references = references;
+        this.rulesService = rulesService;
+        this.rule = new Rule_1.Rule();
+        this.mustUpdateView = false;
     }
-    RuleComponent.prototype.ngOnInit = function () { };
-    RuleComponent = __decorate([
-        core_1.Component({
-            moduleId: module.id,
-            selector: 'rule',
-            template: ""
-        }), 
-        __metadata('design:paramtypes', [])
-    ], RuleComponent);
+    RuleComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.rulesService.getRulesCategories().then(function (rc) { return _this.rulesCategories = rc; });
+        this.route.params.subscribe(function (params) {
+            _this.idRule = params['id'];
+            var currentNavigationSnapshot = _this.navigation.getCurrentNavigationSnapshot();
+            var currentPath = NavigationSnapshot_1.NavigationSnapshot.getPath(_this.route.snapshot.url).join("/");
+            if (currentNavigationSnapshot
+                && currentPath == currentNavigationSnapshot.path.join("/")
+                && currentNavigationSnapshot.stateData
+                && currentNavigationSnapshot.stateData.id == _this.idRule) {
+                _this.rule = currentNavigationSnapshot.stateData;
+            }
+            else {
+                _this.navigation.pushUrlSegments("Reglement", _this.route.snapshot.url, null);
+                currentNavigationSnapshot = _this.navigation.getCurrentNavigationSnapshot();
+                _this.rulesService.getRule(_this.idRule).then(function (r) {
+                    _this.rule = r;
+                    currentNavigationSnapshot.label = r.name;
+                    currentNavigationSnapshot.stateData = r;
+                });
+            }
+            //this.mustUpdateView = true;
+        });
+    };
+    RuleComponent.prototype.ngDoCheck = function () {
+        /*if(this.mustUpdateView) {
+            this.mustUpdateView = false;
+
+            
+        }*/
+    };
+    RuleComponent.prototype.keyNumericFilter = function (event) {
+        var pattern = /[0-9\+\-\ ]/;
+        var inputChar = String.fromCharCode(event.charCode);
+        // console.log(inputChar, e.charCode);
+        if (!pattern.test(inputChar) && event.charCode > 0) {
+            // invalid character, prevent input
+            event.preventDefault();
+        }
+    };
+    RuleComponent.prototype.cancel = function () {
+    };
+    RuleComponent.prototype.validate = function () {
+    };
     return RuleComponent;
 }());
+RuleComponent = __decorate([
+    core_1.Component({
+        moduleId: module.id,
+        selector: 'rule',
+        template: "<titlebar title=\"{{rule.name || 'Reglement'}}\"></titlebar>\n\t<div class=\"content body\">\n        <div class=\"row\">\n            <div class=\"col-xs-12\">\n\t\t\t\t<form class=\"form-horizontal\" #ruleForm=\"ngForm\">\n\t\t\t\t<div class=\"nav-tabs-custom\">\n\t\t\t\t\t<ul class=\"nav nav-tabs\">\n\t\t\t\t\t\t<li [class.active]=\"!activePane || activePane=='general'\"><a href=\"javascript:void(0)\" data-toogle=\"tab\" (click)=\"activePane='general'\">G\u00E9n\u00E9ral</a></li>\n\t\t\t\t\t\t<li [class.active]=\"activePane=='criterion'\"><a href=\"javascript:void(0)\" data-toogle=\"tab\" (click)=\"activePane='criterion'\">Crit\u00E8res</a></li>\n\t\t\t\t\t\t<li [class.active]=\"activePane=='classment'\"><a href=\"javascript:void(0)\" data-toogle=\"tab\" (click)=\"activePane='classment'\">Classement</a></li>\n\t\t\t\t\t\t<li [class.active]=\"activePane=='placement'\"><a href=\"javascript:void(0)\" data-toogle=\"tab\" (click)=\"activePane='placement'\">Placement</a></li>\n\t\t\t\t\t</ul>\n\t\t\t\t\t<div class=\"tab-content\">\n\t\t\t\t\t\t<div id=\"general\" class=\"tab-pane\" [class.active]=\"!activePane || activePane=='general'\">\n\t\t\t\t\t\t\t<section class=\"formulaire\">\n\t\t\t\t\t\t\t\t<h4>D\u00E9tail</h4>\n\n\t\t\t\t\t\t\t\t<div class=\"form-group\">\n\t\t\t\t\t\t\t\t\t<label class=\"col-md-3 col-lg-2 control-label\">R\u00E9glement rattach\u00E9 \u00E0</label>\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-9 col-lg-10\"><a href=\"#/entities/{{rule.idEntite}}\">{{rule.libelleEntite}}</a></div>\n\t\t\t\t\t\t\t\t</div>\n\n\t\t\t\t\t\t\t\t<div class=\"form-group\">\n\t\t\t\t\t\t\t\t\t<label for=\"ruleCategory\" class=\"col-md-3 col-lg-2 control-label\">Cat\u00E9gorie</label>\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-9 col-lg-10\"><select id=\"ruleCategory\" [attr.disabled]=\"rule.officialReglement ? 'disabled' : null\" name=\"ruleCategory\" class=\"form-control\" [(ngModel)]=\"rule.idCategory\">\n\t\t\t\t\t\t\t\t\t\t<option *ngFor=\"let category of rulesCategories\" [value]=\"category.id\">{{category.name}}</option>\n\t\t\t\t\t\t\t\t\t</select></div>\n\t\t\t\t\t\t\t\t</div>\n\n\t\t\t\t\t\t\t\t<div class=\"form-group\">\n\t\t\t\t\t\t\t\t\t<label for=\"ruleName\" class=\"col-md-3 col-lg-2 control-label\">Nom</label>\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-9 col-lg-10\"><input type=\"text\" placeholder=\"Nom\" id=\"ruleName\" name=\"ruleName\" class=\"form-control\" [attr.disabled]=\"rule.officialReglement ? 'disabled' : null\" [(ngModel)]=\"rule.name\"/></div>\n\t\t\t\t\t\t\t\t</div>\n\n\t\t\t\t\t\t\t\t<div class=\"form-group\">\n\t\t\t\t\t\t\t\t\t<label for=\"ruleDescription\" class=\"col-md-3 col-lg-2 control-label\">Description</label>\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-9 col-lg-10\"><textarea placeholder=\"Description\" id=\"ruleDescription\" name=\"ruleDescription\" class=\"form-control\" [attr.disabled]=\"rule.officialReglement ? 'disabled' : null\" [(ngModel)]=\"rule.description\"></textarea></div>\n\t\t\t\t\t\t\t\t</div>\n\n\t\t\t\t\t\t\t\t<div class=\"form-group\" [class.has-error]=\"ruleNbSerie.errors\">\n\t\t\t\t\t\t\t\t\t<label for=\"ruleNbSerie\" class=\"col-md-3 col-lg-2 control-label\">Nombre de s\u00E9rie</label>\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-9 col-lg-10\">\n\t\t\t\t\t\t\t\t\t\t<input type=\"number\" placeholder=\"Nombre de s\u00E9rie\"\n\t\t\t\t\t\t\t\t\t\t\tpattern=\"[0-9]+\" \n\t\t\t\t\t\t\t\t\t\t\t#ruleNbSerie=\"ngModel\" \n\t\t\t\t\t\t\t\t\t\t\t(keypress)=\"keyNumericFilter($event)\"\n\t\t\t\t\t\t\t\t\t\t\tid=\"ruleNbSerie\" name=\"ruleNbSerie\" class=\"form-control\" [attr.disabled]=\"rule.officialReglement ? 'disabled' : null\" [(ngModel)]=\"rule.nbSerie\"/>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\n\t\t\t\t\t\t\t\t<div class=\"form-group\">\n\t\t\t\t\t\t\t\t\t<label for=\"ruleNbVoleeParSerie\" class=\"col-md-3 col-lg-2 control-label\">Nombre de vol\u00E9e par s\u00E9rie</label>\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-9 col-lg-10\"><input type=\"number\" placeholder=\"Nombre de vol\u00E9e par s\u00E9rie\" id=\"ruleNbVoleeParSerie\" name=\"ruleNbVoleeParSerie\" class=\"form-control\" [attr.disabled]=\"rule.officialReglement ? 'disabled' : null\" [(ngModel)]=\"rule.nbVoleeParSerie\"/></div>\n\t\t\t\t\t\t\t\t</div>\n\n\t\t\t\t\t\t\t\t<div class=\"form-group\">\n\t\t\t\t\t\t\t\t\t<label for=\"ruleNbFlecheParVolee\" class=\"col-md-3 col-lg-2 control-label\">Nombre de fl\u00E8che par vol\u00E9e</label>\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-9 col-lg-10\"><input type=\"number\" placeholder=\"Nombre de fl\u00E8che par vol\u00E9e\" id=\"ruleNbFlecheParVolee\" name=\"ruleNbFlecheParVolee\" class=\"form-control\" [attr.disabled]=\"rule.officialReglement ? 'disabled' : null\" [(ngModel)]=\"rule.nbFlecheParVolee\"/></div>\n\t\t\t\t\t\t\t\t</div>\n\n\t\t\t\t\t\t\t\t<div class=\"form-group\">\n\t\t\t\t\t\t\t\t\t<label for=\"ruleNbPointsParFleche\" class=\"col-md-3 col-lg-2 control-label\">Nombre de point par fl\u00E8che</label>\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-9 col-lg-10\"><input type=\"number\" placeholder=\"Nombre de point maximal par fl\u00E8che\" id=\"ruleNbPointsParFleche\" name=\"ruleNbPointsParFleche\" class=\"form-control\" [attr.disabled]=\"rule.officialReglement ? 'disabled' : null\" [(ngModel)]=\"rule.nbPointsParFleche\"/></div>\n\t\t\t\t\t\t\t\t</div>\n\n\t\t\t\t\t\t\t\t<div class=\"form-group\">\n\t\t\t\t\t\t\t\t\t<label for=\"ruleDepartages\" class=\"col-md-3 col-lg-2 control-label\">Crit\u00E8res de d\u00E9partage</label>\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-9 col-lg-10\"><input type=\"text\" placeholder=\"Crit\u00E8res de d\u00E9partage\" id=\"ruleDepartages\" name=\"ruleDepartages\" class=\"form-control\" [attr.disabled]=\"rule.officialReglement ? 'disabled' : null\" [(ngModel)]=\"rule.departages\"/></div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</section>\n\n\t\t\t\t\t\t\t<section class=\"formulaire\">\n\t\t\t\t\t\t\t\t<h4>Equipes</h4>\n\n\t\t\t\t\t\t\t\t<div class=\"form-group\">\n\t\t\t\t\t\t\t\t\t<label for=\"ruleNbMembresEquipe\" class=\"col-md-3 col-lg-2 control-label\">Taille maximale \u00E9quipe</label>\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-9 col-lg-10\"><input type=\"number\" placeholder=\"Taille maximale \u00E9quipe\" id=\"ruleNbMembresEquipe\" name=\"ruleNbMembresEquipe\" class=\"form-control\" [attr.disabled]=\"rule.officialReglement ? 'disabled' : null\" [(ngModel)]=\"rule.nbMembresEquipe\"/></div>\n\t\t\t\t\t\t\t\t</div>\n\n\t\t\t\t\t\t\t\t<div class=\"form-group\">\n\t\t\t\t\t\t\t\t\t<label for=\"ruleNbMembresRetenu\" class=\"col-md-3 col-lg-2 control-label\">Nombre de co\u00E9quipier comptant pour le classement</label>\n\t\t\t\t\t\t\t\t\t<div class=\"col-md-9 col-lg-10\"><input type=\"number\" placeholder=\"Nombre de co\u00E9quipier comptant pour le classement\" id=\"ruleNbMembresRetenu\" name=\"ruleNbMembresRetenu\" class=\"form-control\" [attr.disabled]=\"rule.officialReglement ? 'disabled' : null\" [(ngModel)]=\"rule.nbMembresRetenu\"/></div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</section>\n\t\t\t\t\t\t</div>\n\n\t\t\t\t\t\t<div id=\"criterion\" class=\"tab-pane\" [class.active]=\"activePane=='criterion'\">\n\t\t\t\t\t\t\t<div class=\"row\">\n\t\t\t\t\t\t\t\t<div class=\"col-sm-6\"><a href=\"javascript:void(0)\" class=\"btn btn-app\"><i class=\"fa fa-plus-circle\" aria-hidden=\"true\"></i> Ajouter</a>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class=\"col-sm-6 form-inline\">\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\n\t\t\t\t<div class=\"alert alert-danger\" role=\"alert\" *ngIf=\"error\">\n\t\t\t\t{{error}}\n\t\t\t\t</div>\n\n\t\t\t\t<button class=\"btn btn-primary pull-right\" type=\"button\" (click)=\"cancel()\">Annuler</button>\n\t\t\t\t<button class=\"btn btn-success pull-right\" style=\"margin-right: 5px;\" type=\"button\" (click)=\"validate()\">Valider</button>\n\n\t\t\t\t</form>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n\t"
+    }),
+    __metadata("design:paramtypes", [router_1.ActivatedRoute,
+        router_1.Router,
+        navigator_1.NavigatorService,
+        references_1.ReferencesService,
+        rules_1.RulesService])
+], RuleComponent);
 exports.RuleComponent = RuleComponent;
 
 //# sourceMappingURL=rule.js.map

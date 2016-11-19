@@ -89,7 +89,7 @@
 package org.ajdeveloppement.concours.webapi;
 
 import org.ajdeveloppement.concours.webapi.services.CompetitionsService;
-import org.ajdeveloppement.concours.webapi.services.ContactsService;
+import org.ajdeveloppement.concours.webapi.services.PersonsService;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
 import org.ajdeveloppement.concours.webapi.services.ProfilesService;
 import org.ajdeveloppement.concours.webapi.services.ReferenceService;
@@ -108,7 +108,7 @@ public class WebConfig extends AbstractApiApplication {
 	@Override
 	protected  void initLifeUnits() {
 		webApiService.addSingletonService(ReferenceService.class);
-		webApiService.addSingletonService(ContactsService.class);
+		webApiService.addSingletonService(PersonsService.class);
 		webApiService.addSingletonService(EntiteService.class);
 		webApiService.addSingletonService(ProfilesService.class);
 		webApiService.addSingletonService(RuleService.class);
@@ -118,7 +118,7 @@ public class WebConfig extends AbstractApiApplication {
 	@Override
 	protected void stopLifeUnits() {
 		webApiService.removeService(ReferenceService.class);
-		webApiService.removeService(ContactsService.class);
+		webApiService.removeService(PersonsService.class);
 		webApiService.removeService(EntiteService.class);
 		webApiService.removeService(ProfilesService.class);
 		webApiService.removeService(RuleService.class);

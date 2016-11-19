@@ -96,6 +96,7 @@ import java.util.stream.Collectors;
 import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.concours.data.Criterion;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.RulesCategory;
@@ -119,8 +120,6 @@ public class RuleService {
 	public RuleService() {
 	}
 	
-	
-	
 	private List<RuleModelView> asModelViewList(List<Rule> rules) {
 		RuleAdapter adapter = new RuleAdapter();
 		return rules.stream().map(r -> adapter.toModelView(r)).collect(Collectors.toList());
@@ -140,7 +139,6 @@ public class RuleService {
 	public int countAllRules() {
 		return T_Rule.all().count();
 	}
-	
 	
 	public int countRulesByGlobalSearchValue(String search) {
 		return queryRulesByGlobalSearchValue(search, -1, -1).count();
@@ -186,8 +184,8 @@ public class RuleService {
 	@SuppressWarnings("nls")
 	public void createOrUpdateRule(RuleModelView ruleModelView) throws ObjectPersistenceException {
 		Rule rule = null;
-		if(ruleModelView.getIdRule() != null)
-			rule = T_Rule.getInstanceWithPrimaryKey(ruleModelView.getIdRule());
+		if(ruleModelView.getId() != null)
+			rule = T_Rule.getInstanceWithPrimaryKey(ruleModelView.getId());
 		
 		RuleAdapter adapter = new RuleAdapter(rule);
 		rule = adapter.toModel(ruleModelView);
@@ -205,8 +203,8 @@ public class RuleService {
 			rule.getTie().removeIf(t -> !departages.contains(t.getFieldName()));
 		}
 		
-		if(rule.getIdRule() != ruleModelView.getIdRule())
-			ruleModelView.setIdRule(rule.getIdRule());
+		if(rule.getIdRule() != ruleModelView.getId())
+			ruleModelView.setId(rule.getIdRule());
 		
 		rule.save();
 	}
@@ -221,5 +219,20 @@ public class RuleService {
 		RulesCategoryAdapter adapter = new RulesCategoryAdapter();
 		
 		return adapter.toModelView(T_RulesCategory.getInstanceWithPrimaryKey(id));
+	}
+
+	/**
+	 * Return all criteria associate to given rule id
+	 * 
+	 * @param idRule the id of rule to retur criteria
+	 * @return
+	 */
+	public List<Criterion> getRuleCriteria(UUID idRule) {
+		Rule rule = T_Rule.getInstanceWithPrimaryKey(idRule);
+		if(rule != null) {
+			return rule.getListCriteria();
+		}
+		
+		return null;
 	}
 }

@@ -114,9 +114,6 @@ import org.ajdeveloppement.concours.data.Profile;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-/*@XmlType(propOrder={"federations", "federation", "club", "langue", "logoPath", "reglementName", "tarifs", "pdfReaderPath", "formatPapier",
-		"orientation", "colonneAndLigne", "marges", "espacements", "interfaceResultatCumul", "interfaceAffResultatExEquo",
-		"useProxy", "proxy", "metaDataFichesConcours", "curProfil"})*/
 public class Configuration extends DefaultParameters implements Cloneable {
 	
 	/**

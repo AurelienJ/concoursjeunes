@@ -12,7 +12,7 @@
 		    <conf name="all" extends="windows32,windows64,macosx,linux" description="All platform dependencies"/>
 		</configurations>
         <dependencies>
-            <dependency org="org.ajdeveloppement" name="ajcommons" rev="[2.0,)"/> 
+            <dependency org="org.ajdeveloppement" name="ajcommons" rev="[2.0,)"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-ext" rev="[2.0,)"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-webserver" rev="[0.3,)"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-webserver-viewbinder" rev="[0.0,)"/>

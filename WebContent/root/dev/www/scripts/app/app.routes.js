@@ -1,11 +1,12 @@
 "use strict";
 ///<reference path="_references.ts"/>
-var parameters_1 = require('./components/parameters');
-var entites_1 = require('./components/entites');
-var entite_1 = require('./components/entite');
-var persons_1 = require('./components/persons');
-var person_1 = require('./components/person');
-var rules_1 = require('./components/rules');
+var parameters_1 = require("./components/parameters");
+var entites_1 = require("./components/entites");
+var entite_1 = require("./components/entite");
+var persons_1 = require("./components/persons");
+var person_1 = require("./components/person");
+var rules_1 = require("./components/rules");
+var rule_1 = require("./components/rule");
 //import { UserComponent } from './user.component';
 exports.AppRoutes = [
     { path: '', component: parameters_1.ParametersComponent },
@@ -16,7 +17,8 @@ exports.AppRoutes = [
     { path: 'entities/:id', component: entite_1.EntiteComponent },
     { path: 'persons', component: persons_1.PersonsComponent },
     { path: 'persons/:id', component: person_1.PersonComponent },
-    { path: 'rules', component: rules_1.RulesComponent }
+    { path: 'rules', component: rules_1.RulesComponent },
+    { path: 'rules/:id', component: rule_1.RuleComponent }
 ];
 
 //# sourceMappingURL=app.routes.js.map

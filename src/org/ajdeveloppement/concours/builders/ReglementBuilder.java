@@ -92,9 +92,7 @@ package org.ajdeveloppement.concours.builders;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -108,11 +106,9 @@ import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
 import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache.Key;
 import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.data.Criterion;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.Surclassement;
-import org.ajdeveloppement.concours.data.T_Criterion;
 import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.data.T_Rule;
 import org.ajdeveloppement.concours.data.T_Surclassement;
@@ -302,18 +298,18 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 							QResults.from(Tie.class, sessionCache).where(T_Tie.ID_REGLEMENT.equalTo(idReglement)).orderBy(T_Tie.NUMORDRE).asList());
 					
 					// Récupération des critères
-					List<Criterion> criteria = new ArrayList<Criterion>();
-
-					try(ResultSet rsCriterion = QResults.from(Criterion.class)
-							.where(T_Criterion.ID_REGLEMENT.equalTo(idReglement))
-							.orderBy(T_Criterion.ORDRE)
-							.asResultSet()) {
-
-						while(rsCriterion.next()) {
-							criteria.add(CriterionBuilder.getCriterion(reglement, rsCriterion, doNotUseCache, context));
-						}
-					}
-					reglement.setListCriteria(criteria);
+//					List<Criterion> criteria = new ArrayList<Criterion>();
+//
+//					try(ResultSet rsCriterion = QResults.from(Criterion.class)
+//							.where(T_Criterion.ID_REGLEMENT.equalTo(idReglement))
+//							.orderBy(T_Criterion.ORDRE)
+//							.asResultSet()) {
+//
+//						while(rsCriterion.next()) {
+//							criteria.add(CriterionBuilder.getCriterion(reglement, rsCriterion, doNotUseCache, context));
+//						}
+//					}
+//					reglement.setListCriteria(criteria);
 					
 					// Récupération des distances blason
 //					reglement.setListPlacementCriteriaSet(

@@ -1,3 +1,7 @@
+body {
+	 -webkit-app-region:drag;
+}
+
 .navbar-titre {
 	font-size: 17px;
 	line-height: 50px;
@@ -22,4 +26,9 @@
 .logo-panel > .image > img {
 	width: 100%;
 	max-width: 140px;
+}
+
+.formulaire > h4 {
+	font-size: 24px;
+	padding: 20px 70px;
 }

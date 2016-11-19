@@ -9,19 +9,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 ///<reference path="../_references.ts"/>
-var core_1 = require('@angular/core');
+var core_1 = require("@angular/core");
 var ParametersComponent = (function () {
     function ParametersComponent() {
     }
-    ParametersComponent = __decorate([
-        core_1.Component({
-            selector: 'parameters',
-            template: "<div class=\"content-header\">\n    <h1>Param\u00E8tres</h1>\n    <ol class=\"breadcrumb\">\n        <li>Accueil</li>\n        <li class=\"active\">Param\u00E8tres</li>\n    </ol>\n    </div>\n    <div class=\"content body\">\n\n    </div>\n    "
-        }), 
-        __metadata('design:paramtypes', [])
-    ], ParametersComponent);
     return ParametersComponent;
 }());
+ParametersComponent = __decorate([
+    core_1.Component({
+        selector: 'parameters',
+        template: "<div class=\"content-header\">\n    <h1>Param\u00E8tres</h1>\n    <ol class=\"breadcrumb\">\n        <li>Accueil</li>\n        <li class=\"active\">Param\u00E8tres</li>\n    </ol>\n    </div>\n    <div class=\"content body\">\n\n    </div>\n    "
+    }),
+    __metadata("design:paramtypes", [])
+], ParametersComponent);
 exports.ParametersComponent = ParametersComponent;
 
 //# sourceMappingURL=parameters.js.map

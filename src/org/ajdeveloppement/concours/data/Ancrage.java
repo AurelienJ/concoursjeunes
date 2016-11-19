@@ -146,7 +146,7 @@ public class Ancrage implements SqlObjectPersistence {
 	public static final int POSITION_BD = 6;
 	
 	@SqlField(name="EMPLACEMENT",nullable=false,sqlType="INTEGER")
-	protected int emplacement = POSITION_A;
+	private int emplacement = POSITION_A;
 	
 	@SqlField(name="ANCRAGEX",sqlType="DOUBLE")
 	private double x = 0;
@@ -158,7 +158,7 @@ public class Ancrage implements SqlObjectPersistence {
 	private Face blason;
 	
 	/**
-	 * Construit un nouvel encrange de blason
+	 * Construit un nouvel ancrage de blason
 	 */
 	public Ancrage() {
 	}

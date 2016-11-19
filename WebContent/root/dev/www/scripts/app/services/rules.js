@@ -8,9 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require('@angular/core');
-var http_1 = require('@angular/http');
-require('rxjs/add/operator/toPromise');
+var core_1 = require("@angular/core");
+var http_1 = require("@angular/http");
+require("rxjs/add/operator/toPromise");
 var RulesService = (function () {
     function RulesService(http) {
         this.http = http;
@@ -41,12 +41,20 @@ var RulesService = (function () {
     RulesService.prototype.getRule = function (id) {
         return this.http.get("api/rules/" + id, { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
     };
-    RulesService = __decorate([
-        core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http])
-    ], RulesService);
+    RulesService.prototype.getRulesCategories = function () {
+        if (!this.rulesCategories)
+            this.rulesCategories = this.http.get("api/rulesCategories", { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
+        return this.rulesCategories;
+    };
+    RulesService.prototype.getCriteria = function (idRule) {
+        return this.http.get("api/rules/" + idRule + "/criteria").toPromise().then(function (r) { return r.json(); });
+    };
     return RulesService;
 }());
+RulesService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [http_1.Http])
+], RulesService);
 exports.RulesService = RulesService;
 
 //# sourceMappingURL=rules.js.map

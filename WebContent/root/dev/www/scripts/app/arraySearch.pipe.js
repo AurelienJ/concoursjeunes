@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require('@angular/core');
+var core_1 = require("@angular/core");
 var TableFilterPipe = (function () {
     function TableFilterPipe() {
     }
@@ -27,14 +27,14 @@ var TableFilterPipe = (function () {
             return false;
         }) : value;
     };
-    TableFilterPipe = __decorate([
-        core_1.Pipe({
-            name: 'tableFilter'
-        }), 
-        __metadata('design:paramtypes', [])
-    ], TableFilterPipe);
     return TableFilterPipe;
 }());
+TableFilterPipe = __decorate([
+    core_1.Pipe({
+        name: 'tableFilter'
+    }),
+    __metadata("design:paramtypes", [])
+], TableFilterPipe);
 exports.TableFilterPipe = TableFilterPipe;
 
 //# sourceMappingURL=arraySearch.pipe.js.map

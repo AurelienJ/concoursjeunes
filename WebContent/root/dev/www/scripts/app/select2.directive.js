@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require('@angular/core');
+var core_1 = require("@angular/core");
 var Select2Directive = (function () {
     function Select2Directive(el, renderer) {
         this.onSelect = new core_1.EventEmitter();
@@ -38,33 +38,33 @@ var Select2Directive = (function () {
         configurable: true
     });
     ;
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', String)
-    ], Select2Directive.prototype, "placeHolder", void 0);
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', Boolean), 
-        __metadata('design:paramtypes', [Boolean])
-    ], Select2Directive.prototype, "disable", null);
-    __decorate([
-        core_1.Output(), 
-        __metadata('design:type', core_1.EventEmitter)
-    ], Select2Directive.prototype, "onSelect", void 0);
-    __decorate([
-        core_1.Output(), 
-        __metadata('design:type', core_1.EventEmitter)
-    ], Select2Directive.prototype, "onUnselect", void 0);
-    __decorate([
-        core_1.Output(), 
-        __metadata('design:type', core_1.EventEmitter)
-    ], Select2Directive.prototype, "value", void 0);
-    Select2Directive = __decorate([
-        core_1.Directive({ selector: '[select2]' }), 
-        __metadata('design:paramtypes', [core_1.ElementRef, core_1.Renderer])
-    ], Select2Directive);
     return Select2Directive;
 }());
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", String)
+], Select2Directive.prototype, "placeHolder", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Boolean),
+    __metadata("design:paramtypes", [Boolean])
+], Select2Directive.prototype, "disable", null);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], Select2Directive.prototype, "onSelect", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], Select2Directive.prototype, "onUnselect", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], Select2Directive.prototype, "value", void 0);
+Select2Directive = __decorate([
+    core_1.Directive({ selector: '[select2]' }),
+    __metadata("design:paramtypes", [core_1.ElementRef, core_1.Renderer])
+], Select2Directive);
 exports.Select2Directive = Select2Directive;
 
 //# sourceMappingURL=select2.directive.js.map

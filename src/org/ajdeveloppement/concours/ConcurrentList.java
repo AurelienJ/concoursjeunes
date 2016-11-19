@@ -208,15 +208,6 @@ public class ConcurrentList {
 
 	/**
 	 * supprime tout les concurrent de la liste
-	 * @deprecated remplacé par {@link org.ajdeveloppement.concours.ConcurrentList#clear()}
-	 */
-	@Deprecated
-	public void removeAll() {
-		archList.clear();
-	}
-	
-	/**
-	 * supprime tout les concurrent de la liste
 	 *
 	 */
 	public void clear() {
@@ -448,30 +439,6 @@ public class ConcurrentList {
 	}
 	
 	/**
-	 * Passe au concurrent suivant par ordre de cible/position
-	 *
-	 * @deprecated utiliser {@link #nextConcurrent(List, Concurrent, SortCriteria)} à la place
-	 * @param curConcurrent - le concurrent courant
-	 * @return le concurrent suivant
-	 */
-	@Deprecated
-	public Concurrent nextConcurrent(Concurrent curConcurrent) {
-		int depart = curConcurrent.getDepart();
-		int cible = curConcurrent.getCible(); 
-		int position = curConcurrent.getPosition();
-
-		do {
-			position++;
-			if(position == parametre.getNbTireur()) {
-				position = 0;
-				cible++;
-			}
-		} while(getConcurrentAt(depart, cible, position) == null && cible <= parametre.getNbCible());
-
-		return getConcurrentAt(depart, cible, position);
-	}
-	
-	/**
 	 * Retourne le concurrent suivant dans la liste fournit en paramètre en fonction du critère de tri sélectionné
 	 * 
 	 * @param lstConcurrent la liste des concurrent dans lequel récupérer le suivant
@@ -490,31 +457,6 @@ public class ConcurrentList {
 			return lstConcurrent.get(index+1);
 		
 		return null;
-	}
-
-	/**
-	 * Passe au concurrent précédent par ordre de cible/position
-	 * 
-	 * @deprecated utiliser {@link #previousConcurrent(List, Concurrent, SortCriteria)} à la place
-	 * @param curConcurrent - le concurrent courant
-	 * 
-	 * @return le concurrent précèdent
-	 */
-	@Deprecated
-	public Concurrent previousConcurrent(Concurrent curConcurrent) {
-		int depart = curConcurrent.getDepart();
-		int cible = curConcurrent.getCible(); 
-		int position = curConcurrent.getPosition();
-
-		do {
-			position--;
-			if(position == -1) {
-				position = parametre.getNbTireur() - 1;
-				cible--;
-			}
-		} while(getConcurrentAt(depart, cible, position) == null && cible > 0);
-
-		return getConcurrentAt(depart, cible, position);
 	}
 	
 	/**

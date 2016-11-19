@@ -9,11 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 ///<reference path="../_references.ts"/>
-var core_1 = require('@angular/core');
-var common_1 = require('@angular/common');
-var router_1 = require('@angular/router');
-var NavigationSnapshot_1 = require('../models/NavigationSnapshot');
-require('rxjs/add/operator/filter');
+var core_1 = require("@angular/core");
+var common_1 = require("@angular/common");
+var router_1 = require("@angular/router");
+var NavigationSnapshot_1 = require("../models/NavigationSnapshot");
+require("rxjs/add/operator/filter");
 var NavigatorService = (function () {
     //public navigationStack$ : Observable<NavigationSnapshot[]>;
     function NavigatorService(router, route, location) {
@@ -79,12 +79,12 @@ var NavigatorService = (function () {
             return this.navigationStack[this.navigationStack.length - 2];
         return null;
     };
-    NavigatorService = __decorate([
-        core_1.Injectable(), 
-        __metadata('design:paramtypes', [router_1.Router, router_1.ActivatedRoute, common_1.Location])
-    ], NavigatorService);
     return NavigatorService;
 }());
+NavigatorService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [router_1.Router, router_1.ActivatedRoute, common_1.Location])
+], NavigatorService);
 exports.NavigatorService = NavigatorService;
 
 //# sourceMappingURL=navigator.js.map

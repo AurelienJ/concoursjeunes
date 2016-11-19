@@ -9,9 +9,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 ///<reference path="../_references.ts"/>
-var core_1 = require('@angular/core');
-var http_1 = require('@angular/http');
-require('rxjs/add/operator/toPromise');
+var core_1 = require("@angular/core");
+var http_1 = require("@angular/http");
+require("rxjs/add/operator/toPromise");
 var EntitesService = (function () {
     function EntitesService(http) {
         this.http = http;
@@ -124,12 +124,12 @@ var EntitesService = (function () {
         console.error('An error occurred', error);
         return Promise.reject(error.message || error);
     };
-    EntitesService = __decorate([
-        core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http])
-    ], EntitesService);
     return EntitesService;
 }());
+EntitesService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [http_1.Http])
+], EntitesService);
 exports.EntitesService = EntitesService;
 
 //# sourceMappingURL=entites.js.map

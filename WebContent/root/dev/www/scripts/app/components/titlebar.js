@@ -9,10 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 ///<reference path="../_references.ts"/>
-var core_1 = require('@angular/core');
-var router_1 = require('@angular/router');
-var navigator_1 = require('../services/navigator');
-require('rxjs/add/operator/share');
+var core_1 = require("@angular/core");
+var router_1 = require("@angular/router");
+var navigator_1 = require("../services/navigator");
+require("rxjs/add/operator/share");
 var TitlebarComponent = (function () {
     function TitlebarComponent(router, navigatorService) {
         this.router = router;
@@ -31,19 +31,19 @@ var TitlebarComponent = (function () {
     TitlebarComponent.prototype.clearAfter = function (index) {
         this.navigatorService.clearAfter(index);
     };
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', String)
-    ], TitlebarComponent.prototype, "title", void 0);
-    TitlebarComponent = __decorate([
-        core_1.Component({
-            selector: 'titlebar',
-            template: "<div class=\"content-header\">\n\t<h1>{{title}}</h1>\n\t<ol class=\"breadcrumb\">\n        <li><i class=\"fa fa-home\"></i></li>\n        <li *ngFor=\"let path of paths; let i = index\"><a [routerLink]=\"path.path\" [queryParams]=\"path.queryParams\" (click)=\"clearAfter(i)\">{{path.label}}</a></li>\n    </ol></div>"
-        }), 
-        __metadata('design:paramtypes', [router_1.Router, navigator_1.NavigatorService])
-    ], TitlebarComponent);
     return TitlebarComponent;
 }());
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", String)
+], TitlebarComponent.prototype, "title", void 0);
+TitlebarComponent = __decorate([
+    core_1.Component({
+        selector: 'titlebar',
+        template: "<div class=\"content-header\">\n\t<h1>{{title}}</h1>\n\t<ol class=\"breadcrumb\">\n        <li><i class=\"fa fa-home\"></i></li>\n        <li *ngFor=\"let path of paths; let i = index\"><a [routerLink]=\"path.path\" [queryParams]=\"path.queryParams\" (click)=\"clearAfter(i)\">{{path.label}}</a></li>\n    </ol></div>"
+    }),
+    __metadata("design:paramtypes", [router_1.Router, navigator_1.NavigatorService])
+], TitlebarComponent);
 exports.TitlebarComponent = TitlebarComponent;
 
 //# sourceMappingURL=titlebar.js.map

@@ -201,8 +201,6 @@ public class CriterionDialog extends JDialog implements ActionListener, ChangeLi
         super(parent, "", true); //$NON-NLS-1$
         
         this.localisation = localisation;
-        if(reglement != null)
-        	this.criterion.setReglement(reglement);
         
         if(criterion != null)
         	this.criterion = criterion;

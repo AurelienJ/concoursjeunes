@@ -94,6 +94,7 @@ import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.Rule.TypeReglement;
 import org.ajdeveloppement.concours.webapi.adapters.RuleAdapter;
 import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
+import org.ajdeveloppement.webserver.services.webapi.helpers.Implementation;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -102,7 +103,7 @@ import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
 @Adapter(RuleAdapter.class)
 public class RuleModelView {
 
-	private UUID idRule;
+	private UUID id;
 	
 	private UUID IdCompetition;
 	
@@ -140,15 +141,17 @@ public class RuleModelView {
 	/**
 	 * @return idRule
 	 */
-	public UUID getIdRule() {
-		return idRule;
+	@Implementation(methodModelToView="getIdRule")
+	public UUID getId() {
+		return id;
 	}
 
 	/**
 	 * @param idRule idRule à définir
 	 */
-	public void setIdRule(UUID idRule) {
-		this.idRule = idRule;
+	@Implementation(methodModelToView="setIdRule")
+	public void setId(UUID idRule) {
+		this.id = idRule;
 	}
 
 	/**

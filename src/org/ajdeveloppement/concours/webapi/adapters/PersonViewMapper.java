@@ -1,7 +1,7 @@
 /*
- * Créé le 7 avr. 2015 à 14:21:28 pour ArcCompetition
+ * Créé le 13 nov. 2016 à 12:13:29 pour ArcCompetition
  *
- * Copyright 2002-2015 - Aurélien JEOFFRAY
+ * Copyright 2002-2016 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -90,70 +90,133 @@ package org.ajdeveloppement.concours.webapi.adapters;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.concours.data.Archer;
+import org.ajdeveloppement.concours.data.CategoryContact;
+import org.ajdeveloppement.concours.data.CategoryContact.IdDefaultCategory;
+import org.ajdeveloppement.concours.data.CategoryContactContact;
 import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.T_CategoryContact;
 import org.ajdeveloppement.concours.data.T_Civility;
 import org.ajdeveloppement.concours.data.T_Entite;
-import org.ajdeveloppement.concours.webapi.models.ContactModelView;
+import org.ajdeveloppement.concours.webapi.services.PersonsService;
+import org.ajdeveloppement.concours.webapi.views.ContactView;
 import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class ContactAdapter implements ModelViewAdapter<Contact,ContactModelView> {
-
-	private Contact reference;
+public class PersonViewMapper {
 	
-	public ContactAdapter() {
+	private PersonsService personsService;
+	
+	public PersonViewMapper(PersonsService personsService) {
+		this.personsService = personsService;
+	}
+	
+	/**
+	 * Return id of contact's civility if exists
+	 * 
+	 * @param contact
+	 * @return
+	 */
+	public static UUID getIdCivility(Contact contact) {
+		if(contact != null && contact.getCivility() != null)
+			return contact.getCivility().getIdCivility();
 		
+		return null;
 	}
 	
-	public ContactAdapter(Contact model) {
-		reference = model;
+	/**
+	 * Inject the view civility in model
+	 * 
+	 * @param contactView
+	 * @param contact
+	 */
+	public static void setIdCivility(ContactView contactView, Contact contact) {
+		if(contactView != null && contact != null) {
+			if(!(contactView.getIdCivility() != null
+					&& contact.getCivility() != null
+					&& contact.getCivility().getIdCivility().equals(contactView.getIdCivility()))) {
+				contact.setCivility(T_Civility.getInstanceWithPrimaryKey(contactView.getIdCivility()));
+			}
+		}
 	}
 	
-	@Override
-	public ContactModelView toModelView(Contact model) {
-		ContactModelView contactModelView = new ContactModelView();
+	/**
+	 * Return ids of contact's categories if exists
+	 * 
+	 * @param contact
+	 * @return
+	 */
+	public static List<UUID> getCategories(Contact contact) {
+		if(contact != null && contact.getCategories() != null)
+			return  contact.getCategories().stream().map(c -> c.getCategoryContact().getId()).collect(Collectors.toList());
+		
+		return null;
+	}
+	
+	public static void setCategories(ContactView contactView, Contact contact) {
+		if(!(contactView.getCategories() != null && contact.getCategories() != null && getCategories(contact).equals(contactView.getCategories()))) {
+			if(contactView.getCategories() != null) {
+				List<CategoryContact> categories = T_CategoryContact.all().where(T_CategoryContact.ID_CATEGORIE_CONTACT.in(contactView.getCategories())).asList();
+				List<CategoryContactContact> categoriesContact = categories.stream().map(cc -> new CategoryContactContact(contact, cc)).collect(Collectors.toList());
+				
+
+				contact.setCategories(categoriesContact);
+			}
+		}
+	}
+	
+	/**
+	 * Return id of contact's entity
+	 * 
+	 * @param contact
+	 * @return
+	 */
+	public static UUID getIdEntity(Contact contact) {
+		if(contact != null && contact.getEntite() != null)
+			return contact.getEntite().getIdEntite();
+		
+		return null;
+	}
+	
+	public static void setIdEntity(ContactView contactView, Contact contact) {
+		if(contactView != null && contact != null) {
+			if(!(contactView.getIdEntity() != null
+					&& contact.getEntite() != null
+					&& contact.getEntite().getIdEntite().equals(contactView.getIdEntity()))) {
+				contact.setEntite(T_Entite.getInstanceWithPrimaryKey(contactView.getIdEntity()));
+			}
+		}
+	}
+	
+	public Contact getContactFor(ContactView contactView) {
+		Contact contact = null;
+		
+		if(contactView.getId() != null)
+			contact = personsService.getContactById(contactView.getId());
+		
+		if(contact == null) {
+			if(contactView.getCategories() != null && contactView.getCategories().contains(IdDefaultCategory.BOWMAN.value())) {
+				contact = new Archer();
+			} else {
+				contact = new Contact();
+			}
+		}
+		
 		try {
-			ModelViewMapper.mapModelToViewModel(model, contactModelView);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
+			ModelViewMapper.mapModelViewToModel(contactView, contact);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+				| SecurityException | IntrospectionException e) {
 			throw new UncheckedException(e);
 		}
-		if(model instanceof Archer)
-			contactModelView.setType("archer");
 		
-		contactModelView.setId(model.getIdContact());
-		if(model.getCivility() != null)
-			contactModelView.setIdCivility(model.getCivility().getIdCivility());
-		if(model.getEntite() != null)
-			contactModelView.setIdEntite(model.getEntite().getIdEntite());
-		
-		return contactModelView;
+		return contact;
 	}
-
-	@Override
-	public Contact toModel(ContactModelView modelView) {
-		if(reference == null)
-			reference = new Contact();
-		try {
-			ModelViewMapper.mapModelViewToModel(modelView, reference);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
-		}
-		
-		if(modelView.getIdCivility() != null)
-			reference.setCivility(T_Civility.getInstanceWithPrimaryKey(modelView.getIdCivility()));
-		
-		if(modelView.getIdEntite() != null)
-			reference.setEntite(T_Entite.getInstanceWithPrimaryKey(modelView.getIdCivility()));
-		
-		return reference;
-	}
-
 }

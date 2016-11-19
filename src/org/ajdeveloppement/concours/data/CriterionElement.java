@@ -153,6 +153,20 @@ public class CriterionElement implements SqlObjectPersistence, Cloneable {
     }
 
     /**
+	 * @return id
+	 */
+	public UUID getId() {
+		return id;
+	}
+
+	/**
+	 * @param id id à définir
+	 */
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+	/**
 	 * Renvoie le code de l'élément
 	 * 
 	 * @return le code de l'élément

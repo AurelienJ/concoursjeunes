@@ -8,9 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require('@angular/core');
-var http_1 = require('@angular/http');
-require('rxjs/add/operator/toPromise');
+var core_1 = require("@angular/core");
+var http_1 = require("@angular/http");
+require("rxjs/add/operator/toPromise");
 var ReferencesService = (function () {
     function ReferencesService(http) {
         this.http = http;
@@ -24,12 +24,12 @@ var ReferencesService = (function () {
                 .toPromise().then(function (r) { return r.json(); });
         return this.countries;
     };
-    ReferencesService = __decorate([
-        core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http])
-    ], ReferencesService);
     return ReferencesService;
 }());
+ReferencesService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [http_1.Http])
+], ReferencesService);
 exports.ReferencesService = ReferencesService;
 
 //# sourceMappingURL=references.js.map

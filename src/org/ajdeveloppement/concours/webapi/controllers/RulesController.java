@@ -99,9 +99,10 @@ import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Profile;
 import org.ajdeveloppement.concours.webapi.UserSessionData;
 import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
-import org.ajdeveloppement.concours.webapi.models.JsDataTables;
 import org.ajdeveloppement.concours.webapi.models.RuleModelView;
+import org.ajdeveloppement.concours.webapi.models.RulesCategoryModelView;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
+import org.ajdeveloppement.concours.webapi.views.CriterionView;
 import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
 import org.ajdeveloppement.webserver.HttpReturnCode.Success;
@@ -109,10 +110,10 @@ import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpServiceId;
-import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
 import org.ajdeveloppement.webserver.services.webapi.helpers.HttpSessionHelper;
 import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
+import org.ajdeveloppement.webserver.viewbinder.ViewsFactory;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -128,36 +129,14 @@ public class RulesController {
 		this.context = context;
 		this.service = service;
 	}
-	@HttpService(key="rulesDataTable")
-	public JsDataTables getRulesDataTable(
-			@UrlParameter("search[value]") String searchValue,
-			@UrlParameter("length") int length,
-			@UrlParameter("start") int start,
-			@UrlParameter("draw") int draw) {
-		
-		int nbTotalRules = service.countAllRules();
-		int nbFilteredRules = nbTotalRules;
-		if(searchValue != null && !searchValue.isEmpty())
-			nbFilteredRules = service.countRulesByGlobalSearchValue(searchValue);
-		
-		int offset = -1;
-		if(length > 0)
-			offset = start;
-		
-		JsDataTables jsDataTables = new JsDataTables();
-		jsDataTables.setDraw(draw);
-		jsDataTables.setRecordsTotal(nbTotalRules);
-		jsDataTables.setRecordsFiltered(nbFilteredRules);
-		jsDataTables.setData(service.getRulesByGlobalSearchValue(searchValue, length, offset));
-		
-		return jsDataTables;
+	
+	@HttpService(key="rulesCategories")
+	public List<RulesCategoryModelView> getRulesCategories() {
+		return service.getAllRulesCategories();
 	}
 	
 	@HttpService(key="rulesCategories")
-	public Object getRulesCategories(@HttpServiceId int idRuleCategory) {
-		if(idRuleCategory == 0)
-			return service.getAllRulesCategories();
-		
+	public RulesCategoryModelView getRulesCategories(@HttpServiceId int idRuleCategory) {
 		return service.getRulesCategoryById(idRuleCategory);
 	}
 	
@@ -215,6 +194,17 @@ public class RulesController {
 					return entite;
 				}).collect(Collectors.toList());
 			}
+		}
+		
+		return null;
+	}
+	
+	@HttpService(key="rules/criteria")
+	public List<CriterionView> getCriterion(@HttpServiceId UUID idRule) {
+		if(idRule != null) {
+			return service.getRuleCriteria(idRule).stream()
+				.map(c -> ViewsFactory.getView(CriterionView.class, c, RuleService.class.getClassLoader()))
+				.collect(Collectors.toList());
 		}
 		
 		return null;

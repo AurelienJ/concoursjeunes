@@ -92,9 +92,10 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -105,24 +106,19 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlSession;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlSubTables;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
 import org.ajdeveloppement.concours.managers.CivilityManager;
-import org.ajdeveloppement.concours.managers.EntiteManager;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -133,7 +129,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CONTACT",disableCache=true)
+@SqlTable(name="CONTACT")
+@SqlSubTables(Archer.class)
 @SqlPrimaryKey(fields="ID_CONTACT",generatedidField=@SqlGeneratedIdField(name="ID_CONTACT",type=Types.JAVA_OBJECT))
 @SqlUnmappedFields(fields="UPPER_NAME",typeFields=String.class)
 public class Contact implements SqlObjectPersistence, Cloneable {
@@ -153,6 +150,12 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	
 	@SqlField(name="FIRSTNAME")
 	private String firstName;
+	
+	@SqlField(name="DATENAISS")
+	private Date dateNaissance;
+	
+	@SqlField(name="SEXE")
+	private int sexe;
 	
 	@SqlForeignKey(mappedTo="ID_CIVILITY")
 	private Civility civility;
@@ -174,7 +177,7 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	
 	@XmlIDREF
 	@SqlForeignKey(mappedTo="ID_ENTITE")
-	private Entite entite = new Entite();
+	private Entite entite;
 	
 	@SqlField(name="IDENTIFIANT")
 	private String login;
@@ -193,6 +196,9 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	
 	@SqlField(name="SAISI_NON_CUMULE")
 	private boolean uncumuledInput;
+	
+	@SqlField(name="DATEMODIF")
+	private Date dateModification;
 	
 	@SqlChildCollection(foreignFields="ID_CONTACT",type=Coordinate.class)
 	private List<Coordinate> coordinates;
@@ -303,6 +309,42 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 		this.firstName = firstName;
 		
 		pcs.firePropertyChange("firstName", oldValue, firstName); //$NON-NLS-1$
+	}
+
+	/**
+	 * @return dateNaissance
+	 */
+	public Date getDateNaissance() {
+		return dateNaissance;
+	}
+
+	/**
+	 * @param dateNaissance dateNaissance à définir
+	 */
+	public void setDateNaissance(Date dateNaissance) {
+		Date oldValue = this.dateNaissance;
+		
+		this.dateNaissance = dateNaissance;
+		
+		pcs.firePropertyChange("dateNaissance", oldValue, dateNaissance); //$NON-NLS-1$
+	}
+
+	/**
+	 * @return sexe
+	 */
+	public int getSexe() {
+		return sexe;
+	}
+
+	/**
+	 * @param sexe sexe à définir
+	 */
+	public void setSexe(int sexe) {
+		int oldValue = this.sexe;
+		
+		this.sexe = sexe;
+		
+		pcs.firePropertyChange("sexe", oldValue, sexe); //$NON-NLS-1$
 	}
 
 	/**
@@ -658,53 +700,19 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	}
 	
 	/**
-	 * Save contact in database
+	 * @return dateModification
 	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			if(entite != null) {
-				if(!entite.getNom().isEmpty()) {
-					entite.save(session);
-					
-					if(session != null && !session.contains(entite)) {
-						//si l'instance n'a pas été sauvegardé c'est qu'il existe une instance concurrente en base
-						//on va donc la récupérer et l'utiliser
-						List<Entite> entitesInDatabase = EntiteManager.getEntitesInDatabase(entite);
-						if(entitesInDatabase != null && entitesInDatabase.size() > 0)
-							entite = entitesInDatabase.get(0);
-						else //ne devrais pas ce produire compte tenu des tests précédents mais dans le doute pour éviter les plantages on stop la sauvegarde
-							return;
-					}
-				}
-			}
-			Entite savedEntite = entite;
-			if(entite != null && entite.getNom().isEmpty())
-				entite = null;
-			
-			SqlContext context = SqlContext.getDefaultContext();
-			if(session instanceof SqlSession)
-				context = ((SqlSession)session).getContext();
-			
-			StoreHelper<Contact> helper = SqlStoreHelperCache.getHelper(Contact.class, context);
-			helper.save(this);
-			
-			entite = savedEntite;
-		
-			if(categories != null) {
-				PersitentCollection.save(categories, session, 
-						Collections.<String, Object>singletonMap(T_CategoryContactContact.ID_CONTACT.getFieldName(), idContact));	
-			}
-			
-			if(coordinates!= null) {
-				PersitentCollection.save(coordinates, session, 
-						Collections.<String, Object>singletonMap(T_CategoryContactContact.ID_CONTACT.getFieldName(), idContact));
-			}
-			
-			Session.addProcessedObject(session, this);
-		}
+	public Date getDateModification() {
+		return dateModification;
 	}
-	
+
+	/**
+	 * @param dateModification dateModification à définir
+	 */
+	public void setDateModification(Date dateModification) {
+		this.dateModification = dateModification;
+	}
+
 	/**
 	 * For JAXB Usage only. Do not use.
 	 * 
@@ -715,7 +723,8 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 			idContact = UUID.randomUUID();
 		xmlId = idContact.toString();
 		
-		entite.beforeMarshal(marshaller);
+		if(entite != null)
+			entite.beforeMarshal(marshaller);
 	}
 	
 	/**
@@ -746,7 +755,50 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 			}
 		}
 		
-		entite.afterUnmarshal(unmarshaller, this);
+		if(entite != null)
+			entite.afterUnmarshal(unmarshaller, this);
+	}
+	
+	@Override
+	public boolean validateBeforeSave() throws ObjectPersistenceException {
+
+		if(this.categories != null) {
+			List<CategoryContactContact> originalCategoriesCollection = QResults.from(CategoryContactContact.class)
+				.where(T_CategoryContactContact.ID_CONTACT.equalTo(idContact)).asList();
+			
+			List<UUID> currentCategoriesCollection = this.categories.stream()
+					.map(ccc -> ccc.getCategoryContact().getId())
+					.collect(Collectors.toList());
+			
+			originalCategoriesCollection.stream().filter(ccc -> !currentCategoriesCollection.contains(ccc.getCategoryContact().getId()))
+				.forEach(ccc -> {
+					try {
+						ccc.delete();
+					} catch (ObjectPersistenceException e) {
+						throw new UncheckedException(e);
+					}
+				});
+		}
+		
+		if(this.coordinates != null) {
+			List<Coordinate> originalCoordinatesCollection = QResults.from(Coordinate.class)
+				.where(T_Coordinate.ID_CONTACT.equalTo(idContact)).asList();
+			
+			List<UUID> currentCoordinatesCollection = this.coordinates.stream()
+					.map(c -> c.getIdCoordinate())
+					.collect(Collectors.toList());
+			
+			originalCoordinatesCollection.stream().filter(c -> !currentCoordinatesCollection.contains(c.getIdCoordinate()))
+				.forEach(ccc -> {
+					try {
+						ccc.delete();
+					} catch (ObjectPersistenceException e) {
+						throw new UncheckedException(e);
+					}
+				});
+		}
+		
+		return true;
 	}
 	
 	@Override

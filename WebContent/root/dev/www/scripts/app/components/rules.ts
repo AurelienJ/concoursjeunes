@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { InputData, DataEvent } from 'angular2-datatable'
 
 import { IEntite } from '../models/ientite';
-import { IRule } from '../models/IRule';
+import { Rule } from '../models/Rule';
 //import { IPerson } from '../models/IPerson';
 
 //import { PersonsService } from '../services/persons';
@@ -12,7 +12,7 @@ import { RulesService } from '../services/rules';
 import { NavigatorService } from '../services/navigator';
 
 export class RulesServerSideInputData implements InputData {
-    private cachedData : IRule[];
+    private cachedData : Rule[];
     private cachedSize : number;
 
     private sortBy: string | string[];
@@ -162,7 +162,7 @@ export class RulesComponent implements OnInit{
         this.rules = new RulesServerSideInputData(this.rulesService);
 	}
 
-    public select(rule : IRule) {
+    public select(rule : Rule) {
         this.navigatorService.goBack(this.router, rule, -1);
     }
 }

@@ -67,7 +67,7 @@ import * as moment from 'moment';
 										<i class="fa fa-calendar"></i>
 									</div>
 									<input datepicker type="date" id="certificat" name="certificat" class="form-control"
-										[ngModel]="person.certificat | date:'dd/MM/yyyy'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										[ngModel]="formatDate(person.certificat)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 									<div class="dropdown-menu">
 										<datepicker [(ngModel)]="person.certificat" [showWeeks]="true" name="certificatb" (selectionDone)="showDatePicker = false"></datepicker>
 									</div>
@@ -136,7 +136,10 @@ import * as moment from 'moment';
 	`
 })
 export class PersonComponent implements OnInit, DoCheck {
-	private person : IPerson = <IPerson>{};
+	private person : IPerson = <IPerson>{
+		name: '',
+		firstName: ''
+	};
 
 	private countries : ICountry[] = [];
 	private civilities : ICivility[] = [];
@@ -199,12 +202,19 @@ export class PersonComponent implements OnInit, DoCheck {
                 currentNavigationSnapshot.stateData = p;
 			});
 		} else {
-			this.person = <IPerson>{};
+			this.person = <IPerson>{
+				name: '',
+				firstName: ''
+			};
 			currentNavigationSnapshot.stateData = this.person;
 		}
-	 }
+	}
 
-	 cancel() {
+	formatDate(date : Date) : string{
+		return moment(date).format('DD/MM/YYYY');
+	}
+
+	cancel() {
         this.navigation.goBack(this.router, null, -1);
     }
 

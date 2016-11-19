@@ -106,6 +106,7 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -155,6 +156,10 @@ import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
 import org.ajdeveloppement.webserver.services.files.FilesService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.VisibilityWindowListener;
+import org.eclipse.swt.browser.WindowEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -259,7 +264,7 @@ public class Main {
 		Display display = Display.getDefault();
 		Display.setAppName("ArcCompetition 0.0.1");
         final Shell shell = new Shell(display, SWT.SHELL_TRIM);
-        shell.setSize(1024, 768);
+        shell.setSize(1280, 768);
         shell.setLayout(new FillLayout());
        
         Browser browser = new Browser(shell, SWT.NONE);
@@ -268,8 +273,12 @@ public class Main {
                 shell.setText(event.title);
              }
           });*/
+        initialize(display, browser);
         browser.setBounds(0,0,1024,768);
         browser.setUrl("http://localhost:" + webServerListenPort + "/index.html");
+        
+        
+        
         
         
         Monitor primary = display.getPrimaryMonitor();
@@ -279,8 +288,11 @@ public class Main {
         int x = bounds.x + (bounds.width - rect.width) / 2;
         int y = bounds.y + (bounds.height - rect.height) / 2;
         
+        System.out.println(Paths.get("").toAbsolutePath().toString());
+        
         shell.setLocation(x, y);
         shell.setText("ArcCompetition 0.0.1");
+        shell.setImage(new Image(display, "ressources/graphics/iconCJ.jpg"));
         shell.open();
         
         
@@ -291,6 +303,42 @@ public class Main {
         }
         
         display.dispose();
+	}
+	
+	private static void initialize(final Display display, Browser browser) {
+		browser.addOpenWindowListener(event -> {
+			if (!event.required) return;	/* only do it if necessary */
+			Shell shell = new Shell(display);
+			shell.setText("New Window");
+			shell.setLayout(new FillLayout());
+			Browser browser1 = new Browser(shell, SWT.NONE);
+			initialize(display, browser1);
+			event.browser = browser1;
+		});
+		browser.addVisibilityWindowListener(new VisibilityWindowListener() {
+			@Override
+			public void hide(WindowEvent event) {
+				Browser browser = (Browser)event.widget;
+				Shell shell = browser.getShell();
+				shell.setVisible(false);
+			}
+			@Override
+			public void show(WindowEvent event) {
+				Browser browser = (Browser)event.widget;
+				final Shell shell = browser.getShell();
+				if (event.location != null) shell.setLocation(event.location);
+				if (event.size != null) {
+					Point size = event.size;
+					shell.setSize(shell.computeSize(size.x, size.y));
+				}
+				shell.open();
+			}
+		});
+		browser.addCloseWindowListener(event -> {
+			Browser browser1 = (Browser)event.widget;
+			Shell shell = browser1.getShell();
+			shell.close();
+		});
 	}
 	
 	/**

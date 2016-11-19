@@ -234,10 +234,10 @@ public class CriterionElementDialog extends JDialog implements ActionListener {
     	
     	criterionBinding.bind();
         
-        jtfCode.setEditable(!criterionElement.getCriterion().getReglement().isOfficialReglement()
-        		&& editable);
-        jcbActive.setEnabled(!criterionElement.getCriterion().getReglement().isOfficialReglement()
-        		&& editable);
+//        jtfCode.setEditable(!criterionElement.getCriterion().getReglement().isOfficialReglement()
+//        		&& editable);
+//        jcbActive.setEnabled(!criterionElement.getCriterion().getReglement().isOfficialReglement()
+//        		&& editable);
 
     }
     

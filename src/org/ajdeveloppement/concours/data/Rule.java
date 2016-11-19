@@ -438,9 +438,7 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 		Object oldValue = this.listCriteria;
 		
 		this.listCriteria = listCriteria;
-		
-		for(Criterion criterion : listCriteria)
-			criterion.setReglement(this);
+
 		
 		pcs.firePropertyChange("listCriteria", oldValue, listCriteria); //$NON-NLS-1$
 	}
@@ -452,8 +450,6 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	 */
 	public void addCriterion(Criterion criterion) {
 		listCriteria.add(criterion);
-		
-		criterion.setReglement(this);
 	}
 	
 	/**

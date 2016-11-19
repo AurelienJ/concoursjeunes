@@ -1,7 +1,7 @@
 /*
- * Créé le 7 août 2014 à 15:48:21 pour ArcCompetition
+ * Créé le 7 avr. 2015 à 16:15:30 pour ArcCompetition
  *
- * Copyright 2002-2014 - Aurélien JEOFFRAY
+ * Copyright 2002-2015 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,7 +86,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi.controllers;
+package org.ajdeveloppement.concours.webapi.services;
 
 import java.util.List;
 import java.util.UUID;
@@ -94,39 +94,45 @@ import java.util.UUID;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QField;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
+import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.concours.builders.ContactBuilder;
+import org.ajdeveloppement.concours.data.Archer;
+import org.ajdeveloppement.concours.data.CategoryContact;
+import org.ajdeveloppement.concours.data.CategoryContact.IdDefaultCategory;
+import org.ajdeveloppement.concours.data.Civility;
+import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.Coordinate;
+import org.ajdeveloppement.concours.data.T_Archer;
+import org.ajdeveloppement.concours.data.T_CategoryContact;
+import org.ajdeveloppement.concours.data.T_Civility;
 import org.ajdeveloppement.concours.data.T_Contact;
-import org.ajdeveloppement.concours.webapi.models.CivilityModelView;
-import org.ajdeveloppement.concours.webapi.models.ContactModelView;
-import org.ajdeveloppement.concours.webapi.models.CoordinateModelView;
-import org.ajdeveloppement.concours.webapi.services.ContactsService;
-import org.ajdeveloppement.webserver.HttpMethod;
-import org.ajdeveloppement.webserver.HttpReturnCode.ClientError;
-import org.ajdeveloppement.webserver.HttpReturnCode.Success;
-import org.ajdeveloppement.webserver.services.webapi.HttpContext;
-import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
-import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
-import org.ajdeveloppement.webserver.services.webapi.annotations.HttpServiceId;
-import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
-import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
-import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
+import org.ajdeveloppement.concours.data.T_Coordinate;
 
 /**
+ * Manipulation of Contacts Service
+ * 
  * @author Aurélien JEOFFRAY
  *
  */
-@WebApiController
-public class ContactsController {
+public class PersonsService {
 	
-	private HttpContext context;
+	private ContactBuilder contactBuilder = new ContactBuilder();
 	
-	private ContactsService service;
+	private CategoryContact archerCategoryContact = null;
 	
-	public ContactsController(HttpContext context, ContactsService service) {
-		this.context = context;
-		this.service = service;
+	public PersonsService() {
+		archerCategoryContact = QResults.from(CategoryContact.class)
+				.where(T_CategoryContact.ID_CATEGORIE_CONTACT.equalTo(IdDefaultCategory.BOWMAN.value()))
+				.first();
 	}
 	
-	private QFilter getFilter(String search) {
+	private QResults<Contact, Void> getContacts() {
+		return QResults.from(Contact.class)
+				.useBuilder(contactBuilder)
+				.leftJoin(Archer.class, T_Contact.ID_CONTACT.equalTo(T_Archer.ID_CONTACT));
+	}
+	
+	public QFilter getFilter(String search) {
 		QFilter filter = null;
 		
 		if(search != null && !search.isEmpty()) {
@@ -138,77 +144,91 @@ public class ContactsController {
 		return filter;
 	}
 	
-	@HttpService(key="countcontacts")
-	public int countContacts(@UrlParameter("search") String search) {
-		QFilter filter = getFilter( search);
-		
-		return service.countWithFilter(filter);
+	/**
+	 * return numbers of contacts corresponding at filter query
+	 * 
+	 * @param filter the contact's filter
+	 * @return numbers of contacts corresponding at filter query
+	 */
+	public int countWithFilter(QFilter filter) {
+		return T_Contact.all().where(filter).count();
 	}
 	
-	@HttpService(key="contacts")
-	public List<ContactModelView> getContact(
-			@UrlParameter("search") String search,
-			@UrlParameter("start") int offset,
-			@UrlParameter("length") int length,
-			@UrlParameter("sortBy") String sortBy,
-			@UrlParameter("sortOrder") String sortOrder) {
-		QFilter filter = getFilter( search);
-		
-		return service.getContactWithFilter(filter, length, offset);
+	public QResults<Contact, Void> getContactWithFilter(QFilter filter) {
+		return getContactWithFilter(filter, 0, -1);
 	}
 	
-	@HttpService(key="entities/contacts")
-	public List<ContactModelView> getContactsForEntity(
-			@HttpServiceId UUID idEntity) {
-		QFilter filter = T_Contact.ID_ENTITE.equalTo(idEntity);
+	public QResults<Contact, Void> getContactWithFilter(QFilter filter, int limit, int offset) {
+		QResults<Contact, Void> contactsQuery = getContacts()
+				.where(filter).orderBy(T_Contact.NAME, T_Contact.FIRSTNAME);
+		if(limit > 0)
+			contactsQuery = contactsQuery.limit(limit, offset);
 		
-		return service.getContactWithFilter(filter);
+		return contactsQuery;
+		
+//		if(contacts != null)
+//			return ModelViewAdapterHelper.asModelViewList(ContactModelView.class, contacts);
+//		
+//		return null;
 	}
 	
-	@SuppressWarnings("nls")
-	@HttpService(key="contacts")
-	public Object getContact(@HttpServiceId UUID id) {
-		String error = "";
+	/**
+	 * 
+	 * @param idEntite
+	 * @return
+	 */
+	public List<Contact> getContactsForEntite(UUID idEntite) {
+		return getContacts().where(T_Contact.ID_ENTITE.equalTo(idEntite)).asList();
 		
-		if(id != null) {
+//		if(contacts != null) {
+//			return ModelViewAdapterHelper.asModelViewList(ContactModelView.class, contacts);
+//		}
+//		
+//		return null;
+	}
+	
+	
+	
+	public Contact getContactById(UUID idContact) {
+		return getContacts().where(T_Contact.ID_CONTACT.equalTo(idContact)).first();
+	}
+	
+	public void createOrUpdateContact(Contact contact) throws ObjectPersistenceException {
+		if(contact instanceof Archer) {
+			
+			Contact dbContact = QResults.from(Archer.class)
+				.where(T_Contact.NAME.equalTo(contact.getName())
+						.and(T_Contact.FIRSTNAME.equalTo(contact.getFirstName()))
+						.and(T_Archer.NUMLICENCEARCHER.equalTo(((Archer)contact).getNumLicenceArcher())))
+				.first();
+			
+			if(dbContact != null && !dbContact.getIdContact().equals(contact.getIdContact()))
+				throw new ObjectPersistenceException("Impossible d'inserer un archer en double");
+			
 
-			ContactModelView contact = service.getContactById(id);
+			if(contact.getCategories().indexOf(archerCategoryContact) == -1)
+				contact.addCategoryContact(archerCategoryContact);
+		}
+		
+		contact.save();
+	}
+	
+	public boolean deleteContact(UUID idContact) throws ObjectPersistenceException {
+		Contact contact = T_Contact.getInstanceWithPrimaryKey(idContact);
+		if(contact != null) {
+			contact.delete();
 			
-			if(contact != null) {
-				return contact;
-			}
-			context.setReturnCode(ClientError.NotFound);
-			error = "There is no contact with id: " + id.toString();
+			return true;
 		}
 		
-		return JsonHelper.getFailSuccessResponse(error);
+		return false;
 	}
 	
-	@HttpService(key="contacts", methods={HttpMethod.PUT, HttpMethod.POST})
-	public ContactModelView createOrUpdateContact(@Body ContactModelView contactModelView) throws ObjectPersistenceException {
-		
-		if(contactModelView != null) {
-			service.createOrUpdateContact(contactModelView);
-			
-			if(context.getHttpRequest().getRequestMethod() == HttpMethod.POST)
-				context.setReturnCode(Success.CREATED);
-			return contactModelView;
-		}
-		return null;
+	public List<Coordinate> getCoordinatesForIdContact(UUID idContact) {
+		return T_Coordinate.all().where(T_Coordinate.ID_CONTACT.equalTo(idContact)).asList();
 	}
 	
-	@HttpService(key="contacts/coordinates")
-	public List<CoordinateModelView> getCoordinate(@HttpServiceId(0) UUID idContact, @HttpServiceId(1) UUID idCoordinate) {
-		if(idContact != null) {
-			return service.getCoordinateForIdContact(idContact);
-		}
-		
-		context.setReturnCode(ClientError.NotFound);
-		return null;
-	}
-	
-	@HttpService(key="civilities")
-	public List<CivilityModelView> getCivilities() {
-		return service.getAllCivilities();
+	public List<Civility> getAllCivilities() {
+		return T_Civility.all().asList();
 	}
 }

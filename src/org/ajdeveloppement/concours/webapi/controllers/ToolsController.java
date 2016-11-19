@@ -1,7 +1,7 @@
 /*
- * Créé le 7 avr. 2015 à 19:10:26 pour ArcCompetition
+ * Créé le 13 nov. 2016 à 10:27:46 pour ArcCompetition
  *
- * Copyright 2002-2015 - Aurélien JEOFFRAY
+ * Copyright 2002-2016 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,54 +86,40 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi.adapters;
+package org.ajdeveloppement.concours.webapi.controllers;
 
-import org.ajdeveloppement.concours.data.Coordinate;
-import org.ajdeveloppement.concours.data.T_Contact;
-import org.ajdeveloppement.concours.webapi.models.CoordinateModelView;
+import java.sql.SQLException;
+
+import org.ajdeveloppement.concours.ApplicationCore;
+import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
+import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
+import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
+import org.h2.tools.Server;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class CoordinateAdapter implements ModelViewAdapter<Coordinate, CoordinateModelView> {
-
-	private Coordinate reference;
-	/**
-	 * 
-	 */
-	public CoordinateAdapter() {
-		
-	}
+@WebApiController
+public class ToolsController {
 	
-	public CoordinateAdapter(Coordinate coordinate) {
-		reference = coordinate;
-	}
-
-	@Override
-	public CoordinateModelView toModelView(Coordinate model) {
-		CoordinateModelView coordinateModelView = new CoordinateModelView();
-		coordinateModelView.setId(model.getIdCoordinate());
-		if(model.getContact() != null)
-			coordinateModelView.setIdContact(model.getContact().getIdContact());
-		coordinateModelView.setCoordinateType(model.getCoordinateType().getValue());
-		coordinateModelView.setValue(model.getValue());
+	@HttpService(key="openDatabaseConsole")
+	public String openDatabaseConsole() {
+		Thread sqlConsole = new Thread() {
+			@Override
+			public void run() {
+				try {
+					//System.setProperty("java.net.useSystemProxies","false");  //$NON-NLS-1$//$NON-NLS-2$
+					Server.startWebServer(ApplicationCore.dbConnection);
+					//System.setProperty("java.net.useSystemProxies","true"); //$NON-NLS-1$ //$NON-NLS-2$
+				} catch (SQLException e1) {
+					DisplayableErrorHelper.displayException(e1);
+					e1.printStackTrace();
+				}
+			}
+		};
+		sqlConsole.start();
 		
-		return coordinateModelView;
+		return "Database Console Open";
 	}
-
-	@Override
-	public Coordinate toModel(CoordinateModelView modelView) {
-		if(reference == null)
-			reference = new Coordinate();
-		
-		reference.setIdCoordinate(modelView.getId());
-		reference.setCoordinateType(Coordinate.Type.valueOf(modelView.getCoordinateType()));
-		reference.setValue(modelView.getValue());
-		if(modelView.getIdContact() != null)
-			reference.setContact(T_Contact.getInstanceWithPrimaryKey(modelView.getIdContact()));
-		
-		return reference;
-	}
-
 }

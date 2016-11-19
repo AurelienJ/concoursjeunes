@@ -160,7 +160,7 @@ public class CategoryContact implements SqlObjectPersistence {
 	private transient Map<String, String> localizedLibelle;
 	
 	/**
-	 * Create a new catehory of contact
+	 * Create a new category of contact
 	 */
 	public CategoryContact() {
 	}

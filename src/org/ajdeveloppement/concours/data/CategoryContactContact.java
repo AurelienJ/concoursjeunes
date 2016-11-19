@@ -150,4 +150,41 @@ public class CategoryContactContact implements SqlObjectPersistence {
 	public void setCategoryContact(CategoryContact categoryContact) {
 		this.categoryContact = categoryContact;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((categoryContact == null) ? 0 : categoryContact.hashCode());
+		result = prime * result + ((contact == null) ? 0 : contact.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CategoryContactContact other = (CategoryContactContact) obj;
+		if (categoryContact == null) {
+			if (other.categoryContact != null)
+				return false;
+		} else if (!categoryContact.equals(other.categoryContact))
+			return false;
+		if (contact == null) {
+			if (other.contact != null)
+				return false;
+		} else if (!contact.equals(other.contact))
+			return false;
+		return true;
+	}
 }

@@ -196,7 +196,6 @@ public class CriterionBuilder implements ResultSetRowToObjectBinder<Criterion, R
 		
 		if(criterion == null) {
 			criterion = new Criterion();
-			criterion.setReglement(reglement);
 			if(rs == null) {
 				criterion.setCode(codeCritere);
 				
