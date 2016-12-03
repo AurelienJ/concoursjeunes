@@ -12,6 +12,9 @@ import org.ajdeveloppement.webserver.viewbinder.annotations.View;
 @View()
 public interface ContactView {
 
+	@Implementation(mapperClass=PersonViewMapper.class, methodModelToView="getType")
+	String getType();
+	
 	/**
 	 * Get the id of contact
 	 * 

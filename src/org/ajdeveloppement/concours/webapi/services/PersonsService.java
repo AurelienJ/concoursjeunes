@@ -95,7 +95,6 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QField;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.builders.ContactBuilder;
 import org.ajdeveloppement.concours.data.Archer;
 import org.ajdeveloppement.concours.data.CategoryContact;
 import org.ajdeveloppement.concours.data.CategoryContact.IdDefaultCategory;
@@ -116,8 +115,6 @@ import org.ajdeveloppement.concours.data.T_Coordinate;
  */
 public class PersonsService {
 	
-	private ContactBuilder contactBuilder = new ContactBuilder();
-	
 	private CategoryContact archerCategoryContact = null;
 	
 	public PersonsService() {
@@ -128,8 +125,8 @@ public class PersonsService {
 	
 	private QResults<Contact, Void> getContacts() {
 		return QResults.from(Contact.class)
-				.useBuilder(contactBuilder)
-				.leftJoin(Archer.class, T_Contact.ID_CONTACT.equalTo(T_Archer.ID_CONTACT));
+				/*.useBuilder(contactBuilder)
+				.leftJoin(Archer.class, T_Contact.ID_CONTACT.equalTo(T_Archer.ID_CONTACT))*/;
 	}
 	
 	public QFilter getFilter(String search) {

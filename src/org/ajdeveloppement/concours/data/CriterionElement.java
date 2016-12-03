@@ -101,7 +101,6 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
-import org.ajdeveloppement.concours.builders.CriterionElementBuilder;
 
 /**
  * Element de critère
@@ -109,11 +108,10 @@ import org.ajdeveloppement.concours.builders.CriterionElementBuilder;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="ELEMENT_CRITERE_DISCRIMINANT",loadBuilder=CriterionElementBuilder.class)
+@SqlTable(name="ELEMENT_CRITERE_DISCRIMINANT")
 @SqlPrimaryKey(fields={"ID_ELEMENT_CRITERE_DISCRIMINANT"})
 public class CriterionElement implements SqlObjectPersistence, Cloneable {
-	//private static StoreHelper<CriterionElement> helper = SqlStoreHelperFactory.getStoreHelper(CriterionElement.class);
-	
+
 	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
 	@XmlID
 	@XmlAttribute(name="id")

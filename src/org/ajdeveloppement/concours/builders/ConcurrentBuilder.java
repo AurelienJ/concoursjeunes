@@ -187,8 +187,7 @@ public class ConcurrentBuilder implements ResultSetRowToObjectBinder<Concurrent,
 					
 						try (ResultSet rsCriteriaSet = pstmt.executeQuery()) {
 							if(rsCriteriaSet.first()) {
-								differentiationCriteria = CriteriaSetBuilder
-										.getCriteriaSet(rsCriteriaSet.getInt("NUMCRITERIASET"), context); //$NON-NLS-1$
+								//differentiationCriteria = T_CriteriaSet.getInstanceWithPrimaryKey(rsCriteriaSet.getInt("NUMCRITERIASET"));
 							} else {
 //								differentiationCriteria = new CriteriaSet(reglement);
 //								for(Criterion key : reglement.getListCriteria()) {

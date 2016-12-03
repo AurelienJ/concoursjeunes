@@ -101,15 +101,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlSession;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
@@ -117,7 +110,6 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdFie
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
-import org.ajdeveloppement.concours.builders.CriteriaSetBuilder;
 
 /**
  * Jeux de critères utilisé pour distinguer un archer a des fins
@@ -126,7 +118,7 @@ import org.ajdeveloppement.concours.builders.CriteriaSetBuilder;
  * @author  Aurélien Jeoffray
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="JEUX_CRITERES_DISCRIMINANT",loadBuilder=CriteriaSetBuilder.class)
+@SqlTable(name="JEUX_CRITERES_DISCRIMINANT")
 @SqlPrimaryKey(fields="ID_JEUX_CRITERES_DISCRIMINANT",generatedidField=@SqlGeneratedIdField(name="ID_JEUX_CRITERES_DISCRIMINANT"))
 @SqlUnmappedFields(fields={"IDCRITERIASET"})
 public class CriteriaSet implements SqlObjectPersistence,Cloneable {
@@ -339,35 +331,6 @@ public class CriteriaSet implements SqlObjectPersistence,Cloneable {
 		/*if(reglement != null)
 			idReglement = reglement.getIdReglement();*/
 		return "R=" + (idReglement != null ? idReglement.toString() : "") + ",S=" + uid;
-	}
-	
-	/**
-	 * Sauvegarde en base le jeux de critère. Les arguments sont ignoré
-	 * 
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(Session)
-	 * 
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			//vérifie si le jeux n'existe pas déjà
-			String uid = getUID();
-	
-			SqlContext context = SqlContext.getDefaultContext();
-			if(session instanceof SqlSession)
-				context = ((SqlSession)session).getContext();
-			
-			StoreHelper<CriteriaSet> helper = SqlStoreHelperCache.getHelper(CriteriaSet.class, context);
-			helper.save(this, Collections.<String, Object>singletonMap("IDCRITERIASET", uid)); //$NON-NLS-1$
-			
-			if(context != null)
-				context.getCache().put(this);
-			
-			Session.addProcessedObject(session, this);
-			
-			PersitentCollection.save(elements, session, 
-					Collections.<String,Object>singletonMap(T_CriteriaSetElement.ID_JEUX_CRITERES_DISCRIMINANT.getFieldName(), id));
-		}
 	}
 	
 	/**

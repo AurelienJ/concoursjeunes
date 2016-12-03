@@ -107,6 +107,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlSubTables;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
 import org.ajdeveloppement.concours.managers.ContactManager;
@@ -129,6 +130,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name = "ENTITE")
+@SqlSubTables(Federation.class)
 @SqlPrimaryKey(fields = { "ID_ENTITE" },generatedidField=@SqlGeneratedIdField(name="ID_ENTITE",type=Types.JAVA_OBJECT))
 @SqlUnmappedFields(fields={ "DATEMODIF", "UPPER_VILLE"})
 public class Entite implements SqlObjectPersistence {

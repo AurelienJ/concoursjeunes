@@ -103,7 +103,6 @@ import org.ajdeveloppement.commons.persistence.sql.QField;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.ResultRow;
-import org.ajdeveloppement.concours.builders.EntiteBuilder;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Federation;
 import org.ajdeveloppement.concours.data.T_Entite;
@@ -121,10 +120,10 @@ public class EntiteService {
 
 	private Map<String,QField<?>> orderableField = new HashMap<>();
 	
-	private EntiteBuilder entiteBuilder = new EntiteBuilder();
 	/**
 	 * 
 	 */
+	@SuppressWarnings("nls")
 	public EntiteService() {
 		orderableField.put("nom", T_Entite.NOM);
 		orderableField.put("reference", T_Entite.REFERENCE);
@@ -161,7 +160,7 @@ public class EntiteService {
 		}
 		
 		if(search != null && !search.isEmpty()) {
-			String searchPattern = String.format("%%%s%%", search.toUpperCase());
+			String searchPattern = String.format("%%%s%%", search.toUpperCase()); //$NON-NLS-1$
 			
 			QFilter searchFilter = T_Entite.NOM.upper().like(searchPattern)
 					.or(T_Entite.VILLE.upper().like(searchPattern))
@@ -173,10 +172,6 @@ public class EntiteService {
 				filter = searchFilter;
 		}
 		return filter;
-	}
-	
-	public int countAllEntities() {
-		return T_Entite.all().count();
 	}
 	
 	public int countEntitiesWithFilter(QFilter filter) {
@@ -192,31 +187,13 @@ public class EntiteService {
 		};
 	}
 	
-	public List<EntiteModelView> getAllEntities() {
-		EntiteAdapter adapter = new EntiteAdapter();
-		
-		return T_Entite.all().orderBy(T_Entite.NOM).asList().stream().map(e -> adapter.toModelView(e)).collect(Collectors.toList());
-	}
-	
-	public List<EntiteModelView> getFederationEntities() {
-		EntiteAdapter adapter = new EntiteAdapter();
-		
-		return T_Entite.all().where(T_Entite.TYPEENTITE.equalTo(Entite.FEDERATION)).orderBy(T_Entite.NOM).asList().stream().map(e -> adapter.toModelView(e)).collect(Collectors.toList());
-	}
-	
-	public List<EntiteModelView> getClubEntities() {
-		EntiteAdapter adapter = new EntiteAdapter();
-		
-		return T_Entite.all().where(T_Entite.TYPEENTITE.differentOf(Entite.FEDERATION)).orderBy(T_Entite.NOM).asList().stream().map(e -> adapter.toModelView(e)).collect(Collectors.toList());
-	}
-	
 	@SuppressWarnings("nls")
 	public List<EntiteModelView> getEntitiesWithFilter(QFilter filter, int length, int offset, String sortBy, String sortOrder) {
 		EntiteAdapter adapter = new EntiteAdapter();
 		
 		QResults<Entite, Void> entiteQuery = T_Entite.all()
-				.useBuilder(entiteBuilder)
-				.leftJoin(Federation.class, T_Entite.ID_ENTITE.equalTo(T_Federation.ID_ENTITE))
+				//.useBuilder(entiteBuilder)
+				//.leftJoin(Federation.class, T_Entite.ID_ENTITE.equalTo(T_Federation.ID_ENTITE))
 				.where(filter);
 		
 		if(sortBy == null || sortBy.trim().isEmpty()) {

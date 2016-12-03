@@ -1,5 +1,5 @@
 /*
- * Créé le 6 nov. 2016 à 14:08:28 pour ArcCompetition
+ * Créé le 27 nov. 2016 à 17:59:44 pour ArcCompetition
  *
  * Copyright 2002-2016 - Aurélien JEOFFRAY
  *
@@ -86,51 +86,39 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.builders;
+package org.ajdeveloppement.concours.webapi.services;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.UUID;
+import static org.ajdeveloppement.concours.data.T_Face.*;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.DefaultSqlBuilder;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
-import org.ajdeveloppement.commons.persistence.sql.SqlContext;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
-import org.ajdeveloppement.concours.data.Archer;
-import org.ajdeveloppement.concours.data.Contact;
-import org.ajdeveloppement.concours.data.T_Archer;
+import java.util.List;
+
+import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.concours.data.Face;
 
 /**
+ * Gére la construction des blasons à partir des données trouvé en base
+ * 
  * @author Aurélien JEOFFRAY
  *
  */
-public class ContactBuilder implements ResultSetRowToObjectBinder<Contact, Void> {
-	private DefaultSqlBuilder<Contact, Void> contactBuilder = new DefaultSqlBuilder<>(Contact.class);
-	private DefaultSqlBuilder<Archer, Void> archerBuilder = new DefaultSqlBuilder<>(Archer.class);
-	
-	@Override
-	public Contact get(ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap)
-			throws ObjectPersistenceException {
-		try {
-			if(rs.getObject(T_Archer.ID_CONTACT.getFullyQualifiedName()) != null) {
-				return archerBuilder.get(rs, context, sessionCache, binderRessourcesMap);
-			}
-		} catch (SQLException e) {
-			throw new ObjectPersistenceException(e);
-		}
-		return contactBuilder.get(rs, context, sessionCache, binderRessourcesMap);
+public class FacesService {
+	/**
+	 * Recherche dans la base le blason correspondant au nom donnée en parametre
+	 * 
+	 * @param name le nom du blason à trouver
+	 * 
+	 * @return l'objet Face trouvé ou null si inexistant
+	 */
+	public static Face findBlasonByName(String name) {	
+		return QResults.from(Face.class).where(NOM.equalTo(name)).first();
 	}
 
-	@Override
-	public Contact get(SqlContext context, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap,
-			Object... primaryKeyValues) throws ObjectPersistenceException {
-
-		Contact contact = T_Archer.getInstanceWithPrimaryKey((UUID)primaryKeyValues[0]);
-		if(contact != null)
-			return contact;
-
-		return contactBuilder.get(context, sessionCache, binderRessourcesMap, primaryKeyValues);
+	/**
+	 * Liste l'ensemble des blasons existant dans la base
+	 * 
+	 * @return la liste des blasons existant
+	 */
+	public static List<Face> listAvailableTargetFace() {
+		return QResults.from(Face.class).orderBy(ORDRE).asList();
 	}
-
 }

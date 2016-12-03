@@ -88,9 +88,7 @@ package org.ajdeveloppement.concours.data;
 
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.bind.Unmarshaller;
@@ -99,20 +97,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
-import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlSession;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
-import org.ajdeveloppement.concours.builders.CriterionBuilder;
 
 /**
  * Caractéristique d'un critère de distinction
@@ -120,7 +110,7 @@ import org.ajdeveloppement.concours.builders.CriterionBuilder;
  * @author Aurélien JEOFFRAY
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="CRITERE_DISCRIMINANT",loadBuilder=CriterionBuilder.class)
+@SqlTable(name="CRITERE_DISCRIMINANT")
 @SqlPrimaryKey(fields="ID_CRITERE_DISCRIMINANT",generatedidField=@SqlGeneratedIdField(name="ID_CRITERE_DISCRIMINANT",type=Types.JAVA_OBJECT))
 public class Criterion implements SqlObjectPersistence, Cloneable {
 	/**
@@ -160,8 +150,6 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
     
     @SqlForeignKey(mappedTo="ID_CRITERE_DISCRIMINANT_REFERENCE")
     private Criterion critereReference;
-    
-    //private static StoreHelper<Criterion> helper = SqlStoreHelperFactory.getStoreHelper(Criterion.class);
     
     /**
      * 
@@ -325,39 +313,6 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
 	
 	public void removeCriterionElement(CriterionElement criterionElement) {
 		criterionElements.remove(criterionElement);
-	}
-
-	/**
-	 * Sauvegarde le critère en base.
-	 * 
-	 * @see org.ajdeveloppement.commons.persistence.ObjectPersistence#save(Session)
-	 */
-	@SuppressWarnings("nls")
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			SqlContext context = SqlContext.getDefaultContext();
-			if(session instanceof SqlSession)
-				context = ((SqlSession)session).getContext();
-			
-			StoreHelper<Criterion> helper = SqlStoreHelperCache.getHelper(Criterion.class, context);
-			helper.save(this); //$NON-NLS-1$
-			
-			Session.addProcessedObject(session, this);
-			
-			if(context != null)
-				context.getCache().put(this);
-	
-			Map<String, Object> fkMap = new HashMap<String, Object>();
-			fkMap.put("ID_CRITERE_DISCRIMINANT", getId());
-			
-			int numordre = 1;
-			for(CriterionElement criterionElement : criterionElements) {
-				criterionElement.setNumordre(numordre++);
-			}
-			
-			PersitentCollection.save(criterionElements, session, fkMap);
-		}
 	}
 	
 	/**

@@ -275,7 +275,7 @@ public class Main {
           });*/
         initialize(display, browser);
         browser.setBounds(0,0,1024,768);
-        browser.setUrl("http://localhost:" + webServerListenPort + "/index.html");
+        browser.setUrl("http://localhost:" + webServerListenPort + "/index.html"); //$NON-NLS-1$ //$NON-NLS-2$
         
         
         
@@ -288,11 +288,11 @@ public class Main {
         int x = bounds.x + (bounds.width - rect.width) / 2;
         int y = bounds.y + (bounds.height - rect.height) / 2;
         
-        System.out.println(Paths.get("").toAbsolutePath().toString());
+        System.out.println(Paths.get("").toAbsolutePath().toString()); //$NON-NLS-1$
         
         shell.setLocation(x, y);
         shell.setText("ArcCompetition 0.0.1");
-        shell.setImage(new Image(display, "ressources/graphics/iconCJ.jpg"));
+        shell.setImage(new Image(display, "ressources/graphics/iconCJ.jpg")); //$NON-NLS-1$
         shell.open();
         
         
@@ -473,11 +473,11 @@ public class Main {
 	private static void initDefaultProfile() throws ObjectPersistenceException {
 		List<Profile> profiles = QResults.from(Profile.class).asList();
 		if(profiles == null || profiles.size() == 0) {
-			Contact defaultUser = new Contact("default", "", null);
+			Contact defaultUser = new Contact("default", "", null); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			Profile profile = new Profile();
 			profile.setEntite(null);
-			profile.setIntitule("default");
+			profile.setIntitule("default"); //$NON-NLS-1$
 			profile.addManager(defaultUser);
 			
 			profile.save();

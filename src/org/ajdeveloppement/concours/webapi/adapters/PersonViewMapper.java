@@ -119,6 +119,12 @@ public class PersonViewMapper {
 		this.personsService = personsService;
 	}
 	
+	public static String getType(Contact contact) {
+		if(contact instanceof Archer)
+			return "archer";
+		return "contact";
+	}
+	
 	/**
 	 * Return id of contact's civility if exists
 	 * 

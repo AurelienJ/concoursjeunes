@@ -89,31 +89,9 @@
 
 package org.ajdeveloppement.concours.builders;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
 
-import org.ajdeveloppement.commons.persistence.LoadHelper;
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetLoadFactory;
-import org.ajdeveloppement.commons.persistence.sql.ResultSetRowToObjectBinder;
-import org.ajdeveloppement.commons.persistence.sql.SqlContext;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadFactory;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache;
-import org.ajdeveloppement.commons.persistence.sql.SqlLoadingSessionCache.Key;
-import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Rule;
-import org.ajdeveloppement.concours.data.Surclassement;
-import org.ajdeveloppement.concours.data.T_Entite;
-import org.ajdeveloppement.concours.data.T_Rule;
-import org.ajdeveloppement.concours.data.T_Surclassement;
-import org.ajdeveloppement.concours.data.T_Tie;
-import org.ajdeveloppement.concours.data.Tie;
 
 /**
  * <p>
@@ -126,10 +104,7 @@ import org.ajdeveloppement.concours.data.Tie;
  * @version 1.0
  *
  */
-public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
-	
-	private static LoadHelper<Rule,Map<String,Object>> loadHelper = SqlLoadFactory.getLoadHelper(Rule.class);
-	private static LoadHelper<Rule,ResultSet> resultSetLoadHelper = ResultSetLoadFactory.getLoadHelper(Rule.class);
+public class ReglementBuilder {
 
 	/**
 	 * Crée un nouveau règlement de concours
@@ -140,197 +115,6 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 		return getDefaultReglement(); 
 	}
 	
-	/**
-	 * <p>
-	 * Retourne le règlement identifié par son numéro dans la base.
-	 * Si aucun régalement ne correspond au numéro, celui ci est initialisé par défaut
-	 * (équivalent à createReglement()).
-	 * </p>
-	 * <p>
-	 * Pour fonctionner correctement, "ApplicationCore.dbConnection" doit auparavant être
-	 * correctement instancié.
-	 * </p>
-	 * 
-	 * @param idReglement le numéro du règlement à construire
-	 * 
-	 * @return le régalement construit à partir du numéro
-	 * @throws ObjectPersistenceException 
-	 */
-	public static Rule getReglement(UUID idReglement) throws ObjectPersistenceException {
-		return getReglement(idReglement, null, false, SqlContext.getDefaultContext(), null);
-	}
-	
-	/**
-	 * <p>
-	 * Retourne le règlement identifié par son numéro dans la base.
-	 * Si aucun régalement ne correspond au numéro, celui ci est initialisé par défaut
-	 * (équivalent à createReglement()).
-	 * </p>
-	 * <p>
-	 * Pour fonctionner correctement, "ApplicationCore.dbConnection" doit auparavant être
-	 * correctement instancié.
-	 * </p>
-	 * 
-	 * @param idReglement le numéro du règlement à construire
-	 * @param doNotUseCache	ne pas utiliser le cache pour le chargement
-	 * 
-	 * @return le régalement construit à partir du numéro
-	 * @throws ObjectPersistenceException 
-	 */
-	public static Rule getReglement(UUID idReglement, boolean doNotUseCache) throws ObjectPersistenceException {
-		return getReglement(idReglement, null, doNotUseCache, SqlContext.getDefaultContext(), null);
-	}
-	
-	/**
-	 * <p>
-	 * Retourne le règlement identifié par son numéro dans la base.
-	 * Si aucun régalement ne correspond au numéro, celui ci est initialisé par défaut
-	 * (équivalent à createReglement()).
-	 * </p>
-	 * <p>
-	 * Pour fonctionner correctement, "ApplicationCore.dbConnection" doit auparavant être
-	 * correctement instancié.
-	 * </p>
-	 * 
-	 * @param idReglement le numéro du règlement à construire
-	 * @param doNotUseCache	ne pas utiliser le cache pour le chargement
-	 * @param sessionCache 
-	 * 
-	 * @return le régalement construit à partir du numéro
-	 * @throws ObjectPersistenceException 
-	 */
-	public static Rule getReglement(UUID idReglement, boolean doNotUseCache, SqlContext context, SqlLoadingSessionCache sessionCache) throws ObjectPersistenceException {
-		return getReglement(idReglement, null, doNotUseCache, context, sessionCache);
-	}
-	
-	/**
-	 * Injecte les données du resultset d'une table reglement dans
-	 * un objet.
-	 * 
-	 * @param rs le jeux de résultat à injecter dans une instance réglement
-	 * 
-	 * @return le réglement construit à partir du jeux de résultat
-	 * @throws ObjectPersistenceException
-	 */
-	public static Rule getReglement(ResultSet rs, SqlContext context)
-			throws ObjectPersistenceException {
-		return getReglement(null, rs, false, context, null);
-	}
-	
-	/**
-	 * Injecte les données du resultset d'une table reglement dans
-	 * un objet.
-	 * 
-	 * @param rs le jeux de résultat à injecter dans une instance réglement
-	 * @param sessionCache 
-	 * 
-	 * @return le réglement construit à partir du jeux de résultat
-	 * @throws ObjectPersistenceException
-	 */
-	public static Rule getReglement(ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache)
-			throws ObjectPersistenceException {
-		return getReglement(null, rs, false, context, sessionCache);
-	}
-	
-	/**
-	 * Injecte les données du resultset d'une table reglement dans
-	 * un objet.
-	 * 
-	 * @param rs le jeux de résultat à injecter dans une instance réglement
-	 * @param doNotUseCache	ne pas utiliser le cache pour le chargement
-	 * 
-	 * @return le réglement construit à partir du jeux de résultat
-	 * @throws ObjectPersistenceException
-	 */
-	public static Rule getReglement(ResultSet rs, boolean doNotUseCache, SqlContext context)
-			throws ObjectPersistenceException {
-		return getReglement(null, rs, doNotUseCache, context, null);
-	}
-	
-	private static Rule getReglement(UUID idReglement, ResultSet rs, boolean doNotUseCache, 
-			SqlContext context, SqlLoadingSessionCache sessionCache)
-			throws ObjectPersistenceException {
-		
-		try {
-			if(rs != null)
-				idReglement = T_Rule.ID_REGLEMENT.getValue(rs);
-			
-			Rule reglement = null;
-			if(!doNotUseCache) {
-				reglement = context.getCache().get(Rule.class, idReglement);
-			} else {
-				if(sessionCache == null)
-					sessionCache = new SqlLoadingSessionCache();
-				else
-					reglement = sessionCache.get(Rule.class, new Key(idReglement));
-			}
-			
-			if(reglement == null) {
-				reglement = new Rule();
-				reglement.setVersion(Rule.CURRENT_VERSION);
-		
-		
-				Map<Class<?>, Map<String,Object>> foreignKeys = null;
-				if(rs != null) {
-					foreignKeys = resultSetLoadHelper.load(reglement, rs);
-					
-					idReglement = reglement.getIdRule();
-				} else {
-					reglement.setIdRule(idReglement);
-					
-					foreignKeys = loadHelper.load(reglement);
-				}
-				
-				if(!doNotUseCache)
-					context.getCache().put(reglement);
-				else
-					sessionCache.put(reglement);
-				
-				reglement.setEntite(
-						QResults.from(Entite.class)
-							.where(T_Entite.ID_ENTITE.equalTo((UUID)foreignKeys.get(Rule.class).get(T_Rule.ID_ENTITE.getFieldName())))
-							.first());
-
-				
-				Statement stmt = ApplicationCore.dbConnection.createStatement();
-				try {
-					reglement.setTie(
-							QResults.from(Tie.class, sessionCache).where(T_Tie.ID_REGLEMENT.equalTo(idReglement)).orderBy(T_Tie.NUMORDRE).asList());
-					
-					// Récupération des critères
-//					List<Criterion> criteria = new ArrayList<Criterion>();
-//
-//					try(ResultSet rsCriterion = QResults.from(Criterion.class)
-//							.where(T_Criterion.ID_REGLEMENT.equalTo(idReglement))
-//							.orderBy(T_Criterion.ORDRE)
-//							.asResultSet()) {
-//
-//						while(rsCriterion.next()) {
-//							criteria.add(CriterionBuilder.getCriterion(reglement, rsCriterion, doNotUseCache, context));
-//						}
-//					}
-//					reglement.setListCriteria(criteria);
-					
-					// Récupération des distances blason
-//					reglement.setListPlacementCriteriaSet(
-//						QResults.from(CriteriaSet.class, sessionCache)
-//							.where(T_CriteriaSet.ID_REGLEMENT.equalTo(idReglement).and(T_CriteriaSet.ID_DISTANCESBLASONS.isNotNull()))
-//							.asList());
-					
-					// Récupération des surclassements
-					reglement.setSurclassements(
-							QResults.from(Surclassement.class, sessionCache).where(T_Surclassement.ID_REGLEMENT.equalTo(idReglement)).asList());
-				} finally {
-					stmt.close();
-				}
-			}
-			
-			return reglement;
-		} catch (SQLException e) {
-			throw new ObjectPersistenceException(e);
-		}
-	}
-	
 	private static Rule getDefaultReglement() {
 		Rule reglement = new Rule();
 		
@@ -339,19 +123,5 @@ public class ReglementBuilder implements ResultSetRowToObjectBinder<Rule,Void> {
 		reglement.setNbVoleeParSerie(10);
 
 		return reglement;
-	}
-
-	@Override
-	public Rule get(ResultSet rs, SqlContext context, SqlLoadingSessionCache sessionCache, Void binderRessourcesMap)
-			throws ObjectPersistenceException {
-		return getReglement(rs, context, sessionCache);
-	}
-
-	@Override
-	public Rule get(SqlContext context, SqlLoadingSessionCache sessionCache,
-			Void binderRessourcesMap, Object... primaryKeyValues)
-			throws ObjectPersistenceException {
-		// TODO Raccord de méthode auto-généré
-		return null;
 	}
 }
