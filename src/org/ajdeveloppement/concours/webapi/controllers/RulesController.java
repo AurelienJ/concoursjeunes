@@ -93,6 +93,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.ajdeveloppement.commons.ExceptionUtils;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Entite;
@@ -125,6 +127,7 @@ public class RulesController {
 	private HttpContext context;
 	private RuleService service;
 
+	@Inject
 	public RulesController(HttpContext context, RuleService service) {
 		this.context = context;
 		this.service = service;

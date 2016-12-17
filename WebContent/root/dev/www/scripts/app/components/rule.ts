@@ -130,6 +130,8 @@ export class RuleComponent implements OnInit, DoCheck {
 	private rule : Rule = new Rule();
 	private rulesCategories : IRulesCategory[];
 
+	private activePane : string;
+	private error : string;
 	private mustUpdateView : boolean = false;
 
 	constructor(private route : ActivatedRoute,

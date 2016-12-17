@@ -90,6 +90,9 @@ var PersonsComponent = (function () {
     }
     PersonsComponent.prototype.ngOnInit = function () {
         this.navigatorService.pushUrlSegments("Pesonnes", this.route.snapshot.url, this.route.snapshot.queryParams);
+        if (this.route.snapshot.queryParams["forSelect"]) {
+            this.forSelect = true;
+        }
         this.persons = new PersonServerSideInputData(this.personsService);
     };
     PersonsComponent.prototype.select = function (person) {

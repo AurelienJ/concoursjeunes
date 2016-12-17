@@ -140,6 +140,8 @@ export class PersonComponent implements OnInit, DoCheck {
 		name: '',
 		firstName: ''
 	};
+	
+	private activePane : string;
 
 	private countries : ICountry[] = [];
 	private civilities : ICivility[] = [];

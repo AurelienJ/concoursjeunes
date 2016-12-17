@@ -1,6 +1,8 @@
 import { Directive, ElementRef, Input, Output, Renderer, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import '@types/jquery';
+import '@types/select2';
 
 @Directive({ selector: '[select2]' })
 export class Select2Directive {

@@ -84,9 +84,13 @@ var RulesComponent = (function () {
         this.router = router;
         this.navigatorService = navigatorService;
         this.rulesService = rulesService;
+        this.forSelect = false;
     }
     RulesComponent.prototype.ngOnInit = function () {
         this.navigatorService.pushUrlSegments("Réglements", this.route.snapshot.url, this.route.snapshot.queryParams);
+        if (this.route.snapshot.queryParams["forSelect"]) {
+            this.forSelect = true;
+        }
         this.rules = new RulesServerSideInputData(this.rulesService);
     };
     RulesComponent.prototype.select = function (rule) {

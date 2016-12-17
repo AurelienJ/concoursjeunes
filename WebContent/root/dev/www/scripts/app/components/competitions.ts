@@ -10,65 +10,15 @@ import { ICompetitionDescription, Competition } from '../models/Competition';
 @Component({
 	moduleId: module.id,
 	selector: 'competitions',
-	template: `<titlebar title="Compétitions"></titlebar>
-	<div class="content body">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box">
-                    <div class="box-header">
-                        <h3 class="box-title">Liste des réglements</h3>
-                    </div>
-                    <div class="box-body">
-                        <div class="row">
-                            <div class="col-sm-6"><a href="#/competitions/new" class="btn btn-app"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter</a>
-                            </div>
-                            <div class="col-sm-6 form-inline">
-                                <div class="pull-right form-group">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
-                                        <input type="search" class="form-control input-sm" #search (keyup)="0" placeholder="Recherche..." />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-						<table class="table table-bordered table-hover" [mfData]="competitions | tableFilter : [search.value]" #mf="mfDataTable" [mfRowsOnPage]="10">
-                            <thead>
-                            <tr>
-                                <th><mfDefaultSorter by="date">Date</mfDefaultSorter></th>
-                                <th><mfDefaultSorter by="type">Type</mfDefaultSorter></th>
-								<th><mfDefaultSorter by="nom">Nom</mfDefaultSorter></th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr *ngFor="let competition of mf.data">
-								<td>{{competition.date | date : 'dd/MM/yyyy'}}</td>
-								<td>{{competition.type}}</td>
-                                <td><a href="#/competitions/{{competition.id}}">{{competition.name}}</a></td>
-                                
-                                <td>
-                                    <a href="#/competitions/{{competition.id}}"><i class="fa fa-pencil" title="Editer"></i></a>
-                                    <a href="javascript:void(0)" *ngIf="forSelect" (click)="select(competition)"><i class="fa fa-cart-plus" aria-hidden="true" title="Selectionner"></i></a>
-                                </td>
-                            </tr>
-                            </tbody>
-                            <tfoot>
-                            <tr>
-                                <td colspan="5">
-                                    <mfBootstrapPaginator [rowsOnPageSet]="[5,10,25]"></mfBootstrapPaginator>
-                                </td>
-                            </tr>
-                            </tfoot>
-                        </table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	`
+	templateUrl: 'competitions.html'
 })
 export class CompetitionsComponent implements OnInit {
 	private competitions : ICompetitionDescription[];
+	
+	/**
+     * Affichage pour seléction
+     */
+    private forSelect : boolean;
 
 	constructor(private router: Router,
             private route: ActivatedRoute,
@@ -77,5 +27,13 @@ export class CompetitionsComponent implements OnInit {
 
 	ngOnInit() {
 		this.competitionsService.getCompetitionsDescription().then(c => this.competitions = c);
+		
+		if(this.route.snapshot.queryParams["forSelect"]) {
+            this.forSelect = true;
+        }
+	}
+	
+	public select(competition : ICompetitionDescription) {
+		
 	}
 }

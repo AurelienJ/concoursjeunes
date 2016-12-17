@@ -92,6 +92,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import org.ajdeveloppement.commons.ExceptionUtils;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
@@ -119,6 +121,7 @@ public class EntitiesController {
 	private HttpContext context;
 	private EntiteService service;
 	
+	@Inject
 	public EntitiesController(HttpContext context, EntiteService service) {
 		this.context = context;
 		this.service = service;

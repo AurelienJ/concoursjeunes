@@ -22,6 +22,11 @@ var CompetitionsComponent = (function () {
     CompetitionsComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.competitionsService.getCompetitionsDescription().then(function (c) { return _this.competitions = c; });
+        if (this.route.snapshot.queryParams["forSelect"]) {
+            this.forSelect = true;
+        }
+    };
+    CompetitionsComponent.prototype.select = function (competition) {
     };
     return CompetitionsComponent;
 }());

@@ -147,6 +147,8 @@ export class RulesServerSideInputDataFilterPipe implements PipeTransform {
 	})
 export class RulesComponent implements OnInit{
 	private rules : RulesServerSideInputData;
+	
+	private forSelect : boolean = false;
 
 	constructor(
         private route: ActivatedRoute,
@@ -158,6 +160,10 @@ export class RulesComponent implements OnInit{
 
 	ngOnInit() {
         this.navigatorService.pushUrlSegments("Réglements", this.route.snapshot.url, this.route.snapshot.queryParams);
+		
+		if(this.route.snapshot.queryParams["forSelect"]) {
+            this.forSelect = true;
+        }
 
         this.rules = new RulesServerSideInputData(this.rulesService);
 	}

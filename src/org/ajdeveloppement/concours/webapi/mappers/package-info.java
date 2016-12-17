@@ -1,7 +1,7 @@
 /*
- * Créé le 7 août 2014 à 15:48:21 pour ArcCompetition
+ * Créé le 3 déc. 2016 à 11:45:29 pour ArcCompetition
  *
- * Copyright 2002-2014 - Aurélien JEOFFRAY
+ * Copyright 2002-2016 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,132 +86,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi.controllers;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.sql.QFilter;
-import org.ajdeveloppement.concours.data.CategoryContact.IdDefaultCategory;
-import org.ajdeveloppement.concours.data.Contact;
-import org.ajdeveloppement.concours.webapi.adapters.PersonViewMapper;
-import org.ajdeveloppement.concours.webapi.services.PersonsService;
-import org.ajdeveloppement.concours.webapi.views.ArcherView;
-import org.ajdeveloppement.concours.webapi.views.CivilityView;
-import org.ajdeveloppement.concours.webapi.views.ContactView;
-import org.ajdeveloppement.webserver.HttpMethod;
-import org.ajdeveloppement.webserver.HttpReturnCode.Success;
-import org.ajdeveloppement.webserver.services.webapi.HttpContext;
-import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
-import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
-import org.ajdeveloppement.webserver.services.webapi.annotations.HttpServiceId;
-import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
-import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
-import org.ajdeveloppement.webserver.viewbinder.ViewsFactory;
-
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@WebApiController
-public class PersonsController {
-	
-	private HttpContext context;
-	
-	private PersonsService service;
-	
-	private PersonViewMapper contactViewMapper;
-	
-	@Inject
-	public PersonsController(HttpContext context, PersonsService service) {
-		this.context = context;
-		this.service = service;
-		this.contactViewMapper = new PersonViewMapper(service);
-	}
-	
-	/**
-	 * Convert a Contact list to ContactView list
-	 * 
-	 * @param contacts
-	 * @return
-	 */
-	private List<ContactView> toViewsList(List<Contact> contacts) {
-		return contacts.stream()
-				.map(c -> toView(c))
-				.collect(Collectors.toList());
-	}
-	
-	/**
-	 * Convert a Contact to ContactView
-	 * 
-	 * @param contact
-	 * @return
-	 */
-	private ContactView toView(Contact contact) {
-		return ViewsFactory.getView(ArcherView.class, null, Contact.class, contact, service.getClass().getClassLoader());
-	}
-	
-	@HttpService(key="countcontacts")
-	public int countContacts(@UrlParameter("search") String search) {
-		QFilter filter = service.getFilter( search);
-		
-		return service.countWithFilter(filter);
-	}
-	
-	@HttpService(key="contacts")
-	public List<ContactView> getContact(
-			@UrlParameter("search") String search,
-			@UrlParameter("start") int offset,
-			@UrlParameter("length") int length,
-			@UrlParameter("sortBy") String sortBy,
-			@UrlParameter("sortOrder") String sortOrder) {
-		QFilter filter = service.getFilter( search);
-		System.out.println(IdDefaultCategory.BOWMAN.value());
-		return toViewsList(service.getContactWithFilter(filter, length, offset).asList());
-	}
-	
-	@HttpService(key="entities/contacts")
-	public List<ContactView> getContactsForEntity(
-			@HttpServiceId UUID idEntity) {
-		
-		return toViewsList(service.getContactsForEntite(idEntity));
-	}
-	
-	@HttpService(key="contacts")
-	public ContactView getContact(@HttpServiceId UUID id) {
-		if(id != null) {
-
-			ContactView contact = toView(service.getContactById(id));
-			
-			if(contact != null)
-				return contact;
-		}
-		
-		return null;
-	}
-	
-	@HttpService(key="contacts", methods={HttpMethod.PUT, HttpMethod.POST})
-	public ContactView createOrUpdateContact(@Body ContactView contactView) throws ObjectPersistenceException {
-		if(contactView != null) {
-			Contact contact = contactViewMapper.getContactFor(contactView);
-			
-			service.createOrUpdateContact(contact);
-			
-			if(context.getHttpRequest().getRequestMethod() == HttpMethod.POST)
-				context.setReturnCode(Success.CREATED);
-			return contactView;
-		}
-		return null;
-	}
-	
-	@HttpService(key="civilities")
-	public List<CivilityView> getCivilities() {
-		return service.getAllCivilities().stream()
-				.map(c -> ViewsFactory.getView(CivilityView.class, c, service.getClass().getClassLoader()))
-				.collect(Collectors.toList());
-	}
-}
+package org.ajdeveloppement.concours.webapi.mappers;

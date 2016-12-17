@@ -1,7 +1,7 @@
 /*
- * Créé le 20 févr. 2010 à 18:11:01 pour ArcCompetition
+ * Créé le 3 déc. 2016 à 11:45:55 pour ArcCompetition
  *
- * Copyright 2002-2010 - Aurélien JEOFFRAY
+ * Copyright 2002-2016 - Aurélien JEOFFRAY
  *
  * http://arccompetition.ajdeveloppement.org
  *
@@ -86,126 +86,18 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.plugins.scriptext;
+package org.ajdeveloppement.concours.webapi.mappers;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
 
-import javax.script.ScriptException;
-import javax.xml.bind.JAXBException;
-
-import org.ajdeveloppement.commons.io.FileUtils;
-import org.ajdeveloppement.commons.io.XMLSerializer;
-import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.plugins.Plugin;
-import org.ajdeveloppement.concours.plugins.PluginEntry;
+//import fr.xebia.extras.selma.Mapper;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@Plugin(type = Plugin.Type.STARTUP)
-public class ScriptExtLauncher {
-	
-	private static List<ScriptExtention> scripts = new ArrayList<ScriptExtention>();
-
-	public ScriptExtLauncher() {
-		if(scripts.size() == 0) {
-			loadScripts();
-		}
-	}
-	
-//	private File getAllUsersScriptsPath() {
-//		return new File(ApplicationCore.userRessources.getAllusersDataPath(), "scripts"); //$NON-NLS-1$
-//	}
-	
-	public static File getUserScriptsPath() {
-		return new File(ApplicationCore.userRessources.getUserPath(), "scripts"); //$NON-NLS-1$
-	}
-	
-	public static List<ScriptExtention> getUiStartupScripts() {
-		List<ScriptExtention> uiStartupScript = new ArrayList<ScriptExtention>();
-		if(scripts.size() == 0) {
-			loadScripts();
-		}
-		for(final ScriptExtention extention : scripts) {
-			if(extention.getType() == Plugin.Type.UI_STARTUP) {
-				uiStartupScript.add(extention);
-			}
-		}
-		return uiStartupScript;
-	}
-	
-	public static List<ScriptExtention> getOnDemandScripts() {
-		List<ScriptExtention> onDemandScript = new ArrayList<ScriptExtention>();
-		if(scripts.size() == 0) {
-			loadScripts();
-		}
-		for(final ScriptExtention extention : scripts) {
-			if(extention.getType() == Plugin.Type.ON_DEMAND) {
-				onDemandScript.add(extention);
-			}
-		}
-		return onDemandScript;
-	}
-	
-	@PluginEntry
-	public void runStartupExtention() {
-		for(final ScriptExtention extention : scripts) {
-			if(extention.getType() == Plugin.Type.STARTUP && extention.getScriptInterface() != null) {
-				if(extention.isAsynchrone()) {
-					Thread t = new Thread(new Runnable() {
-						
-						@Override
-						public void run() {
-							extention.getScriptInterface().load(null, null);
-						}
-					});
-					t.start();
-				} else
-					extention.getScriptInterface().load(null, null);
-			}
-		}
-	}
-	
-	public static ScriptExtention loadScript(File scriptFolder) {
-		ScriptExtention extention = null;
-		if(scriptFolder.isDirectory()) {
-			File scriptFile = new File(scriptFolder, "scriptext.xml"); //$NON-NLS-1$
-			if(scriptFile.exists()) {
-				try {
-					extention = XMLSerializer.loadMarshallStructure(scriptFile, ScriptExtention.class);
-					extention.setMainPath(scriptFolder.getPath());
-					extention.compileScript();
-					scripts.add(extention);
-				} catch (JAXBException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (ScriptException e) {
-					e.printStackTrace();
-				}
-			}
-		} /*else if(scriptFolder.getName().endsWith(".zip")) { //$NON-NLS-1$
-			
-		}*/
-		
-		return extention;
-	}
-	
-	public static void removeScript(ScriptExtention extention) {
-		scripts.remove(extention);
-	}
-	
-	private static void loadScripts() {
-		File scriptsPath = getUserScriptsPath();
-		
-		List<File> scriptsFolders = FileUtils.listAllFiles(scriptsPath, ".*", true); //$NON-NLS-1$
-		
-		for(File scriptFolder : scriptsFolders) {
-			loadScript(scriptFolder);
-		}
-	}
+//@Mapper
+public interface EntiteMapper {
+	Entite asEntite(EntiteModelView entiteView);
 }

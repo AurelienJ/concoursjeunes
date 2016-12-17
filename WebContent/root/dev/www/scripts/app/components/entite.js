@@ -27,6 +27,7 @@ var EntiteComponent = (function () {
         this.navigatorService = navigatorService;
         this.entite = {};
         this.persons = [];
+        this.forSelect = false;
         this.mustUpdateView = false;
     }
     EntiteComponent.prototype.ngOnInit = function () {
@@ -47,6 +48,8 @@ var EntiteComponent = (function () {
             this.mustUpdateView = false;
             this.updateView();
         }
+    };
+    EntiteComponent.prototype.select = function (person) {
     };
     EntiteComponent.prototype.cancel = function () {
         this.navigatorService.goBack(this.router, null, -1);

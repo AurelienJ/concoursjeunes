@@ -93,6 +93,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import org.ajdeveloppement.commons.ExceptionUtils;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Contact;
@@ -121,7 +123,8 @@ public class ProfileController {
 	private HttpContext context;
 	private ProfilesService service;
 	
-	private ProfileController(HttpContext context, ProfilesService service) {
+	@Inject
+	public ProfileController(HttpContext context, ProfilesService service) {
 		this.context = context;
 		this.service = service;
 	}

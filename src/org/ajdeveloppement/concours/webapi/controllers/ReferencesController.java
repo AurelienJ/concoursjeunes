@@ -91,6 +91,8 @@ package org.ajdeveloppement.concours.webapi.controllers;
 import java.util.List;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.ManagerProfile;
 import org.ajdeveloppement.concours.data.Profile;
@@ -118,6 +120,7 @@ public class ReferencesController {
 	private HttpContext context;
 	private ReferenceService service;
 	
+	@Inject
 	public ReferencesController(HttpContext context, ReferenceService service) {
 		this.context = context;
 		this.service =service;

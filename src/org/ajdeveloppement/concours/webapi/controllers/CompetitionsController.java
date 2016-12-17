@@ -2,6 +2,8 @@ package org.ajdeveloppement.concours.webapi.controllers;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.concours.data.T_Competition;
 import org.ajdeveloppement.concours.webapi.models.CompetitionModelView;
@@ -19,6 +21,7 @@ public class CompetitionsController {
 	
 	private CompetitionsService service;
 	
+	@Inject
 	public CompetitionsController(HttpContext context, CompetitionsService service) {
 		this.context = context;
 		this.service = service;

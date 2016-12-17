@@ -149,6 +149,7 @@ import 'rxjs/add/operator/share';
 export class EntiteComponent implements OnInit, DoCheck {
     private entite : IEntite = <IEntite>{};
     private persons : IPerson[] = [];
+	private activePane : string;
     private error : string;
     private typesEntite: ITypeLabel[];
 
@@ -157,6 +158,7 @@ export class EntiteComponent implements OnInit, DoCheck {
     private idEntity : string;
     private url : UrlSegment[];
 
+	private forSelect : boolean = false;
     private mustUpdateView : boolean = false;
 
     constructor(
@@ -190,6 +192,9 @@ export class EntiteComponent implements OnInit, DoCheck {
             this.updateView();
         }
     }
+	
+	select(person : IPerson) {
+	}
 
     cancel() {
         this.navigatorService.goBack(this.router, null, -1);

@@ -89,12 +89,15 @@
 package org.ajdeveloppement.concours.webapi;
 
 import org.ajdeveloppement.concours.webapi.services.CompetitionsService;
-import org.ajdeveloppement.concours.webapi.services.PersonsService;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
+import org.ajdeveloppement.concours.webapi.services.PersonsService;
 import org.ajdeveloppement.concours.webapi.services.ProfilesService;
 import org.ajdeveloppement.concours.webapi.services.ReferenceService;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
 import org.ajdeveloppement.webserver.services.webapi.AbstractApiApplication;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Scopes;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -107,22 +110,22 @@ public class WebConfig extends AbstractApiApplication {
 	 */
 	@Override
 	protected  void initLifeUnits() {
-		webApiService.addSingletonService(ReferenceService.class);
-		webApiService.addSingletonService(PersonsService.class);
-		webApiService.addSingletonService(EntiteService.class);
-		webApiService.addSingletonService(ProfilesService.class);
-		webApiService.addSingletonService(RuleService.class);
-		webApiService.addSingletonService(CompetitionsService.class);
+		setInjectorModule(new AbstractModule() {
+			
+			@Override
+			protected void configure() {
+				bind(ReferenceService.class).in(Scopes.SINGLETON);
+				bind(PersonsService.class).in(Scopes.SINGLETON);
+				bind(EntiteService.class).in(Scopes.SINGLETON);
+				bind(ProfilesService.class).in(Scopes.SINGLETON);
+				bind(RuleService.class).in(Scopes.SINGLETON);
+				bind(CompetitionsService.class).in(Scopes.SINGLETON);
+			}
+		});
 	}
 
 	@Override
 	protected void stopLifeUnits() {
-		webApiService.removeService(ReferenceService.class);
-		webApiService.removeService(PersonsService.class);
-		webApiService.removeService(EntiteService.class);
-		webApiService.removeService(ProfilesService.class);
-		webApiService.removeService(RuleService.class);
-		webApiService.removeService(CompetitionsService.class);
 	}
 	
 	

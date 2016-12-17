@@ -524,7 +524,6 @@
 		description="Pack en fonction du système">
 		<antcall target="jar" />
 		<antcall target="pack-ArcCompetitionUpdate" />
-		<antcall target="pack-PhoenixPlugin" />
 		<antcall target="pack-BackupRestorePlugin" />
 		<antcall target="pack-FFTAImport" />
 		<antcall target="pack-ScriptExt" />

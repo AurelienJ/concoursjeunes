@@ -151,8 +151,13 @@ export class PersonServerSideInputDataFilterPipe implements PipeTransform {
     </div>
 	`
 	})
-export class PersonsComponent implements OnInit{
+export class PersonsComponent implements OnInit {
 	private persons : PersonServerSideInputData;
+    
+    /**
+     * Affichage pour seléction
+     */
+    private forSelect : boolean;
 
 	constructor(
         private route: ActivatedRoute,
@@ -164,6 +169,10 @@ export class PersonsComponent implements OnInit{
 
 	ngOnInit() {
         this.navigatorService.pushUrlSegments("Pesonnes", this.route.snapshot.url, this.route.snapshot.queryParams);
+        
+        if(this.route.snapshot.queryParams["forSelect"]) {
+            this.forSelect = true;
+        }
 
         this.persons = new PersonServerSideInputData(this.personsService);
 	}
