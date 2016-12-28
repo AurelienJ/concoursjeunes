@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.ajdeveloppement.concours.webapi.adapters.PersonViewMapper;
-import org.ajdeveloppement.webserver.services.webapi.helpers.Implementation;
 import org.ajdeveloppement.webserver.viewbinder.annotations.CollectionType;
+import org.ajdeveloppement.webserver.viewbinder.annotations.Implementation;
 import org.ajdeveloppement.webserver.viewbinder.annotations.View;
 
-@View()
+@View(defaultMapperClass=PersonViewMapper.class)
 public interface ContactView {
 
 	@Implementation(mapperClass=PersonViewMapper.class, methodModelToView="getType")

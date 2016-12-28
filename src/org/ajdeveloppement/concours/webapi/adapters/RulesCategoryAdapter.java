@@ -94,7 +94,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.concours.data.RulesCategory;
 import org.ajdeveloppement.concours.webapi.models.RulesCategoryModelView;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
+import org.ajdeveloppement.webserver.viewbinder.ModelViewMapper;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -131,7 +131,8 @@ public class RulesCategoryAdapter implements ModelViewAdapter<RulesCategory, Rul
 		try {
 			ModelViewMapper.mapModelViewToModel(modelView, model);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException 
+				| InstantiationException e) {
 			throw new UncheckedException(e);
 		}
 		

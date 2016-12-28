@@ -95,7 +95,7 @@ import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Federation;
 import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
+import org.ajdeveloppement.webserver.viewbinder.ModelViewMapper;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -139,7 +139,7 @@ public class EntiteAdapter implements ModelViewAdapter<Entite, EntiteModelView> 
 		try {
 			ModelViewMapper.mapModelViewToModel(modelView, reference);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException | InstantiationException e) {
 			e.printStackTrace();
 		}
 		

@@ -101,6 +101,7 @@ import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
 import org.ajdeveloppement.concours.webapi.models.TypeLabel;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
 import org.ajdeveloppement.webserver.HttpMethod;
+import org.ajdeveloppement.webserver.HttpResponse;
 import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
 import org.ajdeveloppement.webserver.HttpReturnCode.Success;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
@@ -109,7 +110,6 @@ import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpServiceId;
 import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
-import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -126,10 +126,8 @@ public class EntitiesController {
 		this.context = context;
 		this.service = service;
 	}
-	
-	
 
-	@HttpService(key="typeentity",methods=HttpMethod.GET)
+	@HttpService(key="typeentity")
 	public TypeLabel[] getTypeEntity() {
 		return service.getTypeEntity();
 	}
@@ -175,7 +173,6 @@ public class EntitiesController {
 	
 	@HttpService(key="entities",methods={HttpMethod.PUT, HttpMethod.POST})
 	public Object createOrUpdateEntity(@Body EntiteModelView entiteModelView) {
-		boolean success = true;
 		String error = null;
 		try {
 			service.createOrUpdateEntite(entiteModelView);
@@ -187,12 +184,8 @@ public class EntitiesController {
 		} catch (IllegalArgumentException | ObjectPersistenceException e) {
 			e.printStackTrace();
 			error = ExceptionUtils.toString(e);
-			context.setReturnCode(ServerError.InternalServerError);
-			success = false;
+			context.setCustomResponse(new HttpResponse(ServerError.InternalServerError, "text/plain", error));
 		}
-		
-		if(!success)
-			return JsonHelper.getFailSuccessResponse(error);
 		
 		return null;
 	}

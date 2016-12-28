@@ -93,7 +93,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.ajdeveloppement.concours.data.Profile;
 import org.ajdeveloppement.concours.webapi.models.ProfileModelView;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
+import org.ajdeveloppement.webserver.viewbinder.ModelViewMapper;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -133,7 +133,8 @@ public class ProfileAdapter implements ModelViewAdapter<Profile, ProfileModelVie
 		try {
 			ModelViewMapper.mapModelViewToModel(modelView, profile);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException
+				| InstantiationException e) {
 			e.printStackTrace();
 		}
 		

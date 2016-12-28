@@ -97,8 +97,7 @@ import org.ajdeveloppement.concours.data.T_CompetitionLevel;
 import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.data.T_Rule;
 import org.ajdeveloppement.concours.webapi.models.CompetitionModelView;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
-
+import org.ajdeveloppement.webserver.viewbinder.ModelViewMapper;
 /**
  * @author Aurélien JEOFFRAY
  *
@@ -149,7 +148,7 @@ public class CompetitionAdapter implements ModelViewAdapter<Competition, Competi
 		try {
 			ModelViewMapper.mapModelViewToModel(modelView, reference);
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException | InstantiationException e) {
 			e.printStackTrace();
 		}
 		

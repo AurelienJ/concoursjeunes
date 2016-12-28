@@ -94,7 +94,7 @@ import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.Rule.TypeReglement;
 import org.ajdeveloppement.concours.webapi.adapters.RuleAdapter;
 import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
-import org.ajdeveloppement.webserver.services.webapi.helpers.Implementation;
+import org.ajdeveloppement.webserver.viewbinder.annotations.Implementation;
 
 /**
  * @author Aurélien JEOFFRAY

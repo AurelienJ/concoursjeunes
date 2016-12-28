@@ -14,7 +14,7 @@ import org.ajdeveloppement.concours.data.Rule.TypeReglement;
 import org.ajdeveloppement.concours.data.RulesCategory;
 import org.ajdeveloppement.concours.data.Surclassement;
 import org.ajdeveloppement.concours.data.Tie;
-import org.ajdeveloppement.webserver.services.webapi.helpers.Implementation;
+import org.ajdeveloppement.webserver.viewbinder.annotations.Implementation;
 import org.ajdeveloppement.webserver.viewbinder.annotations.View;
 
 @View()

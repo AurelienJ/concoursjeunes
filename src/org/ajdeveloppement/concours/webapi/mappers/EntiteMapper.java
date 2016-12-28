@@ -88,8 +88,14 @@
  */
 package org.ajdeveloppement.concours.webapi.mappers;
 
+import java.util.UUID;
+
 import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 //import fr.xebia.extras.selma.Mapper;
 
@@ -97,7 +103,27 @@ import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
  * @author Aurélien JEOFFRAY
  *
  */
-//@Mapper
-public interface EntiteMapper {
-	Entite asEntite(EntiteModelView entiteView);
+@Mapper
+public abstract class EntiteMapper {
+	@Mapping(target = "idEntite", source = "id")
+	@Mapping(target = "competitionLevels", ignore = true)
+	@Mapping(target = "competitions", ignore = true)
+	@Mapping(target = "entiteParent", source = "idEntiteParent")
+	@Mapping(target = "entitesEnfant", ignore = true)
+	@Mapping(target = "profiles", ignore = true)
+	@Mapping(target = "rules", ignore = true)
+	public abstract Entite asEntite(EntiteModelView entiteView);
+	
+	@Mapping(target = "idEntite", source = "id")
+	@Mapping(target = "competitionLevels", ignore = true)
+	@Mapping(target = "competitions", ignore = true)
+	@Mapping(target = "entiteParent", source = "idEntiteParent")
+	@Mapping(target = "entitesEnfant", ignore = true)
+	@Mapping(target = "profiles", ignore = true)
+	@Mapping(target = "rules", ignore = true)
+	public abstract void updateEntiteFromEntiteModelView(EntiteModelView entiteView, @MappingTarget Entite entite);
+	
+	public Entite idEntiteToEntite(UUID source) {
+		return T_Entite.getInstanceWithPrimaryKey(source);
+	}
 }

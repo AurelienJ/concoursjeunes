@@ -96,7 +96,6 @@ import javax.inject.Inject;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
-import org.ajdeveloppement.concours.data.CategoryContact.IdDefaultCategory;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.webapi.adapters.PersonViewMapper;
 import org.ajdeveloppement.concours.webapi.services.PersonsService;
@@ -170,7 +169,7 @@ public class PersonsController {
 			@UrlParameter("sortBy") String sortBy,
 			@UrlParameter("sortOrder") String sortOrder) {
 		QFilter filter = service.getFilter( search);
-		System.out.println(IdDefaultCategory.BOWMAN.value());
+
 		return toViewsList(service.getContactWithFilter(filter, length, offset).asList());
 	}
 	
@@ -197,7 +196,7 @@ public class PersonsController {
 	@HttpService(key="contacts", methods={HttpMethod.PUT, HttpMethod.POST})
 	public ContactView createOrUpdateContact(@Body ContactView contactView) throws ObjectPersistenceException {
 		if(contactView != null) {
-			Contact contact = contactViewMapper.getContactFor(contactView);
+			Contact contact = contactViewMapper.asContact(contactView);
 			
 			service.createOrUpdateContact(contact);
 			

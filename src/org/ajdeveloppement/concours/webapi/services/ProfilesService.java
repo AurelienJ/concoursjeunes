@@ -108,7 +108,7 @@ import org.ajdeveloppement.concours.data.T_Profile;
 import org.ajdeveloppement.concours.data.T_Rate;
 import org.ajdeveloppement.concours.webapi.adapters.ProfileAdapter;
 import org.ajdeveloppement.concours.webapi.models.ProfileModelView;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
+import org.ajdeveloppement.webserver.viewbinder.ModelViewMapper;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -168,7 +168,7 @@ public class ProfilesService {
 		return null;
 	}
 	
-	public void createOrUpdateProfile(ProfileModelView profileModelView) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ObjectPersistenceException, NoSuchMethodException, SecurityException {
+	public void createOrUpdateProfile(ProfileModelView profileModelView) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ObjectPersistenceException, NoSuchMethodException, SecurityException, InstantiationException {
 		Profile dbProfile = null;
 		if(profileModelView.getId() != null)
 			dbProfile = T_Profile.getInstanceWithPrimaryKey(profileModelView.getId());

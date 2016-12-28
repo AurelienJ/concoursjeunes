@@ -94,7 +94,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.ajdeveloppement.concours.webapi.adapters.EntiteAdapter;
 import org.ajdeveloppement.concours.webapi.adapters.annotations.Adapter;
-import org.ajdeveloppement.webserver.services.webapi.helpers.Implementation;
+import org.ajdeveloppement.webserver.viewbinder.annotations.Implementation;
 
 /**
  * @author Aurélien JEOFFRAY

@@ -130,6 +130,7 @@ import javax.xml.bind.JAXBException;
 
 import org.ajdeveloppement.apps.AppUtilities;
 import org.ajdeveloppement.apps.ApplicationContext;
+import org.ajdeveloppement.apps.annotations.AppInfos;
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.io.XMLSerializer;
@@ -175,6 +176,15 @@ import org.jdesktop.swingx.error.ErrorInfo;
  * @version 2.3
  * 
  */
+@AppInfos(
+		properties="version.properties",
+		authors="Aurélien JEOFFRAY",
+		copyRights="&copy; 2016",
+		name="ArcCompetition",
+		organisation="AjDeveloppement",
+		codeName="version.codename",
+		version="version.number",
+		versionDate="version.date")
 public class Main {
 	private static SplashScreen splash = null;
 	private static AjResourcesReader localisation = new AjResourcesReader("libelle");  //$NON-NLS-1$
@@ -376,9 +386,10 @@ public class Main {
 		updateStartProgressStatus(0, localisation.getResourceString("main.initerrormanager")); //$NON-NLS-1$
 		//initialisation du rapport d'erreur
 		try {
+			AppInfos appInfos = Main.class.getAnnotation(AppInfos.class);
 			ApplicationContext contexte = ApplicationContext.getContext();
-			contexte.setApplicationName(AppInfos.NOM);
-			contexte.setApplicationVersion(AppInfos.VERSION + " - " + AppInfos.VERSION_DATE); //$NON-NLS-1$
+			contexte.setApplicationName(appInfos.name());
+			contexte.setApplicationVersion(appInfos.version() + " - " + appInfos.versionDate()); //$NON-NLS-1$
 			
 			DisplayableErrorHelper.setErrorReporter(new WebErrorReporter(
 					new URL(ApplicationCore.staticParameters.getResourceString("url.errorreport")), //$NON-NLS-1$

@@ -105,7 +105,7 @@ import org.ajdeveloppement.concours.data.T_Civility;
 import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.webapi.services.PersonsService;
 import org.ajdeveloppement.concours.webapi.views.ContactView;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
+import org.ajdeveloppement.webserver.viewbinder.ModelViewMapper;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -119,6 +119,7 @@ public class PersonViewMapper {
 		this.personsService = personsService;
 	}
 	
+	@SuppressWarnings("nls")
 	public static String getType(Contact contact) {
 		if(contact instanceof Archer)
 			return "archer";
@@ -202,7 +203,7 @@ public class PersonViewMapper {
 		}
 	}
 	
-	public Contact getContactFor(ContactView contactView) {
+	public Contact asContact(ContactView contactView) {
 		Contact contact = null;
 		
 		if(contactView.getId() != null)
@@ -219,7 +220,7 @@ public class PersonViewMapper {
 		try {
 			ModelViewMapper.mapModelViewToModel(contactView, contact);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-				| SecurityException | IntrospectionException e) {
+				| SecurityException | IntrospectionException | InstantiationException e) {
 			throw new UncheckedException(e);
 		}
 		

@@ -103,8 +103,7 @@ import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.data.T_RulesCategory;
 import org.ajdeveloppement.concours.data.Tie;
 import org.ajdeveloppement.concours.webapi.models.RuleModelView;
-import org.ajdeveloppement.webserver.services.webapi.helpers.ModelViewMapper;
-
+import org.ajdeveloppement.webserver.viewbinder.ModelViewMapper;
 /**
  * @author Aurélien JEOFFRAY
  *
@@ -177,7 +176,8 @@ public class RuleAdapter implements ModelViewAdapter<Rule, RuleModelView> {
 				model.setTie(ties);
 			}
 		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
+				| InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException 
+				| InstantiationException e) {
 			throw new UncheckedException(e);
 		}
 		model.setCategory(T_RulesCategory.getInstanceWithPrimaryKey(modelView.getIdCategory()));

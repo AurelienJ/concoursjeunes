@@ -151,7 +151,8 @@ public class ProfileController {
 				
 				return profileModelView;
 			}
-		} catch (ObjectPersistenceException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException | NoSuchMethodException | SecurityException e) {
+		} catch (ObjectPersistenceException | IllegalAccessException | IllegalArgumentException | InvocationTargetException 
+				| IntrospectionException | NoSuchMethodException | SecurityException | InstantiationException e) {
 			e.printStackTrace();
 			context.setReturnCode(ServerError.InternalServerError);
 			return JsonHelper.getFailSuccessResponse(ExceptionUtils.toString(e));
@@ -182,7 +183,7 @@ public class ProfileController {
 				return profileModelView;
 			} catch (IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | IntrospectionException
-					| ObjectPersistenceException | NoSuchMethodException | SecurityException e) {
+					| ObjectPersistenceException | NoSuchMethodException | SecurityException | InstantiationException e) {
 				e.printStackTrace();
 				error = ExceptionUtils.toString(e);
 				context.setReturnCode(ServerError.InternalServerError);

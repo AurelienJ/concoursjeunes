@@ -1,7 +1,8 @@
+///<reference path="_references.ts"/>
+
 import { Directive, ElementRef, Input, Output, Renderer, EventEmitter, HostListener } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import '@types/jquery';
 
 @Directive({ selector: '[slimscroll]' })
 export class SlimScrollDirective {
