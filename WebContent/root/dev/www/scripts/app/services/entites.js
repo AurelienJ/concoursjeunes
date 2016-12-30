@@ -68,12 +68,12 @@ var EntitesService = (function () {
         })
             .catch(this.handleError);
     };
-    EntitesService.prototype.getEntitie = function (id) {
+    EntitesService.prototype.getEntity = function (id) {
         var _this = this;
         if (this.entites && this.entites[id]) {
             return new Promise(function (resolve, reject) {
                 if (_this.entites[id].idEntiteParent && (!_this.entites[id].entiteParent || _this.entites[id].entiteParent.id != _this.entites[id].idEntiteParent))
-                    _this.getEntitie(_this.entites[id].idEntiteParent).then(function (parent) { return _this.entites[id].entiteParent = parent; });
+                    _this.getEntity(_this.entites[id].idEntiteParent).then(function (parent) { return _this.entites[id].entiteParent = parent; });
                 resolve(_this.entites[id]);
             });
         }
@@ -82,7 +82,7 @@ var EntitesService = (function () {
             return entitiePromise.then(function (res) { return res.json(); })
                 .then(function (entite) {
                 if (entite.idEntiteParent != null)
-                    _this.getEntitie(entite.idEntiteParent).then(function (parent) { return entite.entiteParent = parent; });
+                    _this.getEntity(entite.idEntiteParent).then(function (parent) { return entite.entiteParent = parent; });
                 _this.entites[entite.id] = entite;
                 return entite;
             })
@@ -107,8 +107,8 @@ var EntitesService = (function () {
         return request.toPromise()
             .then(function (response) { return response.json(); })
             .then(function (updatedEntite) {
-            if ((updatedEntite.idEntiteParent && !entiteParent) || updatedEntite.idEntiteParent != entiteParent.id) {
-                _this.getEntitie(updatedEntite.idEntiteParent).then(function (parent) { return updatedEntite.entiteParent = parent; });
+            if ((updatedEntite.idEntiteParent && !entiteParent) || (entiteParent && updatedEntite.idEntiteParent != entiteParent.id)) {
+                _this.getEntity(updatedEntite.idEntiteParent).then(function (parent) { return updatedEntite.entiteParent = parent; });
             }
             else {
                 updatedEntite.entiteParent = entiteParent;
@@ -117,6 +117,24 @@ var EntitesService = (function () {
         })
             .catch(function (error) {
             entite.entiteParent = entiteParent;
+            _this.handleError(error);
+        });
+    };
+    EntitesService.prototype.getCriteria = function (idEntity) {
+        var _this = this;
+        return this.http.get("api/entities/" + idEntity + "/criteria").toPromise()
+            .then(function (response) { return response.json(); })
+            .catch(function (error) {
+            _this.handleError(error);
+        });
+    };
+    EntitesService.prototype.saveCriteria = function (idEntity, criteria) {
+        var _this = this;
+        criteria.forEach(function (c) { return c.idFederation = idEntity; });
+        return this.http.post("api/entities/" + idEntity + "/criteria", criteria, { headers: this.headers })
+            .toPromise()
+            .then(function (response) { return response.json(); })
+            .catch(function (error) {
             _this.handleError(error);
         });
     };

@@ -162,7 +162,7 @@ public class Entite implements SqlObjectPersistence {
 
 	@XmlTransient
 	@SqlField(name = "ID_ENTITE")
-	private UUID idEntite;
+	private UUID idEntite = UUID.randomUUID();
 	@SqlField(name = "NOM")
 	private String nom;
 	@SqlField(name = "REFERENCE")
@@ -645,26 +645,18 @@ public class Entite implements SqlObjectPersistence {
 		return (nom == null) ? "" : nom; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((reference == null) ? 0 : reference.hashCode());
-		result = prime * result + ((nom == null) ? 0 : nom.hashCode());
-		result = prime * result + type;
-		result = prime * result + ((ville == null) ? 0 : ville.hashCode());
+		result = prime * result + ((idEntite == null) ? 0 : idEntite.hashCode());
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -676,22 +668,10 @@ public class Entite implements SqlObjectPersistence {
 		if (getClass() != obj.getClass())
 			return false;
 		Entite other = (Entite) obj;
-		if (reference == null) {
-			if (other.reference != null)
+		if (idEntite == null) {
+			if (other.idEntite != null)
 				return false;
-		} else if (!reference.equals(other.reference))
-			return false;
-		if (nom == null) {
-			if (other.nom != null)
-				return false;
-		} else if (!nom.equals(other.nom))
-			return false;
-		if (type != other.type)
-			return false;
-		if (ville == null) {
-			if (other.ville != null)
-				return false;
-		} else if (!ville.equals(other.ville))
+		} else if (!idEntite.equals(other.idEntite))
 			return false;
 		return true;
 	}

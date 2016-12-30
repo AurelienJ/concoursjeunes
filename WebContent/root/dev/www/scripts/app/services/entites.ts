@@ -3,8 +3,9 @@ import { Injectable }    from '@angular/core';
 import { Headers, Http } from '@angular/http';
 
 import { IEntite } from '../models/ientite';
-import { ITypeLabel } from '../models/ITypeLabel'
-import { ICountry } from '../models/ICountry'
+import { ITypeLabel } from '../models/ITypeLabel';
+import { ICountry } from '../models/ICountry';
+import { Criterion } from '../models/Criterion';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -92,11 +93,11 @@ export class EntitesService {
             .catch(this.handleError);
     }
 
-    public getEntitie(id : string) : Promise<IEntite> {
+    public getEntity(id : string) : Promise<IEntite> {
         if(this.entites && this.entites[id]) {
             return new Promise<IEntite>((resolve, reject) => {
                  if(this.entites[id].idEntiteParent && (!this.entites[id].entiteParent || this.entites[id].entiteParent.id != this.entites[id].idEntiteParent))
-                    this.getEntitie(this.entites[id].idEntiteParent).then(parent => this.entites[id].entiteParent = parent);
+                    this.getEntity(this.entites[id].idEntiteParent).then(parent => this.entites[id].entiteParent = parent);
                 resolve(this.entites[id]);
             });
         } else {
@@ -105,7 +106,7 @@ export class EntitesService {
             return entitiePromise.then(res => res.json())
                 .then(entite => {
                     if((<IEntite>entite).idEntiteParent != null)
-                        this.getEntitie((<IEntite>entite).idEntiteParent).then(parent => (<IEntite>entite).entiteParent = parent);
+                        this.getEntity((<IEntite>entite).idEntiteParent).then(parent => (<IEntite>entite).entiteParent = parent);
 
                     this.entites[entite.id] = entite;
                     
@@ -133,11 +134,12 @@ export class EntitesService {
             request = this.http.post(url, entite, {headers: this.headers});
         else
             request = this.http.put(url, entite, {headers: this.headers});
+
         return request.toPromise()
             .then(response => response.json())
             .then((updatedEntite : IEntite) => {
-                if((updatedEntite.idEntiteParent && !entiteParent) || updatedEntite.idEntiteParent != entiteParent.id) {
-                    this.getEntitie(updatedEntite.idEntiteParent).then(parent => updatedEntite.entiteParent = parent);
+                if((updatedEntite.idEntiteParent && !entiteParent) || (entiteParent && updatedEntite.idEntiteParent != entiteParent.id)) {
+                    this.getEntity(updatedEntite.idEntiteParent).then(parent => updatedEntite.entiteParent = parent);
                 } else {
                     updatedEntite.entiteParent = entiteParent;
                 }
@@ -145,6 +147,25 @@ export class EntitesService {
             })
             .catch(error => {
                 entite.entiteParent = entiteParent;
+                this.handleError(error);
+            });
+    }
+
+    public getCriteria(idEntity : string) : Promise<Criterion[]> {
+        return this.http.get("api/entities/" + idEntity + "/criteria").toPromise()
+            .then(response => response.json())
+            .catch(error => {
+                this.handleError(error);
+            });
+    }
+
+    public saveCriteria(idEntity : string, criteria : Criterion[]) {
+        criteria.forEach(c => c.idFederation = idEntity);
+
+        return this.http.post("api/entities/" + idEntity + "/criteria", criteria, {headers: this.headers})
+            .toPromise()
+            .then(response => response.json())
+            .catch(error => {
                 this.handleError(error);
             });
     }

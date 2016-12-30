@@ -1,7 +1,7 @@
 ///<reference path="../_references.ts"/>
 import { Component, EventEmitter, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { InputData, DataEvent } from 'angular2-datatable'
+import { InputData, DataEvent } from '../../libs/angular2-datatable'
 
 import { IEntite } from '../models/ientite';
 import { IPerson } from '../models/IPerson';

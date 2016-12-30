@@ -91,15 +91,19 @@ package org.ajdeveloppement.concours.webapi.controllers;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.ajdeveloppement.commons.ExceptionUtils;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
+import org.ajdeveloppement.concours.data.Criterion;
+import org.ajdeveloppement.concours.webapi.mappers.CriterionMapper;
 import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
 import org.ajdeveloppement.concours.webapi.models.TypeLabel;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
+import org.ajdeveloppement.concours.webapi.views.CriterionView;
 import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.HttpResponse;
 import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
@@ -110,6 +114,7 @@ import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpServiceId;
 import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
+import org.ajdeveloppement.webserver.viewbinder.ViewsFactory;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -120,11 +125,13 @@ public class EntitiesController {
 	
 	private HttpContext context;
 	private EntiteService service;
+	private CriterionMapper criterionMapper;
 	
 	@Inject
-	public EntitiesController(HttpContext context, EntiteService service) {
+	public EntitiesController(HttpContext context, EntiteService service, CriterionMapper criterionMapper) {
 		this.context = context;
 		this.service = service;
+		this.criterionMapper = criterionMapper;
 	}
 
 	@HttpService(key="typeentity")
@@ -172,21 +179,37 @@ public class EntitiesController {
 	}
 	
 	@HttpService(key="entities",methods={HttpMethod.PUT, HttpMethod.POST})
-	public Object createOrUpdateEntity(@Body EntiteModelView entiteModelView) {
+	public EntiteModelView createOrUpdateEntity(@Body EntiteModelView entiteModelView) {
 		String error = null;
 		try {
 			service.createOrUpdateEntite(entiteModelView);
 
-			if(context.getHttpRequest().getRequestMethod() == HttpMethod.POST)
+			if(context.getHttpRequest().getRequestMethod() == HttpMethod.PUT)
 				context.setReturnCode(Success.CREATED);
 			
 			return entiteModelView;
 		} catch (IllegalArgumentException | ObjectPersistenceException e) {
 			e.printStackTrace();
 			error = ExceptionUtils.toString(e);
-			context.setCustomResponse(new HttpResponse(ServerError.InternalServerError, "text/plain", error));
+			context.setCustomResponse(new HttpResponse(ServerError.InternalServerError, "text/plain", error)); //$NON-NLS-1$
 		}
 		
 		return null;
+	}
+	
+	@HttpService(key="entities/criteria")
+	public List<CriterionView> getCriteria(@HttpServiceId UUID idEntity) {
+		return service.getCriteria(idEntity).stream()
+				.map(c -> ViewsFactory.getView(CriterionView.class, c, c.getClass().getClassLoader()))
+				.collect(Collectors.toList());
+	}
+	
+	@HttpService(key="entities/criteria",methods={HttpMethod.PUT, HttpMethod.POST})
+	public List<CriterionView> saveCriteria(@HttpServiceId UUID idEntity, @Body CriterionView[] criterionViews) throws ObjectPersistenceException {
+		List<Criterion> criteria = criterionMapper.criterionViewListToCriterionList(criterionViews);
+		
+		return service.saveCriteria(idEntity, criteria).stream()
+				.map(c -> ViewsFactory.getView(CriterionView.class, c, c.getClass().getClassLoader()))
+				.collect(Collectors.toList());
 	}
 }

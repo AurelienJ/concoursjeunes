@@ -25,7 +25,6 @@
     "font-awesome":"^4.7.0",
     "admin-lte": "^2.3.8",
 
-    "angular2-datatable": "^0.5.2",
     "angular2-tree-component": "^2.5.1",
     "select2": "^4.0.3",
     "ng2-bootstrap": "^1.1.16-9",

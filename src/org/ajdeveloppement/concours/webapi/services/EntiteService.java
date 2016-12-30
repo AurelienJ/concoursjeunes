@@ -103,8 +103,10 @@ import org.ajdeveloppement.commons.persistence.sql.QField;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.ResultRow;
+import org.ajdeveloppement.concours.data.Criterion;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Federation;
+import org.ajdeveloppement.concours.data.T_Criterion;
 import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.data.T_Federation;
 import org.ajdeveloppement.concours.webapi.adapters.EntiteAdapter;
@@ -293,5 +295,25 @@ public class EntiteService {
 			if(entite.getIdEntite() != entiteModelView.getId())
 				entiteModelView.setId(entite.getIdEntite());
 		}
+	}
+
+	public List<Criterion> getCriteria(UUID idEntite) {
+		List<Criterion> criteria = T_Criterion.all().where(T_Criterion.ID_ENTITE.equalTo(idEntite)).orderBy(T_Criterion.ORDRE).asList();
+		return criteria;
+	}
+	
+	public List<Criterion> saveCriteria(UUID idEntity, List<Criterion> criteria) throws ObjectPersistenceException {
+		Federation federation = T_Federation.getInstanceWithPrimaryKey(idEntity);
+		if(federation != null) {
+			List<Criterion> sourceCriteria = federation.getCriteria();
+			federation.setCriteria(criteria);
+			for(Criterion sourceCriterion : sourceCriteria) {
+				if(!criteria.contains(sourceCriterion))
+					sourceCriterion.delete();
+			}
+			
+			federation.save();
+		}
+		return criteria;
 	}
 }

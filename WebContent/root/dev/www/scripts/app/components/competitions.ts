@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { InputData, DataEvent } from 'angular2-datatable';
+import { InputData, DataEvent } from '../../libs/angular2-datatable';
 
 import { NavigatorService } from '../services/navigator';
 import { CompetitionsService } from '../services/competitions';

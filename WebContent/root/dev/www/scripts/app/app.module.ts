@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { DatepickerModule } from 'ng2-bootstrap/ng2-bootstrap';
 
 import { HttpModule, XHRBackend } from '@angular/http';
-import { DataTableModule } from "angular2-datatable";
+import { DataTableModule } from "../libs/angular2-datatable";
 
 import { Select2Directive } from './select2.directive';
 import { SlimScrollDirective } from './slimscroll.directive';
@@ -14,6 +14,7 @@ import { SlimScrollDirective } from './slimscroll.directive';
 import { AppComponent } from './components/app';
 import { TitlebarComponent } from './components/titlebar';
 import { ParametersComponent } from './components/parameters';
+import { CriterionComponent } from './components/criterion';
 import { EntitesComponent, EntiteServerSideInputDataFilterPipe } from './components/entites';
 import { EntiteComponent } from './components/entite';
 import { PersonsComponent , PersonServerSideInputDataFilterPipe } from './components/persons';
@@ -38,6 +39,7 @@ import { AppRoutes } from './app.routes';
     declarations:   [ 
         AppComponent, TitlebarComponent, 
         ParametersComponent,
+        CriterionComponent,
         EntitesComponent, EntiteComponent,
         PersonsComponent, PersonComponent, 
         RulesComponent, RuleComponent,

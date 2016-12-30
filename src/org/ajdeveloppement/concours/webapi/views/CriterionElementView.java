@@ -7,7 +7,7 @@ import org.ajdeveloppement.webserver.viewbinder.annotations.View;
 @View()
 public interface CriterionElementView {
 
-	UUID getid();
+	UUID getId();
 	/**
 	 * Renvoie le code de l'élément
 	 * 

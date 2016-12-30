@@ -15,12 +15,13 @@ var forms_1 = require("@angular/forms");
 var router_1 = require("@angular/router");
 var ng2_bootstrap_1 = require("ng2-bootstrap/ng2-bootstrap");
 var http_1 = require("@angular/http");
-var angular2_datatable_1 = require("angular2-datatable");
+var angular2_datatable_1 = require("../libs/angular2-datatable");
 var select2_directive_1 = require("./select2.directive");
 var slimscroll_directive_1 = require("./slimscroll.directive");
 var app_1 = require("./components/app");
 var titlebar_1 = require("./components/titlebar");
 var parameters_1 = require("./components/parameters");
+var criterion_1 = require("./components/criterion");
 var entites_1 = require("./components/entites");
 var entite_1 = require("./components/entite");
 var persons_1 = require("./components/persons");
@@ -47,6 +48,7 @@ AppModule = __decorate([
         declarations: [
             app_1.AppComponent, titlebar_1.TitlebarComponent,
             parameters_1.ParametersComponent,
+            criterion_1.CriterionComponent,
             entites_1.EntitesComponent, entite_1.EntiteComponent,
             persons_1.PersonsComponent, person_1.PersonComponent,
             rules_1.RulesComponent, rule_1.RuleComponent,

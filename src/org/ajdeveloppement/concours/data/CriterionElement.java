@@ -96,6 +96,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
@@ -118,7 +119,7 @@ public class CriterionElement implements SqlObjectPersistence, Cloneable {
 	private String xmlId;
 	
 	@SqlField(name="ID_ELEMENT_CRITERE_DISCRIMINANT")
-	private UUID id;
+	private UUID id = UUID.randomUUID();
 	
 	@SqlField(name="CODE")
     private String code = ""; //$NON-NLS-1$
@@ -236,6 +237,14 @@ public class CriterionElement implements SqlObjectPersistence, Cloneable {
     	this.numordre = numordre;
     }
 	
+	@Override
+	public boolean validateBeforeSave() throws ObjectPersistenceException {
+		if(id == null)
+			id = UUID.randomUUID();
+		
+		return true;
+	}
+	
 	/**
 	 * 
 	 * @param marshaller
@@ -261,57 +270,6 @@ public class CriterionElement implements SqlObjectPersistence, Cloneable {
     public String toString() {
         return code;
     }
-    
-    /**
-     * Test si deux éléments de critères sont équivalent
-     * 
-     * @param criterionElement - l'objet à comparer
-     * @return boolean - le résultats de la comparaison de critères
-     */
-//    public boolean equals(CriterionElement criterionElement) {
-//        return code.equals(criterionElement.getCode());
-//    }
-    
-    /**
-     * donne le hash de l'objet en se basant sur celui de son code
-     */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		result = prime * result
-				+ ((criterion == null) ? 0 : criterion.hashCode());
-		return result;
-	}
-
-	/**
-     * Test si deux critères sont équivalent en se basant sur la comparaison d'objet
-     * 
-     * @param obj - l'objet à comparer
-     * @return boolean - le résultats de la comparaison de critères
-     */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CriterionElement other = (CriterionElement) obj;
-		if (code == null) {
-			if (other.code != null)
-				return false;
-		} else if (!code.equals(other.code))
-			return false;
-		if (criterion == null) {
-			if (other.criterion != null)
-				return false;
-		} else if (!criterion.equals(other.criterion))
-			return false;
-		return true;
-	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()

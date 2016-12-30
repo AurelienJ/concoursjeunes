@@ -3,7 +3,9 @@ package org.ajdeveloppement.concours.webapi.views;
 import java.util.List;
 import java.util.UUID;
 
+import org.ajdeveloppement.concours.webapi.mappers.CriterionMapper;
 import org.ajdeveloppement.webserver.viewbinder.annotations.CollectionType;
+import org.ajdeveloppement.webserver.viewbinder.annotations.Implementation;
 import org.ajdeveloppement.webserver.viewbinder.annotations.View;
 
 @View()
@@ -33,6 +35,9 @@ public interface CriterionView {
 	 * @return le numéro d'ordre d'affichage du critère
 	 */
 	int getNumordre();
+	
+	@Implementation(mapperClass=CriterionMapper.class,methodModelToView="getIdFederation")
+	UUID getIdFederation();
 
 	/**
 	 * Retourne la liste des éléments lié au critère

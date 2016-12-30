@@ -97,7 +97,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
@@ -133,7 +135,7 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
     	T_Archer.ARC.getFieldName()
     };
     @SqlField(name="ID_CRITERE_DISCRIMINANT")
-    private UUID id;
+    private UUID id = UUID.randomUUID();
     @SqlField(name="CODE")
     private String code = ""; //$NON-NLS-1$
     @SqlField(name="NOM")
@@ -143,9 +145,10 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
     
     @XmlElementWrapper(name="criterionelements",required=true)
     @XmlElement(name="element")
+    @SqlChildCollection(foreignFields="ID_CRITERE_DISCRIMINANT",type=CriterionElement.class)
     private List<CriterionElement> criterionElements = new ArrayList<CriterionElement>();
     
-    @SqlForeignKey(mappedTo="ID_FEDERATION")
+    @SqlForeignKey(mappedTo="ID_ENTITE")
     private Federation federation;
     
     @SqlForeignKey(mappedTo="ID_CRITERE_DISCRIMINANT_REFERENCE")
@@ -245,43 +248,33 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
 //    }
     
     /**
-     * Test si deux critères sont équivalent en se basant sur la comparaison d'objet
-     */
+	 * @return federation
+	 */
+	public Federation getFederation() {
+		return federation;
+	}
+
+	/**
+	 * @param federation federation à définir
+	 */
+	public void setFederation(Federation federation) {
+		this.federation = federation;
+	}
+	
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Criterion other = (Criterion) obj;
-		if (code == null) {
-			if (other.code != null)
-				return false;
-		} else if (!code.equals(other.code))
-			return false;
+	public boolean validateBeforeSave() throws ObjectPersistenceException {
+		if(id == null)
+			id = UUID.randomUUID();
 		
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		return result;
-	}
-    
     /**
      * renvoie le libelle du critère
      */
     @Override
     public String toString() {
-        return code;
+        return libelle;
     }
 
 	/**
@@ -290,6 +283,8 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
 	 * @return la liste des éléments du critère
 	 */
 	public List<CriterionElement> getCriterionElements() {
+		if(criterionElements == null || criterionElements.size() == 0)
+			criterionElements = T_CriterionElement.all().where(T_CriterionElement.ID_CRITERE_DISCRIMINANT.equalTo(id)).asList();
 		return criterionElements;
 	}
 

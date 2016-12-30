@@ -88,6 +88,7 @@
  */
 package org.ajdeveloppement.concours.webapi;
 
+import org.ajdeveloppement.concours.webapi.mappers.CriterionMapper;
 import org.ajdeveloppement.concours.webapi.services.CompetitionsService;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
 import org.ajdeveloppement.concours.webapi.services.PersonsService;
@@ -95,8 +96,10 @@ import org.ajdeveloppement.concours.webapi.services.ProfilesService;
 import org.ajdeveloppement.concours.webapi.services.ReferenceService;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
 import org.ajdeveloppement.webserver.services.webapi.AbstractApiApplication;
+import org.mapstruct.factory.Mappers;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
 /**
@@ -114,12 +117,18 @@ public class WebConfig extends AbstractApiApplication {
 			
 			@Override
 			protected void configure() {
+				//Service
 				bind(ReferenceService.class).in(Scopes.SINGLETON);
 				bind(PersonsService.class).in(Scopes.SINGLETON);
 				bind(EntiteService.class).in(Scopes.SINGLETON);
 				bind(ProfilesService.class).in(Scopes.SINGLETON);
 				bind(RuleService.class).in(Scopes.SINGLETON);
 				bind(CompetitionsService.class).in(Scopes.SINGLETON);
+			}
+			
+			@Provides
+			public CriterionMapper provideCriterionMapper() {
+				return Mappers.getMapper(CriterionMapper.class);
 			}
 		});
 	}

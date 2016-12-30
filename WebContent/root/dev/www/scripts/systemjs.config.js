@@ -28,7 +28,7 @@
         'lodash':                    'node_modules/lodash/lodash.min.js',
         'moment':                    'node_modules/moment/min/moment-with-locales.min.js',
 
-        'angular2-datatable': 'node_modules/angular2-datatable',
+        'angular2-datatable': 'scripts/libs/angular2-datatable',
         'ng2-bootstrap/ng2-bootstrap': 'node_modules/ng2-bootstrap/bundles/ng2-bootstrap.umd.min.js'
     };
     

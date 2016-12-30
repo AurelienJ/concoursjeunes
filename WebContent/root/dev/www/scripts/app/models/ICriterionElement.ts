@@ -8,5 +8,5 @@ export interface ICriterionElement {
 	code: string;
 	libelle : string;
 	numordre : number;
-	criterion : Criterion
+	//criterion : Criterion
 }

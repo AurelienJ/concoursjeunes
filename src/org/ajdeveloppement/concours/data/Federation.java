@@ -88,21 +88,15 @@
  */
 package org.ajdeveloppement.concours.data;
 
-import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlSession;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
@@ -118,8 +112,6 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields
 @SqlPrimaryKey(fields="ID_ENTITE")
 @SqlUnmappedFields(fields="ID_ENTITE",typeFields=UUID.class)
 public class Federation extends Entite implements SqlObjectPersistence {
-	//private static StoreHelper<Federation> helper = SqlStoreHelperFactory.getStoreHelper(Federation.class);
-
 	@SqlField(name="SIGLE")
 	@XmlElement(name="sigle")
 	private String sigleFederation = ""; //$NON-NLS-1$
@@ -127,6 +119,9 @@ public class Federation extends Entite implements SqlObjectPersistence {
 	@SqlField(name="NOM")
 	@XmlElement(name="nom")
 	private String nomFederation = ""; //$NON-NLS-1$
+	
+	@SqlChildCollection(foreignFields="ID_ENTITE",type=Criterion.class)
+	private List<Criterion> criteria;
 	
 	/**
 	 * Construit une nouvelle fédération
@@ -182,82 +177,63 @@ public class Federation extends Entite implements SqlObjectPersistence {
 	public void setNomFederation(String nomFederation) {
 		this.nomFederation = nomFederation;
 	}
-
-	private void checkAlreadyExists(SqlContext context) throws ObjectPersistenceException {
-		try {
-			UUID nullableIdFederation = QResults.from(Federation.class).where(
-					T_Federation.SIGLE.equalTo(sigleFederation)
-							.and(T_Federation.NOM.equalTo(nomFederation))
-					).singleValue(T_Entite.ID_ENTITE);
-			
-			if(nullableIdFederation != null) {
-				setIdEntite(nullableIdFederation);
-				
-				if(context != null)
-					context.getCache().put(this);
-			}
-		} catch(SQLException e) {
-			throw new ObjectPersistenceException(e);
-		}
-	}
 	
+	/**
+	 * @return criteria
+	 */
+	public List<Criterion> getCriteria() {
+		if(criteria == null)
+			criteria = T_Criterion.all().where(T_Criterion.ID_ENTITE.equalTo(getIdEntite())).asList();
+		return criteria;
+	}
+
+	/**
+	 * @param criteria criteria à définir
+	 */
+	public void setCriteria(List<Criterion> criteria) {
+		this.criteria = criteria;
+	}
+
+//	private void checkAlreadyExists(SqlContext context) throws ObjectPersistenceException {
+//		try {
+//			UUID nullableIdFederation = QResults.from(Federation.class).where(
+//					T_Federation.SIGLE.equalTo(sigleFederation)
+//							.and(T_Federation.NOM.equalTo(nomFederation))
+//					).singleValue(T_Entite.ID_ENTITE);
+//			
+//			if(nullableIdFederation != null) {
+//				setIdEntite(nullableIdFederation);
+//				
+//				if(context != null)
+//					context.getCache().put(this);
+//			}
+//		} catch(SQLException e) {
+//			throw new ObjectPersistenceException(e);
+//		}
+//	}
+
 	/**
 	 * Sauvegarde la fédération en base de données. Les arguments sont ignoré.
 	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			
-			SqlContext context = SqlContext.getDefaultContext();
-			if(session instanceof SqlSession)
-				context = ((SqlSession)session).getContext();
-
-			checkAlreadyExists(context);
-			
-			StoreHelper<Federation> helper = SqlStoreHelperCache.getHelper(Federation.class, context);
-			helper.save(this);
-			
-			Session.addProcessedObject(session,this);
-			
-			if(context != null)
-				context.getCache().put(this);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		//result = prime * result + numFederation;
-		result = prime * result
-				+ ((sigleFederation == null) ? 0 : sigleFederation.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Federation other = (Federation) obj;
-		//if (numFederation != other.numFederation)
-		//	return false;
-		if (sigleFederation == null) {
-			if (other.sigleFederation != null)
-				return false;
-		} else if (!sigleFederation.equals(other.sigleFederation))
-			return false;
-		return true;
-	}
+//	@Override
+//	public void save(Session session) throws ObjectPersistenceException {
+//		if(Session.canExecute(session, this)) {
+//			
+//			SqlContext context = SqlContext.getDefaultContext();
+//			if(session instanceof SqlSession)
+//				context = ((SqlSession)session).getContext();
+//
+//			checkAlreadyExists(context);
+//			
+//			StoreHelper<Federation> helper = SqlStoreHelperCache.getHelper(Federation.class, context);
+//			helper.save(this);
+//			
+//			Session.addProcessedObject(session,this);
+//			
+//			if(context != null)
+//				context.getCache().put(this);
+//		}
+//	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
