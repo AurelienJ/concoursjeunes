@@ -584,9 +584,10 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 		Object oldValue = this.coordinates;
 		
 		this.coordinates = coordinates;
-		
-		for(Coordinate coordinate : coordinates)
-			coordinate.setContact(this);
+		if(coordinates != null) {
+			for(Coordinate coordinate : coordinates)
+				coordinate.setContact(this);
+		}
 		
 		pcs.firePropertyChange("coordinates", oldValue, coordinates); //$NON-NLS-1$
 	}
@@ -618,6 +619,10 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 		this.categories = categories;
 		
 		pcs.firePropertyChange("categories", oldValue, categories); //$NON-NLS-1$
+	}
+	
+	public List<CategoryContact> getCategoryContact(){
+		return categories.stream().map(ccc ->ccc.getCategoryContact()).collect(Collectors.toList());
 	}
 	
 	/**

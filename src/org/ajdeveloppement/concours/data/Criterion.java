@@ -87,19 +87,15 @@
 package org.ajdeveloppement.concours.data;
 
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
@@ -143,10 +139,10 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
     @SqlField(name="ORDRE")
     private int numordre = 0;
     
-    @XmlElementWrapper(name="criterionelements",required=true)
-    @XmlElement(name="element")
-    @SqlChildCollection(foreignFields="ID_CRITERE_DISCRIMINANT",type=CriterionElement.class)
-    private List<CriterionElement> criterionElements = new ArrayList<CriterionElement>();
+//    @XmlElementWrapper(name="criterionelements",required=true)
+//    @XmlElement(name="element")
+//    @SqlChildCollection(foreignFields="ID_CRITERE_DISCRIMINANT",type=CriterionElement.class)
+//    private List<CriterionElement> criterionElements = new ArrayList<CriterionElement>();
     
     @SqlForeignKey(mappedTo="ID_ENTITE")
     private Federation federation;
@@ -283,32 +279,30 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
 	 * @return la liste des éléments du critère
 	 */
 	public List<CriterionElement> getCriterionElements() {
-		if(criterionElements == null || criterionElements.size() == 0)
-			criterionElements = T_CriterionElement.all().where(T_CriterionElement.ID_CRITERE_DISCRIMINANT.equalTo(id)).asList();
-		return criterionElements;
+		return T_CriterionElement.all().where(T_CriterionElement.ID_CRITERE_DISCRIMINANT.equalTo(id)).asList();
 	}
 
-	/**
-	 * Définit la liste des éléments lié au critère
-	 * 
-	 * @param criterionElements la liste des éléments du critère
-	 */
-	public void setCriterionElements(List<CriterionElement> criterionElements) {
-		this.criterionElements = criterionElements;
-		
-		for(CriterionElement element : criterionElements)
-			element.setCriterion(this);
-	}
-	
-	public void addCriterionElement(CriterionElement criterionElement) {
-		criterionElements.add(criterionElement);
-		
-		criterionElement.setCriterion(this);
-	}
-	
-	public void removeCriterionElement(CriterionElement criterionElement) {
-		criterionElements.remove(criterionElement);
-	}
+//	/**
+//	 * Définit la liste des éléments lié au critère
+//	 * 
+//	 * @param criterionElements la liste des éléments du critère
+//	 */
+//	public void setCriterionElements(List<CriterionElement> criterionElements) {
+//		this.criterionElements = criterionElements;
+//		
+//		for(CriterionElement element : criterionElements)
+//			element.setCriterion(this);
+//	}
+//	
+//	public void addCriterionElement(CriterionElement criterionElement) {
+//		criterionElements.add(criterionElement);
+//		
+//		criterionElement.setCriterion(this);
+//	}
+//	
+//	public void removeCriterionElement(CriterionElement criterionElement) {
+//		criterionElements.remove(criterionElement);
+//	}
 	
 	/**
 	 * 
@@ -316,21 +310,5 @@ public class Criterion implements SqlObjectPersistence, Cloneable {
 	 * @param parent
 	 */
 	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		Criterion clone = (Criterion)super.clone();
-		List<CriterionElement> clonedElements = new ArrayList<CriterionElement>();
-		for(CriterionElement element : criterionElements) {
-			CriterionElement clonedElement = (CriterionElement)element.clone();
-			clonedElements.add(clonedElement);
-		}
-		clone.setCriterionElements(clonedElements);
-		
-		return clone;
 	}
 }

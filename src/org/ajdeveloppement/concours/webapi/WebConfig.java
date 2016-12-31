@@ -89,6 +89,8 @@
 package org.ajdeveloppement.concours.webapi;
 
 import org.ajdeveloppement.concours.webapi.mappers.CriterionMapper;
+import org.ajdeveloppement.concours.webapi.mappers.EntiteMapper;
+import org.ajdeveloppement.concours.webapi.mappers.PersonMapper;
 import org.ajdeveloppement.concours.webapi.services.CompetitionsService;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
 import org.ajdeveloppement.concours.webapi.services.PersonsService;
@@ -129,6 +131,16 @@ public class WebConfig extends AbstractApiApplication {
 			@Provides
 			public CriterionMapper provideCriterionMapper() {
 				return Mappers.getMapper(CriterionMapper.class);
+			}
+			
+			@Provides
+			public EntiteMapper provideEntiteMapper() {
+				return Mappers.getMapper(EntiteMapper.class);
+			}
+			
+			@Provides
+			public PersonMapper providePersonMapper() {
+				return Mappers.getMapper(PersonMapper.class);
 			}
 		});
 	}

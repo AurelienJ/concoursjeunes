@@ -96,8 +96,9 @@ import javax.inject.Inject;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
+import org.ajdeveloppement.concours.data.Archer;
 import org.ajdeveloppement.concours.data.Contact;
-import org.ajdeveloppement.concours.webapi.adapters.PersonViewMapper;
+import org.ajdeveloppement.concours.webapi.mappers.PersonMapper;
 import org.ajdeveloppement.concours.webapi.services.PersonsService;
 import org.ajdeveloppement.concours.webapi.views.ArcherView;
 import org.ajdeveloppement.concours.webapi.views.CivilityView;
@@ -123,13 +124,13 @@ public class PersonsController {
 	
 	private PersonsService service;
 	
-	private PersonViewMapper contactViewMapper;
+	private PersonMapper contactViewMapper;
 	
 	@Inject
-	public PersonsController(HttpContext context, PersonsService service) {
+	public PersonsController(HttpContext context, PersonsService service, PersonMapper contactViewMapper) {
 		this.context = context;
 		this.service = service;
-		this.contactViewMapper = new PersonViewMapper(service);
+		this.contactViewMapper = contactViewMapper;
 	}
 	
 	/**
@@ -151,7 +152,9 @@ public class PersonsController {
 	 * @return
 	 */
 	private ContactView toView(Contact contact) {
-		return ViewsFactory.getView(ArcherView.class, null, Contact.class, contact, service.getClass().getClassLoader());
+		if(contact instanceof Archer)
+			return ViewsFactory.getView(ArcherView.class, null, Contact.class, contact, service.getClass().getClassLoader());
+		return ViewsFactory.getView(ContactView.class, null, Contact.class, contact, service.getClass().getClassLoader());
 	}
 	
 	@HttpService(key="countcontacts")

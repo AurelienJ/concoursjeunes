@@ -128,6 +128,7 @@ var EntiteComponent = (function () {
             if (this.idEntity) {
                 this.entitesService.getEntity(this.idEntity).then(function (entite) {
                     _this.entite = entite;
+                    entite._type = "Entite";
                     _this.entitesService.getCriteria(entite.id).then(function (c) { return _this.criteria = c; });
                     _this.personsService.getPersonsForEntity(entite.id).then(function (p) { return _this.persons = p; });
                     currentNavigationSnapshot.label = entite.nom;
@@ -135,7 +136,7 @@ var EntiteComponent = (function () {
                 });
             }
             else {
-                this.entite = {};
+                this.entite = { _type: "Entite" };
                 currentNavigationSnapshot.label = "Nouvel entité";
                 currentNavigationSnapshot.stateData = this.entite;
             }

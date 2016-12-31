@@ -88,7 +88,6 @@
  */
 package org.ajdeveloppement.concours.webapi.mappers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -143,8 +142,6 @@ public abstract class CriterionMapper {
 		Criterion criterion = null;
 		if(criterionView.getId() != null) {
 			criterion = T_Criterion.getInstanceWithPrimaryKey(criterionView.getId());
-			
-			criterion.setCriterionElements(new ArrayList<CriterionElement>());
 		}
 		
 		if(criterion == null)
@@ -156,6 +153,7 @@ public abstract class CriterionMapper {
 	}
 
 	@Mapping(target = "federation", source = "idFederation")
+	@Mapping(target = "criterionElements", ignore = true)
 	public abstract void updateCriterionFromCriterionView(CriterionView view, @MappingTarget Criterion criterion);
 	
 	public CriterionElement asCriterionElement(CriterionElementView criterionElementView) {

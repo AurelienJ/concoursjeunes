@@ -95,7 +95,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
@@ -104,13 +103,12 @@ import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.ResultRow;
 import org.ajdeveloppement.concours.data.Criterion;
+import org.ajdeveloppement.concours.data.CriterionElement;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Federation;
 import org.ajdeveloppement.concours.data.T_Criterion;
 import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.data.T_Federation;
-import org.ajdeveloppement.concours.webapi.adapters.EntiteAdapter;
-import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
 import org.ajdeveloppement.concours.webapi.models.TypeLabel;
 import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 
@@ -190,9 +188,7 @@ public class EntiteService {
 	}
 	
 	@SuppressWarnings("nls")
-	public List<EntiteModelView> getEntitiesWithFilter(QFilter filter, int length, int offset, String sortBy, String sortOrder) {
-		EntiteAdapter adapter = new EntiteAdapter();
-		
+	public List<Entite> getEntitiesWithFilter(QFilter filter, int length, int offset, String sortBy, String sortOrder) {
 		QResults<Entite, Void> entiteQuery = T_Entite.all()
 				//.useBuilder(entiteBuilder)
 				//.leftJoin(Federation.class, T_Entite.ID_ENTITE.equalTo(T_Federation.ID_ENTITE))
@@ -243,18 +239,16 @@ public class EntiteService {
 //				e = T_Federation.getInstanceWithPrimaryKey(e.getIdEntite());
 //			return adapter.toModelView(e);
 //		}).collect(Collectors.toList());
-		return entites.stream().map(e -> adapter.toModelView(e)).collect(Collectors.toList());
+		return entites;
 	}
 
-	public EntiteModelView getEntiteById(UUID idEntite) {
-		EntiteAdapter adapter = new EntiteAdapter();
-		
+	public Entite getEntiteById(UUID idEntite) {
 		Entite entite = T_Entite.getInstanceWithPrimaryKey(idEntite);
 		if(entite.getType() == Entite.FEDERATION)
 			entite = T_Federation.getInstanceWithPrimaryKey(idEntite);
 		
 		if(entite != null)
-			return adapter.toModelView(entite);
+			return entite;
 		
 		return null;
 	}
@@ -268,32 +262,12 @@ public class EntiteService {
 		return null;
 	}
 	
-	public void createOrUpdateEntite(EntiteModelView entiteModelView) throws ObjectPersistenceException {
-		if(entiteModelView != null) {
-			Entite entite = null;
-			if(entiteModelView.getId() != null) {
-				if(entiteModelView.getType() == Entite.FEDERATION)
-					entite = T_Federation.getInstanceWithPrimaryKey(entiteModelView.getId());
-				else
-					entite = T_Entite.getInstanceWithPrimaryKey(entiteModelView.getId());
-			}
-			
-			if(entite == null) {
-				if(entiteModelView.getType() == Entite.FEDERATION)
-					entite = new Federation();
-				else
-					entite = new Entite();
-			}
-			
-			EntiteAdapter adapter = new EntiteAdapter(entite);
-			entite = adapter.toModel(entiteModelView);
+	public void createOrUpdateEntite(Entite entite) throws ObjectPersistenceException {
+		if(entite != null) {
 			if(entite instanceof Federation)
 				((Federation)entite).setNomFederation(entite.getNom());
 			
 			entite.save();
-			
-			if(entite.getIdEntite() != entiteModelView.getId())
-				entiteModelView.setId(entite.getIdEntite());
 		}
 	}
 
@@ -315,5 +289,20 @@ public class EntiteService {
 			federation.save();
 		}
 		return criteria;
+	}
+	
+	public void saveCriterionElement(Criterion criterion, List<CriterionElement> elements)
+			throws ObjectPersistenceException {
+		List<CriterionElement> sourceElements = criterion.getCriterionElements();
+		
+		for(CriterionElement element : elements) {
+			element.setCriterion(criterion);
+			element.save();
+		}
+		
+		for(CriterionElement sourceElement : sourceElements) {
+			if(!elements.contains(sourceElement))
+				sourceElement.delete();
+		}
 	}
 }

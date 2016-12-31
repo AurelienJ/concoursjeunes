@@ -95,7 +95,6 @@ import java.awt.GridBagConstraints;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -118,7 +117,6 @@ import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.RulesCategory;
 import org.ajdeveloppement.concours.managers.FederationManager;
 import org.ajdeveloppement.concours.managers.ReglementManager;
-import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
 import org.jdesktop.swingx.JXHeader;
 import org.jdesktop.swingx.painter.GlossPainter;
 
@@ -263,15 +261,15 @@ public class NewReglementDialog extends JDialog implements ActionListener {
 		if(e.getSource() == jbValider) {
 			Rule reglement = ReglementBuilder.createReglement();
 			if(jcbReference.getSelectedItem() instanceof Rule) {
-				Rule reference = (Rule)jcbReference.getSelectedItem();
-				try {
-					reglement =reference.clone();
-					reglement.setName("C"+(new Date().getTime())); //$NON-NLS-1$
-					reglement.setRemovable(true);
-					reglement.setOfficialReglement(false);
-				} catch (CloneNotSupportedException e1) {
-					DisplayableErrorHelper.displayException(e1);
-				}
+//				Rule reference = (Rule)jcbReference.getSelectedItem();
+//				try {
+//					reglement =reference.clone();
+//					reglement.setName("C"+(new Date().getTime())); //$NON-NLS-1$
+//					reglement.setRemovable(true);
+//					reglement.setOfficialReglement(false);
+//				} catch (CloneNotSupportedException e1) {
+//					DisplayableErrorHelper.displayException(e1);
+//				}
 			}
 			
 			reglement.setName(jtfReglementName.getText());

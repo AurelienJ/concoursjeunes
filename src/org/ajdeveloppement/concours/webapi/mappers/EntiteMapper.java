@@ -91,28 +91,41 @@ package org.ajdeveloppement.concours.webapi.mappers;
 import java.util.UUID;
 
 import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.Federation;
 import org.ajdeveloppement.concours.data.T_Entite;
-import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
+import org.ajdeveloppement.concours.webapi.views.EntiteView;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-
-//import fr.xebia.extras.selma.Mapper;
+import org.mapstruct.NullValueMappingStrategy;
+import org.mapstruct.factory.Mappers;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@Mapper
+@Mapper(componentModel="jsr330",nullValueMappingStrategy=NullValueMappingStrategy.RETURN_DEFAULT)
 public abstract class EntiteMapper {
-	@Mapping(target = "idEntite", source = "id")
-	@Mapping(target = "competitionLevels", ignore = true)
-	@Mapping(target = "competitions", ignore = true)
-	@Mapping(target = "entiteParent", source = "idEntiteParent")
-	@Mapping(target = "entitesEnfant", ignore = true)
-	@Mapping(target = "profiles", ignore = true)
-	@Mapping(target = "rules", ignore = true)
-	public abstract Entite asEntite(EntiteModelView entiteView);
+	public static EntiteMapper INSTANCE = Mappers.getMapper(EntiteMapper.class);
+	
+	
+	public Entite asEntite(EntiteView entiteView) {
+		Entite entite = null;
+		
+		if(entiteView.getId() != null)
+			entite = T_Entite.getInstanceWithPrimaryKey(entiteView.getId());
+		
+		if(entite == null) {
+			if(entiteView.getType() == Entite.FEDERATION)
+				entite = new Federation();
+			else
+				entite = new Entite();
+		}
+		
+		updateEntiteFromEntiteView(entiteView, entite);
+		
+		return entite;
+	}
 	
 	@Mapping(target = "idEntite", source = "id")
 	@Mapping(target = "competitionLevels", ignore = true)
@@ -121,7 +134,7 @@ public abstract class EntiteMapper {
 	@Mapping(target = "entitesEnfant", ignore = true)
 	@Mapping(target = "profiles", ignore = true)
 	@Mapping(target = "rules", ignore = true)
-	public abstract void updateEntiteFromEntiteModelView(EntiteModelView entiteView, @MappingTarget Entite entite);
+	public abstract void updateEntiteFromEntiteView(EntiteView view, @MappingTarget Entite entite);
 	
 	public Entite idEntiteToEntite(UUID source) {
 		return T_Entite.getInstanceWithPrimaryKey(source);

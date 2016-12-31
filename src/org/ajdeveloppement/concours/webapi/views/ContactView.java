@@ -4,15 +4,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.ajdeveloppement.concours.webapi.adapters.PersonViewMapper;
+import org.ajdeveloppement.concours.webapi.mappers.PersonMapper;
 import org.ajdeveloppement.webserver.viewbinder.annotations.CollectionType;
 import org.ajdeveloppement.webserver.viewbinder.annotations.Implementation;
 import org.ajdeveloppement.webserver.viewbinder.annotations.View;
 
-@View(defaultMapperClass=PersonViewMapper.class)
+@View(defaultMapperClass=PersonMapper.class)
 public interface ContactView {
 
-	@Implementation(mapperClass=PersonViewMapper.class, methodModelToView="getType")
+	@Implementation(mapperClass=PersonMapper.class, methodModelToView="getType")
 	String getType();
 	
 	/**
@@ -52,7 +52,7 @@ public interface ContactView {
 	 * 
 	 * @return the civility of contact
 	 */
-	@Implementation(mapperClass=PersonViewMapper.class, methodModelToView="getIdCivility", methodViewToModel="setIdCivility")
+	@Implementation(mapperClass=PersonMapper.class, methodModelToView="getIdCivility", methodViewToModel="setIdCivility")
 	UUID getIdCivility();
 
 	/**
@@ -121,14 +121,14 @@ public interface ContactView {
 	 * 
 	 * @return categories the categories of contact
 	 */
-	@Implementation(mapperClass=PersonViewMapper.class, methodModelToView="getCategories",methodViewToModel="setCategories")
+	@Implementation(mapperClass=PersonMapper.class, methodModelToView="getCategories",methodViewToModel="setCategories")
 	List<UUID> getCategories();
 
 	/**
 	 * Get entity associate with contact
 	 * @return entity associate with contact
 	 */
-	@Implementation(mapperClass=PersonViewMapper.class, methodModelToView="getIdEntity",methodViewToModel="setIdEntity")
+	@Implementation(mapperClass=PersonMapper.class, methodModelToView="getIdEntity",methodViewToModel="setIdEntity")
 	UUID getIdEntity();
 
 	/**

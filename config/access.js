@@ -12,7 +12,7 @@ function verifyAccess(session) {
 		
 	}
 	
-	print((new Date()) + "\t" + session.getHost() + "\t" + session.getProtocol()+ "\t" + session.getRequestMethod() + "\t" + session.getRequestUri());
+	//print((new Date()) + "\t" + session.getHost() + "\t" + session.getProtocol()+ "\t" + session.getRequestMethod() + "\t" + session.getRequestUri());
 	
 	if(session.getRequestUri().startsWith("/admin") 
 			&& ((!session.getRemoteAddress().isAnyLocalAddress()

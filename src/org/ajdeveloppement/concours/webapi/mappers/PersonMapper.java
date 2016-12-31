@@ -86,38 +86,39 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi.adapters;
+package org.ajdeveloppement.concours.webapi.mappers;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.concours.data.Archer;
 import org.ajdeveloppement.concours.data.CategoryContact;
 import org.ajdeveloppement.concours.data.CategoryContact.IdDefaultCategory;
 import org.ajdeveloppement.concours.data.CategoryContactContact;
+import org.ajdeveloppement.concours.data.Civility;
 import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.Coordinate;
+import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.T_CategoryContact;
 import org.ajdeveloppement.concours.data.T_Civility;
+import org.ajdeveloppement.concours.data.T_Contact;
+import org.ajdeveloppement.concours.data.T_Coordinate;
 import org.ajdeveloppement.concours.data.T_Entite;
-import org.ajdeveloppement.concours.webapi.services.PersonsService;
 import org.ajdeveloppement.concours.webapi.views.ContactView;
-import org.ajdeveloppement.webserver.viewbinder.ModelViewMapper;
+import org.ajdeveloppement.concours.webapi.views.CoordinateView;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.CollectionMappingStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class PersonViewMapper {
-	
-	private PersonsService personsService;
-	
-	public PersonViewMapper(PersonsService personsService) {
-		this.personsService = personsService;
-	}
+@Mapper(componentModel="js330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
+public abstract class PersonMapper {
 	
 	@SuppressWarnings("nls")
 	public static String getType(Contact contact) {
@@ -207,7 +208,7 @@ public class PersonViewMapper {
 		Contact contact = null;
 		
 		if(contactView.getId() != null)
-			contact = personsService.getContactById(contactView.getId());
+			contact = T_Contact.getInstanceWithPrimaryKey(contactView.getId());
 		
 		if(contact == null) {
 			if(contactView.getCategories() != null && contactView.getCategories().contains(IdDefaultCategory.BOWMAN.value())) {
@@ -217,13 +218,60 @@ public class PersonViewMapper {
 			}
 		}
 		
-		try {
-			ModelViewMapper.mapModelViewToModel(contactView, contact);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-				| SecurityException | IntrospectionException | InstantiationException e) {
-			throw new UncheckedException(e);
-		}
+		updateContactFromContactView(contactView, contact);
 		
 		return contact;
+	}
+	
+	@Mapping(source = "id", target = "idContact")
+	@Mapping(source = "idCivility", target = "civility")
+	@Mapping(source = "idEntity", target = "entite")
+	@Mapping(source = "categories", target = "categoryContact")
+	@Mapping(target = "categories", ignore = true)
+	@Mapping(target = "idpToken", ignore = true)
+	@Mapping(target = "passwordHash", ignore = true)
+	@Mapping(target = "managedProfiles", ignore = true)
+	public abstract void updateContactFromContactView(ContactView view, @MappingTarget Contact contact);
+	
+	@AfterMapping
+	public void afterUpdateContactFromContactView(ContactView view, @MappingTarget Contact contact) {
+		contact.getCoordinates().forEach(c -> c.setContact(contact));
+	}
+	
+	public Civility asCivility(UUID id) {
+		if(id != null)
+			return T_Civility.getInstanceWithPrimaryKey(id);
+		return null;
+	}
+	
+	public Entite asEntite(UUID id) {
+		if(id != null)
+			return T_Entite.getInstanceWithPrimaryKey(id);
+		return null;
+	}
+	
+	public Coordinate asCoordinate(CoordinateView view) {
+		Coordinate coordinate = null;
+		
+		if(view.getIdCoordinate() != null)
+			coordinate = T_Coordinate.getInstanceWithPrimaryKey(view.getIdCoordinate());
+		
+		if(coordinate == null)
+			coordinate = new Coordinate();
+		
+		updateCoordinateFromCoordinateView(view, coordinate);
+		
+		return coordinate;
+	}
+	
+	@Mapping(target = "contact", ignore = true)
+	public abstract void updateCoordinateFromCoordinateView(CoordinateView view, @MappingTarget Coordinate coordinate);
+	
+	public CategoryContact asCategoryContact(UUID id) {
+		if(id != null) {
+			return T_CategoryContact.getInstanceWithPrimaryKey(id);
+		}
+		
+		return null;
 	}
 }

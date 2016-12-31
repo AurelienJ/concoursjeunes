@@ -69,9 +69,16 @@ var PersonComponent = (function () {
             });
         }
         else {
+            var previousNavigationSnapshot = this.navigation.getPreviousNavigationSnapshot();
+            var idEntity = null;
+            if (previousNavigationSnapshot && previousNavigationSnapshot.stateData
+                && previousNavigationSnapshot.stateData._type == "Entite") {
+                idEntity = previousNavigationSnapshot.stateData.id;
+            }
             this.person = {
                 name: '',
-                firstName: ''
+                firstName: '',
+                idEntity: idEntity
             };
             currentNavigationSnapshot.stateData = this.person;
         }

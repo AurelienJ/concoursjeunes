@@ -95,18 +95,19 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.ajdeveloppement.commons.ExceptionUtils;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.concours.data.Criterion;
+import org.ajdeveloppement.concours.data.CriterionElement;
+import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.webapi.mappers.CriterionMapper;
-import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
+import org.ajdeveloppement.concours.webapi.mappers.EntiteMapper;
 import org.ajdeveloppement.concours.webapi.models.TypeLabel;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
+import org.ajdeveloppement.concours.webapi.views.CriterionElementView;
 import org.ajdeveloppement.concours.webapi.views.CriterionView;
+import org.ajdeveloppement.concours.webapi.views.EntiteView;
 import org.ajdeveloppement.webserver.HttpMethod;
-import org.ajdeveloppement.webserver.HttpResponse;
-import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
 import org.ajdeveloppement.webserver.HttpReturnCode.Success;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
@@ -126,12 +127,15 @@ public class EntitiesController {
 	private HttpContext context;
 	private EntiteService service;
 	private CriterionMapper criterionMapper;
+	private EntiteMapper entiteMapper;
 	
 	@Inject
-	public EntitiesController(HttpContext context, EntiteService service, CriterionMapper criterionMapper) {
+	public EntitiesController(HttpContext context, EntiteService service, 
+			CriterionMapper criterionMapper, EntiteMapper entiteMapper) {
 		this.context = context;
 		this.service = service;
 		this.criterionMapper = criterionMapper;
+		this.entiteMapper = entiteMapper;
 	}
 
 	@HttpService(key="typeentity")
@@ -154,7 +158,7 @@ public class EntitiesController {
 	
 	
 	@HttpService(key="entities")
-	public List<EntiteModelView> getEntities(
+	public List<EntiteView> getEntities(
 			@UrlParameter("types") String types,
 			@UrlParameter("childOf") UUID childOf,
 			@UrlParameter("search") String search,
@@ -165,12 +169,14 @@ public class EntitiesController {
 		
 		QFilter filter = service.getFilter(types, childOf, search);
 		
-		return service.getEntitiesWithFilter(filter, length, offset, sortBy, sortOrder);
+		List<Entite> entities = service.getEntitiesWithFilter(filter, length, offset, sortBy, sortOrder);
+		
+		return entities.stream().map(e -> ViewsFactory.getView(EntiteView.class, e)).collect(Collectors.toList());
 	}
 	
 	@HttpService(key="entities")
-	public EntiteModelView getEntities(@HttpServiceId UUID id) {
-		return service.getEntiteById(id);
+	public EntiteView getEntities(@HttpServiceId UUID id) {
+		return ViewsFactory.getView(EntiteView.class, service.getEntiteById(id));
 	}
 	
 	@HttpService(key="entityname")
@@ -179,22 +185,15 @@ public class EntitiesController {
 	}
 	
 	@HttpService(key="entities",methods={HttpMethod.PUT, HttpMethod.POST})
-	public EntiteModelView createOrUpdateEntity(@Body EntiteModelView entiteModelView) {
-		String error = null;
-		try {
-			service.createOrUpdateEntite(entiteModelView);
-
-			if(context.getHttpRequest().getRequestMethod() == HttpMethod.PUT)
-				context.setReturnCode(Success.CREATED);
-			
-			return entiteModelView;
-		} catch (IllegalArgumentException | ObjectPersistenceException e) {
-			e.printStackTrace();
-			error = ExceptionUtils.toString(e);
-			context.setCustomResponse(new HttpResponse(ServerError.InternalServerError, "text/plain", error)); //$NON-NLS-1$
-		}
+	public EntiteView createOrUpdateEntity(@Body EntiteView entiteView) throws ObjectPersistenceException {
+		Entite entite = entiteMapper.asEntite(entiteView);
 		
-		return null;
+		service.createOrUpdateEntite(entite);
+
+		if(context.getHttpRequest().getRequestMethod() == HttpMethod.PUT)
+			context.setReturnCode(Success.CREATED);
+		
+		return ViewsFactory.getView(EntiteView.class, entite);
 	}
 	
 	@HttpService(key="entities/criteria")
@@ -207,9 +206,19 @@ public class EntitiesController {
 	@HttpService(key="entities/criteria",methods={HttpMethod.PUT, HttpMethod.POST})
 	public List<CriterionView> saveCriteria(@HttpServiceId UUID idEntity, @Body CriterionView[] criterionViews) throws ObjectPersistenceException {
 		List<Criterion> criteria = criterionMapper.criterionViewListToCriterionList(criterionViews);
-		
-		return service.saveCriteria(idEntity, criteria).stream()
+
+		List<CriterionView> criteriaView = service.saveCriteria(idEntity, criteria).stream()
 				.map(c -> ViewsFactory.getView(CriterionView.class, c, c.getClass().getClassLoader()))
 				.collect(Collectors.toList());
+		
+		for(int i = 0; i < criterionViews.length; i++) {
+			List<CriterionElementView> elementsView = criterionViews[i].getCriterionElements();
+			List<CriterionElement> elements = elementsView.stream().map(
+					e -> criterionMapper.asCriterionElement(e)).collect(Collectors.toList());
+			
+			service.saveCriterionElement(criteria.get(i), elements);
+		}
+
+		return criteriaView;
 	}
 }

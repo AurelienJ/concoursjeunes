@@ -100,11 +100,11 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Profile;
 import org.ajdeveloppement.concours.webapi.UserSessionData;
-import org.ajdeveloppement.concours.webapi.models.EntiteModelView;
 import org.ajdeveloppement.concours.webapi.models.RuleModelView;
 import org.ajdeveloppement.concours.webapi.models.RulesCategoryModelView;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
 import org.ajdeveloppement.concours.webapi.views.CriterionView;
+import org.ajdeveloppement.concours.webapi.views.EntiteView;
 import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
 import org.ajdeveloppement.webserver.HttpReturnCode.Success;
@@ -175,7 +175,7 @@ public class RulesController {
 	}
 	
 	@HttpService(key="availableEntitiesForRulesCreation")
-	public List<EntiteModelView> getAvailableEntitiesForRulesCreation() {
+	public List<EntiteView> getAvailableEntitiesForRulesCreation() {
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
 		
 		List<Entite> entites = new ArrayList<Entite>();
@@ -189,13 +189,7 @@ public class RulesController {
 					
 					parent = parent.getEntiteParent();
 				}
-				return entites.stream().map(e -> {
-					EntiteModelView entite = new EntiteModelView();
-					entite.setId(e.getIdEntite());
-					entite.setNom(e.getNom());
-					
-					return entite;
-				}).collect(Collectors.toList());
+				return entites.stream().map(e -> ViewsFactory.getView(EntiteView.class, e)).collect(Collectors.toList());
 			}
 		}
 		

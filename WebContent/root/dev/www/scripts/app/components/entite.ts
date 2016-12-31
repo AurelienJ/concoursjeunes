@@ -352,6 +352,8 @@ export class EntiteComponent implements OnInit, DoCheck {
 					entite => {
 						this.entite = entite;
 
+						entite._type = "Entite";
+
 						this.entitesService.getCriteria(entite.id).then(c => this.criteria = c);
 						this.personsService.getPersonsForEntity(entite.id).then(p => this.persons = p);
 
@@ -359,7 +361,7 @@ export class EntiteComponent implements OnInit, DoCheck {
 						currentNavigationSnapshot.stateData = entite;
 					});
 			} else {
-				this.entite = <IEntite>{};
+				this.entite = <IEntite>{ _type: "Entite" };
 
 				currentNavigationSnapshot.label = "Nouvel entité";
 				currentNavigationSnapshot.stateData = this.entite;

@@ -838,7 +838,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 				cpd.setEditable(true);
 
 				if (cpd.showCriterionElementDialog() == DefaultDialogReturn.OK) {
-					criterion.addCriterionElement(cpd.getCriterionElement());
+					//criterion.addCriterionElement(cpd.getCriterionElement());
 					
 					DefaultMutableTreeNode dmtnIndiv = new DefaultMutableTreeNode(cpd.getCriterionElement());
 
@@ -963,7 +963,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 					DefaultMutableTreeNode dmtnParent = (DefaultMutableTreeNode) selectedPath.getParentPath().getLastPathComponent();
 	
 					Criterion curCriterion = (Criterion) dmtnParent.getUserObject();
-					curCriterion.removeCriterionElement((CriterionElement)dmtnObj);
+					//curCriterion.removeCriterionElement((CriterionElement)dmtnObj);
 	
 					treeModel.removeNodeFromParent(dmtn);
 	

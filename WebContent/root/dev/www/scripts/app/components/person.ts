@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, NavigationEnd,UrlSegment } from '@angular/route
 //import { IEntite } from '../models/ientite';
 //import { EntitesService } from '../services/entites';
 import { ReferencesService } from '../services/references';
+import { IEntite } from '../models/ientite';
 import { IPerson } from '../models/IPerson';
 import { ICivility } from '../models/ICivility';
 import { PersonsService } from '../services/persons';
@@ -204,9 +205,16 @@ export class PersonComponent implements OnInit, DoCheck {
                 currentNavigationSnapshot.stateData = p;
 			});
 		} else {
+			let previousNavigationSnapshot = this.navigation.getPreviousNavigationSnapshot();
+			let idEntity = null;
+			if(previousNavigationSnapshot && previousNavigationSnapshot.stateData
+					&& previousNavigationSnapshot.stateData._type == "Entite") {
+				idEntity = (<IEntite>previousNavigationSnapshot.stateData).id;
+			}
 			this.person = <IPerson>{
 				name: '',
-				firstName: ''
+				firstName: '',
+				idEntity: idEntity
 			};
 			currentNavigationSnapshot.stateData = this.person;
 		}

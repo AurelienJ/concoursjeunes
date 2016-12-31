@@ -2,6 +2,7 @@
  * Représente une entité (Féd&ration / club)
  */
 export interface IEntite {
+    _type : string;
     /**
      * Identifiant unique de l'entité 
      */
