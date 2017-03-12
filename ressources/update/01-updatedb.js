@@ -12,7 +12,7 @@ function updateReglements() {
 	}
 }
 
-dbVersion = org.ajdeveloppement.concours.ApplicationCore.DB_RELEASE_REQUIRED;
+//dbVersion = org.ajdeveloppement.concours.ApplicationCore.DB_RELEASE_REQUIRED;
 //sql.executeUpdate("UPDATE PARAM SET DBVERSION=" + org.ajdeveloppement.concours.ApplicationCore.DB_RELEASE_REQUIRED + ";");
 
 if(dbVersion == 0) {
