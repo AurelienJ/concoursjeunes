@@ -1,5 +1,6 @@
+///<reference path="_references.ts"/>
 import {SimpleChange} from "@angular/core";
-import {DataTable} from "./DataTable";
+import {DataTable, InputData } from "./DataTable";
 
 describe("DataTable directive tests", ()=> {
     let datatable: DataTable;
@@ -39,7 +40,7 @@ describe("DataTable directive tests", ()=> {
         it("data should be equal to inputData", (done)=> {
             datatable.ngDoCheck()
                 .then(() => {
-                    expect(datatable.data).toEqual(datatable.inputData);
+                    expect(datatable.data).toEqual(<any[]>datatable.inputData);
                     done();
                 })
                 .catch(error => {

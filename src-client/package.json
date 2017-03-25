@@ -5,8 +5,7 @@
     "clean": "gulp clean",
     "compile": "gulp compile",
     "build": "gulp build",
-    "start": "concurrent --kill-others \"gulp watch\" \"lite-server\"",
-    "postinstall": "typings install"
+    "start": "concurrent --kill-others \"gulp watch\" \"lite-server\""
   },
   "license": "CECILL-2.1",
   "dependencies": {
@@ -36,11 +35,15 @@
     "systemjs": "^0.19.47",
     "zone.js": "^0.8.5",
     "lodash": "^4.17.4",
+    "moment": "^2.18.1",
 
     "@types/chai": "^3.4.35",
     "@types/jquery":"^2.0.41",
     "@types/select2": "^4.0.33",
-    "@types/lodash": "^4.14.58"
+    "@types/lodash": "^4.14.58",
+    "@types/core-js": "^0.9.39",
+    "@types/jasmine": "^2.5.46",
+    "@types/node": "^7.0.11"
   },
   "devDependencies": {
     "concurrently": "^3.4.0",
@@ -48,15 +51,19 @@
     "typescript": "^2.2.1",
     "typings": "^2.1.0",
     "del": "^2.2.2",
+
     "gulp": "^3.9.1",
     "gulp-sourcemaps": "^2.4.1",
     "gulp-tslint": "^7.1.0",
     "gulp-typescript": "^3.1.6",
     "gulp-cached": "^1.1.1",
     "gulp-file-include": "^1.0.0",
+    "gulp-preprocess": "^2.0.0",
+
     "tslint": "^4.5.1",
     "ts-node": "^3.0.2",
     "typescript-register": "^1.1.0",
+    
     "systemjs-builder": "^0.16.4"
   }
 }

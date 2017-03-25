@@ -26,17 +26,20 @@
         <script src="node_modules/zone.js/dist/zone.js"></script>
         <script src="node_modules/reflect-metadata/Reflect.js"></script>
         <script src="node_modules/jquery/dist/jquery.min.js"></script>
-        <!--<script src="node_modules/systemjs/dist/system.src.js"></script>-->
+
+        <!-- @ifdef DEBUG -->
+        <script src="node_modules/systemjs/dist/system.src.js"></script>
        
         <!-- 2. Configure SystemJS -->
-        <!--<script src="scripts/systemjs.config.js"></script>
+        <script src="scripts/systemjs.config.js"></script>
         <script>
         try {
             System.import('app').catch(function(err){ console.error(err); });
         } catch(e) {
             alert(e);
         }
-        </script>-->
+        </script>
+        <!-- @endif -->
     </head>
     <!-- 3. Display the application -->
     <body class="hold-transition skin-blue sidebar-mini fixed">
@@ -52,8 +55,11 @@
             enableTrace: true
         }
         </script>-->
+        <!-- @ifndef DEBUG -->
         <script src="scripts/app/bundle.js"></script>
+        <!-- @endif -->
         <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="node_modules/jquery-slimscroll/jquery.slimscroll.min.js"></script>
         <script src="node_modules/admin-lte/dist/js/app.min.js"></script>
     </body>
 </html>

@@ -7,14 +7,17 @@ const tslint = require('gulp-tslint');
 const cache = require('gulp-cached');
 const Builder = require('systemjs-builder');
 const path = require("path");
+const preprocess = require('gulp-preprocess');
 //const fileinclude = require('gulp-file-include');
 
-const destinationDir = "./scripts/"
+const destinationDir = "./scripts/";
+const distDir = "../WebContent/root/dev/www";
+var packageJson = require('./package.json');
 /**
  * Remove build directory.
  */
 gulp.task('clean', (cb) => {
-    return del([destinationDir], {force: true}, cb);
+    return del([distDir], {force: true}, cb);
 });
 
 /**
@@ -62,56 +65,75 @@ gulp.task("build", ['compile'], () => {
     console.log("Building the project ...")
 });
 
-gulp.task("dist", ["build"], () => {
+gulp.task("dist", ["clean", "build"], () => {
     gulp.src("fonts/**")
-        .pipe(gulp.dest("dist/fonts"));
+        .pipe(gulp.dest(distDir + "/fonts"));
 
     gulp.src("images/**")
-        .pipe(gulp.dest("dist/images"));
+        .pipe(gulp.dest(distDir + "/images"));
     gulp.src("images.large/**")
-        .pipe(gulp.dest("dist/images.large"));
+        .pipe(gulp.dest(distDir + "/images.large"));
     gulp.src("images.small/**")
-        .pipe(gulp.dest("dist/images.small"));
+        .pipe(gulp.dest(distDir + "/images.small"));
 
     gulp.src("styles/**")
-        .pipe(gulp.dest("dist/styles"));
+        .pipe(gulp.dest(distDir + "/styles"));
+})
 
-    gulp.src("scripts/**/*.html")
-        .pipe(gulp.dest("dist/scripts"));
+gulp.task('distDebug', ["dist"], () => {
+  var modules = Object.keys(packageJson.dependencies);
+  var moduleFiles = modules.map((module) => {
+    return 'node_modules/' + module + '/**/*.*';
+  });
+
+  gulp.src(moduleFiles, { base: 'node_modules' })
+    .pipe(gulp.dest(distDir + '/node_modules'));
+
+  gulp.src("scripts/**")
+        .pipe(gulp.dest(distDir + "/scripts"));
+
+  gulp.src("index.html")
+        .pipe(preprocess({context: { DEBUG: true}}))
+        .pipe(gulp.dest(distDir));
+});
+
+gulp.task('distProd', ["bundle","dist"], () => {
     gulp.src("scripts/app/bundle.js")
-        .pipe(gulp.dest("dist/scripts/app"));
+        .pipe(gulp.dest(distDir + "/scripts/app"));
+    gulp.src("scripts/**/*.html")
+        .pipe(gulp.dest(distDir + "/scripts"));
 
     gulp.src("node_modules/bootstrap/dist/css/**")
-        .pipe(gulp.dest("dist/node_modules/bootstrap/dist/css"));
+        .pipe(gulp.dest(distDir + "/node_modules/bootstrap/dist/css"));
     gulp.src("node_modules/select2/dist/css/**")
-        .pipe(gulp.dest("dist/node_modules/select2/dist/css"));
+        .pipe(gulp.dest(distDir + "/node_modules/select2/dist/css"));
     gulp.src("node_modules/font-awesome/css/**")
-        .pipe(gulp.dest("dist/node_modules/font-awesome/css"));  
+        .pipe(gulp.dest(distDir + "/node_modules/font-awesome/css"));  
     gulp.src("node_modules/admin-lte/dist/css/**")
-        .pipe(gulp.dest("dist/node_modules/admin-lte/dist/css"));
+        .pipe(gulp.dest(distDir + "/node_modules/admin-lte/dist/css"));
 
     gulp.src("node_modules/core-js/client/**")
-        .pipe(gulp.dest("dist/node_modules/core-js/client"));
+        .pipe(gulp.dest(distDir + "/node_modules/core-js/client"));
     gulp.src("node_modules/zone.js/dist/**")
-        .pipe(gulp.dest("dist/node_modules/zone.js/dist"));
+        .pipe(gulp.dest(distDir + "/node_modules/zone.js/dist"));
     gulp.src("node_modules/reflect-metadata/**")
-        .pipe(gulp.dest("dist/node_modules/reflect-metadata"));
+        .pipe(gulp.dest(distDir + "/node_modules/reflect-metadata"));
     gulp.src("node_modules/jquery/dist/**")
-        .pipe(gulp.dest("dist/node_modules/jquery/dist"));
+        .pipe(gulp.dest(distDir + "/node_modules/jquery/dist"));
     gulp.src("node_modules/bootstrap/dist/js/**")
-        .pipe(gulp.dest("dist/node_modules/bootstrap/dist/js"));
+        .pipe(gulp.dest(distDir + "/node_modules/bootstrap/dist/js"));
     gulp.src("node_modules/admin-lte/dist/js/**")
-        .pipe(gulp.dest("dist/node_modules/admin-lte/dist/js"));
+        .pipe(gulp.dest(distDir + "/node_modules/admin-lte/dist/js"));
 
-
-    gulp.src("index.html")
-        .pipe(gulp.dest("dist"));
-})
+    return gulp.src("index.html")
+        .pipe(preprocess({context: { DEBUG: true}}))
+        .pipe(gulp.dest(distDir));
+});
 
 gulp.task('watch', function(){
   gulp.watch('scripts/**/*.ts', ['build']);
 });
 
-gulp.task('default', ['watch', 'build']);
+gulp.task('default', ['watch', 'distDebug']);
 
 gulp.task('prod', ['watch', 'build', 'bundle']);
