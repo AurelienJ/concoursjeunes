@@ -60,7 +60,10 @@ var PersonsService = (function () {
         return this.http.get("api/entities/" + idEntity + "/contacts", { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
     };
     PersonsService.prototype.getPerson = function (idPerson) {
-        return this.http.get("api/contacts/" + idPerson, { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
+        return this.http.get("api/contacts/" + idPerson, { headers: this.headers }).toPromise().then(function (r) { return r.json(); }).then(function (p) {
+            p.certificat = new Date(p.certificat);
+            return p;
+        });
     };
     PersonsService.prototype.savePerson = function (person) {
         var url = "api/contacts";

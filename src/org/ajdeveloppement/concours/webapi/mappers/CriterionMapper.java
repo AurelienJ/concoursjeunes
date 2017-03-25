@@ -103,6 +103,7 @@ import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.TargetType;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -156,7 +157,8 @@ public abstract class CriterionMapper {
 	@Mapping(target = "criterionElements", ignore = true)
 	public abstract void updateCriterionFromCriterionView(CriterionView view, @MappingTarget Criterion criterion);
 	
-	public CriterionElement asCriterionElement(CriterionElementView criterionElementView) {
+	@Mapping(target = "criterion", ignore = true)
+	public abstract CriterionElement asCriterionElement(CriterionElementView criterionElementView);/* {
 		CriterionElement criterionElement = null;
 		
 		if(criterionElementView.getId() != null)
@@ -166,6 +168,18 @@ public abstract class CriterionMapper {
 			criterionElement = new CriterionElement();
 		
 		updateCriterionElementFromCriterionElementView(criterionElementView, criterionElement);
+		
+		return criterionElement;
+	}*/
+	
+	public CriterionElement resolve(CriterionElementView criterionElementView, @TargetType Class<CriterionElement> type) {
+		CriterionElement criterionElement = null;
+		
+		if(criterionElementView.getId() != null)
+			criterionElement = T_CriterionElement.getInstanceWithPrimaryKey(criterionElementView.getId());
+		
+		if(criterionElement == null)
+			criterionElement = new CriterionElement();
 		
 		return criterionElement;
 	}

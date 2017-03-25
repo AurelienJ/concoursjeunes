@@ -62,6 +62,52 @@ gulp.task("build", ['compile'], () => {
     console.log("Building the project ...")
 });
 
+gulp.task("dist", ["build"], () => {
+    gulp.src("fonts/**")
+        .pipe(gulp.dest("dist/fonts"));
+
+    gulp.src("images/**")
+        .pipe(gulp.dest("dist/images"));
+    gulp.src("images.large/**")
+        .pipe(gulp.dest("dist/images.large"));
+    gulp.src("images.small/**")
+        .pipe(gulp.dest("dist/images.small"));
+
+    gulp.src("styles/**")
+        .pipe(gulp.dest("dist/styles"));
+
+    gulp.src("scripts/**/*.html")
+        .pipe(gulp.dest("dist/scripts"));
+    gulp.src("scripts/app/bundle.js")
+        .pipe(gulp.dest("dist/scripts/app"));
+
+    gulp.src("node_modules/bootstrap/dist/css/**")
+        .pipe(gulp.dest("dist/node_modules/bootstrap/dist/css"));
+    gulp.src("node_modules/select2/dist/css/**")
+        .pipe(gulp.dest("dist/node_modules/select2/dist/css"));
+    gulp.src("node_modules/font-awesome/css/**")
+        .pipe(gulp.dest("dist/node_modules/font-awesome/css"));  
+    gulp.src("node_modules/admin-lte/dist/css/**")
+        .pipe(gulp.dest("dist/node_modules/admin-lte/dist/css"));
+
+    gulp.src("node_modules/core-js/client/**")
+        .pipe(gulp.dest("dist/node_modules/core-js/client"));
+    gulp.src("node_modules/zone.js/dist/**")
+        .pipe(gulp.dest("dist/node_modules/zone.js/dist"));
+    gulp.src("node_modules/reflect-metadata/**")
+        .pipe(gulp.dest("dist/node_modules/reflect-metadata"));
+    gulp.src("node_modules/jquery/dist/**")
+        .pipe(gulp.dest("dist/node_modules/jquery/dist"));
+    gulp.src("node_modules/bootstrap/dist/js/**")
+        .pipe(gulp.dest("dist/node_modules/bootstrap/dist/js"));
+    gulp.src("node_modules/admin-lte/dist/js/**")
+        .pipe(gulp.dest("dist/node_modules/admin-lte/dist/js"));
+
+
+    gulp.src("index.html")
+        .pipe(gulp.dest("dist"));
+})
+
 gulp.task('watch', function(){
   gulp.watch('scripts/**/*.ts', ['build']);
 });

@@ -11,7 +11,6 @@ var core_1 = require("@angular/core");
 var platform_browser_1 = require("@angular/platform-browser");
 var forms_1 = require("@angular/forms");
 var router_1 = require("@angular/router");
-var ng2_bootstrap_1 = require("ng2-bootstrap/ng2-bootstrap");
 var http_1 = require("@angular/http");
 var angular2_datatable_1 = require("../libs/angular2-datatable");
 var select2_directive_1 = require("./select2.directive");
@@ -42,7 +41,7 @@ var AppModule = (function () {
 AppModule = __decorate([
     core_1.NgModule({
         imports: [platform_browser_1.BrowserModule, http_1.HttpModule, forms_1.FormsModule,
-            router_1.RouterModule.forRoot(app_routes_1.AppRoutes, { useHash: true }), angular2_datatable_1.DataTableModule, ng2_bootstrap_1.DatepickerModule],
+            router_1.RouterModule.forRoot(app_routes_1.AppRoutes, { useHash: true }), angular2_datatable_1.DataTableModule],
         declarations: [
             app_1.AppComponent, titlebar_1.TitlebarComponent,
             parameters_1.ParametersComponent,

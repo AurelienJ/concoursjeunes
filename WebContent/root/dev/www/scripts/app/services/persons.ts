@@ -81,7 +81,10 @@ export class PersonsService {
 	}
 
 	public getPerson(idPerson : string) : Promise<IPerson> {
-		return this.http.get("api/contacts/" + idPerson, {headers: this.headers}).toPromise().then(r => r.json());
+		return this.http.get("api/contacts/" + idPerson, {headers: this.headers}).toPromise().then(r => r.json()).then((p : IPerson) => {
+			p.certificat = new Date(p.certificat);
+			return p;
+		});
 	}
 
 	public savePerson(person : IPerson) : Promise<IPerson> {

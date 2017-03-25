@@ -1,3 +1,4 @@
+///<reference path="../../../app/_references.ts"/>
 import {Directive, Input, EventEmitter, SimpleChange, OnChanges, DoCheck} from "@angular/core";
 import * as _ from "lodash";
 

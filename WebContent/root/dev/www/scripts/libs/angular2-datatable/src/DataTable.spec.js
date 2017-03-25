@@ -17,7 +17,7 @@ describe("DataTable directive tests", function () {
                 { id: 5, name: 'Ðrone' },
                 { id: 4, name: 'Ananas' }
             ];
-            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(null, datatable.inputData) })
+            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(null, datatable.inputData, true) })
                 .then(function (number) { return resolve(number); });
         }).then(function () { return done(); });
     });
@@ -27,7 +27,7 @@ describe("DataTable directive tests", function () {
     describe("initializing", function () {
         it("data should be empty array if inputData is undefined or null", function () {
             var datatable = new DataTable_1.DataTable();
-            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(null, null) });
+            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(null, null, true) });
             datatable.ngDoCheck();
             expect(datatable.data).toEqual([]);
         });
@@ -192,7 +192,7 @@ describe("DataTable directive tests", function () {
                 { name: 'Claire', age: 7 },
                 { name: 'Anna', age: 12 }
             ];
-            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(datatable.inputData, newData) });
+            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(datatable.inputData, newData, true) });
             datatable.setSort(['name', 'age'], "asc");
             datatable.ngDoCheck()
                 .then(function () {
@@ -218,7 +218,7 @@ describe("DataTable directive tests", function () {
                 { name: 'Claire', city: { zip: '11111' } },
                 { name: 'Anna', city: { zip: '21111' } }
             ];
-            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(datatable.inputData, newData) });
+            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(datatable.inputData, newData, true) });
             datatable.setSort("city.zip", "asc");
             datatable.ngDoCheck()
                 .then(function () {
@@ -240,7 +240,7 @@ describe("DataTable directive tests", function () {
     describe("data change", function () {
         it("should change data", function (done) {
             var newData = [{ id: 5, name: 'Ðrone' }, { id: 4, name: 'Ananas' }];
-            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(datatable.inputData, newData) });
+            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(datatable.inputData, newData, true) });
             datatable.ngDoCheck()
                 .then(function () {
                 expect(datatable.data).toEqual([{ id: 5, name: 'Ðrone' }, { id: 4, name: 'Ananas' }]);
@@ -255,7 +255,7 @@ describe("DataTable directive tests", function () {
             datatable.setPage(2, 2);
             datatable.ngDoCheck();
             var newData = [{ id: 5, name: 'Ðrone' }, { id: 4, name: 'Ananas' }];
-            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(datatable.inputData, newData) })
+            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(datatable.inputData, newData, true) })
                 .then(function () {
                 datatable.ngDoCheck()
                     .then(function () {
@@ -272,7 +272,7 @@ describe("DataTable directive tests", function () {
             datatable.setPage(2, 1);
             datatable.ngDoCheck();
             var newData = [{ id: 5, name: 'Ðrone' }, { id: 1, name: 'Duck' }, { id: 4, name: 'Ananas' }];
-            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(datatable.inputData, newData) });
+            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(datatable.inputData, newData, true) });
             datatable.ngDoCheck()
                 .then(function () {
                 expect(datatable.data).toEqual([{ id: 1, name: 'Duck' }]);
@@ -287,7 +287,7 @@ describe("DataTable directive tests", function () {
             datatable.setPage(2, 1);
             datatable.ngDoCheck();
             var newData = [];
-            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(datatable.inputData, newData) });
+            datatable.ngOnChanges({ inputData: new core_1.SimpleChange(datatable.inputData, newData, true) });
             datatable.ngDoCheck()
                 .then(function () {
                 expect(datatable.activePage).toEqual(1);

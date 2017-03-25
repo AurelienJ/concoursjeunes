@@ -1,3 +1,4 @@
+///<reference path="../../../app/_references.ts"/>
 import {Component, Input, OnChanges} from "@angular/core";
 import {DataTable} from "./DataTable";
 import * as _ from "lodash";

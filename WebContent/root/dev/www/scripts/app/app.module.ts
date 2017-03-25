@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { FormsModule }    from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { DatepickerModule } from 'ng2-bootstrap/ng2-bootstrap';
 
 import { HttpModule, XHRBackend } from '@angular/http';
 import { DataTableModule } from "../libs/angular2-datatable";
@@ -35,7 +34,7 @@ import { AppRoutes } from './app.routes';
 
 @NgModule({
     imports:        [BrowserModule, HttpModule, FormsModule, 
-        RouterModule.forRoot(AppRoutes, { useHash: true }), DataTableModule, DatepickerModule],
+        RouterModule.forRoot(AppRoutes, { useHash: true }), DataTableModule],
     declarations:   [ 
         AppComponent, TitlebarComponent, 
         ParametersComponent,

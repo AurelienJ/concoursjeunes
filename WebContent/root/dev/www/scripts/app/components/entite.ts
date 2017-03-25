@@ -99,7 +99,7 @@ import 'rxjs/add/operator/share';
 								<div class="modal-dialog">
 									<div class="modal-content">
 									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal" aria-label="Fermer" (click)="selectedCriterionForDelete=undefined">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Fermer" (click)="selectedCriterionForDelete=null">
 										<span aria-hidden="true">×</span></button>
 										<h4 class="modal-title">Suppression d'un critère</h4>
 									</div>
@@ -108,7 +108,7 @@ import 'rxjs/add/operator/share';
 									</div>
 									<div class="modal-footer">
 										<button type="button" class="btn btn-outline" (click)="deleteCriterion(selectedCriterionForDelete, true)">Supprimer</button>
-										<button type="button" class="btn btn-outline" data-dismiss="modal" (click)="selectedCriterionForDelete=undefined">Fermer</button>
+										<button type="button" class="btn btn-outline" data-dismiss="modal" (click)="selectedCriterionForDelete=null">Fermer</button>
 									</div>
 									</div>
 									<!-- /.modal-content -->

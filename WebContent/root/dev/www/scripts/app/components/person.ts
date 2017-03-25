@@ -63,18 +63,13 @@ import * as moment from 'moment';
 								<div class="form-group" *ngIf="person.type == 'archer'">
 									<label for="certificat" class="col-sm-2 control-label">Certificat</label>
 									<div class="col-sm-10">
-									<div class="input-group date">
-									<div class="input-group-addon">
-										<i class="fa fa-calendar"></i>
+										<div class="input-group date">
+											<div class="input-group-addon">
+												<i class="fa fa-calendar"></i>
+											</div>
+											<input [ngModel]="person.certificat | date: 'dd/MM/yyyy'" (ngModelChange)="person.certificat = toDate($event)" type="date" id="certificat" name="certificat" class="form-control">
+										</div>
 									</div>
-									<input datepicker type="date" id="certificat" name="certificat" class="form-control"
-										[ngModel]="formatDate(person.certificat)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									<div class="dropdown-menu">
-										<datepicker [(ngModel)]="person.certificat" [showWeeks]="true" name="certificatb" (selectionDone)="showDatePicker = false"></datepicker>
-									</div>
-									</div>
-									</div>
-									
 								</div>
 							</section>
 
@@ -160,7 +155,6 @@ export class PersonComponent implements OnInit, DoCheck {
 		private navigation : NavigatorService,
 		private references : ReferencesService,
 		private persons : PersonsService) {
-
 	}
 
 	ngOnInit() {
@@ -222,6 +216,10 @@ export class PersonComponent implements OnInit, DoCheck {
 
 	formatDate(date : Date) : string{
 		return moment(date).format('DD/MM/YYYY');
+	}
+
+	toDate(date : string) : Date{
+		return new Date(date);
 	}
 
 	cancel() {

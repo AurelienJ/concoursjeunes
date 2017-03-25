@@ -1,8 +1,9 @@
-///<reference path="_references.ts"/>
-
 import { Directive, ElementRef, Input, Output, HostListener, Renderer, EventEmitter, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+
+import 'jquery';
+import 'select2';
 
 @Directive({ selector: '[select2]' })
 export class Select2Directive implements OnInit {
