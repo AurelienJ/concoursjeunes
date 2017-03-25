@@ -40,7 +40,9 @@ describe("DataTable directive tests", ()=> {
         it("data should be equal to inputData", (done)=> {
             datatable.ngDoCheck()
                 .then(() => {
-                    expect(datatable.data).toEqual(<any[]>datatable.inputData);
+					if(datatable.inputData instanceof Array)
+                    	expect(datatable.data).toEqual(<any[]>datatable.inputData);
+					else fail("must be an array");
                     done();
                 })
                 .catch(error => {
