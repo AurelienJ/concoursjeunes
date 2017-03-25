@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 ///<reference path="_references.ts"/>
 var parameters_1 = require("./components/parameters");
 var entites_1 = require("./components/entites");
@@ -19,6 +20,8 @@ exports.AppRoutes = [
     { path: 'persons/:id', component: person_1.PersonComponent },
     { path: 'rules', component: rules_1.RulesComponent },
     { path: 'rules/:id', component: rule_1.RuleComponent }
+    //{ path: 'authToken/:token', component: LoginComponent},
+    //{ path: 'user',component: UserComponent}
 ];
 
 //# sourceMappingURL=app.routes.js.map

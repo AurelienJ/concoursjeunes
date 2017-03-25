@@ -9,19 +9,25 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var Select2Directive = (function () {
+    // @HostListener('select2:select')
+    // private select(e: Event) {
+    // 	this.value.next(this.element.val());
+    // 	this.onSelect.emit(e);
+    // }
+    // @HostListener('select2:unselect')
+    // private unselect(e: Event) {
+    // 	this.value.next(this.element.val());
+    // 	this.onUnselect.emit(e);
+    // }
     function Select2Directive(el, renderer) {
         this.onSelect = new core_1.EventEmitter();
         this.onUnselect = new core_1.EventEmitter();
         this.value = new core_1.EventEmitter();
         var that = this;
         this.element = jQuery(el.nativeElement);
-        this.element.select2({
-            placeholder: this.placeHolder,
-            allowClear: true
-        });
-        this.value.next(this.element.val());
         this.element.on('select2:select', function (e) {
             that.value.next(that.element.val());
             that.onSelect.emit(e);
@@ -39,6 +45,13 @@ var Select2Directive = (function () {
         configurable: true
     });
     ;
+    Select2Directive.prototype.ngOnInit = function () {
+        this.element.select2({
+            placeholder: this.placeHolder,
+            allowClear: true
+        });
+        this.value.next(this.element.val());
+    };
     return Select2Directive;
 }());
 __decorate([

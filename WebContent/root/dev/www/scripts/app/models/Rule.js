@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Rule = (function () {
     function Rule() {
         this.nbSerie = 2;

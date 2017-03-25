@@ -108,7 +108,6 @@ import org.mapstruct.factory.Mappers;
 public abstract class EntiteMapper {
 	public static EntiteMapper INSTANCE = Mappers.getMapper(EntiteMapper.class);
 	
-	
 	public Entite asEntite(EntiteView entiteView) {
 		Entite entite = null;
 		
@@ -122,7 +121,10 @@ public abstract class EntiteMapper {
 				entite = new Entite();
 		}
 		
-		updateEntiteFromEntiteView(entiteView, entite);
+		if(entite instanceof Federation)
+			updateFederationFromEntiteView(entiteView, (Federation)entite);
+		else
+			updateEntiteFromEntiteView(entiteView, entite);
 		
 		return entite;
 	}
@@ -135,6 +137,18 @@ public abstract class EntiteMapper {
 	@Mapping(target = "profiles", ignore = true)
 	@Mapping(target = "rules", ignore = true)
 	public abstract void updateEntiteFromEntiteView(EntiteView view, @MappingTarget Entite entite);
+	
+	@Mapping(target = "idEntite", source = "id")
+	@Mapping(target = "competitionLevels", ignore = true)
+	@Mapping(target = "competitions", ignore = true)
+	@Mapping(target = "entiteParent", source = "idEntiteParent")
+	@Mapping(target = "entitesEnfant", ignore = true)
+	@Mapping(target = "profiles", ignore = true)
+	@Mapping(target = "rules", ignore = true)
+	@Mapping(target = "nomFederation", source = "nom")
+	@Mapping(target = "sigleFederation", source = "sigle")
+	@Mapping(target = "criteria", ignore = true)
+	public abstract void updateFederationFromEntiteView(EntiteView view, @MappingTarget Federation federation);
 	
 	public Entite idEntiteToEntite(UUID source) {
 		return T_Entite.getInstanceWithPrimaryKey(source);

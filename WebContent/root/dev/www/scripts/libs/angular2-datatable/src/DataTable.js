@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var _ = require("lodash");
 var LocalInputData = (function () {
@@ -207,8 +208,7 @@ DataTable = __decorate([
     core_1.Directive({
         selector: 'table[mfData]',
         exportAs: 'mfDataTable'
-    }),
-    __metadata("design:paramtypes", [])
+    })
 ], DataTable);
 exports.DataTable = DataTable;
 

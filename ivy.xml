@@ -16,10 +16,10 @@
             <dependency org="org.ajdeveloppement" name="ajcommons-ext" rev="[2.0,)"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-webserver" rev="[0.3,)"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-webserver-viewbinder" rev="[0.0,)"/>
-			<dependency org="org.mapstruct" name="mapstruct-jdk8" rev="1.1.0.Final">
+			<dependency org="org.mapstruct" name="mapstruct-jdk8" rev="1.2.0.Beta2">
 				<exclude module="mapstruct-common"/>
 			</dependency>
-			<dependency org="org.mapstruct" name="mapstruct-processor" rev="1.1.0.Final"/>
+			<dependency org="org.mapstruct" name="mapstruct-processor" rev="1.2.0.Beta2"/>
             <dependency org="com.h2database" name="h2" rev="1.3.176" conf="runtime->default" />
             <dependency org="com.lowagie" name="itext" rev="2.1.7">
             	<exclude module="bcmail-jdk14"/>
