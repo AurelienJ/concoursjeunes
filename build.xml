@@ -14,6 +14,10 @@
 	  </classpath>
 	</taskdef>
 	
+	<taskdef name="bundleapp"
+		             classname="com.oracle.appbundler.AppBundlerTask"   
+		             classpath="lib/appbundler-1.0.0.jar" />
+	
 	<condition property="isWindows">
 		<os family="Windows" />
 	</condition>
@@ -410,6 +414,22 @@
 	<target name="makemacbundle">
 		<defaultexcludes remove="**/.DS_Store"/>
 		
+		<bundleapp outputdirectory="${projet.pack.dir}/macosx"
+				            name="ConcoursJeunes"
+				            displayname="ConcoursJeunes"
+				            identifier="org.ajdeveloppement.concours"
+				            mainclassname="org.ajdeveloppement.concours.Main"
+							icon="packager/macosx/ConcoursJeunes.app/Contents/Java/ressources/iconCJ.icns"
+							jvmrequired="1.8"
+			      			jrepreferred="true"
+							workingdirectory="$APP_ROOT/Contents/Java"
+							signature="ACGS"
+							>
+							<classpath file="${projet.pack.dir}/ConcoursJeunes.jar" />
+							<option value="-Dapple.laf.useScreenMenuBar=true"/>
+							<option value="-splash:$APP_ROOT/Contents/Java/ressources/Logo.png"/>
+				        </bundleapp>
+		
 		<copy todir="${projet.pack.dir}/macosx/" >
 			<fileset dir="packager/macosx" >
 				<include name="**/**"/>
@@ -418,20 +438,27 @@
 		
 		<defaultexcludes default="true"/>
 		
-		<copy todir="${projet.pack.dir}/macosx/${version.name}.app/Contents/Resources/Java" >
+		<copy todir="${projet.pack.dir}/macosx/${version.name}.app/Contents/Java" >
 			<fileset dir="pack" >
 				<include name="config/**"/>
 				<include name="lang/**"/>
 				<include name="lib/**"/>
+			</fileset>
+		</copy>
+		
+		<copy todir="${projet.pack.dir}/macosx/${version.name}.app/Contents/Java" >
+			<fileset dir="pack" >
 				<include name="ressources/**"/>
 				<include name="documentation/**"/>
-				<include name="ConcoursJeunes.jar"/>
+				<!--<include name="ConcoursJeunes.jar"/>-->
 				<include name="*.txt"/>
 			</fileset>
 		</copy>
+		
+		<!--
 		<chmod file="${projet.pack.dir}/macosx/${version.name}.app/Contents/MacOS/JavaApplicationStub" perm="a+x"></chmod>
 		<chmod file="${projet.pack.dir}/macosx/${version.name}.app/Contents/Resources/Java/concoursjeunes-applyupdate" perm="a+x"></chmod>
-		
+		-->
 		<for param="plugin">
 		    <dirset dir="${projet.pack.dir}/plugins/">
 		    	<include name="*"/>
@@ -440,7 +467,7 @@
 		    	<exclude name="ScriptExt"/>
 		    </dirset>
 			<sequential>
-				<copy todir="${projet.pack.dir}/macosx/${version.name}.app/Contents/Resources/Java" >
+				<copy todir="${projet.pack.dir}/macosx/${version.name}.app/Contents/Java" >
 					<fileset dir="@{plugin}" >
 						<include name="**/**"/>
 						
@@ -454,6 +481,9 @@
 			<env key="APPNAME" value="${version.name}"/>
 			<env key="VERSION" value="${version.numero}"/>
 		</exec>
+		
+		
+		
 		<gzip zipfile="${projet.pack.dir}/macosx/${version.name}-${version.numero}.dmg.gz" src="${projet.pack.dir}/macosx/${version.name}-${version.numero}.dmg"/>
 	</target>
 	

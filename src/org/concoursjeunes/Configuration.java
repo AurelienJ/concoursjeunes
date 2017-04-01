@@ -136,7 +136,6 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	private static String[] strLstLangue;
 
 	@XmlAttribute
-	@SuppressWarnings("unused")
 	private String version			= "2"; //$NON-NLS-1$
 	private String langue           = "fr";               //$NON-NLS-1$
 	private String logoPath         = "ressources/logos/default.jpg";   //$NON-NLS-1$
@@ -508,7 +507,7 @@ public class Configuration extends DefaultParameters implements Cloneable {
 	 * @return String[] - retourne la liste des langues disponible
 	 */
 	public static String[] listLangue() {
-		if (strLstLangue == null) {
+		if (strLstLangue == null) {			
 			String[] strLng = new File("lang").list(new FilenameFilter() {  //$NON-NLS-1$
 						@Override
 						public boolean accept(File dir, String name) {
