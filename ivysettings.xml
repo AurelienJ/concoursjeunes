@@ -15,8 +15,8 @@
 		        <artifact pattern="${ivy-pattern}" />
 		    </filesystem>
 		    
-            <ibiblio name="ajdev" root="http://repos.ajdeveloppement.org/ivy/" pattern="[organisation]/[module]/[revision]/[type]s/[module].[ext]"/>
-            <ibiblio name="swt-repo" m2compatible="true" root="https://swt-repo.googlecode.com/svn/repo/" />
+            <ibiblio name="ajdev" root="https://repos.ajdeveloppement.org/ivy/" pattern="[organisation]/[module]/[revision]/[type]s/[module].[ext]"/>
+            <ibiblio name="swt-repo" m2compatible="true" root="http://maven-eclipse.github.io/maven/" />
             <ibiblio name="maven2" m2compatible="true"/>
             <ibiblio name="central" m2compatible="true"/>
         </chain>

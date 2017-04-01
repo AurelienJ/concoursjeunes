@@ -136,4 +136,4 @@ gulp.task('watch', function(){
 
 gulp.task('default', ['watch', 'distDebug']);
 
-gulp.task('prod', ['watch', 'build', 'bundle']);
+gulp.task('prod', ['distProd']);
