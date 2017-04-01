@@ -100,6 +100,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
@@ -194,7 +195,8 @@ public class Entite implements SqlObjectPersistence {
 	private Entite entiteParent;
 	
 	@SqlChildCollection(foreignFields="ID_ENTITE_PARENT",type=Entite.class)
-	private List<Entite> entitesEnfant;
+	private LazyPersistentCollection<Entite, Void> entitesEnfant = new LazyPersistentCollection<Entite, Void>(
+			()-> QResults.from(Entite.class).where(T_Entite.ID_ENTITE_PARENT.equalTo(idEntite)));
 	
 	@SqlChildCollection(foreignFields="ID_ENTITE",type=Rule.class)
 	private List<Rule> rules;
@@ -491,18 +493,8 @@ public class Entite implements SqlObjectPersistence {
 	/**
 	 * @return entitesEnfant
 	 */
-	public List<Entite> getEntitesEnfant() {
-		if(entitesEnfant != null) {
-			entitesEnfant = QResults.from(Entite.class).where(T_Entite.ID_ENTITE_PARENT.equalTo(idEntite)).asList();
-		}
+	public LazyPersistentCollection<Entite, Void> getEntitesEnfant() {
 		return entitesEnfant;
-	}
-
-	/**
-	 * @param entitesEnfant entitesEnfant à définir
-	 */
-	public void setEntitesEnfant(List<Entite> entitesEnfant) {
-		this.entitesEnfant = entitesEnfant;
 	}
 
 	/**
