@@ -100,11 +100,11 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Profile;
 import org.ajdeveloppement.concours.webapi.UserSessionData;
-import org.ajdeveloppement.concours.webapi.models.RuleModelView;
 import org.ajdeveloppement.concours.webapi.models.RulesCategoryModelView;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
 import org.ajdeveloppement.concours.webapi.views.CriterionView;
 import org.ajdeveloppement.concours.webapi.views.EntiteView;
+import org.ajdeveloppement.concours.webapi.views.RuleView;
 import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.HttpReturnCode.ServerError;
 import org.ajdeveloppement.webserver.HttpReturnCode.Success;
@@ -150,17 +150,17 @@ public class RulesController {
 	}
 	
 	@HttpService(key="rules")
-	public List<RuleModelView> getRules() {
+	public List<RuleView> getRules() {
 		return service.getAllRules();
 	}
 	
 	@HttpService(key="rules")
-	public RuleModelView getRules(@HttpServiceId UUID idRule) {
+	public RuleView getRules(@HttpServiceId UUID idRule) {
 		return service.getRuleById(idRule);
 	}
 
 	@HttpService(key="rules",methods={HttpMethod.PUT, HttpMethod.POST})
-	public Object createOrUpdateRule( @Body RuleModelView modelView) {
+	public Object createOrUpdateRule( @Body RuleView modelView) {
 		try {
 			service.createOrUpdateRule(modelView);
 		} catch (ObjectPersistenceException e) {

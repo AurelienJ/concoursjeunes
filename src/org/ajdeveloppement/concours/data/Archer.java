@@ -109,7 +109,7 @@ import org.ajdeveloppement.concours.managers.ConcurrentManager;
 @SqlTable(name="ARCHER")
 @SqlPrimaryKey(fields="ID_CONTACT")
 @SqlUnmappedFields(fields={"ID_CONTACT","CATEGORIE","NIVEAU","ARC"},
-	typeFields={UUID.class, Integer.class, Integer.class, Integer.class, Integer.class, Date.class, Date.class})
+	typeFields={UUID.class, Integer.class, Integer.class, Integer.class })
 public class Archer extends Contact {
 	@SqlField(name="NUMLICENCEARCHER",sqlType="VARCHAR",size=32)
 	private String numLicenceArcher;
@@ -239,15 +239,15 @@ public class Archer extends Contact {
 	}
 
 
-	@Override
-	protected Archer clone() throws CloneNotSupportedException {
-		return clone(true);
-	}
-	
-	@Override
-	protected Archer clone(boolean conserveId) throws CloneNotSupportedException {
-		Archer clone = (Archer)super.clone(conserveId);
-		
-		return clone;
-	}
+//	@Override
+//	protected Archer clone() throws CloneNotSupportedException {
+//		return clone(true);
+//	}
+//	
+//	@Override
+//	protected Archer clone(boolean conserveId) throws CloneNotSupportedException {
+//		Archer clone = (Archer)super.clone(conserveId);
+//		
+//		return clone;
+//	}
 }

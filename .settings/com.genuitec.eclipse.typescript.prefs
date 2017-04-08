@@ -11,3 +11,4 @@ formatter.placeOpenBraceOnNewLineForControlBlocks=false
 formatter.placeOpenBraceOnNewLineForFunctions=false
 spacesForTabs=false
 tabWidth=4
+tsConfigPath=src-client/tsconfig.json

@@ -30,15 +30,16 @@
         'jquery-slimscroll':         'node_modules/jquery-slimscroll/jquery.slimscroll.min.js',
         'select2':                   'node_modules/select2/dist/js/select2.js',
 
-        'angular2-datatable': 'scripts/libs/angular2-datatable',
+        'angular2-datatable':        'scripts/libs/angular2-datatable',
+        'general':                   'scripts/app/general'
     };
     
     // packages tells the System loader how to load when no filename and/or no extension
     var packages = {
         'app':                        { main: 'main.js',  defaultExtension: 'js' },
+        'general':                    { main: 'index.js',  defaultExtension: 'js' },
         'rxjs':                       { defaultExtension: 'js' },
-        'angular2-cookie':            { defaultExtension: 'js' },
-        'angular2-datatable':         { main: 'index.js', defaultExtension: 'js' },
+        'angular2-datatable':         { main: 'index.js', defaultExtension: 'js' }
     };
     
 //    var ngPackageNames = [

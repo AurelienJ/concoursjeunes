@@ -91,7 +91,7 @@ package org.ajdeveloppement.concours.data;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.sql.Types;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -108,6 +108,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
@@ -201,13 +202,16 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	private Date dateModification;
 	
 	@SqlChildCollection(foreignFields="ID_CONTACT",type=Coordinate.class)
-	private List<Coordinate> coordinates;
+	private LazyPersistentCollection<Coordinate, Void> coordinates = new LazyPersistentCollection<>(
+			() -> T_Coordinate.all().where(T_Coordinate.ID_CONTACT.equalTo(idContact)));
 	
 	@SqlChildCollection(foreignFields="ID_CONTACT",type=CategoryContactContact.class)
-	private List<CategoryContactContact> categories;
+	private LazyPersistentCollection<CategoryContactContact, Void> categories = new LazyPersistentCollection<>(
+			() -> T_CategoryContactContact.all().where(T_CategoryContactContact.ID_CONTACT.equalTo(idContact)));
 	
 	@SqlChildCollection(foreignFields="ID_CONTACT",type=ManagerProfile.class)
-	private List<ManagerProfile> managedProfiles;
+	private LazyPersistentCollection<ManagerProfile, Void> managedProfiles = new LazyPersistentCollection<>(
+			() -> T_ManagerProfile.all().where(T_ManagerProfile.ID_CONTACT.equalTo(idContact)));
 
 	protected transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
@@ -564,64 +568,26 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	 * 
 	 * @return coordinates of contact
 	 */
-	public List<Coordinate> getCoordinates() {
-		if(coordinates == null) {
-			coordinates = QResults.from(Coordinate.class)
-					.where(T_Coordinate.ID_CONTACT.equalTo(idContact))
-					.asList();
-			if(coordinates == null)
-				coordinates = new ArrayList<Coordinate>();
-		}
+	public Collection<Coordinate> getCoordinates() {
 		return coordinates;
 	}
 
 	/**
-	 * Set coordinates of contact (phone, fax, mail)
+	 * add a coordinate of contact (phone, fax, mail)
 	 * 
 	 * @param coordinates coordinates of contact (phone, fax, mail)
 	 */
-	public void setCoordinates(List<Coordinate> coordinates) {
-		Object oldValue = this.coordinates;
+	public void addCoordinates(Coordinate coordinate) {
+		coordinate.setContact(this);
 		
-		this.coordinates = coordinates;
-		if(coordinates != null) {
-			for(Coordinate coordinate : coordinates)
-				coordinate.setContact(this);
-		}
-		
-		pcs.firePropertyChange("coordinates", oldValue, coordinates); //$NON-NLS-1$
-	}
-
-	/**
-	 * Get categories of contact
-	 * 
-	 * @return categories the categories of contact
-	 */
-	public List<CategoryContactContact> getCategories() {
-		if(categories == null) {
-			categories = QResults.from(CategoryContactContact.class)
-					.where(T_CategoryContactContact.ID_CONTACT.equalTo(idContact))
-					.asList();
-			if(categories == null)
-				categories = new ArrayList<CategoryContactContact>();
-		}
-		return categories;
-	}
-
-	/**
-	 * Set categories of contact
-	 * 
-	 * @param categories the categories of contact
-	 */
-	public void setCategories(List<CategoryContactContact> categories) {
-		Object oldValue = categories;
-		
-		this.categories = categories;
-		
-		pcs.firePropertyChange("categories", oldValue, categories); //$NON-NLS-1$
+		coordinates.add(coordinate);
 	}
 	
-	public List<CategoryContact> getCategoryContact(){
+	public void removeCoordinates(Coordinate coordinate) {
+		coordinates.remove(coordinate);
+	}
+	
+	public List<CategoryContact> getCategoriesContact(){
 		return categories.stream().map(ccc ->ccc.getCategoryContact()).collect(Collectors.toList());
 	}
 	
@@ -630,35 +596,34 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	 * @param categoryContact
 	 */
 	public void addCategoryContact(CategoryContact categoryContact) {
-		getCategories().add(new CategoryContactContact(this, categoryContact));
+		categories.add(new CategoryContactContact(this, categoryContact));
+	}
+	
+	public void removeCategoryContact(CategoryContact categoryContact) {
+		categories.remove(new CategoryContactContact(this, categoryContact));
 	}
 	
 	/**
 	 * @return managedProfiles
 	 */
-	public List<ManagerProfile> getManagedProfiles() {
-		if(managedProfiles == null) {
-			managedProfiles = T_ManagerProfile.all()
-					.where(T_ManagerProfile.ID_CONTACT.equalTo(idContact))
-					.asList();
-			if(managedProfiles == null)
-				managedProfiles = new ArrayList<>();
-		}
+	public Collection<ManagerProfile> getManagedProfiles() {
 		return managedProfiles;
 	}
 
 	/**
 	 * @param managedProfiles managedProfiles à définir
 	 */
-	public void setManagedProfiles(List<ManagerProfile> managedProfiles) {
-		Object oldValue = this.managedProfiles;
-		
-		this.managedProfiles = managedProfiles;
-		
-		for(ManagerProfile managedProfile : managedProfiles)
-			managedProfile.setManager(this);
-		
-		pcs.firePropertyChange("managedProfiles", oldValue, managedProfiles); //$NON-NLS-1$
+	public void addManagedProfile(ManagerProfile managedProfile) {
+		managedProfile.setManager(this);
+		managedProfiles.add(managedProfile);
+	}
+	
+	/**
+	 * @param managedProfiles managedProfiles à définir
+	 */
+	public void removeManagedProfile(ManagerProfile managedProfile) {
+		managedProfile.setManager(null);
+		managedProfiles.add(managedProfile); //add is used to force save() call of managedProfile
 	}
 
 	/**
@@ -811,42 +776,42 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 		return getFullNameWithCivility();
 	}
 	
-	/**
-	 * clone the contact and all non-immutable properties
-	 * 
-	 * @return the cloned contact
-	 * @throws CloneNotSupportedException
-	 */
-	@Override
-	protected Contact clone() throws CloneNotSupportedException {
-		return clone(true);
-	}
-	
-	/**
-	 * clone the contact and all non-immutable properties.
-	 * 
-	 * @param conserveId if true, the id is conserved else id is reset to null
-	 * @return the cloned contact
-	 * @throws CloneNotSupportedException
-	 */
-	protected Contact clone(boolean conserveId) throws CloneNotSupportedException {
-		Contact clone = (Contact)super.clone();
-		if(!conserveId)
-			clone.setIdContact(null);
-		clone.pcs = new PropertyChangeSupport(clone);
-		
-		List<Coordinate> clonedCoordinates = new ArrayList<Coordinate>();
-		if(coordinates != null) {
-			for(Coordinate coordinate : clone.getCoordinates()) {
-				Coordinate clonedCoordinate = coordinate.clone();
-				clonedCoordinate.setContact(clone);
-				clonedCoordinates.add(clonedCoordinate);
-			}
-			clone.setCoordinates(clonedCoordinates);
-		}
-		
-		return clone;
-	}
+//	/**
+//	 * clone the contact and all non-immutable properties
+//	 * 
+//	 * @return the cloned contact
+//	 * @throws CloneNotSupportedException
+//	 */
+//	@Override
+//	protected Contact clone() throws CloneNotSupportedException {
+//		return clone(true);
+//	}
+//	
+//	/**
+//	 * clone the contact and all non-immutable properties.
+//	 * 
+//	 * @param conserveId if true, the id is conserved else id is reset to null
+//	 * @return the cloned contact
+//	 * @throws CloneNotSupportedException
+//	 */
+//	protected Contact clone(boolean conserveId) throws CloneNotSupportedException {
+//		Contact clone = (Contact)super.clone();
+//		if(!conserveId)
+//			clone.setIdContact(null);
+//		clone.pcs = new PropertyChangeSupport(clone);
+//		
+//		List<Coordinate> clonedCoordinates = new ArrayList<Coordinate>();
+//		if(coordinates != null) {
+//			for(Coordinate coordinate : clone.getCoordinates()) {
+//				Coordinate clonedCoordinate = coordinate.clone();
+//				clonedCoordinate.setContact(clone);
+//				clonedCoordinates.add(clonedCoordinate);
+//			}
+//			clone.setCoordinates(clonedCoordinates);
+//		}
+//		
+//		return clone;
+//	}
 
 	@Override
 	public int hashCode() {

@@ -93,6 +93,7 @@ import java.beans.PropertyChangeSupport;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -114,6 +115,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
+import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
 import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
@@ -228,7 +230,8 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	@XmlElementWrapper(name="departages",required=true)
     @XmlElement(name="departage")
 	@SqlChildCollection(foreignFields="ID_REGLEMENT", type=Tie.class)
-	private List<Tie> tie = new ArrayList<>();
+	private LazyPersistentCollection<Tie, Void> ties = new LazyPersistentCollection<>(
+			() -> T_Tie.all().where(T_Tie.ID_REGLEMENT.equalTo(idRule)));
 	
 	@SqlChildCollection(foreignFields="ID_REGLEMENT", type=RankingCriterion.class)
 	private List<RankingCriterion> rankingCriteria;
@@ -821,23 +824,28 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	 * 
 	 * @return la liste des départage
 	 */
-	public List<Tie> getTie() {
-		return tie;
+	public Collection<Tie> getTies() {
+		return ties;
 	}
-
+	
 	/**
-	 * Défini la liste des champs de départage
+	 * Ajoute un item de départage
 	 * 
-	 * @param tie la liste des champs de départage
+	 * @param tie
 	 */
-	public void setTie(List<Tie> tie) {
-		Object oldValue = this.tie;
+	public void addTie(Tie tie) {
+		tie.setReglement(this);
 		
-		this.tie = tie;
-		for(Tie t : tie)
-			t.setReglement(this);
-		
-		pcs.firePropertyChange("tie", oldValue, tie); //$NON-NLS-1$
+		ties.add(tie);
+	}
+	
+	/**
+	 * Supprime u iteme de départage
+	 * 
+	 * @param tie
+	 */
+	public void removeTie(Tie tie) {
+		ties.remove(tie);
 	}
 
 	/**
@@ -1006,12 +1014,11 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	
 	private void saveTie(Session session) throws ObjectPersistenceException {
 		int i = 1;
-		for(Tie d : tie) {
+		for(Tie d : ties) {
 			d.setNumOrdre(i++);
 		}
 		
-		PersitentCollection.save(tie, session, 
-				Collections.<String, Object>singletonMap(T_Tie.ID_REGLEMENT.getFieldName(), idRule));
+		ties.save(session);
 	}
 
 	/**

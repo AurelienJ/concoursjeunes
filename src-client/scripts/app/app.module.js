@@ -1,62 +1,74 @@
-"use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-///<reference path="_references.ts"/>
-var core_1 = require("@angular/core");
-var platform_browser_1 = require("@angular/platform-browser");
-var forms_1 = require("@angular/forms");
-var router_1 = require("@angular/router");
-var http_1 = require("@angular/http");
-var angular2_datatable_1 = require("../libs/angular2-datatable");
-var select2_directive_1 = require("./select2.directive");
-var slimscroll_directive_1 = require("./slimscroll.directive");
-var app_1 = require("./components/app");
-var titlebar_1 = require("./components/titlebar");
-var parameters_1 = require("./components/parameters");
-var criterion_1 = require("./components/criterion");
-var entites_1 = require("./components/entites");
-var entite_1 = require("./components/entite");
-var persons_1 = require("./components/persons");
-var person_1 = require("./components/person");
-var rules_1 = require("./components/rules");
-var rule_1 = require("./components/rule");
-var references_1 = require("./services/references");
-var entites_2 = require("./services/entites");
-var persons_2 = require("./services/persons");
-var rules_2 = require("./services/rules");
-var navigator_1 = require("./services/navigator");
-var arraySearch_pipe_1 = require("./arraySearch.pipe");
-var uppercase_pipe_1 = require("./uppercase.pipe");
-var app_routes_1 = require("./app.routes");
-var AppModule = (function () {
-    function AppModule() {
-    }
-    return AppModule;
-}());
-AppModule = __decorate([
-    core_1.NgModule({
-        imports: [platform_browser_1.BrowserModule, http_1.HttpModule, forms_1.FormsModule,
-            router_1.RouterModule.forRoot(app_routes_1.AppRoutes, { useHash: true }), angular2_datatable_1.DataTableModule],
-        declarations: [
-            app_1.AppComponent, titlebar_1.TitlebarComponent,
-            parameters_1.ParametersComponent,
-            criterion_1.CriterionComponent,
-            entites_1.EntitesComponent, entite_1.EntiteComponent,
-            persons_1.PersonsComponent, person_1.PersonComponent,
-            rules_1.RulesComponent, rule_1.RuleComponent,
-            select2_directive_1.Select2Directive, slimscroll_directive_1.SlimScrollDirective,
-            arraySearch_pipe_1.TableFilterPipe, uppercase_pipe_1.UpperCasePipe, entites_1.EntiteServerSideInputDataFilterPipe, persons_1.PersonServerSideInputDataFilterPipe, rules_1.RulesServerSideInputDataFilterPipe
+System.register(["@angular/core", "@angular/platform-browser", "@angular/router", "./general/general.module", "./references/references.module", "./competitions/competitions.module", "./entites/entites.module", "./persons/persons.module", "./rules/rules.module", "./parameters/parameters.module", "./slimscroll.directive", "./app.component", "./app.routes"], function (exports_1, context_1) {
+    "use strict";
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __moduleName = context_1 && context_1.id;
+    var core_1, platform_browser_1, router_1, general_module_1, references_module_1, competitions_module_1, entites_module_1, persons_module_1, rules_module_1, parameters_module_1, slimscroll_directive_1, app_component_1, app_routes_1, AppModule;
+    return {
+        setters: [
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (platform_browser_1_1) {
+                platform_browser_1 = platform_browser_1_1;
+            },
+            function (router_1_1) {
+                router_1 = router_1_1;
+            },
+            function (general_module_1_1) {
+                general_module_1 = general_module_1_1;
+            },
+            function (references_module_1_1) {
+                references_module_1 = references_module_1_1;
+            },
+            function (competitions_module_1_1) {
+                competitions_module_1 = competitions_module_1_1;
+            },
+            function (entites_module_1_1) {
+                entites_module_1 = entites_module_1_1;
+            },
+            function (persons_module_1_1) {
+                persons_module_1 = persons_module_1_1;
+            },
+            function (rules_module_1_1) {
+                rules_module_1 = rules_module_1_1;
+            },
+            function (parameters_module_1_1) {
+                parameters_module_1 = parameters_module_1_1;
+            },
+            function (slimscroll_directive_1_1) {
+                slimscroll_directive_1 = slimscroll_directive_1_1;
+            },
+            function (app_component_1_1) {
+                app_component_1 = app_component_1_1;
+            },
+            function (app_routes_1_1) {
+                app_routes_1 = app_routes_1_1;
+            }
         ],
-        bootstrap: [app_1.AppComponent],
-        providers: [navigator_1.NavigatorService, references_1.ReferencesService,
-            entites_2.EntitesService, persons_2.PersonsService, rules_2.RulesService]
-    })
-], AppModule);
-exports.AppModule = AppModule;
+        execute: function () {
+            AppModule = (function () {
+                function AppModule() {
+                }
+                return AppModule;
+            }());
+            AppModule = __decorate([
+                core_1.NgModule({
+                    imports: [platform_browser_1.BrowserModule,
+                        router_1.RouterModule.forRoot(app_routes_1.AppRoutes, { useHash: true }),
+                        general_module_1.GeneralModule, references_module_1.ReferencesModule, parameters_module_1.ParametersModule, competitions_module_1.CompetitionModule, entites_module_1.EntitesModule, persons_module_1.PersonsModule, rules_module_1.RulesModule],
+                    declarations: [app_component_1.AppComponent, slimscroll_directive_1.SlimScrollDirective],
+                    bootstrap: [app_component_1.AppComponent],
+                    providers: []
+                })
+            ], AppModule);
+            exports_1("AppModule", AppModule);
+        }
+    };
+});
 
 //# sourceMappingURL=app.module.js.map

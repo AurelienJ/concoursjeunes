@@ -118,6 +118,7 @@ import org.ajdeveloppement.commons.AJTemplate;
 import org.ajdeveloppement.commons.XmlUtils;
 import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.concours.builders.EquipeListBuilder;
+import org.ajdeveloppement.concours.data.CompetitionJudge;
 import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.CriteriaSet;
@@ -443,9 +444,9 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 	protected void beforeMarshal(Marshaller marshaller) {
 		if(parametre != null && concurrentList != null) {
 			entitesConcours = new ArrayList<Entite>(Arrays.asList(concurrentList.listCompagnie()));
-			for(Judge judge : parametre.getJudges()) {
-				if(!entitesConcours.contains(judge.getEntite()))
-					entitesConcours.add(judge.getEntite());
+			for(CompetitionJudge judge : parametre.getJudges()) {
+				if(!entitesConcours.contains(judge.getJudge().getEntite()))
+					entitesConcours.add(judge.getJudge().getEntite());
 			}
 			if(!entitesConcours.contains(parametre.getClub()))
 				entitesConcours.add(parametre.getClub());
@@ -503,8 +504,8 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 			for(Concurrent concurrent : concurrentList.list())
 				resyncContactEntite(concurrent, cacheEntite);
 			
-			for(Judge judge : parametre.getJudges())
-				resyncContactEntite(judge, cacheEntite);
+			for(CompetitionJudge judge : parametre.getJudges())
+				resyncContactEntite(judge.getJudge(), cacheEntite);
 			
 			dbUUID = ApplicationCore.dbUUID;
 		}
@@ -620,7 +621,7 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 					}
 					
 					String departages = ""; //$NON-NLS-1$
-					for (Tie departage : parametre.getReglement().getTie()) {
+					for (Tie departage : parametre.getReglement().getTies()) {
 						if(!departages.isEmpty())
 							departages += "-"; //$NON-NLS-1$
 						departages += departage.getFieldName();
@@ -658,10 +659,10 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 								tplClassement.parse("categories.classement.TOTAL", "" + sortList.get(j).getTotalScore()); //$NON-NLS-1$ //$NON-NLS-2$
 								
 								departages = ""; //$NON-NLS-1$
-								if(sortList.get(j).getDepartages().length == parametre.getReglement().getTie().size()) {
-									for(int k = 0; k < parametre.getReglement().getTie().size(); k++) {
+								if(sortList.get(j).getDepartages().length == parametre.getReglement().getTies().size()) {
+									for(int k = 0; k < parametre.getReglement().getTies().size(); k++) {
 										departages += sortList.get(j).getDepartages()[k];
-										if(k<parametre.getReglement().getTie().size()-1)
+										if(k<parametre.getReglement().getTies().size()-1)
 											departages += "-"; //$NON-NLS-1$
 									}
 								}

@@ -102,6 +102,7 @@ import javax.xml.bind.annotation.XmlIDREF;
 
 import org.ajdeveloppement.concours.data.CompetitionLevel;
 import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.data.CompetitionJudge;
 import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.managers.ReglementManager;
 
@@ -124,7 +125,7 @@ public class Parametre extends DefaultParameters {
 	private boolean duel			= false;
 	@XmlElementWrapper(name="judges",required=false)
 	@XmlElement(name="judge")
-	private List<Judge> judges		= new ArrayList<Judge>();
+	private List<CompetitionJudge> judges		= new ArrayList<CompetitionJudge>();
 	private Rule reglement		= new Rule();
 
 	private String saveName         = UUID.randomUUID().toString()
@@ -343,7 +344,7 @@ public class Parametre extends DefaultParameters {
 	 * 
 	 * @return judges la liste des arbitres
 	 */
-	public List<Judge> getJudges() {
+	public List<CompetitionJudge> getJudges() {
 		return judges;
 	}
 
@@ -352,8 +353,8 @@ public class Parametre extends DefaultParameters {
 	 * 
 	 * @param judges la liste des arbitres du concours
 	 */
-	public void setJudges(List<Judge> judges) {
-		List<Judge> oldValue = this.judges;
+	public void setJudges(List<CompetitionJudge> judges) {
+		List<CompetitionJudge> oldValue = this.judges;
 		
 		this.judges = judges;
 		

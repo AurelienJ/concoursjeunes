@@ -89,7 +89,7 @@
 package org.ajdeveloppement.concours.data;
 
 import java.sql.Types;
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 
 import javax.xml.bind.Marshaller;
@@ -100,6 +100,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
@@ -152,7 +153,8 @@ public class City implements SqlObjectPersistence {
 	private String country;
 	
 	@SqlChildCollection(type=ZipCode.class,foreignFields="CODE_VILLE")
-	private List<ZipCode> zipCodes;
+	private LazyPersistentCollection<ZipCode, Void> zipCodes = new LazyPersistentCollection<>(
+			() -> QResults.from(ZipCode.class).where(T_ZipCode.CODE_VILLE.equalTo(cityCode)));
 
 	/**
 	 * @return cityCode
@@ -283,20 +285,10 @@ public class City implements SqlObjectPersistence {
 	/**
 	 * @return zipCodes
 	 */
-	public List<ZipCode> getZipCodes() {
-		if(zipCodes == null) {
-			zipCodes = QResults.from(ZipCode.class).where(T_ZipCode.CODE_VILLE.equalTo(cityCode)).asList();
-		}
+	public Collection<ZipCode> getZipCodes() {
 		return zipCodes;
 	}
-
-	/**
-	 * @param zipCodes zipCodes à définir
-	 */
-	public void setZipCodes(List<ZipCode> zipCodes) {
-		this.zipCodes = zipCodes;
-	}
-
+	
 	/**
 	 * Use only by JAXB. Do not use.
 	 * 

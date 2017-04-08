@@ -88,16 +88,17 @@
  */
 package org.ajdeveloppement.concours.data;
 
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
+import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
-import org.ajdeveloppement.concours.Judge;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -130,10 +131,12 @@ public class Competition implements SqlObjectPersistence {
 	@SqlField(name="DUEL")
 	private boolean gestionDuel = true;
 	
-	@SqlForeignKey(mappedTo="ID_REGLEMENT")
+	@SqlForeignKey(mappedTo = "ID_REGLEMENT")
 	private Rule reglement;
 	
-	private List<Judge> judge;
+	@SqlChildCollection(foreignFields = "ID_COMPETITION")
+	private LazyPersistentCollection<CompetitionJudge, Void> judges = new LazyPersistentCollection<>(
+			() -> T_CompetitionJudge.all().where(T_CompetitionJudge.ID_COMPETITION.equalTo(idCompetition)));
 
 	/**
 	 * 
@@ -142,147 +145,154 @@ public class Competition implements SqlObjectPersistence {
 		
 	}
 	
-	/**
-	 * @return idCompetition
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#getIdCompetition()
 	 */
 	public UUID getIdCompetition() {
 		return idCompetition;
 	}
 
 
-	/**
-	 * @param idCompetition idCompetition à définir
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#setIdCompetition(java.util.UUID)
 	 */
 	public void setIdCompetition(UUID idCompetition) {
 		this.idCompetition = idCompetition;
 	}
 
 
-	/**
-	 * @return organisateur
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#getOrganisateur()
 	 */
 	public Entite getOrganisateur() {
 		return organisateur;
 	}
 
 
-	/**
-	 * @param organisateur organisateur à définir
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#setOrganisateur(org.ajdeveloppement.concours.data.Entite)
 	 */
 	public void setOrganisateur(Entite organisateur) {
 		this.organisateur = organisateur;
 	}
 
 
-	/**
-	 * @return lieuCompetition
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#getLieuCompetition()
 	 */
 	public String getLieuCompetition() {
 		return lieuCompetition;
 	}
 
 
-	/**
-	 * @param lieuCompetition lieuCompetition à définir
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#setLieuCompetition(java.lang.String)
 	 */
 	public void setLieuCompetition(String lieuCompetition) {
 		this.lieuCompetition = lieuCompetition;
 	}
 
 
-	/**
-	 * @return competitionLevel
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#getCompetitionLevel()
 	 */
 	public CompetitionLevel getCompetitionLevel() {
 		return competitionLevel;
 	}
 
 
-	/**
-	 * @param competitionLevel competitionLevel à définir
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#setCompetitionLevel(org.ajdeveloppement.concours.data.CompetitionLevel)
 	 */
 	public void setCompetitionLevel(CompetitionLevel competitionLevel) {
 		this.competitionLevel = competitionLevel;
 	}
 
 
-	/**
-	 * @return dateDebutConcours
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#getDateDebutConcours()
 	 */
 	public Date getDateDebutConcours() {
 		return dateDebutConcours;
 	}
 
 
-	/**
-	 * @param dateDebutConcours dateDebutConcours à définir
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#setDateDebutConcours(java.util.Date)
 	 */
 	public void setDateDebutConcours(Date dateDebutConcours) {
 		this.dateDebutConcours = dateDebutConcours;
 	}
 
 
-	/**
-	 * @return dateFinConcours
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#getDateFinConcours()
 	 */
 	public Date getDateFinConcours() {
 		return dateFinConcours;
 	}
 
 
-	/**
-	 * @param dateFinConcours dateFinConcours à définir
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#setDateFinConcours(java.util.Date)
 	 */
 	public void setDateFinConcours(Date dateFinConcours) {
 		this.dateFinConcours = dateFinConcours;
 	}
 
-	/**
-	 * @return gestionDuel
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#isGestionDuel()
 	 */
 	public boolean isGestionDuel() {
 		return gestionDuel;
 	}
 
-	/**
-	 * @param gestionDuel gestionDuel à définir
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#setGestionDuel(boolean)
 	 */
 	public void setGestionDuel(boolean gestionDuel) {
 		this.gestionDuel = gestionDuel;
 	}
 
 
-	/**
-	 * @return reglement
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#getReglement()
 	 */
 	public Rule getReglement() {
 		return reglement;
 	}
 
 
-	/**
-	 * @param reglement reglement à définir
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#setReglement(org.ajdeveloppement.concours.data.Rule)
 	 */
 	public void setReglement(Rule reglement) {
 		this.reglement = reglement;
 	}
 
 
-	/**
-	 * @return judge
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#getJudges()
 	 */
-	public List<Judge> getJudge() {
-		return judge;
+	public Collection<CompetitionJudge> getJudges() {
+		return judges;
 	}
-
-
-	/**
-	 * @param judge judge à définir
+	
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#addJudge(org.ajdeveloppement.concours.data.CompetitionJudge)
 	 */
-	public void setJudge(List<Judge> judge) {
-		this.judge = judge;
+	public void addJudge(CompetitionJudge competitionJudge) {
+		competitionJudge.setCompetition(this);
+		judges.add(competitionJudge);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.CompetitionView#removeJudge(org.ajdeveloppement.concours.data.CompetitionJudge)
+	 */
+	public void removeJudge(CompetitionJudge competitionJudge) {
+		judges.remove(competitionJudge);
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

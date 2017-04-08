@@ -52,8 +52,7 @@
 			access="package"
 			additionalparam=" -encoding utf8 -docencoding utf8 -charset utf8"
 			sourcepath="${projet.pack.dir}/src"
-			destdir="docs"
-			classpath="${compilclasspath}">
+			destdir="docs">
 			<classpath refid="main.classpath" />
 			<link href="http://docs.oracle.com/javase/8/docs/api/" />
 			<link href="http://arccompetion.ajdeveloppement.org/docs/"/>
@@ -64,14 +63,30 @@
 	<target name="resolve" description="--> retrieve dependencies with ivy">
         <ivy:retrieve />
     </target>
-
-	<target name="pack_stage1" depends="resolve">
-		<mkdir dir="${projet.pack.dir}" />
-
+	
+	<target name="clean">
 		<delete includeemptydirs="true">
 			<fileset dir="${projet.pack.dir}" includes="**/*"/>
 		</delete>
-		
+	</target>
+	
+	<target name="npm-install">
+		<exec executable="src-client/build.sh" os="Linux">
+			<env key="SOURCEDIR" value="src-client"/>
+		</exec>
+	</target>
+	
+	<target name="copy-webui" depends="clean">
+		<copy todir="${projet.pack.dir}/WebContent/root" >
+			<fileset dir="WebContent/root/dev" >
+				<include name="www/**"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="pack_stage1" depends="resolve, npm-install, copy-webui">
+		<mkdir dir="${projet.pack.dir}" />
+
 		<java classname="org.ajdeveloppement.updater.tools.ChangeLogEditor"
 			classpath="lib/ajcommons-2.0.0-SNAPSHOT.jar"
 			fork="yes">
@@ -90,6 +105,8 @@
 				<include name="src/**"/>
 				<!--exclu les réference subversion -->
 				<exclude name="**/.svn*" />
+				<exclude name="lib/**/*-sources.jar" />
+				<exclude name="lib/**/*-javadoc.jar" />
 				<exclude name="ressources/states/**"/>
 				<exclude name="ressources/repositories/**"/>
 				<exclude name="config/ffta.properties" />

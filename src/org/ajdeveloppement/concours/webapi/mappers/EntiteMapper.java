@@ -107,7 +107,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel="jsr330",nullValueMappingStrategy=NullValueMappingStrategy.RETURN_DEFAULT)
 public abstract class EntiteMapper {
 	public static EntiteMapper INSTANCE = Mappers.getMapper(EntiteMapper.class);
-	
+
 	public Entite asEntite(EntiteView entiteView) {
 		Entite entite = null;
 		

@@ -95,7 +95,6 @@ import java.util.stream.Collectors;
 import org.ajdeveloppement.concours.data.Archer;
 import org.ajdeveloppement.concours.data.CategoryContact;
 import org.ajdeveloppement.concours.data.CategoryContact.IdDefaultCategory;
-import org.ajdeveloppement.concours.data.CategoryContactContact;
 import org.ajdeveloppement.concours.data.Civility;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.Coordinate;
@@ -108,6 +107,7 @@ import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.webapi.views.ContactView;
 import org.ajdeveloppement.concours.webapi.views.CoordinateView;
 import org.mapstruct.AfterMapping;
+import org.mapstruct.BeforeMapping;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -163,20 +163,17 @@ public abstract class PersonMapper {
 	 * @return
 	 */
 	public static List<UUID> getCategories(Contact contact) {
-		if(contact != null && contact.getCategories() != null)
-			return  contact.getCategories().stream().map(c -> c.getCategoryContact().getId()).collect(Collectors.toList());
+		if(contact != null)
+			return contact.getCategoriesContact().stream().map(c -> c.getId()).collect(Collectors.toList());
 		
 		return null;
 	}
 	
 	public static void setCategories(ContactView contactView, Contact contact) {
-		if(!(contactView.getCategories() != null && contact.getCategories() != null && getCategories(contact).equals(contactView.getCategories()))) {
+		if(!(contactView.getCategories() != null && getCategories(contact).equals(contactView.getCategories()))) {
 			if(contactView.getCategories() != null) {
-				List<CategoryContact> categories = T_CategoryContact.all().where(T_CategoryContact.ID_CATEGORIE_CONTACT.in(contactView.getCategories())).asList();
-				List<CategoryContactContact> categoriesContact = categories.stream().map(cc -> new CategoryContactContact(contact, cc)).collect(Collectors.toList());
-				
-
-				contact.setCategories(categoriesContact);
+				T_CategoryContact.all().where(T_CategoryContact.ID_CATEGORIE_CONTACT.in(contactView.getCategories()))
+					.forEach(cc -> contact.addCategoryContact(cc));
 			}
 		}
 	}
@@ -204,6 +201,26 @@ public abstract class PersonMapper {
 		}
 	}
 	
+	@BeforeMapping
+	public Contact getContact(ContactView contactView, @MappingTarget Class<?> type) {
+		Contact contact = null;
+		
+		if(contactView.getId() != null)
+			contact = T_Contact.getInstanceWithPrimaryKey(contactView.getId());
+		
+		if(contact == null) {
+			if(contactView.getCategories() != null && contactView.getCategories().contains(IdDefaultCategory.BOWMAN.value())) {
+				contact = new Archer();
+			} else {
+				contact = new Contact();
+			}
+		}
+		
+		return contact;
+	}
+	
+	//public abstract Contact asContact(ContactView contactView);
+	
 	public Contact asContact(ContactView contactView) {
 		Contact contact = null;
 		
@@ -226,11 +243,10 @@ public abstract class PersonMapper {
 	@Mapping(source = "id", target = "idContact")
 	@Mapping(source = "idCivility", target = "civility")
 	@Mapping(source = "idEntity", target = "entite")
-	@Mapping(source = "categories", target = "categoryContact")
-	@Mapping(target = "categories", ignore = true)
 	@Mapping(target = "idpToken", ignore = true)
 	@Mapping(target = "passwordHash", ignore = true)
 	@Mapping(target = "managedProfiles", ignore = true)
+	@Mapping(target = "categoriesContact", source = "categories")
 	public abstract void updateContactFromContactView(ContactView view, @MappingTarget Contact contact);
 	
 	@AfterMapping

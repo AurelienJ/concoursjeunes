@@ -1,11 +1,14 @@
 ///<reference path="_references.ts"/>
-import { ParametersComponent } from './components/parameters';
-import { EntitesComponent } from './components/entites';
-import { EntiteComponent } from './components/entite';
-import { PersonsComponent } from './components/persons';
-import { PersonComponent } from './components/person';
-import { RulesComponent } from './components/rules';
-import { RuleComponent } from './components/rule';
+import { ParametersComponent } from './parameters/parameters.component';
+
+import { EntitesComponent } from './entites/entites.component';
+import { EntiteComponent } from './entites/entite.component';
+import { PersonsComponent } from './persons/persons.component';
+import { PersonComponent } from './persons/person.component';
+import { RulesComponent } from './rules/rules.component';
+import { RuleComponent } from './rules/rule.component';
+
+import { CompetitionsComponent } from './competitions/competitions.component';
 //import { UserComponent } from './user.component';
 
 export const AppRoutes = [
@@ -18,7 +21,9 @@ export const AppRoutes = [
     { path: 'persons', component: PersonsComponent },
     { path: 'persons/:id', component: PersonComponent },
     { path: 'rules', component: RulesComponent },
-    { path: 'rules/:id', component: RuleComponent }
+    { path: 'rules/:id', component: RuleComponent },
+    { path: 'competitions', component: CompetitionsComponent },
+	{ path: 'dashboard', component: CompetitionsComponent }
     //{ path: 'authToken/:token', component: LoginComponent},
     //{ path: 'user',component: UserComponent}
 ]

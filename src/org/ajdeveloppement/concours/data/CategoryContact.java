@@ -100,7 +100,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlSession;
@@ -154,9 +153,6 @@ public class CategoryContact implements SqlObjectPersistence {
 	@SqlField(name="ID_LIBELLE")
 	private UUID idLibelle;
 	
-	//@SqlChildCollection(foreignFields="ID_CATEGORIE_CONTACT", type=CategoryContactContact.class)
-	private QResults<CategoryContactContact,Void> categorysContactContact;
-	
 	private transient Map<String, String> localizedLibelle;
 	
 	/**
@@ -184,19 +180,6 @@ public class CategoryContact implements SqlObjectPersistence {
 		this.id = id;
 	}
 	
-	/**
-	 * Return all contacts association linked with this category.
-	 * 
-	 * @return all contacts association linked with this category.
-	 */
-	public QResults<CategoryContactContact,Void> getCategorysContactContact() {
-		if(categorysContactContact == null) {
-			categorysContactContact = QResults.from(CategoryContactContact.class)
-					.where(T_CategoryContactContact.ID_CATEGORIE_CONTACT.equalTo(id));
-		}
-		return categorysContactContact;
-	}
-
 	/**
 	 * Get the localized label of category contact
 	 * 

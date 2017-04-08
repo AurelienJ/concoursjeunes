@@ -99,7 +99,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
@@ -133,8 +132,6 @@ public class Civility implements SqlObjectPersistence {
 	
 	@SqlField(name="MORALE")
 	private boolean morale = false;
-	
-	private QResults<Contact, Void> contacts;
 	
 	/**
 	 * Init ne civility
@@ -225,16 +222,6 @@ public class Civility implements SqlObjectPersistence {
 	 */
 	public void setMorale(boolean morale) {
 		this.morale = morale;
-	}
-	
-	/**
-	 * @return contacts
-	 */
-	public QResults<Contact,Void> getContacts() {
-		if(contacts == null) {
-			contacts = QResults.from(Contact.class).where(T_Contact.ID_CIVILITY.equalTo(idCivility));
-		}
-		return contacts;
 	}
 
 	/**

@@ -88,12 +88,12 @@
  */
 package org.ajdeveloppement.concours.webapi.services;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.ajdeveloppement.commons.UncheckedException;
+import javax.inject.Inject;
+
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.data.Criterion;
@@ -103,10 +103,11 @@ import org.ajdeveloppement.concours.data.RulesCategory;
 import org.ajdeveloppement.concours.data.T_Entite;
 import org.ajdeveloppement.concours.data.T_Rule;
 import org.ajdeveloppement.concours.data.T_RulesCategory;
-import org.ajdeveloppement.concours.webapi.adapters.RuleAdapter;
 import org.ajdeveloppement.concours.webapi.adapters.RulesCategoryAdapter;
-import org.ajdeveloppement.concours.webapi.models.RuleModelView;
+import org.ajdeveloppement.concours.webapi.mappers.RulesMapper;
 import org.ajdeveloppement.concours.webapi.models.RulesCategoryModelView;
+import org.ajdeveloppement.concours.webapi.views.RuleView;
+import org.ajdeveloppement.webserver.viewbinder.ViewsFactory;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -114,15 +115,17 @@ import org.ajdeveloppement.concours.webapi.models.RulesCategoryModelView;
  */
 public class RuleService {
 
+	private RulesMapper rulesMapper;
 	/**
 	 * 
 	 */
-	public RuleService() {
+	@Inject
+	public RuleService(RulesMapper rulesMapper) {
+		this.rulesMapper = rulesMapper;
 	}
 	
-	private List<RuleModelView> asModelViewList(List<Rule> rules) {
-		RuleAdapter adapter = new RuleAdapter();
-		return rules.stream().map(r -> adapter.toModelView(r)).collect(Collectors.toList());
+	private List<RuleView> asModelViewList(List<Rule> rules) {
+		return rules.stream().map(r -> ViewsFactory.getView(RuleView.class, r)).collect(Collectors.toList());
 	}
 	
 	@SuppressWarnings("nls")
@@ -144,17 +147,17 @@ public class RuleService {
 		return queryRulesByGlobalSearchValue(search, -1, -1).count();
 	}
 
-	public List<RuleModelView> getAllRules() {
+	public List<RuleView> getAllRules() {
 		List<Rule> rules = T_Rule.all().where(T_Rule.ID_COMPETITION.isNull()).asList();
 		
 		return asModelViewList(rules);
 	}
 	
-	public List<RuleModelView> getRulesByGlobalSearchValue(String search, int length, int offset) {
+	public List<RuleView> getRulesByGlobalSearchValue(String search, int length, int offset) {
 		return asModelViewList(queryRulesByGlobalSearchValue(search, length, offset).asList());
 	}
 	
-	public List<RuleModelView> getRulesForEntity(UUID idEntity) {
+	public List<RuleView> getRulesForEntity(UUID idEntity) {
 		if(idEntity != null) {
 			List<Rule> rules = T_Rule.all().where(T_Rule.ID_ENTITE.equalTo(idEntity)).asList();
 			
@@ -164,7 +167,7 @@ public class RuleService {
 		return null;
 	}
 	
-	public List<RuleModelView> getRulesForCompetition(UUID idCompetition) {
+	public List<RuleView> getRulesForCompetition(UUID idCompetition) {
 		if(idCompetition != null) {
 			List<Rule> rules = T_Rule.all().where(T_Rule.ID_COMPETITION.equalTo(idCompetition)).asList();
 			
@@ -174,37 +177,14 @@ public class RuleService {
 		return null;
 	}
 	
-	public RuleModelView getRuleById(UUID idRule) {
+	public RuleView getRuleById(UUID idRule) {
 		Rule rule = T_Rule.getInstanceWithPrimaryKey(idRule);
-		RuleAdapter adapter = new RuleAdapter();
 		
-		return adapter.toModelView(rule);
+		return ViewsFactory.getView(RuleView.class, rule);
 	}
-	
-	@SuppressWarnings("nls")
-	public void createOrUpdateRule(RuleModelView ruleModelView) throws ObjectPersistenceException {
-		Rule rule = null;
-		if(ruleModelView.getId() != null)
-			rule = T_Rule.getInstanceWithPrimaryKey(ruleModelView.getId());
-		
-		RuleAdapter adapter = new RuleAdapter(rule);
-		rule = adapter.toModel(ruleModelView);
-		
-		if(ruleModelView.getDepartages() != null) {
-			//Suppression de tous les départages qui n'existe plus
-			List<String> departages = Arrays.asList(ruleModelView.getDepartages().split(","));
-			rule.getTie().stream().filter(t -> !departages.contains(t.getFieldName())).forEach(t -> {
-				try {
-					t.delete();
-				} catch (Exception e) {
-					throw new UncheckedException(e);
-				}
-			});
-			rule.getTie().removeIf(t -> !departages.contains(t.getFieldName()));
-		}
-		
-		if(rule.getIdRule() != ruleModelView.getId())
-			ruleModelView.setId(rule.getIdRule());
+
+	public void createOrUpdateRule(RuleView ruleModelView) throws ObjectPersistenceException {
+		Rule rule = rulesMapper.toRule(ruleModelView);
 		
 		rule.save();
 	}

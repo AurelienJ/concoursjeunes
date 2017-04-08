@@ -4,14 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.ajdeveloppement.concours.data.Competition;
 import org.ajdeveloppement.concours.data.CriteriaSet;
 import org.ajdeveloppement.concours.data.Criterion;
 import org.ajdeveloppement.concours.data.DistancesEtBlason;
-import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.RankingCriterion;
 import org.ajdeveloppement.concours.data.Rule.TypeReglement;
-import org.ajdeveloppement.concours.data.RulesCategory;
 import org.ajdeveloppement.concours.data.Surclassement;
 import org.ajdeveloppement.concours.data.Tie;
 import org.ajdeveloppement.webserver.viewbinder.annotations.Implementation;
@@ -19,17 +16,7 @@ import org.ajdeveloppement.webserver.viewbinder.annotations.View;
 
 @View()
 public interface RuleView {
-
-	/**
-	 * Retourne le numéro de version interne du règlement.
-	 * La version courante retourné par un fichier sérialisé devrais être 2.
-	 * Si c'est 1 alors envisager de passer par une routine de mise à jour des réglements (opération
-	 * généralement effectué par l'extension PhoenixPlugin)
-	 * 
-	 * @return version le numéro de version du règlement.
-	 */
-	int getVersion();
-
+	
 	/**
 	 * Retourne l'identifiant du réglement en base ou 0 si non lié à la base. Information non sérialisé en XML
 	 * 
@@ -58,11 +45,6 @@ public interface RuleView {
 	 * @return reglementType le type de règlement
 	 */
 	TypeReglement getReglementType();
-
-	/**
-	 * @return competition
-	 */
-	Competition getCompetition();
 
 	/**
 	 * <p>
@@ -199,7 +181,7 @@ public interface RuleView {
 	 * 
 	 * @return l'entité associé au reglement
 	 */
-	Entite getEntite();
+	EntiteView getEntite();
 
 	/**
 	 * Retourne le numéro de la catégorie du règlement<br>
@@ -208,7 +190,7 @@ public interface RuleView {
 	 * 
 	 * @return le numéro de la catégorie du règlement
 	 */
-	RulesCategory getCategory();
+	int getIdCategory();
 
 	/**
 	 * Indique si le règlement peut être supprimé de la base ou non

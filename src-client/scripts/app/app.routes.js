@@ -1,27 +1,54 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-///<reference path="_references.ts"/>
-var parameters_1 = require("./components/parameters");
-var entites_1 = require("./components/entites");
-var entite_1 = require("./components/entite");
-var persons_1 = require("./components/persons");
-var person_1 = require("./components/person");
-var rules_1 = require("./components/rules");
-var rule_1 = require("./components/rule");
-//import { UserComponent } from './user.component';
-exports.AppRoutes = [
-    { path: '', component: parameters_1.ParametersComponent },
-    { path: 'entities', component: entites_1.EntitesComponent },
-    { path: 'federations', component: entites_1.EntitesComponent },
-    { path: 'clubs', component: entites_1.EntitesComponent },
-    { path: 'newentity', component: entite_1.EntiteComponent },
-    { path: 'entities/:id', component: entite_1.EntiteComponent },
-    { path: 'persons', component: persons_1.PersonsComponent },
-    { path: 'persons/:id', component: person_1.PersonComponent },
-    { path: 'rules', component: rules_1.RulesComponent },
-    { path: 'rules/:id', component: rule_1.RuleComponent }
-    //{ path: 'authToken/:token', component: LoginComponent},
-    //{ path: 'user',component: UserComponent}
-];
+System.register(["./parameters/parameters.component", "./entites/entites.component", "./entites/entite.component", "./persons/persons.component", "./persons/person.component", "./rules/rules.component", "./rules/rule.component", "./competitions/competitions.component"], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var parameters_component_1, entites_component_1, entite_component_1, persons_component_1, person_component_1, rules_component_1, rule_component_1, competitions_component_1, AppRoutes;
+    return {
+        setters: [
+            function (parameters_component_1_1) {
+                parameters_component_1 = parameters_component_1_1;
+            },
+            function (entites_component_1_1) {
+                entites_component_1 = entites_component_1_1;
+            },
+            function (entite_component_1_1) {
+                entite_component_1 = entite_component_1_1;
+            },
+            function (persons_component_1_1) {
+                persons_component_1 = persons_component_1_1;
+            },
+            function (person_component_1_1) {
+                person_component_1 = person_component_1_1;
+            },
+            function (rules_component_1_1) {
+                rules_component_1 = rules_component_1_1;
+            },
+            function (rule_component_1_1) {
+                rule_component_1 = rule_component_1_1;
+            },
+            function (competitions_component_1_1) {
+                competitions_component_1 = competitions_component_1_1;
+            }
+        ],
+        execute: function () {
+            //import { UserComponent } from './user.component';
+            exports_1("AppRoutes", AppRoutes = [
+                { path: '', component: parameters_component_1.ParametersComponent },
+                { path: 'entities', component: entites_component_1.EntitesComponent },
+                { path: 'federations', component: entites_component_1.EntitesComponent },
+                { path: 'clubs', component: entites_component_1.EntitesComponent },
+                { path: 'newentity', component: entite_component_1.EntiteComponent },
+                { path: 'entities/:id', component: entite_component_1.EntiteComponent },
+                { path: 'persons', component: persons_component_1.PersonsComponent },
+                { path: 'persons/:id', component: person_component_1.PersonComponent },
+                { path: 'rules', component: rules_component_1.RulesComponent },
+                { path: 'rules/:id', component: rule_component_1.RuleComponent },
+                { path: 'competitions', component: competitions_component_1.CompetitionsComponent },
+                { path: 'dashboard', component: competitions_component_1.CompetitionsComponent }
+                //{ path: 'authToken/:token', component: LoginComponent},
+                //{ path: 'user',component: UserComponent}
+            ]);
+        }
+    };
+});
 
 //# sourceMappingURL=app.routes.js.map

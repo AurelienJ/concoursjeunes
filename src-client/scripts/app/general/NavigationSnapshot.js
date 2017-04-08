@@ -1,0 +1,43 @@
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var NavigationSnapshot;
+    return {
+        setters: [],
+        execute: function () {
+            NavigationSnapshot = (function () {
+                function NavigationSnapshot(label, currentUrl, queryParams, stateData) {
+                    this.label = label;
+                    this.currentUrl = currentUrl;
+                    this.queryParams = queryParams;
+                    this.stateData = stateData;
+                    this.path = NavigationSnapshot.getPath(currentUrl);
+                }
+                NavigationSnapshot.prototype.toPathString = function () {
+                    var pathString = this.path.join("/");
+                    if (this.queryParams) {
+                        var params = [];
+                        for (var key in this.queryParams) {
+                            if (this.queryParams.hasOwnProperty(key)) {
+                                var element = this.queryParams[key];
+                                params.push(key + "=" + element.toString());
+                            }
+                        }
+                        if (params.length > 0)
+                            pathString += "?" + params.join("&");
+                    }
+                    return pathString;
+                };
+                NavigationSnapshot.getPath = function (url) {
+                    var path = url.map(function (u) { return u.path; });
+                    path.unshift("/");
+                    return path;
+                };
+                return NavigationSnapshot;
+            }());
+            exports_1("NavigationSnapshot", NavigationSnapshot);
+        }
+    };
+});
+
+//# sourceMappingURL=NavigationSnapshot.js.map

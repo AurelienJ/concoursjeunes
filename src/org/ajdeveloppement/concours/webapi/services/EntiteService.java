@@ -244,8 +244,6 @@ public class EntiteService {
 
 	public Entite getEntiteById(UUID idEntite) {
 		Entite entite = T_Entite.getInstanceWithPrimaryKey(idEntite);
-		if(entite.getType() == Entite.FEDERATION)
-			entite = T_Federation.getInstanceWithPrimaryKey(idEntite);
 		
 		if(entite != null)
 			return entite;

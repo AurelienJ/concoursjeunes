@@ -639,25 +639,25 @@ public class Concurrent extends Archer implements Cloneable {
 		}
 	}
 	
-	/**
-	 * Clone l'objet concurrent
-	 */
-	@Override
-	public Concurrent clone() {
-		return clone(true);
-	}
-	
-	@Override
-	public Concurrent clone(boolean conserveId) {
-		try {
-			Concurrent clone = (Concurrent)super.clone(conserveId);
-			if(points != null) {
-				clone.points = new ArrayList<Integer>(points);
-			}
-			return clone;
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-			return this;
-		}
-	}
+//	/**
+//	 * Clone l'objet concurrent
+//	 */
+//	@Override
+//	public Concurrent clone() {
+//		return clone(true);
+//	}
+//	
+//	@Override
+//	public Concurrent clone(boolean conserveId) {
+//		try {
+//			Concurrent clone = (Concurrent)super.clone(conserveId);
+//			if(points != null) {
+//				clone.points = new ArrayList<Integer>(points);
+//			}
+//			return clone;
+//		} catch (CloneNotSupportedException e) {
+//			e.printStackTrace();
+//			return this;
+//		}
+//	}
 }
