@@ -89,8 +89,13 @@
 package org.ajdeveloppement.concours.webapi;
 
 import org.ajdeveloppement.concours.webapi.mappers.CriterionMapper;
+import org.ajdeveloppement.concours.webapi.mappers.CriterionMapperImpl;
 import org.ajdeveloppement.concours.webapi.mappers.EntiteMapper;
+import org.ajdeveloppement.concours.webapi.mappers.EntiteMapperImpl;
 import org.ajdeveloppement.concours.webapi.mappers.PersonMapper;
+import org.ajdeveloppement.concours.webapi.mappers.PersonMapperImpl;
+import org.ajdeveloppement.concours.webapi.mappers.RulesMapper;
+import org.ajdeveloppement.concours.webapi.mappers.RulesMapperImpl;
 import org.ajdeveloppement.concours.webapi.services.CompetitionsService;
 import org.ajdeveloppement.concours.webapi.services.EntiteService;
 import org.ajdeveloppement.concours.webapi.services.PersonsService;
@@ -98,10 +103,8 @@ import org.ajdeveloppement.concours.webapi.services.ProfilesService;
 import org.ajdeveloppement.concours.webapi.services.ReferenceService;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
 import org.ajdeveloppement.webserver.services.webapi.AbstractApiApplication;
-import org.mapstruct.factory.Mappers;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
 /**
@@ -126,21 +129,10 @@ public class WebConfig extends AbstractApiApplication {
 				bind(ProfilesService.class).in(Scopes.SINGLETON);
 				bind(RuleService.class).in(Scopes.SINGLETON);
 				bind(CompetitionsService.class).in(Scopes.SINGLETON);
-			}
-			
-			@Provides
-			public CriterionMapper provideCriterionMapper() {
-				return Mappers.getMapper(CriterionMapper.class);
-			}
-			
-			@Provides
-			public EntiteMapper provideEntiteMapper() {
-				return Mappers.getMapper(EntiteMapper.class);
-			}
-			
-			@Provides
-			public PersonMapper providePersonMapper() {
-				return Mappers.getMapper(PersonMapper.class);
+				bind(RulesMapper.class).to(RulesMapperImpl.class).in(Scopes.SINGLETON);
+				bind(CriterionMapper.class).to(CriterionMapperImpl.class).in(Scopes.SINGLETON);
+				bind(EntiteMapper.class).to(EntiteMapperImpl.class).in(Scopes.SINGLETON);
+				bind(PersonMapper.class).to(PersonMapperImpl.class).in(Scopes.SINGLETON);
 			}
 		});
 	}
