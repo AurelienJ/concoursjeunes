@@ -312,6 +312,15 @@ public class Main {
         }
         
         display.dispose();
+        
+        try {
+			httpServer.stop();
+		} catch (IOException e) {
+			// TODO Bloc catch auto-généré
+			e.printStackTrace();
+		}
+        
+        System.exit(0);
 	}
 	
 	private static void initialize(final Display display, Browser browser) {

@@ -121,6 +121,7 @@ public interface ContactView {
 	 * 
 	 * @return categories the categories of contact
 	 */
+	@CollectionType(UUID.class)
 	@Implementation(mapperClass=PersonMapper.class, methodModelToView="getCategories",methodViewToModel="setCategories")
 	List<UUID> getCategories();
 
