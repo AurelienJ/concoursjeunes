@@ -18,14 +18,14 @@ System.register(["@angular/core"], function (exports_1, context_1) {
             ParametersComponent = (function () {
                 function ParametersComponent() {
                 }
+                ParametersComponent = __decorate([
+                    core_1.Component({
+                        selector: 'parameters',
+                        template: "<div class=\"content-header\">\n    <h1>Param\u00E8tres</h1>\n    <ol class=\"breadcrumb\">\n        <li>Accueil</li>\n        <li class=\"active\">Param\u00E8tres</li>\n    </ol>\n    </div>\n    <div class=\"content body\">\n\n    </div>\n    "
+                    })
+                ], ParametersComponent);
                 return ParametersComponent;
             }());
-            ParametersComponent = __decorate([
-                core_1.Component({
-                    selector: 'parameters',
-                    template: "<div class=\"content-header\">\n    <h1>Param\u00E8tres</h1>\n    <ol class=\"breadcrumb\">\n        <li>Accueil</li>\n        <li class=\"active\">Param\u00E8tres</li>\n    </ol>\n    </div>\n    <div class=\"content body\">\n\n    </div>\n    "
-                })
-            ], ParametersComponent);
             exports_1("ParametersComponent", ParametersComponent);
         }
     };

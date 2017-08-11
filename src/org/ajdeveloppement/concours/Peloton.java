@@ -88,7 +88,7 @@
  */
 package org.ajdeveloppement.concours;
 
-import org.ajdeveloppement.concours.data.Face;
+import org.ajdeveloppement.concours.data.DistanceAndFacesSet;
 import org.ajdeveloppement.concours.data.Rule;
 
 
@@ -124,7 +124,7 @@ public class Peloton extends Target {
 	 * @param position la position sur laquelle tester la présence d'un blason
 	 */
 	@Override
-	public boolean isSlotAvailable(Face blason, int position) {
+	public boolean isSlotAvailable(DistanceAndFacesSet blason, int position) {
 		if(getConcurrentAt(position) != null)
 			return false;
 		return true;

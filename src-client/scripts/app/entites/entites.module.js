@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@angular/platform-browser", "@angular/forms", "../../libs/angular2-datatable", "../general", "../references/references.module", "./entites.service", "./entite.component", "./entites.component", "./criterion.component"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@angular/platform-browser", "@angular/forms", "../datatable/DataTableModule", "../general", "../references/references.module", "./entites.service", "./entite.component", "./entites.component", "./criterion.component"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7,7 +7,7 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, platform_browser_1, forms_1, angular2_datatable_1, general_1, references_module_1, entites_service_1, entite_component_1, entites_component_1, criterion_component_1, EntitesModule;
+    var core_1, router_1, platform_browser_1, forms_1, DataTableModule_1, general_1, references_module_1, entites_service_1, entite_component_1, entites_component_1, criterion_component_1, EntitesModule;
     return {
         setters: [
             function (core_1_1) {
@@ -22,8 +22,8 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
             function (forms_1_1) {
                 forms_1 = forms_1_1;
             },
-            function (angular2_datatable_1_1) {
-                angular2_datatable_1 = angular2_datatable_1_1;
+            function (DataTableModule_1_1) {
+                DataTableModule_1 = DataTableModule_1_1;
             },
             function (general_1_1) {
                 general_1 = general_1_1;
@@ -48,17 +48,17 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
             EntitesModule = (function () {
                 function EntitesModule() {
                 }
+                EntitesModule = __decorate([
+                    core_1.NgModule({
+                        imports: [router_1.RouterModule, platform_browser_1.BrowserModule, forms_1.FormsModule, DataTableModule_1.DataTableModule, general_1.GeneralModule, references_module_1.ReferencesModule],
+                        declarations: [entites_component_1.EntitesComponent, entite_component_1.EntiteComponent, entites_component_1.EntiteServerSideInputDataFilterPipe, criterion_component_1.CriterionComponent],
+                        bootstrap: [],
+                        providers: [entites_service_1.EntitesService],
+                        exports: [entites_component_1.EntitesComponent, entite_component_1.EntiteComponent, entites_component_1.EntiteServerSideInputDataFilterPipe, criterion_component_1.CriterionComponent]
+                    })
+                ], EntitesModule);
                 return EntitesModule;
             }());
-            EntitesModule = __decorate([
-                core_1.NgModule({
-                    imports: [router_1.RouterModule, platform_browser_1.BrowserModule, forms_1.FormsModule, angular2_datatable_1.DataTableModule, general_1.GeneralModule, references_module_1.ReferencesModule],
-                    declarations: [entites_component_1.EntitesComponent, entite_component_1.EntiteComponent, entites_component_1.EntiteServerSideInputDataFilterPipe, criterion_component_1.CriterionComponent],
-                    bootstrap: [],
-                    providers: [entites_service_1.EntitesService],
-                    exports: [entites_component_1.EntitesComponent, entite_component_1.EntiteComponent, entites_component_1.EntiteServerSideInputDataFilterPipe, criterion_component_1.CriterionComponent]
-                })
-            ], EntitesModule);
             exports_1("EntitesModule", EntitesModule);
         }
     };

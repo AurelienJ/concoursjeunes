@@ -86,13 +86,13 @@ System.register(["@angular/core", "@angular/router", "./persons.service", "../ge
                     }, 300);
                     return value;
                 };
+                PersonServerSideInputDataFilterPipe = __decorate([
+                    core_1.Pipe({
+                        name: 'personServerSideInputDataFilter'
+                    })
+                ], PersonServerSideInputDataFilterPipe);
                 return PersonServerSideInputDataFilterPipe;
             }());
-            PersonServerSideInputDataFilterPipe = __decorate([
-                core_1.Pipe({
-                    name: 'personServerSideInputDataFilter'
-                })
-            ], PersonServerSideInputDataFilterPipe);
             exports_1("PersonServerSideInputDataFilterPipe", PersonServerSideInputDataFilterPipe);
             PersonsComponent = (function () {
                 function PersonsComponent(route, router, navigatorService, personsService) {
@@ -111,18 +111,18 @@ System.register(["@angular/core", "@angular/router", "./persons.service", "../ge
                 PersonsComponent.prototype.select = function (person) {
                     this.navigatorService.goBack(this.router, person, -1);
                 };
+                PersonsComponent = __decorate([
+                    core_1.Component({
+                        selector: 'persons',
+                        template: "<titlebar title=\"Personnes\"></titlebar>\n\t<div class=\"content body\">\n        <div class=\"row\">\n            <div class=\"col-xs-12\">\n                <div class=\"box\">\n                    <div class=\"box-header\">\n                        <h3 class=\"box-title\">Liste des personnes</h3>\n                    </div>\n                    <div class=\"box-body\">\n                        <div class=\"row\">\n                            <div class=\"col-sm-6\">\n                                <a href=\"#/persons/new\" class=\"btn btn-app\"><i class=\"fa fa-plus-circle\" aria-hidden=\"true\"></i> Ajouter un contact</a>\n                                <a href=\"#/persons/newArcher\" class=\"btn btn-app\"><i class=\"fa fa-plus-circle\" aria-hidden=\"true\"></i> Ajouter un archer</a>\n                            </div>\n                            <div class=\"col-sm-6 form-inline\">\n                                <div class=\"pull-right form-group\">\n                                    <div class=\"input-group\">\n                                        <span class=\"input-group-addon\"><i class=\"fa fa-search\" aria-hidden=\"true\"></i></span>\n                                        <input type=\"search\" class=\"form-control input-sm\" #search (keyup)=\"0\" placeholder=\"Recherche...\" />\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                        <table class=\"table table-bordered table-hover\" [mfData]=\"persons | personServerSideInputDataFilter : [search.value]\" #mf=\"mfDataTable\" [mfRowsOnPage]=\"10\">\n                            <thead>\n                            <tr>\n                                <th><mfDefaultSorter by=\"nom\">Nom</mfDefaultSorter></th>\n                                <th><mfDefaultSorter by=\"reference\">Licence</mfDefaultSorter></th>\n                                <th><mfDefaultSorter by=\"ville\">Ville</mfDefaultSorter></th>\n                                <th></th>\n                            </tr>\n                            </thead>\n                            <tbody>\n                            <tr *ngFor=\"let person of mf.data\">\n                                <td><a href=\"#/persons/{{person.id}}\">{{person.name}} {{person.firstName}}</a></td>\n                                <td>{{person.numLicenceArcher}}</td>\n                                <td>{{person.city}}</td>\n                                <td>\n                                    <a href=\"#/persons/{{person.id}}\"><i class=\"fa fa-pencil\" title=\"Editer\"></i></a>\n                                    <a href=\"javascript:void(0)\" *ngIf=\"forSelect\" (click)=\"select(person)\"><i class=\"fa fa-cart-plus\" aria-hidden=\"true\" title=\"Selectionner\"></i></a>\n                                </td>\n                            </tr>\n                            </tbody>\n                            <tfoot>\n                            <tr>\n                                <td colspan=\"5\">\n                                    <mfBootstrapPaginator [rowsOnPageSet]=\"[5,10,25]\"></mfBootstrapPaginator>\n                                </td>\n                            </tr>\n                            </tfoot>\n                        </table>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\t"
+                    }),
+                    __metadata("design:paramtypes", [router_1.ActivatedRoute,
+                        router_1.Router,
+                        navigator_service_1.NavigatorService,
+                        persons_service_1.PersonsService])
+                ], PersonsComponent);
                 return PersonsComponent;
             }());
-            PersonsComponent = __decorate([
-                core_1.Component({
-                    selector: 'persons',
-                    template: "<titlebar title=\"Personnes\"></titlebar>\n\t<div class=\"content body\">\n        <div class=\"row\">\n            <div class=\"col-xs-12\">\n                <div class=\"box\">\n                    <div class=\"box-header\">\n                        <h3 class=\"box-title\">Liste des personnes</h3>\n                    </div>\n                    <div class=\"box-body\">\n                        <div class=\"row\">\n                            <div class=\"col-sm-6\"><a href=\"#/persons/new\" class=\"btn btn-app\"><i class=\"fa fa-plus-circle\" aria-hidden=\"true\"></i> Ajouter</a>\n                            </div>\n                            <div class=\"col-sm-6 form-inline\">\n                                <div class=\"pull-right form-group\">\n                                    <div class=\"input-group\">\n                                        <span class=\"input-group-addon\"><i class=\"fa fa-search\" aria-hidden=\"true\"></i></span>\n                                        <input type=\"search\" class=\"form-control input-sm\" #search (keyup)=\"0\" placeholder=\"Recherche...\" />\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                        <table class=\"table table-bordered table-hover\" [mfData]=\"persons | personServerSideInputDataFilter : [search.value]\" #mf=\"mfDataTable\" [mfRowsOnPage]=\"10\">\n                            <thead>\n                            <tr>\n                                <th><mfDefaultSorter by=\"nom\">Nom</mfDefaultSorter></th>\n                                <th><mfDefaultSorter by=\"reference\">Licence</mfDefaultSorter></th>\n                                <th><mfDefaultSorter by=\"ville\">Ville</mfDefaultSorter></th>\n                                <th></th>\n                            </tr>\n                            </thead>\n                            <tbody>\n                            <tr *ngFor=\"let person of mf.data\">\n                                <td><a href=\"#/persons/{{person.id}}\">{{person.name}} {{person.firstName}}</a></td>\n                                <td>{{person.numLicenceArcher}}</td>\n                                <td>{{person.city}}</td>\n                                <td>\n                                    <a href=\"#/persons/{{person.id}}\"><i class=\"fa fa-pencil\" title=\"Editer\"></i></a>\n                                    <a href=\"javascript:void(0)\" *ngIf=\"forSelect\" (click)=\"select(person)\"><i class=\"fa fa-cart-plus\" aria-hidden=\"true\" title=\"Selectionner\"></i></a>\n                                </td>\n                            </tr>\n                            </tbody>\n                            <tfoot>\n                            <tr>\n                                <td colspan=\"5\">\n                                    <mfBootstrapPaginator [rowsOnPageSet]=\"[5,10,25]\"></mfBootstrapPaginator>\n                                </td>\n                            </tr>\n                            </tfoot>\n                        </table>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\t"
-                }),
-                __metadata("design:paramtypes", [router_1.ActivatedRoute,
-                    router_1.Router,
-                    navigator_service_1.NavigatorService,
-                    persons_service_1.PersonsService])
-            ], PersonsComponent);
             exports_1("PersonsComponent", PersonsComponent);
         }
     };

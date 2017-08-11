@@ -34,12 +34,12 @@ System.register(["@angular/core", "@angular/http"], function (exports_1, context
                 CompetitionsService.prototype.getCompetition = function (idCompetition) {
                     return this.http.get("api/competitions/" + idCompetition).toPromise().then(function (r) { return r.json(); });
                 };
+                CompetitionsService = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [http_1.Http])
+                ], CompetitionsService);
                 return CompetitionsService;
             }());
-            CompetitionsService = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [http_1.Http])
-            ], CompetitionsService);
             exports_1("CompetitionsService", CompetitionsService);
         }
     };

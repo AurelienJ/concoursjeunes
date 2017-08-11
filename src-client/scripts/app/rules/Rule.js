@@ -8,7 +8,7 @@ System.register([], function (exports_1, context_1) {
             Rule = (function () {
                 function Rule() {
                     this.nbSerie = 2;
-                    this.nbVoleeParSerie = 6;
+                    this.nbVoleeParSerie = 10;
                     this.nbFlecheParVolee = 3;
                     this.nbPointsParFleche = 10;
                     this.nbMembresEquipe = 4;

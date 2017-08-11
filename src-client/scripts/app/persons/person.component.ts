@@ -3,7 +3,7 @@ import { Component, OnInit, DoCheck } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd,UrlSegment } from '@angular/router';
 
 //import { IEntite } from '../models/ientite';
-//import { EntitesService } from '../services/entites';
+import { EntitesService } from '../entites/entites.service';
 import { ReferencesService } from '../references/references.service';
 import { IEntite } from '../entites/ientite';
 import { IPerson } from './IPerson';
@@ -19,7 +19,7 @@ import * as moment from 'moment';
 
 @Component({
     selector: 'person',
-    template: `<titlebar title="{{person.name}} {{person.firstName}}"></titlebar>
+    template: `<titlebar title="{{person.name}} {{person.firstName}} &nbsp;"></titlebar>
 	<div class="content body">
         <div class="row">
             <div class="col-xs-12">
@@ -33,6 +33,15 @@ import * as moment from 'moment';
 					<div class="tab-content">
 						<div id="identity" class="tab-pane" [class.active]="!activePane || activePane=='identity'">
 							<section class="formulaire">
+								<div class="form-group">
+									<label for="personEntity" class="col-sm-2 control-label">Associé à l'entité</label>
+									<div class="col-sm-10">
+										<span *ngIf="entite" >{{entite.nom}}</span>
+										<a class="input" [routerLink]="['/entities']" [queryParams]="{forSelect : true}" id="entity">Choisir...</a>
+									</div>
+								</div>
+
+
 								<h4>Identité</h4>
 								
 								<div class="form-group">
@@ -66,7 +75,7 @@ import * as moment from 'moment';
 											<div class="input-group-addon">
 												<i class="fa fa-calendar"></i>
 											</div>
-											<input [ngModel]="person.certificat | date: 'dd/MM/yyyy'" (ngModelChange)="person.certificat = toDate($event)" type="date" id="certificat" name="certificat" class="form-control">
+											<input [ngModel]="person.certificat | date: 'yyyy-MM-dd'" (ngModelChange)="setDateCertificat($event)" type="date" id="certificat" name="certificat" class="form-control" data-date-format="yyyy-mm-dd" lang="fr">
 										</div>
 									</div>
 								</div>
@@ -135,6 +144,8 @@ export class PersonComponent implements OnInit, DoCheck {
 		name: '',
 		firstName: ''
 	};
+
+	private entite : IEntite;
 	
 	private activePane : string;
 
@@ -153,7 +164,8 @@ export class PersonComponent implements OnInit, DoCheck {
 		private router: Router,
 		private navigation : NavigatorService,
 		private references : ReferencesService,
-		private persons : PersonsService) {
+		private persons : PersonsService,
+		private entitesService : EntitesService) {
 	}
 
 	ngOnInit() {
@@ -190,9 +202,16 @@ export class PersonComponent implements OnInit, DoCheck {
 		this.navigation.pushUrlSegments("Personne", this.url, null);
 		currentNavigationSnapshot = this.navigation.getCurrentNavigationSnapshot();
 
-		if(this.idPerson && this.idPerson != "new") {
+		if(this.idPerson && !this.idPerson.startsWith("new")) {
 			this.persons.getPerson(this.idPerson).then(p => {
 				this.person = p;
+
+				if(currentNavigationSnapshot.returnData) {
+					this.entite = <IEntite>currentNavigationSnapshot.returnData;
+					this.person.idEntity = this.entite.id;
+				} else if(this.person.idEntity) {
+					this.entitesService.getEntity(this.person.idEntity).then(entity => this.entite = entity);
+				}
 
 				currentNavigationSnapshot.label = p.name + " " + p.firstName;
                 currentNavigationSnapshot.stateData = p;
@@ -202,19 +221,34 @@ export class PersonComponent implements OnInit, DoCheck {
 			let idEntity = null;
 			if(previousNavigationSnapshot && previousNavigationSnapshot.stateData
 					&& previousNavigationSnapshot.stateData._type == "Entite") {
-				idEntity = (<IEntite>previousNavigationSnapshot.stateData).id;
+				this.entite = <IEntite>previousNavigationSnapshot.stateData;
+				idEntity = this.entite.id;
+			} else if(currentNavigationSnapshot.returnData) {
+				this.entite = <IEntite>currentNavigationSnapshot.returnData;
+				idEntity = this.entite.id;
 			}
 			this.person = <IPerson>{
 				name: '',
 				firstName: '',
-				idEntity: idEntity
+				idEntity: idEntity,
+				type: this.idPerson == 'newArcher' ? 'archer' : 'contact'
 			};
+			currentNavigationSnapshot.label = "Création d'une personne";
 			currentNavigationSnapshot.stateData = this.person;
 		}
 	}
 
-	formatDate(date : Date) : string{
+	/*formatDate(date : Date) : string{
 		return moment(date).format('DD/MM/YYYY');
+	}*/
+
+	setDateCertificat(date : string) {
+		try {
+			let validDate = this.toDate(date);
+			if(validDate.getFullYear() >= new Date().getFullYear() - 1
+					&& validDate.getFullYear() <= new Date().getFullYear())
+				this.person.certificat = validDate;
+		} catch(e) {}
 	}
 
 	toDate(date : string) : Date{

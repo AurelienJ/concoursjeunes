@@ -157,9 +157,9 @@ public class IndividualScoreSheetState {
 				templateXML.parse("scoresheet.VILLE_CLUB", ficheConcours.getParametre().getLieuConcours()); //$NON-NLS-1$
 				templateXML.parse("scoresheet.DATE_CONCOURS", DateFormat.getDateInstance(DateFormat.LONG).format(ficheConcours.getParametre().getDateDebutConcours())); //$NON-NLS-1$
 				
-				templateXML.parse("scoresheet.cid", concurrents.get(i).getName() + " " + concurrents.get(i).getFirstName()); //$NON-NLS-1$
-				templateXML.parse("scoresheet.cclub", concurrents.get(i).getEntite().getNom()); //$NON-NLS-1$
-				templateXML.parse("scoresheet.clicence", concurrents.get(i).getNumLicenceArcher()); //$NON-NLS-1$
+				templateXML.parse("scoresheet.cid", concurrents.get(i).getArcher().getName() + " " + concurrents.get(i).getArcher().getFirstName()); //$NON-NLS-1$
+				templateXML.parse("scoresheet.cclub", concurrents.get(i).getArcher().getEntite().getNom()); //$NON-NLS-1$
+				templateXML.parse("scoresheet.clicence", concurrents.get(i).getArcher().getNumLicenceArcher()); //$NON-NLS-1$
 				templateXML.parse("scoresheet.emplacement", TargetPosition.toString(concurrents.get(i).getCible(), concurrents.get(i).getPosition())); //$NON-NLS-1$
 				
 				int nbSerie = ficheConcours.getParametre().getReglement().getNbSerie();

@@ -33,13 +33,13 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                         return false;
                     }) : value;
                 };
+                TableFilterPipe = __decorate([
+                    core_1.Pipe({
+                        name: 'tableFilter'
+                    })
+                ], TableFilterPipe);
                 return TableFilterPipe;
             }());
-            TableFilterPipe = __decorate([
-                core_1.Pipe({
-                    name: 'tableFilter'
-                })
-            ], TableFilterPipe);
             exports_1("TableFilterPipe", TableFilterPipe);
         }
     };

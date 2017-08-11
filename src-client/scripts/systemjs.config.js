@@ -26,12 +26,11 @@
         'rxjs':                      'node_modules/rxjs',
         'lodash':                    'node_modules/lodash/lodash.min.js',
         'moment':                    'node_modules/moment/min/moment-with-locales.min.js',
-        'jquery':                    'node_modules/jquery/dist/jquery.min.js',
-        'jquery-slimscroll':         'node_modules/jquery-slimscroll/jquery.slimscroll.min.js',
+        //'jquery':                    'node_modules/jquery/dist/jquery.min.js',
+        //'jquery-slimscroll':         'node_modules/jquery-slimscroll/jquery.slimscroll.min.js',
         'select2':                   'node_modules/select2/dist/js/select2.js',
-
-        'angular2-datatable':        'scripts/libs/angular2-datatable',
-        'general':                   'scripts/app/general'
+        'general':                   'scripts/app/general',
+        'datatable':                 'scripts/app/datatable',
     };
     
     // packages tells the System loader how to load when no filename and/or no extension
@@ -39,7 +38,7 @@
         'app':                        { main: 'main.js',  defaultExtension: 'js' },
         'general':                    { main: 'index.js',  defaultExtension: 'js' },
         'rxjs':                       { defaultExtension: 'js' },
-        'angular2-datatable':         { main: 'index.js', defaultExtension: 'js' }
+        'datatable':                  { main: 'index.js', defaultExtension: 'js' }
     };
     
 //    var ngPackageNames = [

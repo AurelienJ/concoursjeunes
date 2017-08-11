@@ -1,7 +1,7 @@
 ///<reference path="../_references.ts"/>
 import { Component, ViewChild, ElementRef, OnInit, EventEmitter, Pipe, PipeTransform } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { InputData, DataEvent } from '../../libs/angular2-datatable';
+import { InputData, DataEvent } from '../datatable/DataTable';
 
 import { ITypeLabel } from './ITypeLabel';
 import { IEntite } from './ientite';
@@ -192,7 +192,7 @@ export class EntitesComponent implements OnInit {
     /**
      * Affiche la liste des clubs
      */
-    private displayTypes : number[];
+    private displayTypes : number[] = [];
 
     /**
      * Affichage pour seléction
@@ -207,6 +207,8 @@ export class EntitesComponent implements OnInit {
     private childOfName : string;
 
     private isFederationExclusive : boolean;
+
+    private dataLoading : boolean = false;
 
     //private typesEntitiesSelectorElement: JQuery;
 
@@ -246,7 +248,11 @@ export class EntitesComponent implements OnInit {
         this.entites = new EntiteServerSideInputData(this.entitesService);
         this.entites.filter(this.displayTypes, this.childOf);
 
-        this.entitesService.getTypeEntite().then(ta => this.typesEntities = ta);
+        this.dataLoading = true;
+        this.entitesService.getTypeEntite().then(ta => {
+            this.typesEntities = ta;
+            this.dataLoading = false;
+        });
     }
 
     ngAfterViewInit() {
@@ -269,8 +275,10 @@ export class EntitesComponent implements OnInit {
     }
 
     public onValueChanged(value) {
-        this.displayTypes = value.map(v => parseInt(v)); //.val().map(v => parseInt(v));
-        this.entites.filter(this.displayTypes, this.childOf, this.entites.term);
+        if(!this.dataLoading) {
+            this.displayTypes = value.map(v => parseInt(v)); //.val().map(v => parseInt(v));
+            this.entites.filter(this.displayTypes, this.childOf, this.entites.term);
+            }
     }
 
     public onChangeTypeFilter() {

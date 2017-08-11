@@ -43,18 +43,18 @@ System.register(["@angular/core", "@angular/router", "../general", "./competitio
                 };
                 CompetitionsComponent.prototype.select = function (competition) {
                 };
+                CompetitionsComponent = __decorate([
+                    core_1.Component({
+                        selector: 'competitions',
+                        templateUrl: 'scripts/app/competitions/competitions.html'
+                    }),
+                    __metadata("design:paramtypes", [router_1.Router,
+                        router_1.ActivatedRoute,
+                        general_1.NavigatorService,
+                        competitions_service_1.CompetitionsService])
+                ], CompetitionsComponent);
                 return CompetitionsComponent;
             }());
-            CompetitionsComponent = __decorate([
-                core_1.Component({
-                    selector: 'competitions',
-                    templateUrl: 'scripts/app/competitions/competitions.html'
-                }),
-                __metadata("design:paramtypes", [router_1.Router,
-                    router_1.ActivatedRoute,
-                    general_1.NavigatorService,
-                    competitions_service_1.CompetitionsService])
-            ], CompetitionsComponent);
             exports_1("CompetitionsComponent", CompetitionsComponent);
         }
     };

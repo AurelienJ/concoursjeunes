@@ -453,9 +453,9 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 			
 			//On vérifie qu'on ai concordance sur les instances, sinon on corrige
 			for(Concurrent concurrent : concurrentList.list()) {
-				Entite entiteCache = entitesConcours.get(entitesConcours.indexOf(concurrent.getEntite()));
-				if(concurrent.getEntite() != entiteCache)
-					concurrent.setEntite(entiteCache);
+				Entite entiteCache = entitesConcours.get(entitesConcours.indexOf(concurrent.getArcher().getEntite()));
+				if(concurrent.getArcher().getEntite() != entiteCache)
+					concurrent.getArcher().setEntite(entiteCache);
 			}
 			Entite entiteCache = entitesConcours.get(entitesConcours.indexOf(parametre.getClub()));
 			if(parametre.getClub() != entiteCache)
@@ -502,7 +502,7 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 			List<Entite> cacheEntite = new ArrayList<Entite>();
 			
 			for(Concurrent concurrent : concurrentList.list())
-				resyncContactEntite(concurrent, cacheEntite);
+				resyncContactEntite(concurrent.getArcher(), cacheEntite);
 			
 			for(CompetitionJudge judge : parametre.getJudges())
 				resyncContactEntite(judge.getJudge(), cacheEntite);
@@ -599,7 +599,7 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 
 			List<CriteriaSet> scnaUse = new ArrayList<CriteriaSet>(scnalst);
 
-			CriteriaSet.sortCriteriaSet(scnaUse, parametre.getReglement().getListCriteria());
+			//CriteriaSet.sortCriteriaSet(scnaUse, parametre.getReglement().getListCriteria());
 
 			for (CriteriaSet scna : scnaUse) {
 
@@ -613,7 +613,7 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 					tplClassement.parse("categories.CATEGORIE", strSCNA); //$NON-NLS-1$
 
 					for (int j = 0; j < parametre.getReglement().getNbSerie(); j++) {
-						CriteriaSet placementCriteriaSet = scna.getFilteredCriteriaSet(parametre.getReglement().getPlacementFilter());
+						//CriteriaSet placementCriteriaSet = scna.getFilteredCriteriaSet(parametre.getReglement().getPlacementFilter());
 						
 //						tplClassement.parse("categories.distances.DISTANCE", //$NON-NLS-1$
 //								placementCriteriaSet.getDistancesEtBlason().getDistances().get(j).getDistance() + "m"); //$NON-NLS-1$
@@ -645,8 +645,8 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 
 								tplClassement.parse("categories.classement.PLACE", "" + (j + 1)); //$NON-NLS-1$ //$NON-NLS-2$
 								tplClassement.parse("categories.classement.POSITION", "" + sortList.get(j).getDepart()+sortList.get(j).getPosition() + sortList.get(j).getCible()); //$NON-NLS-1$ //$NON-NLS-2$
-								tplClassement.parse("categories.classement.IDENTITEE", sortList.get(j).getFullName()); //$NON-NLS-1$
-								tplClassement.parse("categories.classement.CLUB", sortList.get(j).getEntite().toString()); //$NON-NLS-1$
+								tplClassement.parse("categories.classement.IDENTITEE", sortList.get(j).getArcher().getFullName()); //$NON-NLS-1$
+								tplClassement.parse("categories.classement.CLUB", sortList.get(j).getArcher().getEntite().toString()); //$NON-NLS-1$
 
 								for (int k = 0; k < parametre.getReglement().getNbSerie(); k++) {
 									if (sortList.get(j).getScore() != null)
@@ -705,7 +705,7 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 
 			List<CriteriaSet> teamCriteriaSet = equipes.listCriteriaSet();
 			
-			CriteriaSet.sortCriteriaSet(teamCriteriaSet, parametre.getReglement().getListCriteria());
+			//CriteriaSet.sortCriteriaSet(teamCriteriaSet, parametre.getReglement().getListCriteria());
 			
 			for(CriteriaSet criteriaSet : teamCriteriaSet) {			
 				tplClassementEquipe.parse("categories.CATEGORIE", new CriteriaSetLibelle(criteriaSet, this.profile.getLocalisation()).toString()); //$NON-NLS-1$
@@ -720,7 +720,7 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 					String idsXML = ""; //$NON-NLS-1$
 					String ptsXML = ""; //$NON-NLS-1$
 					for (Concurrent concurrent : sortEquipes.get(i).getMembresEquipe()) {
-						idsXML += XmlUtils.sanitizeText(concurrent.getFullName()) + "<br>"; //$NON-NLS-1$
+						idsXML += XmlUtils.sanitizeText(concurrent.getArcher().getFullName()) + "<br>"; //$NON-NLS-1$
 						ptsXML += concurrent.getTotalScore() + "<br>"; //$NON-NLS-1$
 					}
 					tplClassementEquipe.parse("categories.classement.IDENTITEES", idsXML); //$NON-NLS-1$
@@ -770,7 +770,7 @@ public class FicheConcours implements PasDeTirListener, PropertyChangeListener {
 				String idsXML = ""; //$NON-NLS-1$
 				String ptsXML = ""; //$NON-NLS-1$
 				for (Concurrent concurrent : sortEquipes.get(i).getMembresEquipe()) {
-					idsXML += concurrent.getFullName() + "<br>"; //$NON-NLS-1$
+					idsXML += concurrent.getArcher().getFullName() + "<br>"; //$NON-NLS-1$
 					ptsXML += concurrent.getTotalScore() + "<br>"; //$NON-NLS-1$
 				}
 				tplClassementEquipe.parse("categories.classement.IDENTITEES", idsXML); //$NON-NLS-1$

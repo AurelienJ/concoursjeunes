@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core'
 import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser'
 
-import { DataTableModule } from '../../libs/angular2-datatable';
+import { DataTableModule } from "../datatable/DataTableModule";
 import { GeneralModule } from '../general'
 
 import { CompetitionsService } from './competitions.service'

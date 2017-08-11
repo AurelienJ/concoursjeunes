@@ -207,23 +207,23 @@ import 'rxjs/add/operator/share';
 		}`]
 })
 export class EntiteComponent implements OnInit, DoCheck {
-	private entite : IEntite = <IEntite>{};
-	private criteria : Criterion[] = [];
-	private persons : IPerson[] = [];
+	public entite : IEntite = <IEntite>{};
+	public criteria : Criterion[] = [];
+	public persons : IPerson[] = [];
 
-	private selectedCriterion : Criterion;
-	private selectedCriterionForDelete : Criterion;
+	public selectedCriterion : Criterion;
+	public selectedCriterionForDelete : Criterion;
 
-	private activePane : string;
-	private error : string;
-	private typesEntite: ITypeLabel[];
+	public activePane : string;
+	public error : string;
+	public typesEntite: ITypeLabel[];
 
-	private countries : ICountry[];
+	public countries : ICountry[];
 
 	private idEntity : string;
 	private url : UrlSegment[];
 
-	private forSelect : boolean = false;
+	public forSelect : boolean = false;
 	private mustUpdateView : boolean = false;
 
 	constructor(

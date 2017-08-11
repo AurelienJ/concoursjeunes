@@ -153,12 +153,12 @@ System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"
                     console.error('An error occurred', error);
                     return Promise.reject(error.message || error);
                 };
+                EntitesService = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [http_1.Http])
+                ], EntitesService);
                 return EntitesService;
             }());
-            EntitesService = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [http_1.Http])
-            ], EntitesService);
             exports_1("EntitesService", EntitesService);
         }
     };

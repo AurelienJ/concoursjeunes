@@ -119,8 +119,8 @@ public class RankingCriterion implements SqlObjectPersistence {
 	@SqlForeignKey(mappedTo="ID_JEUX_DISTANCES_BLASONS")
 	private DistanceAndFacesSet distanceAndFacesSet;
 
-	/**
-	 * @return id
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.RankingCriterionView#getId()
 	 */
 	public UUID getId() {
 		return id;
@@ -133,8 +133,8 @@ public class RankingCriterion implements SqlObjectPersistence {
 		this.id = id;
 	}
 
-	/**
-	 * @return name
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.RankingCriterionView#getName()
 	 */
 	public String getName() {
 		return name;
@@ -147,8 +147,8 @@ public class RankingCriterion implements SqlObjectPersistence {
 		this.name = name;
 	}
 
-	/**
-	 * @return teamCriterion
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.RankingCriterionView#isTeamCriterion()
 	 */
 	public boolean isTeamCriterion() {
 		return teamCriterion;
@@ -161,8 +161,8 @@ public class RankingCriterion implements SqlObjectPersistence {
 		this.teamCriterion = teamCriterion;
 	}
 
-	/**
-	 * @return rule
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.RankingCriterionView#getRule()
 	 */
 	public Rule getRule() {
 		return rule;
@@ -175,8 +175,8 @@ public class RankingCriterion implements SqlObjectPersistence {
 		this.rule = rule;
 	}
 
-	/**
-	 * @return distanceAndFacesSet
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.RankingCriterionView#getDistanceAndFacesSet()
 	 */
 	public DistanceAndFacesSet getDistanceAndFacesSet() {
 		return distanceAndFacesSet;
@@ -187,5 +187,30 @@ public class RankingCriterion implements SqlObjectPersistence {
 	 */
 	public void setDistanceAndFacesSet(DistanceAndFacesSet distanceAndFacesSet) {
 		this.distanceAndFacesSet = distanceAndFacesSet;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RankingCriterion other = (RankingCriterion) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 }

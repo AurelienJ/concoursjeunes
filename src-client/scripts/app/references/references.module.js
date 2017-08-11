@@ -24,17 +24,17 @@ System.register(["@angular/core", "../general", "./references.service"], functio
             ReferencesModule = (function () {
                 function ReferencesModule() {
                 }
+                ReferencesModule = __decorate([
+                    core_1.NgModule({
+                        imports: [general_1.GeneralModule],
+                        declarations: [],
+                        bootstrap: [],
+                        providers: [references_service_1.ReferencesService],
+                        exports: []
+                    })
+                ], ReferencesModule);
                 return ReferencesModule;
             }());
-            ReferencesModule = __decorate([
-                core_1.NgModule({
-                    imports: [general_1.GeneralModule],
-                    declarations: [],
-                    bootstrap: [],
-                    providers: [references_service_1.ReferencesService],
-                    exports: []
-                })
-            ], ReferencesModule);
             exports_1("ReferencesModule", ReferencesModule);
         }
     };

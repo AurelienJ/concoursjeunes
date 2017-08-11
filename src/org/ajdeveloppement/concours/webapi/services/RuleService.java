@@ -96,7 +96,6 @@ import javax.inject.Inject;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.concours.data.Criterion;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.RulesCategory;
@@ -199,20 +198,5 @@ public class RuleService {
 		RulesCategoryAdapter adapter = new RulesCategoryAdapter();
 		
 		return adapter.toModelView(T_RulesCategory.getInstanceWithPrimaryKey(id));
-	}
-
-	/**
-	 * Return all criteria associate to given rule id
-	 * 
-	 * @param idRule the id of rule to retur criteria
-	 * @return
-	 */
-	public List<Criterion> getRuleCriteria(UUID idRule) {
-		Rule rule = T_Rule.getInstanceWithPrimaryKey(idRule);
-		if(rule != null) {
-			return rule.getListCriteria();
-		}
-		
-		return null;
 	}
 }

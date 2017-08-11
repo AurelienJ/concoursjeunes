@@ -1,16 +1,11 @@
 package org.ajdeveloppement.concours.webapi.views;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
-import org.ajdeveloppement.concours.data.CriteriaSet;
-import org.ajdeveloppement.concours.data.Criterion;
-import org.ajdeveloppement.concours.data.DistancesEtBlason;
-import org.ajdeveloppement.concours.data.RankingCriterion;
 import org.ajdeveloppement.concours.data.Rule.TypeReglement;
-import org.ajdeveloppement.concours.data.Surclassement;
 import org.ajdeveloppement.concours.data.Tie;
+import org.ajdeveloppement.webserver.viewbinder.annotations.CollectionType;
 import org.ajdeveloppement.webserver.viewbinder.annotations.Implementation;
 import org.ajdeveloppement.webserver.viewbinder.annotations.View;
 
@@ -47,68 +42,10 @@ public interface RuleView {
 	TypeReglement getReglementType();
 
 	/**
-	 * <p>
-	 * Retourne la liste des critères de distinction des archers pouvant être
-	 * utilisé sur les concours exploitant ce règlement.
-	 * </p>
-	 * <p>
-	 * Les critères retournés peuvent être soit determinant pour le classement,
-	 * le placement, les deux ou simplement informatif.
-	 * </p>
-	 * 
-	 * @return la liste des critères de distinction utilisé pour le règlement
-	 */
-	List<CriterionView> getListCriteria();
-
-	/**
-	 * Retourne le tableau de surclassement à appliquer sur
-	 * le règlement
-	 * 
-	 * @return le tableau de surclassement
-	 */
-	List<Surclassement> getSurclassements();
-
-	/**
-	 * Retourne, si il existe, le surclassement associé au jeux de critère
-	 * 
-	 * @param criteriaSet le jeux de critère petentielement surclassé ou désactivé
-	 * @return le surclassement si exisant
-	 */
-	Surclassement getSurclassement(CriteriaSet criteriaSet);
-
-	/**
-	 * @return placementCriteriaSet
-	 */
-	List<CriteriaSet> getListPlacementCriteriaSet();
-
-	/**
 	 * @return listDistancesEtBlason
 	 */
-	List<DistancesEtBlason> getListDistancesEtBlason();
-
-	/**
-	 * Renvoi la politique de placement.
-	 * 
-	 * @return Renvoi le filtre de critère en place
-	 *         pour le placement des archers
-	 */
-	Map<Criterion, Boolean> getPlacementFilter();
-
-	/**
-	 * Retourne la liste des critères de classement valide sur le règlement,
-	 * sont donc exclue de la liste les jeux de critères surclassé ou interdit
-	 * 
-	 * @return liste des critères de classement valide sur le règlement
-	 */
-	List<CriteriaSet> getValidClassementCriteriaSet();
-
-	/**
-	 * Retourne la liste des critères de placement valide sur le règlement,
-	 * sont donc exclue de la liste les jeux de critères surclassé ou interdit
-	 * 
-	 * @return liste des critères de placement valide sur le règlement
-	 */
-	List<CriteriaSet> getValidPlacementCriteriaSet();
+	@CollectionType(DistanceAndFacesSetView.class)
+	List<DistanceAndFacesSetView> getDistancesAndFaces();
 
 	/**
 	 * Retourne le nombre de flèche tiré par volée imposé par le règlement
@@ -165,6 +102,7 @@ public interface RuleView {
 	 * 
 	 * @return la liste des départage
 	 */
+	@CollectionType(Tie.class)
 	List<Tie> getTie();
 
 	/**
@@ -202,6 +140,7 @@ public interface RuleView {
 	/**
 	 * @return rankingCriteria
 	 */
-	List<RankingCriterion> getRankingCriteria();
+	@CollectionType(RankingCriterionView.class)
+	List<RankingCriterionView> getRankingCriteria();
 
 }

@@ -89,6 +89,7 @@
 package org.ajdeveloppement.concours;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +98,7 @@ import javax.swing.event.EventListenerList;
 
 import org.ajdeveloppement.concours.Target.Repartition;
 import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.DistanceAndFacesSet;
 import org.ajdeveloppement.concours.data.DistancesEtBlason;
 import org.ajdeveloppement.concours.event.FicheConcoursEvent;
 import org.ajdeveloppement.concours.event.FicheConcoursListener;
@@ -173,14 +175,14 @@ public class ShootingLine implements FicheConcoursListener {
 	 * @param lDB la liste des DistancesEtBlason utilisé sur le pas de tir
 	 * @return le nombre de tireur par cible à utiliser
 	 */
-	private int getOptimalRythme(List<DistancesEtBlason> lDB) {
+	private int getOptimalRythme(List<DistanceAndFacesSet> lDB) {
 		if(ficheConcours.getParametre().getNbTireur() == 3 || ficheConcours.getParametre().getNbTireur() == 5) { //Mode ABC ou peloton de 5
-			Map<DistancesEtBlason, TargetsOccupation> targetsOccupation = getTargetsOccupation(3);
+			Map<DistanceAndFacesSet, TargetsOccupation> targetsOccupation = getTargetsOccupation(3);
 			if(targetsOccupation != null)
 				return ficheConcours.getParametre().getNbTireur();
 		} else { //Mode 2/4
 			for(int i = 2; i <= ficheConcours.getParametre().getNbTireur(); i+=2) {
-				Map<DistancesEtBlason, TargetsOccupation> targetsOccupation = getTargetsOccupation(i);
+				Map<DistanceAndFacesSet, TargetsOccupation> targetsOccupation = getTargetsOccupation(i);
 				if(targetsOccupation != null)
 					return i;
 			}
@@ -195,9 +197,9 @@ public class ShootingLine implements FicheConcoursListener {
 	 * @param nbtireurparcible le nombre de tireur par cible servant de base au calcul de la table d'occupation
 	 * @return la table d'occupation des cibles
 	 */
-	public Map<DistancesEtBlason, TargetsOccupation> getTargetsOccupation(int nbtireurparcible) {
-		Map<DistancesEtBlason, TargetsOccupation> occupationCibles = new HashMap<DistancesEtBlason, TargetsOccupation>();
-		List<DistancesEtBlason> distancesEtBlasons = ficheConcours.getParametre().getReglement().getListDistancesEtBlason();
+	public Map<DistanceAndFacesSet, TargetsOccupation> getTargetsOccupation(int nbtireurparcible) {
+		Map<DistanceAndFacesSet, TargetsOccupation> occupationCibles = new HashMap<DistanceAndFacesSet, TargetsOccupation>();
+		Collection<DistanceAndFacesSet> distancesEtBlasons = ficheConcours.getParametre().getReglement().getDistancesAndFaces();
 		
 		//effectue une simulation de placement
 		boolean success = placementConcurrents(nbtireurparcible, true);
@@ -206,7 +208,7 @@ public class ShootingLine implements FicheConcoursListener {
 		
 		//boucle sur chacune des cibles de la simulation pour en extraire le résultat
 		for(Target target : simulationTargets) {
-			for(DistancesEtBlason distblas : distancesEtBlasons) {
+			for(DistanceAndFacesSet distblas : distancesEtBlasons) {
 				int nbArcher = target.getNbArcherFor(distblas); //place occupé sur le db
 				int placeLibre = target.getNbAvailableSlotsFor(distblas); //place libre sur le db
 				
@@ -257,7 +259,7 @@ public class ShootingLine implements FicheConcoursListener {
 			
 			place = getTargetsOccupation(ficheConcours.getParametre().getNbTireur()).get(distancesEtBlason);
 
-			return place.getPlaceLibre() > (concurrent.isHandicape()?1:0) || getNbFreeTargets(ficheConcours.getParametre().getNbTireur()) > 0;
+			return place.getPlaceLibre() > (concurrent.getArcher().isHandicape()?1:0) || getNbFreeTargets(ficheConcours.getParametre().getNbTireur()) > 0;
 		}
 
 		int index = ficheConcours.getConcurrentList().getArchList().indexOf(concurrent);
@@ -268,19 +270,19 @@ public class ShootingLine implements FicheConcoursListener {
 
 		//si on ne change pas de db
 		//et que l'archer ne devient pas handicapé ;)
-		if(db1.haveSameDistancesAndTargetFace(db2) && concurrent.isHandicape() == conc2.isHandicape()) {
+		if(db1.haveSameDistancesAndTargetFace(db2) && concurrent.getArcher().isHandicape() == conc2.getArcher().isHandicape()) {
 			return true;
 		}
 
 		//si il reste de la place dans la nouvelle catégorie pas de pb
 		place = getTargetsOccupation(ficheConcours.getParametre().getNbTireur()).get(db1);
-		if(place.getPlaceLibre() > (concurrent.isHandicape()?1:0) || getNbFreeTargets(ficheConcours.getParametre().getNbTireur()) > 0) {
+		if(place.getPlaceLibre() > (concurrent.getArcher().isHandicape()?1:0) || getNbFreeTargets(ficheConcours.getParametre().getNbTireur()) > 0) {
 			return true;
 		}
 
 		//si le retrait du concurrent libère une cible ok
 		place = getTargetsOccupation(ficheConcours.getParametre().getNbTireur()).get(db2);
-		if(place.getPlaceOccupe() % ficheConcours.getParametre().getNbTireur() == (concurrent.isHandicape()?2:1)) {
+		if(place.getPlaceOccupe() % ficheConcours.getParametre().getNbTireur() == (concurrent.getArcher().isHandicape()?2:1)) {
 			return true;
 		}
 
@@ -314,7 +316,7 @@ public class ShootingLine implements FicheConcoursListener {
 	 */
 	private boolean placementConcurrents(int nbtireurparcible, boolean simulationMode) {
 		int curCible = 1;
-		List<DistancesEtBlason> lDB = ficheConcours.getConcurrentList().listDistancesEtBlason(ficheConcours.getParametre().getReglement(), true, depart);
+		List<DistanceAndFacesSet> lDB = ficheConcours.getConcurrentList().listDistancesEtBlason(ficheConcours.getParametre().getReglement(), true, depart);
 		
 		//defini le nombre de tireur par cible en fonction du nombre de tireurs
 		//max acceptés et du nombre de tireur présent
@@ -336,7 +338,7 @@ public class ShootingLine implements FicheConcoursListener {
 		}
 		
 		//pour chaque distance/blason 
-		for(DistancesEtBlason distancesEtBlason : lDB) {
+		for(DistanceAndFacesSet distancesEtBlason : lDB) {
 			//liste les archers pour le distance/blason
 			List<Concurrent> concurrents = ConcurrentList.sort(
 					ficheConcours.getConcurrentList().list(distancesEtBlason, depart, false),
@@ -370,7 +372,7 @@ public class ShootingLine implements FicheConcoursListener {
 				//afin d'éviter d'avoir des problèmes pour les placer
 				ArrayList<Concurrent> concurrentsHandicape = new ArrayList<Concurrent>();
 				for(Concurrent concurrent : concurrents) {
-					if(concurrent.isHandicape()) {
+					if(concurrent.getArcher().isHandicape()) {
 						concurrentsHandicape.add(concurrent);
 					}
 				}
@@ -383,7 +385,7 @@ public class ShootingLine implements FicheConcoursListener {
 			
 			//place les archers valide
 			for(Concurrent concurrent : concurrents) {
-				if(!concurrent.isHandicape()) {
+				if(!concurrent.getArcher().isHandicape()) {
 					curCible = placementConcurrent(concurrent, startCible, curCible, endCible, nbTireurParCible, simulationMode);
 				}
 			}

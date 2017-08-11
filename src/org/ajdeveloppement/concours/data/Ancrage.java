@@ -88,11 +88,6 @@
  */
 package org.ajdeveloppement.concours.data;
 
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
@@ -105,7 +100,6 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  * @author Aurélien JEOFFRAY
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="ANCRAGE_BLASON")
 @SqlPrimaryKey(fields={"ID_BLASON","EMPLACEMENT"})
 public class Ancrage implements SqlObjectPersistence {
@@ -153,7 +147,6 @@ public class Ancrage implements SqlObjectPersistence {
 	@SqlField(name="ANCRAGEY",sqlType="DOUBLE")
 	private double y = 0;
 	
-	@XmlTransient
 	@SqlForeignKey(mappedTo="ID_BLASON")
 	private Face blason;
 	
@@ -207,11 +200,8 @@ public class Ancrage implements SqlObjectPersistence {
 		this.blason = blason;
 	}
 
-	/**
-	 * Retourne l'emplacement sur la cible de l'ancrage. Correspond aux valeur des
-	 * variables static <code>POSITION_</code>
-	 * 
-	 * @return l'emplacement sur la cible de l'ancrage.
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.AncrageView#getEmplacement()
 	 */
 	public int getEmplacement() {
 		return emplacement;
@@ -227,12 +217,8 @@ public class Ancrage implements SqlObjectPersistence {
 		this.emplacement = emplacement;
 	}
 
-	/**
-	 * Retourne la position relative du blason sur l'axe horizontal<br>
-	 * Les positions sont exprimé en fraction de la taille de la cible
-	 * (valeur comprise entre 0 et 1)
-	 * 
-	 * @return la fraction correspondant à la position du blason sur l'axe X
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.AncrageView#getX()
 	 */
 	public double getX() {
     	return x;
@@ -249,12 +235,8 @@ public class Ancrage implements SqlObjectPersistence {
     	this.x = x;
     }
 
-	/**
-	 * Retourne la position relative du blason sur l'axe vertical<br>
-	 * Les positions sont exprimé en fraction de la taille de la cible
-	 * (valeur comprise entre 0 et 1)
-	 * 
-	 * @return la fraction correspondant à la position du blason sur l'axe Y
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.AncrageView#getY()
 	 */
 	public double getY() {
     	return y;
@@ -270,15 +252,4 @@ public class Ancrage implements SqlObjectPersistence {
 	public void setY(double y) {
     	this.y = y;
     }
-
-	/**
-	 * Used by JAXB API only
-	 * 
-	 * @param unmarshaller the unmarchaller process
-	 * @param parent the parent object in XML graph
-	 */
-	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		if(parent instanceof Face)
-			blason = (Face)parent;
-	}
 }

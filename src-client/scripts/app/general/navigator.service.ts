@@ -14,15 +14,23 @@ export class NavigatorService {
     public navigationStack : NavigationSnapshot[] = [];
     //public navigationStack$ : Observable<NavigationSnapshot[]>;
 
+    private onChangesListeners : Array<(navigationSnapshots : NavigationSnapshot[]) => void> = [];
+
     constructor(private router : Router, private route: ActivatedRoute, private location : Location) {
     }
 
     public push(snapshot : NavigationSnapshot) {
         this.navigationStack.push(snapshot);
+
+        this.onChange();
     }
 
     public pop() {
-        return this.navigationStack.pop();
+        let item = this.navigationStack.pop();
+
+        this.onChange();
+
+        return item;
     }
 
     public pushUrlSegments(label : string, url : UrlSegment[], queryParams : any) {
@@ -32,15 +40,38 @@ export class NavigatorService {
         if(previousUrl && previousUrl.toPathString() == urlSnapshot.toPathString())
             this.pop();
         else if(!currentTopUrl || currentTopUrl.toPathString() != urlSnapshot.toPathString())
-            this.push(urlSnapshot)
+            this.push(urlSnapshot);
+
+        this.onChange();
+    }
+
+    public subscribe(fn : (navigationSnapshots : NavigationSnapshot[]) => void) {
+        this.onChangesListeners.push(fn);
+    }
+
+    public unsubscribe(fn : (navigationSnapshots : NavigationSnapshot[]) => void) {
+        let i = this.onChangesListeners.indexOf(fn);
+        if (i > -1) {
+            this.onChangesListeners.splice(i, 1);
+        }
+    }
+
+    private onChange() {
+        for (let handler of this.onChangesListeners) {
+            handler(this.navigationStack);
+        }
     }
 
     public clear() {
         this.navigationStack = [];
+
+         this.onChange();
     }
 
     public clearAfter(index : number) {
         this.navigationStack.length = index+1;
+
+        this.onChange();
     }
 
     public goBack(router : Router, returnData : any, index : number) {

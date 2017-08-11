@@ -88,12 +88,7 @@
  */
 package org.ajdeveloppement.concours;
 
-import junit.framework.TestCase;
-
-import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.Target;
 import org.ajdeveloppement.concours.Target.Repartition;
-import org.ajdeveloppement.concours.builders.ConcurrentBuilder;
 import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.exceptions.PlacementException;
@@ -101,6 +96,8 @@ import org.ajdeveloppement.concours.managers.ReglementManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import junit.framework.TestCase;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -124,7 +121,7 @@ public class TargetTest extends TestCase {
 		
 		
 		reglement = reglementManager.getReglementByName("Savoie"); //charge le réglement savoie //$NON-NLS-1$
-		Concurrent concurrent = ConcurrentBuilder.getConcurrent(reglement);
+		Concurrent concurrent = null; //ConcurrentBuilder.getConcurrent(reglement);
 		
 		targetVide = new Target(1, reglement, 4);
 		target1Archer = new Target(1, reglement, 4);
@@ -146,7 +143,7 @@ public class TargetTest extends TestCase {
 	public void testGetNbArcher() {
 		assertTrue("Il devrait y avoir un archer", target1Archer.getNbArcher() == 1); //$NON-NLS-1$
 		try {
-			Concurrent concurrent = ConcurrentBuilder.getConcurrent(reglement);
+			Concurrent concurrent = null; //ConcurrentBuilder.getConcurrent(reglement);
 			target1Archer.insertConcurrent(concurrent, Repartition.ABCD);
 			assertTrue("Il devrait y avoir 2 archer", target1Archer.getNbArcher() == 2); //$NON-NLS-1$
 			target1Archer.removeConcurrent(concurrent);
@@ -174,8 +171,8 @@ public class TargetTest extends TestCase {
 	public void testGetNbHandicap() {
 		assertTrue("Il devrait y avoir aucun archer handicape", target1Archer.getNbHandicap() == 0); //$NON-NLS-1$
 		try {
-			Concurrent concurrent = ConcurrentBuilder.getConcurrent(reglement);
-			concurrent.setHandicape(true);
+			Concurrent concurrent = new Concurrent(); //ConcurrentBuilder.getConcurrent(reglement);
+			concurrent.getArcher().setHandicape(true);
 			target1Archer.insertConcurrent(concurrent, Repartition.ABCD);
 			assertTrue("Il devrait y avoir 1 archer handicape", target1Archer.getNbHandicap() == 1); //$NON-NLS-1$
 			target1Archer.removeConcurrent(concurrent);
@@ -231,8 +228,8 @@ public class TargetTest extends TestCase {
 	 */
 	@Test
 	public void testGetConcurrentAt() {
-		Concurrent concurrent = ConcurrentBuilder.getConcurrent(reglement);
-		concurrent.setName("Archers"); //$NON-NLS-1$
+		Concurrent concurrent = new Concurrent(); //ConcurrentBuilder.getConcurrent(reglement);
+		concurrent.getArcher().setName("Archers"); //$NON-NLS-1$
 		try {
 			target1Archer.setConcurrentAt(concurrent, 3);
 		} catch (PlacementException e) {
@@ -252,8 +249,8 @@ public class TargetTest extends TestCase {
 		
 		assertTrue(target1Archer.indexOf(concurrent) == 0);
 		
-		Concurrent concurrent2 = ConcurrentBuilder.getConcurrent(reglement);
-		concurrent2.setName("Archers 2"); //$NON-NLS-1$
+		Concurrent concurrent2 = new Concurrent(); //ConcurrentBuilder.getConcurrent(reglement);
+		concurrent2.getArcher().setName("Archers 2"); //$NON-NLS-1$
 		try {
 			target1Archer.setConcurrentAt(concurrent2, 3);
 		} catch (PlacementException e) {
@@ -278,8 +275,8 @@ public class TargetTest extends TestCase {
 	 */
 	@Test
 	public void testSetConcurrentAt() {
-		Concurrent concurrent = ConcurrentBuilder.getConcurrent(reglement);
-		concurrent.setName("Archers 2"); //$NON-NLS-1$
+		Concurrent concurrent = new Concurrent(); // ConcurrentBuilder.getConcurrent(reglement);
+		concurrent.getArcher().setName("Archers 2"); //$NON-NLS-1$
 		try {
 			target1Archer.setConcurrentAt(concurrent, 3);
 		} catch (PlacementException e) {

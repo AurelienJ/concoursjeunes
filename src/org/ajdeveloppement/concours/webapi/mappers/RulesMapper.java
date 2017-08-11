@@ -102,7 +102,12 @@ import org.mapstruct.ObjectFactory;
  * @author Aurélien JEOFFRAY
  *
  */
-@Mapper(uses = {CriterionMapper.class, CompetitionMapper.class }, componentModel="jsr330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
+@Mapper(uses = {
+		CompetitionMapper.class, 
+		RankingCriterionMapper.class, 
+		DistanceAndFacesSetMapper.class,
+		EntiteMapper.class },
+componentModel="jsr330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
 public abstract class RulesMapper {
 	
 	@ObjectFactory
@@ -119,8 +124,10 @@ public abstract class RulesMapper {
 	}
 	
 	@BeforeMapping
-	public void clearCollection(RuleView ruleView, @MappingTarget Rule rule) {
+	public void clearCollections(RuleView ruleView, @MappingTarget Rule rule) {
 		rule.getTies().clear();
+		rule.getDistancesAndFaces().clear();
+		rule.getRankingCriteria().clear();
 	}
 	
 	/**
@@ -131,6 +138,5 @@ public abstract class RulesMapper {
 	 */
 	@Mapping(target = "idRule", ignore = true)
 	@Mapping(target = "ties", source = "tie")
-	@Mapping(target = "classementFilter", ignore = true)
 	public abstract Rule toRule(RuleView ruleView);
 }

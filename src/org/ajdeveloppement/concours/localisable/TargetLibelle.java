@@ -95,7 +95,7 @@ import java.util.Map.Entry;
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.concours.Target;
 import org.ajdeveloppement.concours.data.Concurrent;
-import org.ajdeveloppement.concours.data.DistancesEtBlason;
+import org.ajdeveloppement.concours.data.DistanceAndFacesSet;
 import org.ajdeveloppement.concours.data.Entite;
 
 /**
@@ -141,27 +141,27 @@ public class TargetLibelle {
 				+ ((target.getNumCible() < 10) ? "0" : "") //$NON-NLS-1$ //$NON-NLS-2$
 				+ target.getNumCible() + "</b> ("; //$NON-NLS-1$
 		if(target.getDistancesEtBlason().size() > 0) {
-			List<DistancesEtBlason> dbs = target.getDistancesEtBlason();
+			List<DistanceAndFacesSet> dbs = target.getDistancesEtBlason();
 			if (dbs != null && dbs.size() > 0) {
 				//Sur une cible, les distances des differents objets sont réputées être identique
-				for (int i = 0; i < dbs.get(0).getDistances().size(); i++) {
-					if (i == 0 || (i > 0 && dbs.get(0).getDistances().get(i) != dbs.get(0).getDistances().get(i - 1))) {
+				for (int i = 0; i < dbs.get(0).getDistancesAndFaces().size(); i++) {
+					if (i == 0 || (i > 0 && dbs.get(0).getDistanceAndFaces(i) != dbs.get(0).getDistanceAndFaces(i - 1))) {
 						if (i > 0)
 							strCibleLibelle += "/"; //$NON-NLS-1$
-						strCibleLibelle += dbs.get(0).getDistances().get(i) + "m"; //$NON-NLS-1$
+						strCibleLibelle += dbs.get(0).getDistanceAndFaces(i) + "m"; //$NON-NLS-1$
 					}
 				}
 				strCibleLibelle += ", "; //$NON-NLS-1$
 				
 				//Les blasons sont eux toujours différent
-				for (int i = 0; i < dbs.size(); i++) {
-					if (i == 0 || (i > 0 && !dbs.get(i).getTargetFace().equals(dbs.get(i - 1).getTargetFace()))) {
-						if (i > 0)
-							strCibleLibelle += "/"; //$NON-NLS-1$
-						if(dbs.get(i) != null && dbs.get(i).getTargetFace() != null)
-							strCibleLibelle += dbs.get(i).getTargetFace().getName();
-					}
-				}
+//				for (int i = 0; i < dbs.size(); i++) {
+//					if (i == 0 || (i > 0 && !dbs.get(i).getTargetFace().equals(dbs.get(i - 1).getTargetFace()))) {
+//						if (i > 0)
+//							strCibleLibelle += "/"; //$NON-NLS-1$
+//						if(dbs.get(i) != null && dbs.get(i).getTargetFace() != null)
+//							strCibleLibelle += dbs.get(i).getTargetFace().getName();
+//					}
+//				}
 			}
 		}
 
@@ -169,9 +169,9 @@ public class TargetLibelle {
 
 		Hashtable<Entite, Integer> nbArcherByClub = new Hashtable<Entite, Integer>();
 		for (Concurrent concurrent : target.getAllConcurrents()) {
-			if(!nbArcherByClub.containsKey(concurrent.getEntite()))
-				nbArcherByClub.put(concurrent.getEntite(), 0);
-			nbArcherByClub.put(concurrent.getEntite(), nbArcherByClub.get(concurrent.getEntite())+1);
+			if(!nbArcherByClub.containsKey(concurrent.getArcher().getEntite()))
+				nbArcherByClub.put(concurrent.getArcher().getEntite(), 0);
+			nbArcherByClub.put(concurrent.getArcher().getEntite(), nbArcherByClub.get(concurrent.getArcher().getEntite())+1);
 		}
 		
 		if (nbArcherByClub.size() == 1 && target.getNbArcher() > 1)

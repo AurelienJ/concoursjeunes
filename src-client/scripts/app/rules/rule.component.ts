@@ -8,6 +8,7 @@ import { RulesService } from './rules.service';
 import { NavigatorService, NavigationSnapshot } from '../general';
 import { Rule } from './Rule';
 import { IRulesCategory } from './IRulesCategory';
+import { IRankingCriterion } from './IRankingCriterion';
 
 @Component({
 	selector: 'rule',
@@ -19,7 +20,6 @@ import { IRulesCategory } from './IRulesCategory';
 				<div class="nav-tabs-custom">
 					<ul class="nav nav-tabs">
 						<li [class.active]="!activePane || activePane=='general'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='general'">Général</a></li>
-						<li [class.active]="activePane=='criterion'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='criterion'">Critères</a></li>
 						<li [class.active]="activePane=='classment'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='classment'">Classement</a></li>
 						<li [class.active]="activePane=='placement'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='placement'">Placement</a></li>
 					</ul>
@@ -97,12 +97,60 @@ import { IRulesCategory } from './IRulesCategory';
 							</section>
 						</div>
 
-						<div id="criterion" class="tab-pane" [class.active]="activePane=='criterion'">
+						<div id="classment" class="tab-pane" [class.active]="activePane=='classment'">
 							<div class="row">
 								<div class="col-sm-6"><a href="javascript:void(0)" class="btn btn-app"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter</a>
 								</div>
 								<div class="col-sm-6 form-inline">
 									
+									<div class="modal modal-primary" id="confirmDeleteRankingCriterionItemModal" *ngIf="selectedRankingCriterionForDelete">
+										<div class="modal-dialog">
+											<div class="modal-content">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal" aria-label="Fermer" (click)="selectedRankingCriterionForDelete=null">
+												<span aria-hidden="true">×</span></button>
+												<h4 class="modal-title">Suppression d'un critère de classement</h4>
+											</div>
+											<div class="modal-body">
+												<p>Confirmer la suppression du critère <strong>"{{selectedRankingCriterionForDelete.name}}"</strong>?</p>
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-outline" (click)="deleteRankingCriterion(selectedRankingCriterionForDelete, true)">Supprimer</button>
+												<button type="button" class="btn btn-outline" data-dismiss="modal" (click)="selectedRankingCriterionForDelete=null">Fermer</button>
+											</div>
+											</div>
+											<!-- /.modal-content -->
+										</div>
+										<!-- /.modal-dialog -->
+									</div>
+									<div class="row">
+										<div class="col-sm-6">
+											<h3>Liste des critères</h3>
+											<div class="row">
+												<div class="col-sm-12">
+													<a href="javascript:void(0)" class="btn btn-app" (click)="addRankingCriterion()"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter</a>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<ul class="list-group" id="criteria-collection">
+														<li class="list-group-item" *ngFor="let rankingCriterion of rule.rankingCriteria">
+															<!--<span class="badge" title="Nombre d'élément">{{criterion.criterionElements.length}}</span>-->
+															<a href="javascript:void(0)" (click)="selectedRankingCriterion = rankingCriterion">{{rankingCriterion.name}}</a>
+															<a href="javascript:void(0)" class="pull-right button-separator" (click)="deleteRankingCriterion(rankingCriterion)"><i class="fa fa-trash" title="Supprimer"></i></a>
+															<a href="javascript:void(0)" class="pull-right button-separator" [class.disabled]="rankingCriterion.numordre <= 1" (click)="upCriterion(criterion)"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
+															<a href="javascript:void(0)" class="pull-right button-separator" [class.disabled]="rankingCriterion.numordre >= rule.rankingCriteria.length" (click)="downCriterion(criterion)"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
+														</li>
+													</ul>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6" *ngIf="selectedRankingCriterion">
+											
+										</div>
+									</div>
+
+
 								</div>
 							</div>
 						</div>
@@ -125,11 +173,15 @@ import { IRulesCategory } from './IRulesCategory';
 export class RuleComponent implements OnInit, DoCheck {
 
 	private idRule : string;
-	private rule : Rule = new Rule();
-	private rulesCategories : IRulesCategory[];
 
-	private activePane : string;
-	private error : string;
+	public rule : Rule = new Rule();
+	public rulesCategories : IRulesCategory[];
+	public activePane : string;
+	public error : string;
+
+	public selectedRankingCriterion : IRankingCriterion;
+	public selectedRankingCriterionForDelete : IRankingCriterion;
+
 	private mustUpdateView : boolean = false;
 
 	constructor(private route : ActivatedRoute,
@@ -157,12 +209,18 @@ export class RuleComponent implements OnInit, DoCheck {
 				this.navigation.pushUrlSegments("Reglement", this.route.snapshot.url, null);
 				currentNavigationSnapshot = this.navigation.getCurrentNavigationSnapshot();
 
-				this.rulesService.getRule(this.idRule).then(r => {
-					this.rule = r;
+				if(this.idRule != "new") {
+					this.rulesService.getRule(this.idRule).then(r => {
+						this.rule = r;
 
-					currentNavigationSnapshot.label = r.name;
-					currentNavigationSnapshot.stateData = r;
-				});
+						currentNavigationSnapshot.label = r.name;
+						currentNavigationSnapshot.stateData = r;
+					});
+				} else {
+					this.rule = new Rule();
+					currentNavigationSnapshot.label = this.rule.name;
+					currentNavigationSnapshot.stateData = this.rule;
+				}
 			}
 			
 
@@ -188,11 +246,30 @@ export class RuleComponent implements OnInit, DoCheck {
 		}
 	}
 
-	cancel() {
+	addRankingCriterion() {
+		this.selectedRankingCriterion = <IRankingCriterion>{
+			name: '<Nouveau critère de clasement>',
+			numordre: this.rule.rankingCriteria.length+1
+		};
+		this.rule.rankingCriteria.push(this.selectedRankingCriterion);
+	}
 
+	deleteRankingCriterion(rankingCriterion : IRankingCriterion, confirmation : boolean = false) {
+		if(!confirmation)
+			this.selectedRankingCriterionForDelete = rankingCriterion;
+		else {
+			this.rule.rankingCriteria.splice(rankingCriterion.numordre-1, 1);
+			this.selectedRankingCriterionForDelete = undefined;
+		}
+	}
+
+	cancel() {
+		this.navigation.goBack(this.router, null, -1);
 	}
 
 	validate() {
-
+		this.rulesService.saveRule(this.rule)
+			.then(rule => this.navigation.goBack(this.router, null, -1))
+			.catch(reason => this.error = reason);
 	}
 }

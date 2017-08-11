@@ -89,30 +89,17 @@
 package org.ajdeveloppement.concours.data;
 
 import java.sql.Types;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Collection;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
-import org.ajdeveloppement.commons.persistence.sql.SqlContext;
+import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlSession;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
-import org.ajdeveloppement.concours.builders.AncragesMapBuilder;
-import org.ajdeveloppement.concours.builders.FaceBuilder;
 
 /**
  * Bean représentant un blason de tir et ses caractéristiques
@@ -121,12 +108,10 @@ import org.ajdeveloppement.concours.builders.FaceBuilder;
  * @version 1.0
  *
  */
-@SqlTable(name="BLASONS",loadBuilder=FaceBuilder.class)
+@SqlTable(name="BLASON")
 @SqlPrimaryKey(fields={"ID_BLASON"},generatedidField=@SqlGeneratedIdField(name="ID_BLASON",type=Types.JAVA_OBJECT))
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Face implements SqlObjectPersistence {
 	
-	@XmlAttribute
 	@SqlField(name="ID_BLASON")
 	private UUID id;
 	
@@ -143,11 +128,13 @@ public class Face implements SqlObjectPersistence {
 	@SqlField(name="IMAGE")
 	private String targetFaceImage = ""; //$NON-NLS-1$
 	
-	//@XmlJavaTypeAdapter(JAXBMapAdapter.class)
-	private Map<Integer, Ancrage> ancrages;
-	
+	@SqlChildCollection(foreignFields="ID_BLASON",type=Ancrage.class)
+	private LazyPersistentCollection<Ancrage, Void> ancrages = new LazyPersistentCollection<>(
+			() -> T_Ancrage.all().where(T_Ancrage.ID_BLASON.equalTo(id)));
+
 	@SqlChildCollection(foreignFields="ID_BLASON",type=FaceDistanceAndFaces.class)
-	private List<FaceDistanceAndFaces> facesDistanceAndFaces;
+	private LazyPersistentCollection<FaceDistanceAndFaces, Void> facesDistanceAndFaces = new LazyPersistentCollection<>(
+			() -> T_FaceDistanceAndFaces.all().where(T_FaceDistanceAndFaces.ID_BLASON.equalTo(id)));
 	
 	/**
 	 * Construit un nouveau blason
@@ -206,10 +193,8 @@ public class Face implements SqlObjectPersistence {
 		this.nbArcher = nbArcher;
 	}
 
-	/**
-	 * Retourne le nom du blason
-	 * 
-	 * @return name le nom du blason
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.FaceView#getName()
 	 */
 	public String getName() {
 		return name;
@@ -224,12 +209,8 @@ public class Face implements SqlObjectPersistence {
 		this.name = name;
 	}
 
-	/**
-	 * Le ratio horizontal définissant le blason.<br>
-	 * Le ratio représente une fraction de la taille de la cible (valeur comprise
-	 * entre 0 et 1)
-	 * 
-	 * @return horizontalRatio le ratio horizontal de la cible
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.FaceView#getHorizontalRatio()
 	 */
 	public double getHorizontalRatio() {
 		return horizontalRatio;
@@ -248,12 +229,8 @@ public class Face implements SqlObjectPersistence {
 		this.horizontalRatio = horizontalRatio;
 	}
 
-	/**
-	 * Le ratio vertical définissant le blason.<br>
-	 * Le ratio représente une fraction de la taille de la cible (valeur comprise
-	 * entre 0 et 1)
-	 * 
-	 * @return verticalRatio le ratio vertical de la cible
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.FaceView#getVerticalRatio()
 	 */
 	public double getVerticalRatio() {
 		return verticalRatio;
@@ -275,12 +252,8 @@ public class Face implements SqlObjectPersistence {
 		this.verticalRatio = verticalRatio;
 	}
 	
-	/**
-	 * Le nombre d'archer que peut supporter le blason<br>
-	 * <i>par exemple un blason de 40 ne peut supporter qu'un seul archer,
-	 * alors qu'un blason de 80 supporte jusqu'à 4 archers</i>
-	 * 
-	 * @return le nombre d'archer pouvant tiré sur le même blason
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.FaceView#getNbArcher()
 	 */
 	public int getNbArcher() {
 		return nbArcher;
@@ -297,11 +270,8 @@ public class Face implements SqlObjectPersistence {
 		this.nbArcher = nbArcher;
 	}
 
-	/**
-	 * Le numéro d'ordre de la cible. Le numéro d'ordre permet de classer
-	 * les blasons dans l'ordre.
-	 * 
-	 * @return le numéro d'ordre du blason
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.FaceView#getNumordre()
 	 */
 	public int getNumordre() {
 		return numordre;
@@ -317,12 +287,8 @@ public class Face implements SqlObjectPersistence {
 		this.numordre = numordre;
 	}
 
-	/**
-	 * Le numéro de blason tel que définit dans la base.<br>
-	 * Ce numéro n'est pas destiné à être utilisé directement,
-	 * mais uniquement par afin de permettre la persistance de l'objet
-	 * 
-	 * @return le numéro de reference du blason dans la base ou 0 si non définit 
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.FaceView#getId()
 	 */
 	public UUID getId() {
 		return id;
@@ -339,31 +305,24 @@ public class Face implements SqlObjectPersistence {
 		this.id = numblason;
 	}
 
-	/**
-	 * Retourne la table des points d'ancrages possible du blason
-	 * 
-	 * @return la table des points d'ancrages possible du blason
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.FaceView#getAncrages()
 	 */
-	public Map<Integer, Ancrage> getAncrages() {
-		if(ancrages == null)
-			ancrages = AncragesMapBuilder.getAncragesMap(this);
-		if(ancrages == null)
-			ancrages = AncragesMapBuilder.getAncragesMap(nbArcher);
-
+	public Collection<Ancrage> getAncrages() {
     	return ancrages;
     }
-
-	/**
-	 * Définit la table des points d'ancarge du blason en fonction de la position
-	 * 
-	 * @param ancrages la table des points d'ancrages possible du blason
-	 */
-	public void setAncrages(Map<Integer, Ancrage> ancrages) {
-    	this.ancrages = ancrages;
-    	
-    	ancrages.forEach((key, value) -> value.setBlason(this));
-    }
 	
+	public void addAncrage(Ancrage ancrage) {
+		ancrage.setBlason(this);
+		
+		ancrages.add(ancrage);
+	}
+	
+	public void removeAncrage(Ancrage ancrage) {
+		ancrages.remove(ancrage);
+	}
+
+
 	/**
 	 * Retourne l'ancrage relatif du blason en fonction de sa position logique
 	 * 
@@ -387,15 +346,13 @@ public class Face implements SqlObjectPersistence {
 				ancrageKey = Ancrage.POSITION_ABCD;
 		}
 		if(getAncrages() != null)
-			return getAncrages().get(ancrageKey);
+			return getAncrages().stream().collect(Collectors.toMap(Ancrage::getEmplacement, a -> a)).get(ancrageKey);
 		
 		return null;
 	}
 	
-	/**
-	 * Retourne le nom du fichier image représentant le blason
-	 * 
-	 * @return le nom de l'image du blason
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.FaceView#getTargetFaceImage()
 	 */
 	public String getTargetFaceImage() {
 		return targetFaceImage;
@@ -412,19 +369,23 @@ public class Face implements SqlObjectPersistence {
 	/**
 	 * @return facesDistanceAndFaces
 	 */
-	public List<FaceDistanceAndFaces> getFacesDistanceAndFaces() {
-		if(facesDistanceAndFaces == null) {
-			facesDistanceAndFaces = QResults.from(FaceDistanceAndFaces.class)
-					.where(T_FaceDistanceAndFaces.ID_BLASON.equalTo(id)).asList();
-		}
+	public Collection<FaceDistanceAndFaces> getFacesDistanceAndFaces() {
 		return facesDistanceAndFaces;
 	}
 
 	/**
-	 * @param facesDistanceAndFaces facesDistanceAndFaces à définir
+	 * @param faceDistanceAndFaces facesDistanceAndFaces à définir
 	 */
-	public void setFacesDistanceAndFaces(List<FaceDistanceAndFaces> facesDistanceAndFaces) {
-		this.facesDistanceAndFaces = facesDistanceAndFaces;
+	public void addFacesDistanceAndFaces(FaceDistanceAndFaces faceDistanceAndFaces) {
+		faceDistanceAndFaces.setFace(this);
+		this.facesDistanceAndFaces.add(faceDistanceAndFaces);
+	}
+	
+	/**
+	 * @param faceDistanceAndFaces facesDistanceAndFaces à définir
+	 */
+	public void removeFacesDistanceAndFaces(FaceDistanceAndFaces faceDistanceAndFaces) {
+		this.facesDistanceAndFaces.remove(faceDistanceAndFaces);
 	}
 
 	/**
@@ -462,35 +423,6 @@ public class Face implements SqlObjectPersistence {
 		return !axeX && !axeY;
 	}
 	
-	/**
-	 * Sauvegarde l'objet dans la base en créant une nouvelle ligne si le numero de blason est à 0
-	 * ou en mettant à jour la ligne existante dans la base et identifié par le numero de blason
-	 * 
-	 * @throws ObjectPersistenceException
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			SqlContext context = null;
-			if(session instanceof SqlSession)
-				context = ((SqlSession)session).getContext();
-			
-			StoreHelper<Face> helper = SqlStoreHelperCache.getHelper(Face.class, context);
-			if(helper != null) {
-				helper.save(this);
-
-				if(context != null)
-					context.getCache().put(this);
-				
-				Session.addProcessedObject(session, this);
-				
-				for(Entry<Integer, Ancrage> entry : ancrages.entrySet()) {
-					entry.getValue().save(session);
-				}
-			}
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

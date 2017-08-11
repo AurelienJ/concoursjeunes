@@ -96,8 +96,8 @@ import java.util.List;
 import javax.swing.event.EventListenerList;
 
 import org.ajdeveloppement.concours.data.Concurrent;
+import org.ajdeveloppement.concours.data.DistanceAndFacesSet;
 import org.ajdeveloppement.concours.data.DistancesEtBlason;
-import org.ajdeveloppement.concours.data.Face;
 import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.event.TargetEvent;
 import org.ajdeveloppement.concours.event.TargetListener;
@@ -193,12 +193,11 @@ public class Target implements PropertyChangeListener {
 	 * @param db le DistancesEtBlason pour lequel retourner le nombre d'archers
 	 * @return le nombre d'archer sur le DistancesEtBlason présent sur la cible
 	 */
-	public int getNbArcherFor(DistancesEtBlason db) {
+	public int getNbArcherFor(DistanceAndFacesSet db) {
 		int nbArcher = 0;
 		for(Concurrent concurrent : concurrents) {
 			if(concurrent != null) {
-				DistancesEtBlason concDb = DistancesEtBlason.getDistancesEtBlasonForConcurrent(reglement, concurrent);
-				if(db.haveSameDistancesAndTargetFace(concDb)) {
+				if(db.equals(concurrent.getRankingCriterion().getDistanceAndFacesSet())) {
 					nbArcher++;
 				}
 			}
@@ -233,12 +232,13 @@ public class Target implements PropertyChangeListener {
 	 * 
 	 * @return le nombre de slot disponible pour le DistancesEtBlason
 	 */
-	public int getNbAvailableSlotsFor(DistancesEtBlason distancesEtBlason) {
+	public int getNbAvailableSlotsFor(DistanceAndFacesSet distancesEtBlason) {
 		if(nbArcher > 0) {
-			if(getDistancesEtBlason().get(0).getDistances().equals(distancesEtBlason.getDistances())) {
+			if(getDistancesEtBlason().get(0).isSameDistances(distancesEtBlason)) {
 				int availableSlots = 0;
 				for(int i = 0; i < concurrents.length; i++) {
-					if(concurrents[i] == null && !isReservedPosition(i) && isSlotAvailable(distancesEtBlason.getTargetFace(), i)) {
+					if(concurrents[i] == null 
+							&& !isReservedPosition(i) && isSlotAvailable(distancesEtBlason, i)) {
 						availableSlots++;
 					}
 				}
@@ -257,7 +257,7 @@ public class Target implements PropertyChangeListener {
 	 * @return true si la position est réservé, false sinon
 	 */
 	public boolean isReservedPosition(int position) {
-		if(position % 2 == 1 && concurrents[position-1] != null && concurrents[position-1].isHandicape())
+		if(position % 2 == 1 && concurrents[position-1] != null && concurrents[position-1].getArcher().isHandicape())
 			return true;
 		return false;
 	}
@@ -305,25 +305,25 @@ public class Target implements PropertyChangeListener {
 			//vérifie qu'il reste des places disponible
 			if(nbArcher < concurrents.length - nbHandicap) {
 				DistancesEtBlason concurrentDb = DistancesEtBlason.getDistancesEtBlasonForConcurrent(reglement, concurrent);
-				List<DistancesEtBlason> targetDbs = getDistancesEtBlason();
+				List<DistanceAndFacesSet> targetDbs = getDistancesEtBlason();
 				
 				//vérifie que la distance est bonne
-				if(targetDbs.size() > 0 && !concurrentDb.getDistances().equals(targetDbs.get(0).getDistances()))
-					throw new PlacementException(PlacementException.Nature.BAD_DISTANCES);
+				//if(targetDbs.size() > 0 && !concurrentDb.getDistances().equals(targetDbs.get(0).getDistances()))
+				//	throw new PlacementException(PlacementException.Nature.BAD_DISTANCES);
 				
 				//si l'archer est handicapé, vérifié que les condition spécifique sont remplis
-				if(concurrent.isHandicape()) {
+				if(concurrent.getArcher().isHandicape()) {
 					if(nbArcher < concurrents.length - (nbHandicap+1)) {
 						//dans le cas d'un archer handicapé, on boucle sur les emplacements 2 à 2
 						for (int i = 0; i < concurrents.length; i+=2) {
-							if (isSlotAvailable(concurrentDb.getTargetFace(), i) && concurrents[i+1] == null) {
-								placeConcurrent(concurrent, i, simulationMode);
-								nbHandicap++;
-								
-								position = i;
-								
-								break;
-							}
+//							if (isSlotAvailable(concurrentDb.getTargetFace(), i) && concurrents[i+1] == null) {
+//								placeConcurrent(concurrent, i, simulationMode);
+//								nbHandicap++;
+//								
+//								position = i;
+//								
+//								break;
+//							}
 						}
 						if(position == -1)
 							throw new PlacementException(PlacementException.Nature.BAD_TARGETFACE);
@@ -334,39 +334,39 @@ public class Target implements PropertyChangeListener {
 					if(repartition == Repartition.ABCD) {
 						//on boucle sur les emplacements et on remplit le premier qui est libre
 						for (int i = 0; i < concurrents.length; i++) {
-							if (isSlotAvailable(concurrentDb.getTargetFace(), i)) {
-								if(isReservedPosition(i)) //la position est libre mais réservé pour un archer handicapé
-									continue;
-								placeConcurrent(concurrent, i, simulationMode);
-		
-								position = i;
-		
-								break;
-							}
+//							if (isSlotAvailable(concurrentDb.getTargetFace(), i)) {
+//								if(isReservedPosition(i)) //la position est libre mais réservé pour un archer handicapé
+//									continue;
+//								placeConcurrent(concurrent, i, simulationMode);
+//		
+//								position = i;
+//		
+//								break;
+//							}
 						}
 					} else {
 						//tente le placement en AC
 						for (int i = 0; i < concurrents.length; i+=2) {
-							if (isSlotAvailable(concurrentDb.getTargetFace(), i)) {
-								placeConcurrent(concurrent, i, simulationMode);
-		
-								position = i;
-		
-								break;
-							}
+//							if (isSlotAvailable(concurrentDb.getTargetFace(), i)) {
+//								placeConcurrent(concurrent, i, simulationMode);
+//		
+//								position = i;
+//		
+//								break;
+//							}
 						}
 						//si AC en échec tente en BD
 						if(position == -1) {
 							for (int i = 1; i < concurrents.length; i+=2) {
-								if (isSlotAvailable(concurrentDb.getTargetFace(), i)) {
-									if(isReservedPosition(i)) //la position est libre mais réservé pour un archer handicapé
-										continue;
-									placeConcurrent(concurrent, i, simulationMode);
-			
-									position = i;
-			
-									break;
-								}
+//								if (isSlotAvailable(concurrentDb.getTargetFace(), i)) {
+//									if(isReservedPosition(i)) //la position est libre mais réservé pour un archer handicapé
+//										continue;
+//									placeConcurrent(concurrent, i, simulationMode);
+//			
+//									position = i;
+//			
+//									break;
+//								}
 							}
 						}
 					}
@@ -393,7 +393,7 @@ public class Target implements PropertyChangeListener {
 	 * @param position la position ou placer ce blason
 	 * @return <i>true</i> si l'on arrive à placer le blason sur la position, <i>false</i> sinon
 	 */
-	public boolean isSlotAvailable(Face blason, int position) {
+	public boolean isSlotAvailable(DistanceAndFacesSet blason, int position) {
 		boolean placable = true;
 		
 		if(concurrents[position] != null)
@@ -404,27 +404,29 @@ public class Target implements PropertyChangeListener {
 		
 		for(int i = 0; i < concurrents.length; i++) {
 			if(concurrents[i] != null) {
-				DistancesEtBlason db = DistancesEtBlason.getDistancesEtBlasonForConcurrent(reglement, concurrents[i]);
-				Face otherBlason = db.getTargetFace();
-				if(otherBlason != null) {
-					if(blason.getNbArcher() > 2 || (otherBlason != null && otherBlason.getNbArcher() > 2)) {
-						if(otherBlason == null || !otherBlason.equals(blason)) {
-							placable = false;
-							break;
-						}
-					} else if(blason.getNbArcher() > 1) {
-						if(!((!otherBlason.equals(blason) && !blason.isOver(position, otherBlason, i))
-								|| otherBlason.equals(blason))) {
-							placable = false;
-							break;
-						}
-					} else {
-						if(blason.isOver(position, otherBlason, i)) {
-							placable = false;
-							break;
-						}
-					}
-				}
+				DistanceAndFacesSet db = concurrents[i].getRankingCriterion().getDistanceAndFacesSet();
+				//Face concurrentFace = concurrents[i].getAlternateFaceDistanceAndFaces().getFace();
+				
+//				Face otherBlason = db.getDistancesAndFaces().stream().map(df -> df.getFacesDistanceAndFaces());
+//				if(otherBlason != null) {
+//					if(blason.getNbArcher() > 2 || (otherBlason != null && otherBlason.getNbArcher() > 2)) {
+//						if(otherBlason == null || !otherBlason.equals(blason)) {
+//							placable = false;
+//							break;
+//						}
+//					} else if(blason.getNbArcher() > 1) {
+//						if(!((!otherBlason.equals(blason) && !blason.isOver(position, otherBlason, i))
+//								|| otherBlason.equals(blason))) {
+//							placable = false;
+//							break;
+//						}
+//					} else {
+//						if(blason.isOver(position, otherBlason, i)) {
+//							placable = false;
+//							break;
+//						}
+//					}
+//				}
 			}
 		}
 		
@@ -521,34 +523,34 @@ public class Target implements PropertyChangeListener {
 				assert dbConcurrent != null : "un concururrent doit toujours avoir un DistancesEtBlason associé"; //$NON-NLS-1$
 				
 				//regarde si les distances de la cible sont compatible avec les distances de l'archer
-				if(getDistancesEtBlason().size() > 0 && !dbConcurrent.getDistances().equals(getDistancesEtBlason().get(0).getDistances()))
-					throw new PlacementException(PlacementException.Nature.BAD_DISTANCES);
+//				if(getDistancesEtBlason().size() > 0 && !dbConcurrent.getDistances().equals(getDistancesEtBlason().get(0).getDistances()))
+//					throw new PlacementException(PlacementException.Nature.BAD_DISTANCES);
 				
 				//vérifie que la place est disponible en fonction du blason
-				if (isSlotAvailable(dbConcurrent.getTargetFace(), position)) {
-					//vérifie que la place n'est pas seulement valide pour
-					//un archer non handicape
-					if(concurrent.isHandicape() && position % 2 != 0)
-						throw new PlacementException(PlacementException.Nature.POSITION_AVAILABLE_FOR_VALID_CONCURRENT);
-					concurrent.setCible(numCible);
-					concurrent.setPosition(position);
-					if (concurrents[position] != null)
-						removeConcurrentAt(position);
-					
-					if (concurrent.isHandicape())
-						removeConcurrentAt(position+1);
-						
-					nbArcher++;
-					if (concurrent.isHandicape())
-						nbHandicap++;
-					
-					concurrent.addPropertyChangeListener(this);
-					
-					concurrents[position] = concurrent;
-					fireConcurrentJoined(concurrent);
-					
-					return;
-				}
+//				if (isSlotAvailable(dbConcurrent.getTargetFace(), position)) {
+//					//vérifie que la place n'est pas seulement valide pour
+//					//un archer non handicape
+//					if(concurrent.isHandicape() && position % 2 != 0)
+//						throw new PlacementException(PlacementException.Nature.POSITION_AVAILABLE_FOR_VALID_CONCURRENT);
+//					concurrent.setCible(numCible);
+//					concurrent.setPosition(position);
+//					if (concurrents[position] != null)
+//						removeConcurrentAt(position);
+//					
+//					if (concurrent.isHandicape())
+//						removeConcurrentAt(position+1);
+//						
+//					nbArcher++;
+//					if (concurrent.isHandicape())
+//						nbHandicap++;
+//					
+//					concurrent.addPropertyChangeListener(this);
+//					
+//					concurrents[position] = concurrent;
+//					fireConcurrentJoined(concurrent);
+//					
+//					return;
+//				}
 				throw new PlacementException(PlacementException.Nature.BAD_TARGETFACE);
 			} else {
 				if(isReservedPosition(position))
@@ -583,7 +585,7 @@ public class Target implements PropertyChangeListener {
 			Concurrent removedConcurrent = concurrents[position];
 			if(!simulationMode)
 				removedConcurrent.setCible(0);
-			if(removedConcurrent.isHandicape())
+			if(removedConcurrent.getArcher().isHandicape())
 				nbHandicap--;
 
 			removedConcurrent.removePropertyChangeListener(this);
@@ -631,13 +633,13 @@ public class Target implements PropertyChangeListener {
 	 * 
 	 * @return DistancesEtBlason - la disposition de la cible
 	 */
-	public List<DistancesEtBlason> getDistancesEtBlason() {
-		List<DistancesEtBlason> dbs = new ArrayList<DistancesEtBlason>();
+	public List<DistanceAndFacesSet> getDistancesEtBlason() {
+		List<DistanceAndFacesSet> dbs = new ArrayList<DistanceAndFacesSet>();
 
 		if (nbArcher > 0) {
 			for (Concurrent concurrent : concurrents) {
 				if (concurrent != null) {
-					DistancesEtBlason db = DistancesEtBlason.getDistancesEtBlasonForConcurrent(reglement, concurrent);
+					DistanceAndFacesSet db = concurrent.getRankingCriterion().getDistanceAndFacesSet();
 					if(!dbs.contains(db))
 						dbs.add(db);
 				}

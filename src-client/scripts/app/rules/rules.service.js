@@ -53,6 +53,9 @@ System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"
                 RulesService.prototype.getRule = function (id) {
                     return this.http.get("api/rules/" + id, { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
                 };
+                RulesService.prototype.saveRule = function (rule) {
+                    return this.http.put("api/rules", { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
+                };
                 RulesService.prototype.getRulesCategories = function () {
                     if (!this.rulesCategories)
                         this.rulesCategories = this.http.get("api/rulesCategories", { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
@@ -61,12 +64,12 @@ System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"
                 RulesService.prototype.getCriteria = function (idRule) {
                     return this.http.get("api/rules/" + idRule + "/criteria").toPromise().then(function (r) { return r.json(); });
                 };
+                RulesService = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [http_1.Http])
+                ], RulesService);
                 return RulesService;
             }());
-            RulesService = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [http_1.Http])
-            ], RulesService);
             exports_1("RulesService", RulesService);
         }
     };

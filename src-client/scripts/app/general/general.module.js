@@ -42,17 +42,17 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
             GeneralModule = (function () {
                 function GeneralModule() {
                 }
+                GeneralModule = __decorate([
+                    core_1.NgModule({
+                        imports: [router_1.RouterModule, platform_browser_1.BrowserModule, http_1.HttpModule],
+                        declarations: [titlebar_component_1.TitlebarComponent, arraySearch_pipe_1.TableFilterPipe, uppercase_pipe_1.UpperCasePipe, select2_directive_1.Select2Directive],
+                        bootstrap: [],
+                        providers: [navigator_service_1.NavigatorService],
+                        exports: [titlebar_component_1.TitlebarComponent, arraySearch_pipe_1.TableFilterPipe, uppercase_pipe_1.UpperCasePipe, select2_directive_1.Select2Directive]
+                    })
+                ], GeneralModule);
                 return GeneralModule;
             }());
-            GeneralModule = __decorate([
-                core_1.NgModule({
-                    imports: [router_1.RouterModule, platform_browser_1.BrowserModule, http_1.HttpModule],
-                    declarations: [titlebar_component_1.TitlebarComponent, arraySearch_pipe_1.TableFilterPipe, uppercase_pipe_1.UpperCasePipe, select2_directive_1.Select2Directive],
-                    bootstrap: [],
-                    providers: [navigator_service_1.NavigatorService],
-                    exports: [titlebar_component_1.TitlebarComponent, arraySearch_pipe_1.TableFilterPipe, uppercase_pipe_1.UpperCasePipe, select2_directive_1.Select2Directive]
-                })
-            ], GeneralModule);
             exports_1("GeneralModule", GeneralModule);
         }
     };

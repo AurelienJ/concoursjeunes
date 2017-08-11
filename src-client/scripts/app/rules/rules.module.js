@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@angular/platform-browser", "@angular/forms", "../../libs/angular2-datatable", "../general", "../references/references.module", "./rules.service", "./rules.component", "./rule.component"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@angular/platform-browser", "@angular/forms", "../datatable", "../general", "../references/references.module", "./rules.service", "./rules.component", "./rule.component"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7,7 +7,7 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, platform_browser_1, forms_1, angular2_datatable_1, general_1, references_module_1, rules_service_1, rules_component_1, rule_component_1, RulesModule;
+    var core_1, router_1, platform_browser_1, forms_1, datatable_1, general_1, references_module_1, rules_service_1, rules_component_1, rule_component_1, RulesModule;
     return {
         setters: [
             function (core_1_1) {
@@ -22,8 +22,8 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
             function (forms_1_1) {
                 forms_1 = forms_1_1;
             },
-            function (angular2_datatable_1_1) {
-                angular2_datatable_1 = angular2_datatable_1_1;
+            function (datatable_1_1) {
+                datatable_1 = datatable_1_1;
             },
             function (general_1_1) {
                 general_1 = general_1_1;
@@ -45,17 +45,17 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
             RulesModule = (function () {
                 function RulesModule() {
                 }
+                RulesModule = __decorate([
+                    core_1.NgModule({
+                        imports: [router_1.RouterModule, platform_browser_1.BrowserModule, forms_1.FormsModule, datatable_1.DataTableModule, general_1.GeneralModule, references_module_1.ReferencesModule],
+                        declarations: [rule_component_1.RuleComponent, rules_component_1.RulesComponent, rules_component_1.RulesServerSideInputDataFilterPipe],
+                        bootstrap: [],
+                        providers: [rules_service_1.RulesService],
+                        exports: [rule_component_1.RuleComponent, rules_component_1.RulesComponent, rules_component_1.RulesServerSideInputDataFilterPipe]
+                    })
+                ], RulesModule);
                 return RulesModule;
             }());
-            RulesModule = __decorate([
-                core_1.NgModule({
-                    imports: [router_1.RouterModule, platform_browser_1.BrowserModule, forms_1.FormsModule, angular2_datatable_1.DataTableModule, general_1.GeneralModule, references_module_1.ReferencesModule],
-                    declarations: [rule_component_1.RuleComponent, rules_component_1.RulesComponent, rules_component_1.RulesServerSideInputDataFilterPipe],
-                    bootstrap: [],
-                    providers: [rules_service_1.RulesService],
-                    exports: [rule_component_1.RuleComponent, rules_component_1.RulesComponent, rules_component_1.RulesServerSideInputDataFilterPipe]
-                })
-            ], RulesModule);
             exports_1("RulesModule", RulesModule);
         }
     };

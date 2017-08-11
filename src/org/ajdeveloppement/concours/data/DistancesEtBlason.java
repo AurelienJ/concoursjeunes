@@ -113,7 +113,6 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
-import org.ajdeveloppement.concours.builders.DistancesEtBlasonBuilder;
 import org.ajdeveloppement.concours.xml.bind.BlasonAdapter;
 
 /**
@@ -122,7 +121,7 @@ import org.ajdeveloppement.concours.xml.bind.BlasonAdapter;
  * @author Aurélien Jeoffray
  * @version 1.0
  */
-@SqlTable(name="DISTANCESBLASONS",loadBuilder=DistancesEtBlasonBuilder.class)
+@SqlTable(name="DISTANCESBLASONS")
 @SqlPrimaryKey(fields="ID_DISTANCESBLASONS")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DistancesEtBlason implements SqlObjectPersistence {

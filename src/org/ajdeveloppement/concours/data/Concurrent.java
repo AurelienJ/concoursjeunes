@@ -86,28 +86,22 @@
  */
 package org.ajdeveloppement.concours.data;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
-import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.sql.QResults;
+import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
-import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
-import org.ajdeveloppement.concours.ApplicationCore;
 import org.ajdeveloppement.concours.TargetPosition;
-import org.ajdeveloppement.concours.builders.ConcurrentBuilder;
 
 /**
  * Objet de Base de stockage des Information sur un concurrent:
@@ -116,11 +110,9 @@ import org.ajdeveloppement.concours.builders.ConcurrentBuilder;
  * @author  Aurélien Jeoffray
  * @version  4.0
  */
-@SqlTable(name="CONCURRENT",loadBuilder=ConcurrentBuilder.class)
+@SqlTable(name="CONCURRENT")
 @SqlPrimaryKey(fields={"ID_CONTACT", "ID_COMPETITION"})
-@SqlUnmappedFields(fields="ID_CONTACT",typeFields=UUID.class)
-@XmlAccessorType(XmlAccessType.FIELD)
-public class Concurrent extends Archer implements Cloneable {
+public class Concurrent implements Cloneable {
 	/**
 	 * Statut de l'archer: réservé
 	 */
@@ -136,10 +128,13 @@ public class Concurrent extends Archer implements Cloneable {
 	
 	@SqlForeignKey(mappedTo="ID_COMPETITION")
 	private Competition competition;
+	
+	@SqlForeignKey(mappedTo="ID_CONTACT")
+	private Archer archer;
 
 	@SqlForeignKey(mappedTo="ID_CRITERE_CLASSEMENT")
 	private RankingCriterion rankingCriterion;
-	
+
 	@SqlField(name="DEPART")
 	private int depart                  = 0;
 	private TargetPosition targetPosition = new TargetPosition();
@@ -159,14 +154,45 @@ public class Concurrent extends Archer implements Cloneable {
 	private boolean	presence			= false;
 	@SqlField(name="SURCLASSEMENT")
 	private boolean surclassement		= false;
-	@SqlForeignKey(mappedTo="ID_BLASONALT")
-	private Face alternativeTargetFace = null;
+	
+	@SqlChildCollection(type=RankingCriterionOptions.class,foreignFields={"ID_COMPETITION","ID_CONTACT"})
+	private LazyPersistentCollection<RankingCriterionOptions, Void> rankingCriterionOptions = new LazyPersistentCollection<>(
+			() -> T_RankingCriterionOptions.all().where(
+					T_RankingCriterionOptions.ID_COMPETITION.equalTo(competition.getIdCompetition())
+					.and(T_RankingCriterionOptions.ID_CONTACT.equalTo(archer.getIdContact()))));
+	
+	@SqlChildCollection(type=ConcurrentScore.class,foreignFields={"ID_COMPETITION","ID_CONTACT"})
+	private LazyPersistentCollection<ConcurrentScore, Void> scores = new LazyPersistentCollection<>(
+			() -> T_ConcurrentScore.all().where(
+					T_ConcurrentScore.ID_COMPETITION.equalTo(competition.getIdCompetition())
+					.and(T_ConcurrentScore.ID_CONTACT.equalTo(archer.getIdContact()))));
 
+	protected transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	
 	/**
 	 * Constructeur vide obligatoire pour java beans
 	 * 
 	 */
-	public Concurrent() { }
+	public Concurrent() {
+	}
+	
+	/**
+	 * add a property listener to bean
+	 * 
+	 * @param l the bean's listener
+	 */
+	public void addPropertyChangeListener(PropertyChangeListener l) {
+		pcs.addPropertyChangeListener(l);
+	}
+	
+	/**
+	 * remove a property listener from bean
+	 * 
+	 * @param l the bean's listener
+	 */
+	public void removePropertyChangeListener(PropertyChangeListener l) {
+		pcs.removePropertyChangeListener(l);
+	}
 
 	/**
 	 * Retourne les critères distinguant l'archer
@@ -307,52 +333,18 @@ public class Concurrent extends Archer implements Cloneable {
 		}
 	}
 
-	/**
-	 * Affecte le nombre de dix total du concurrent
-	 * 
-	 * @deprecated remplacé par {@link #setDepartages(int[])}
-	 * @param  neuf
-	 */
-	@Deprecated
-	public void setNeuf(int neuf) {
-		//this.neuf = neuf;
-		if(neuf > 0) {
-			if(departages[1] == 0)
-				departages[1] = neuf;
-		}
+	public Collection<ConcurrentScore> getScores() {
+		return scores;
 	}
 
-	/**
-	 * @deprecated retourne toujours 0, utiliser {@link #getDepartages()} à la place
-	 * @return  toujours 0
-	 */
-	@Deprecated
-	public int getNeuf() {
-		return 0;
+	public void addScores(ConcurrentScore score) {
+		score.setConcurrent(this);
+		
+		this.scores.add(score);
 	}
-
-	/**
-	 * Affecte le nombre de 10+ total du concurrent
-	 * 
-	 * @deprecated remplacé par {@link #setDepartages(int[])}
-	 * @param  dix
-	 */
-	@Deprecated
-	public void setDix(int dix) {
-		//this.dix = dixPlus;
-		if(dix > 0) {
-			if(departages[0] == 0)
-				departages[0] = dix;
-		}
-	}
-
-	/**
-	 * @deprecated retourne toujours 0, utiliser {@link #getDepartages()} à la place
-	 * @return  toujours 0
-	 */
-	@Deprecated
-	public int getDix() {
-		return 0;
+	
+	public void removeScores(ConcurrentScore score) {
+		this.scores.remove(score);
 	}
 
 	/**
@@ -474,35 +466,37 @@ public class Concurrent extends Archer implements Cloneable {
 	public void setSurclassement(boolean surclassement) {
 		this.surclassement = surclassement;
 	}
+	
+	public Competition getCompetition() {
+		return competition;
+	}
 
-	/**
-	 * Indique si l'archer utilise ou non le blason alternatif
-	 * (par exemple tri-spot) permis par sa catégorie
-	 * 
-	 * @return useAlternativeTargetFace true si l'on doit utiliser le
-	 * blason alternatif
-	 */
-	public boolean isUseAlternativeTargetFace() {
-		return alternativeTargetFace != null && !alternativeTargetFace.getName().isEmpty();
+	public void setCompetition(Competition competition) {
+		this.competition = competition;
+	}
+
+	public Archer getArcher() {
+		return archer;
+	}
+
+	public void setArcher(Archer archer) {
+		this.archer = archer;
+	}
+
+	public Collection<RankingCriterionOptions> getRankingCriterionOptions() {
+		return rankingCriterionOptions;
 	}
 	
-	/**
-	 * Retourne le blason alternatif de l'archer si permis par sa categorie
-	 * 
-	 * @return le blason alternatif de l'archer
-	 */
-	public Face getAlternativeTargetFace() {
-		return alternativeTargetFace;
+	public void addRankingCriterionOptions(RankingCriterionOptions rankingCriterionOptions) {
+		rankingCriterionOptions.setConcurrent(this);
+		
+		this.rankingCriterionOptions.add(rankingCriterionOptions);
+	}
+	
+	public void removeRankingCriterionOptions(RankingCriterionOptions rankingCriterionOptions) {
+		this.rankingCriterionOptions.remove(rankingCriterionOptions);
 	}
 
-	/**
-	 * Définit le blason alternatif de l'archer si permis par sa categorie
-	 * 
-	 * @param alternativeTargetFace le blason alternatif de l'archer
-	 */
-	public void setAlternativeTargetFace(Face alternativeTargetFace) {
-		this.alternativeTargetFace = alternativeTargetFace;
-	}
 
 	/**
 	 * Libelle court du concurrent
@@ -513,14 +507,14 @@ public class Concurrent extends Archer implements Cloneable {
 	public String toString() {
 		if(this.targetPosition.getTarget() == 0)
 			return "<html><font color=red>" + //$NON-NLS-1$
-					getName() + " " + //$NON-NLS-1$
-					getFirstName() + " (" + //$NON-NLS-1$
-					((getEntite() != null) ? getEntite().toString() : "") + //$NON-NLS-1$
+					archer.getName() + " " + //$NON-NLS-1$
+					archer.getFirstName() + " (" + //$NON-NLS-1$
+					((archer.getEntite() != null) ? archer.getEntite().toString() : "") + //$NON-NLS-1$
 					")</font></html>"; //$NON-NLS-1$
 		return targetPosition.toString() + ": " + //$NON-NLS-1$
-				getName() + " " + //$NON-NLS-1$
-				getFirstName() + " (" + //$NON-NLS-1$
-				((getEntite() != null) ? getEntite().toString() : "") + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+				archer.getName() + " " + //$NON-NLS-1$
+				archer.getFirstName() + " (" + //$NON-NLS-1$
+				((archer.getEntite() != null) ? archer.getEntite().toString() : "") + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -588,76 +582,4 @@ public class Concurrent extends Archer implements Cloneable {
 			return -1;
 		return 0;
 	}
-	
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if(session == null || !session.contains(this)) {
-			super.save(session);
-			
-			saveCriteriaSet();
-		}
-	}
-	
-	/**
-	 * Sauvegarde le jeux de critère associé à l'archer
-	 */
-	private void saveCriteriaSet() throws ObjectPersistenceException {
-		if(!getNumLicenceArcher().equals("")) { //$NON-NLS-1$
-			try {
-//				UUID idReglement = QResults.from(Rule.class)
-//						.where(T_Rule.NOM.equalTo(criteriaSet.getReglement().getName()))
-//						.singleValue(T_Rule.ID_REGLEMENT);
-//				if(idReglement == null)
-//					return;
-				
-				//if(!criteriaSet.getReglement().getIdReglement().equals(idReglement))
-				//	criteriaSet.getReglement().setIdReglement(idReglement);
-			
-				rankingCriterion.save();
-				
-				UUID idContact = QResults.from(Archer.class)
-						.where(T_Archer.ID_CONTACT.equalTo(getIdContact()))
-						.singleValue(T_Archer.ID_CONTACT);
-			
-				if(idContact != null) {
-					String sql = "merge into distinguer (ID_CONTACT, ID_REGLEMENT, " + //$NON-NLS-1$
-							"NUMCRITERIASET) KEY (ID_CONTACT, NUMREGLEMENT)" + //$NON-NLS-1$
-							"VALUES (?, ?, ?)"; //$NON-NLS-1$
-
-					PreparedStatement pstmt = ApplicationCore.dbConnection.prepareStatement(sql);
-					
-					pstmt.setString(1, getIdContact().toString());
-					//pstmt.setObject(2, criteriaSet.getReglement().getIdReglement());
-					pstmt.setObject(3, rankingCriterion.getId());
-	
-					pstmt.executeUpdate();
-					pstmt.close();
-				}
-			} catch (SQLException e) {
-				throw new ObjectPersistenceException(e);
-			}
-		}
-	}
-	
-//	/**
-//	 * Clone l'objet concurrent
-//	 */
-//	@Override
-//	public Concurrent clone() {
-//		return clone(true);
-//	}
-//	
-//	@Override
-//	public Concurrent clone(boolean conserveId) {
-//		try {
-//			Concurrent clone = (Concurrent)super.clone(conserveId);
-//			if(points != null) {
-//				clone.points = new ArrayList<Integer>(points);
-//			}
-//			return clone;
-//		} catch (CloneNotSupportedException e) {
-//			e.printStackTrace();
-//			return this;
-//		}
-//	}
 }

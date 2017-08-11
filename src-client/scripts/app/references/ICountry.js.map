@@ -1,1 +1,1 @@
-{"version":3,"sources":["app/references/ICountry.ts"],"names":[],"mappings":";;;;;;QAIC,CAAC","file":"ICountry.js","sourceRoot":"../../"}
+{"version":3,"sources":["references/ICountry.ts"],"names":[],"mappings":";;;;;;QAIC,CAAC","file":"ICountry.js","sourceRoot":"../"}

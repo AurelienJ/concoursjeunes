@@ -89,12 +89,12 @@ System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"
                             .then(function (r) { return r.json(); });
                     }
                 };
+                PersonsService = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [http_1.Http])
+                ], PersonsService);
                 return PersonsService;
             }());
-            PersonsService = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [http_1.Http])
-            ], PersonsService);
             exports_1("PersonsService", PersonsService);
         }
     };

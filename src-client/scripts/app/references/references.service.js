@@ -36,12 +36,12 @@ System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"
                             .toPromise().then(function (r) { return r.json(); });
                     return this.countries;
                 };
+                ReferencesService = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [http_1.Http])
+                ], ReferencesService);
                 return ReferencesService;
             }());
-            ReferencesService = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [http_1.Http])
-            ], ReferencesService);
             exports_1("ReferencesService", ReferencesService);
         }
     };

@@ -596,11 +596,13 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	 * @param categoryContact
 	 */
 	public void addCategoryContact(CategoryContact categoryContact) {
-		categories.add(new CategoryContactContact(this, categoryContact));
+		if(categoryContact != null)
+			categories.add(new CategoryContactContact(this, categoryContact));
 	}
 	
 	public void removeCategoryContact(CategoryContact categoryContact) {
-		categories.remove(new CategoryContactContact(this, categoryContact));
+		if(categoryContact != null)
+			categories.remove(new CategoryContactContact(this, categoryContact));
 	}
 	
 	/**

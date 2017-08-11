@@ -2,13 +2,10 @@ import { Directive, ElementRef, Input, Output, HostListener, Renderer, EventEmit
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import 'jquery';
-import 'select2';
-
 @Directive({ selector: '[select2]' })
 export class Select2Directive implements OnInit {
 
-	private element : JQuery;
+	private element : any;
 
 	@Input()
 	private placeHolder : string;

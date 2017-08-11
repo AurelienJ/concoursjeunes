@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
-import { DataTableModule } from '../../libs/angular2-datatable';
+import { DataTableModule } from '../datatable/DataTableModule';
 import { GeneralModule } from '../general';
 import { ReferencesModule } from '../references/references.module';
 

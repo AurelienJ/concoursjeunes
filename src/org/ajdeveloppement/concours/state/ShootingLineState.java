@@ -93,7 +93,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.List;
 
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.Converters;
@@ -103,7 +102,6 @@ import org.ajdeveloppement.concours.ShootingLine;
 import org.ajdeveloppement.concours.Target;
 import org.ajdeveloppement.concours.data.Ancrage;
 import org.ajdeveloppement.concours.data.Concurrent;
-import org.ajdeveloppement.concours.data.Distance;
 import org.ajdeveloppement.concours.data.DistancesEtBlason;
 
 import com.lowagie.text.BadElementException;
@@ -136,7 +134,7 @@ public class ShootingLineState {
 	private PdfContentByte cb;
 	private float pageWidth = 0;
 	private float pageHeight = 0;
-	private int maxDistance = 0;
+	private double maxDistance = 0;
 	
 	/**
 	 * 
@@ -186,14 +184,14 @@ public class ShootingLineState {
 			boolean multiserie = false;
 			for(Target target : pasDeTir.getTargets()) {
 				if(target.getNbArcher() > 0) {
-					List<Distance> distances = target.getDistancesEtBlason().get(0).getDistances();
-					int d1 = distances.get(0).getDistance();
-					for(int i = 1; i < distances.size(); i++) {
-						if(distances.get(i).getDistance() != d1) {
-							multiserie = true;
-							break;
-						}
-					}
+//					List<Distance> distances = target.getDistancesEtBlason().get(0).getDistances();
+//					int d1 = distances.get(0).getDistance();
+//					for(int i = 1; i < distances.size(); i++) {
+//						if(distances.get(i).getDistance() != d1) {
+//							multiserie = true;
+//							break;
+//						}
+//					}
 					
 					if(multiserie)
 						break;
@@ -264,9 +262,9 @@ public class ShootingLineState {
 		double colSize = (29.7 - (leftMargin + rightMargin)) / 10;
 		double pasDeTirPos = 20;
 		double targetSize = colSize - 0.27;
-		double targetPos = (pasDeTirPos - topMargin - targetSize) * (1 - (double)target.getDistancesEtBlason().get(0).getDistances().get(serie).getDistance() / maxDistance); //variation possible entre 0 et 19.5 - colSize
+		double targetPos = (pasDeTirPos - topMargin - targetSize) * (1 - target.getDistancesEtBlason().get(0).getDistanceAndFaces(serie).getDistance() / maxDistance); //variation possible entre 0 et 19.5 - colSize
 		
-		String distance = target.getDistancesEtBlason().get(0).getDistances().get(serie).getDistance() + "m"; //$NON-NLS-1$
+		String distance = target.getDistancesEtBlason().get(0).getDistanceAndFaces(serie).getDistance() + "m"; //$NON-NLS-1$
 		
 		double startCol = rightMargin + colSize * ((target.getNumCible() - 1) % 10);
 		double distanceCible = topMargin + targetPos + targetSize;
@@ -329,11 +327,11 @@ public class ShootingLineState {
 		}
 	}
 	
-	private int getMaxDistance(int serie) {
-		int max = 0;
+	private double getMaxDistance(int serie) {
+		double max = 0;
 		for(Target target : pasDeTir.getTargets()) {
 			if(target.getDistancesEtBlason().size() > 0) {
-				int targetDistance = target.getDistancesEtBlason().get(0).getDistances().get(serie).getDistance();
+				double targetDistance = target.getDistancesEtBlason().get(0).getDistanceAndFaces(serie).getDistance();
 				if(targetDistance > max) {
 					max = targetDistance;
 				}

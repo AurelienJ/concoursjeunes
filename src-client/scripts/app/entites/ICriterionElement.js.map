@@ -1,1 +1,1 @@
-{"version":3,"sources":["app/entites/ICriterionElement.ts"],"names":[],"mappings":";;;;;;QAWC,CAAC","file":"ICriterionElement.js","sourceRoot":"../../"}
+{"version":3,"sources":["entites/ICriterionElement.ts"],"names":[],"mappings":";;;;;;QAWC,CAAC","file":"ICriterionElement.js","sourceRoot":"../"}

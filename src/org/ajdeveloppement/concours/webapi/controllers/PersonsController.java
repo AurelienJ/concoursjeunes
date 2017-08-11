@@ -197,7 +197,7 @@ public class PersonsController {
 	}
 	
 	@HttpService(key="contacts", methods={HttpMethod.PUT, HttpMethod.POST})
-	public ContactView createOrUpdateContact(@Body ContactView contactView) throws ObjectPersistenceException {
+	public ArcherView createOrUpdateContact(@Body ArcherView contactView) throws ObjectPersistenceException {
 		if(contactView != null) {
 			Contact contact = contactViewMapper.asContact(contactView);
 			

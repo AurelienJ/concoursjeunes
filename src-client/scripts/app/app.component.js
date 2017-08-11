@@ -35,15 +35,15 @@ System.register(["@angular/core", "@angular/router", "./general/navigator.servic
                 AppComponent.prototype.clearNavigationPaths = function () {
                     this.navigatorService.clear();
                 };
+                AppComponent = __decorate([
+                    core_1.Component({
+                        selector: 'app',
+                        templateUrl: 'scripts/app/app.html'
+                    }),
+                    __metadata("design:paramtypes", [router_1.ActivatedRoute, navigator_service_1.NavigatorService])
+                ], AppComponent);
                 return AppComponent;
             }());
-            AppComponent = __decorate([
-                core_1.Component({
-                    selector: 'app',
-                    templateUrl: 'scripts/app/app.html'
-                }),
-                __metadata("design:paramtypes", [router_1.ActivatedRoute, navigator_service_1.NavigatorService])
-            ], AppComponent);
             exports_1("AppComponent", AppComponent);
         }
     };

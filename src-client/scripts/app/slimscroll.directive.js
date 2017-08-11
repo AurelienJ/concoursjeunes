@@ -1,4 +1,4 @@
-System.register(["@angular/core", "jquery", "jquery-slimscroll"], function (exports_1, context_1) {
+System.register(["@angular/core"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -15,10 +15,6 @@ System.register(["@angular/core", "jquery", "jquery-slimscroll"], function (expo
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
-            },
-            function (_1) {
-            },
-            function (_2) {
             }
         ],
         execute: function () {
@@ -38,18 +34,18 @@ System.register(["@angular/core", "jquery", "jquery-slimscroll"], function (expo
                         height: event.target.innerHeight - 50
                     });
                 };
+                __decorate([
+                    core_1.HostListener('window:resize', ['$event']),
+                    __metadata("design:type", Function),
+                    __metadata("design:paramtypes", [Object]),
+                    __metadata("design:returntype", void 0)
+                ], SlimScrollDirective.prototype, "onResize", null);
+                SlimScrollDirective = __decorate([
+                    core_1.Directive({ selector: '[slimscroll]' }),
+                    __metadata("design:paramtypes", [core_1.ElementRef, core_1.Renderer])
+                ], SlimScrollDirective);
                 return SlimScrollDirective;
             }());
-            __decorate([
-                core_1.HostListener('window:resize', ['$event']),
-                __metadata("design:type", Function),
-                __metadata("design:paramtypes", [Object]),
-                __metadata("design:returntype", void 0)
-            ], SlimScrollDirective.prototype, "onResize", null);
-            SlimScrollDirective = __decorate([
-                core_1.Directive({ selector: '[slimscroll]' }),
-                __metadata("design:paramtypes", [core_1.ElementRef, core_1.Renderer])
-            ], SlimScrollDirective);
             exports_1("SlimScrollDirective", SlimScrollDirective);
         }
     };

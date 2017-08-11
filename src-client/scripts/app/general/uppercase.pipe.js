@@ -22,13 +22,13 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                     if (value && typeof value == "string")
                         return value.toLocaleUpperCase();
                 };
+                UpperCasePipe = __decorate([
+                    core_1.Pipe({
+                        name: 'upperCase'
+                    })
+                ], UpperCasePipe);
                 return UpperCasePipe;
             }());
-            UpperCasePipe = __decorate([
-                core_1.Pipe({
-                    name: 'upperCase'
-                })
-            ], UpperCasePipe);
             exports_1("UpperCasePipe", UpperCasePipe);
         }
     };

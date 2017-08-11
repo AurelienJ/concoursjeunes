@@ -102,7 +102,6 @@ import org.ajdeveloppement.concours.data.Profile;
 import org.ajdeveloppement.concours.webapi.UserSessionData;
 import org.ajdeveloppement.concours.webapi.models.RulesCategoryModelView;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
-import org.ajdeveloppement.concours.webapi.views.CriterionView;
 import org.ajdeveloppement.concours.webapi.views.EntiteView;
 import org.ajdeveloppement.concours.webapi.views.RuleView;
 import org.ajdeveloppement.webserver.HttpMethod;
@@ -112,6 +111,7 @@ import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpServiceId;
+import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
 import org.ajdeveloppement.webserver.services.webapi.helpers.HttpSessionHelper;
 import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
@@ -144,14 +144,18 @@ public class RulesController {
 	}
 	
 	@HttpService(key="countrules")
-	public Object countRules() {
-		return service.countAllRules();
-
+	public Object countRules(@UrlParameter("search") String search) {
+		return service.countRulesByGlobalSearchValue(search);
 	}
 	
 	@HttpService(key="rules")
-	public List<RuleView> getRules() {
-		return service.getAllRules();
+	public List<RuleView> getRules(
+			@UrlParameter("search") String search,
+			@UrlParameter("start") int offset,
+			@UrlParameter("length") int length,
+			@UrlParameter("sortBy") String sortBy,
+			@UrlParameter("sortOrder") String sortOrder) {
+		return service.getRulesByGlobalSearchValue(search, length, offset);
 	}
 	
 	@HttpService(key="rules")
@@ -165,6 +169,9 @@ public class RulesController {
 			service.createOrUpdateRule(modelView);
 		} catch (ObjectPersistenceException e) {
 			context.setReturnCode(ServerError.InternalServerError);
+			
+			e.printStackTrace();
+			
 			return JsonHelper.getFailSuccessResponse(ExceptionUtils.toString(e));
 		}
 		
@@ -191,17 +198,6 @@ public class RulesController {
 				}
 				return entites.stream().map(e -> ViewsFactory.getView(EntiteView.class, e)).collect(Collectors.toList());
 			}
-		}
-		
-		return null;
-	}
-	
-	@HttpService(key="rules/criteria")
-	public List<CriterionView> getCriterion(@HttpServiceId UUID idRule) {
-		if(idRule != null) {
-			return service.getRuleCriteria(idRule).stream()
-				.map(c -> ViewsFactory.getView(CriterionView.class, c, RuleService.class.getClassLoader()))
-				.collect(Collectors.toList());
 		}
 		
 		return null;

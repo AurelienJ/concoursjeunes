@@ -88,12 +88,18 @@
  */
 package org.ajdeveloppement.concours.webapi;
 
+import org.ajdeveloppement.concours.data.mappers.ArcherMapper;
+import org.ajdeveloppement.concours.data.mappers.ArcherMapperImpl;
 import org.ajdeveloppement.concours.webapi.mappers.CriterionMapper;
 import org.ajdeveloppement.concours.webapi.mappers.CriterionMapperImpl;
+import org.ajdeveloppement.concours.webapi.mappers.DistanceAndFacesSetMapper;
+import org.ajdeveloppement.concours.webapi.mappers.DistanceAndFacesSetMapperImpl;
 import org.ajdeveloppement.concours.webapi.mappers.EntiteMapper;
 import org.ajdeveloppement.concours.webapi.mappers.EntiteMapperImpl;
 import org.ajdeveloppement.concours.webapi.mappers.PersonMapper;
 import org.ajdeveloppement.concours.webapi.mappers.PersonMapperImpl;
+import org.ajdeveloppement.concours.webapi.mappers.RankingCriterionMapper;
+import org.ajdeveloppement.concours.webapi.mappers.RankingCriterionMapperImpl;
 import org.ajdeveloppement.concours.webapi.mappers.RulesMapper;
 import org.ajdeveloppement.concours.webapi.mappers.RulesMapperImpl;
 import org.ajdeveloppement.concours.webapi.services.CompetitionsService;
@@ -129,10 +135,14 @@ public class WebConfig extends AbstractApiApplication {
 				bind(ProfilesService.class).in(Scopes.SINGLETON);
 				bind(RuleService.class).in(Scopes.SINGLETON);
 				bind(CompetitionsService.class).in(Scopes.SINGLETON);
-				bind(RulesMapper.class).to(RulesMapperImpl.class).in(Scopes.SINGLETON);
+				
+				bind(ArcherMapper.class).to(ArcherMapperImpl.class).in(Scopes.SINGLETON);
 				bind(CriterionMapper.class).to(CriterionMapperImpl.class).in(Scopes.SINGLETON);
+				bind(DistanceAndFacesSetMapper.class).to(DistanceAndFacesSetMapperImpl.class).in(Scopes.SINGLETON);
 				bind(EntiteMapper.class).to(EntiteMapperImpl.class).in(Scopes.SINGLETON);
 				bind(PersonMapper.class).to(PersonMapperImpl.class).in(Scopes.SINGLETON);
+				bind(RankingCriterionMapper.class).to(RankingCriterionMapperImpl.class).in(Scopes.SINGLETON);
+				bind(RulesMapper.class).to(RulesMapperImpl.class).in(Scopes.SINGLETON);
 			}
 		});
 	}

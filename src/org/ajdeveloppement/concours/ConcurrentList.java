@@ -103,7 +103,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.ajdeveloppement.concours.data.Concurrent;
 import org.ajdeveloppement.concours.data.CriteriaSet;
 import org.ajdeveloppement.concours.data.Criterion;
-import org.ajdeveloppement.concours.data.DistancesEtBlason;
+import org.ajdeveloppement.concours.data.DistanceAndFacesSet;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Rule;
 
@@ -320,17 +320,15 @@ public class ConcurrentList {
 	 * 
 	 * @return la liste des concurrents correspondant aux critères de recherche
 	 */
-	public List<Concurrent> list(DistancesEtBlason distancesEtBlason, int depart, boolean handicap) {
+	public List<Concurrent> list(DistanceAndFacesSet distancesEtBlason, int depart, boolean handicap) {
 
 		ArrayList<Concurrent> sel = new ArrayList<Concurrent>();
 
 		for(Concurrent concurrent : archList) {
 			if(depart == -1 || concurrent.getDepart() == depart) {
-				DistancesEtBlason db = DistancesEtBlason.getDistancesEtBlasonForConcurrent(parametre.getReglement(), concurrent);
-
-				if(distancesEtBlason == null || db.haveSameDistancesAndTargetFace(distancesEtBlason)) {
+				if(distancesEtBlason == null || distancesEtBlason.equals(concurrent.getRankingCriterion().getDistanceAndFacesSet())) {
 					sel.add(concurrent);
-					if(handicap && concurrent.isHandicape())
+					if(handicap && concurrent.getArcher().isHandicape())
 						sel.add(concurrent);
 				}
 			}
@@ -503,13 +501,13 @@ public class ConcurrentList {
 			if(depart == -1 || concurrent.getDepart() == depart) {
 				boolean add = true;
 				for(Entite dbtemp : alCie) {
-					if(dbtemp.equals(concurrent.getEntite())) {
+					if(dbtemp.equals(concurrent.getArcher().getEntite())) {
 						add = false;
 						break;
 					}
 				}
 				if(add) {
-					alCie.add(concurrent.getEntite());
+					alCie.add(concurrent.getArcher().getEntite());
 				}
 			}
 		}
@@ -549,7 +547,7 @@ public class ConcurrentList {
 	 * 
 	 * @return la liste des distances/blasons du départ
 	 */
-	public List<DistancesEtBlason> listDistancesEtBlason(Rule reglement, int depart) {
+	public List<DistanceAndFacesSet> listDistancesEtBlason(Rule reglement, int depart) {
 		return listDistancesEtBlason(reglement, false, depart);
 	}
 
@@ -562,21 +560,20 @@ public class ConcurrentList {
 	 * 
 	 * @return la liste des distances/blasons utilisé pour un départ donné
 	 */
-	public List<DistancesEtBlason> listDistancesEtBlason(Rule reglement, boolean sort, int depart) {
-		List<DistancesEtBlason> alDB = new ArrayList<DistancesEtBlason>();
+	public List<DistanceAndFacesSet> listDistancesEtBlason(Rule reglement, boolean sort, int depart) {
+		List<DistanceAndFacesSet> alDB = new ArrayList<DistanceAndFacesSet>();
 
 		for(Concurrent concurrent: archList) {
 			if(depart == -1 || concurrent.getDepart() == depart) {
 				boolean add = true;
-				for(DistancesEtBlason dbtemp : alDB) {
-					DistancesEtBlason db = DistancesEtBlason.getDistancesEtBlasonForConcurrent(reglement, concurrent);
-					if(dbtemp.haveSameDistancesAndTargetFace(db)) {
+				for(DistanceAndFacesSet dbtemp : alDB) {
+					if(dbtemp.equals(concurrent.getRankingCriterion().getDistanceAndFacesSet())) {
 						add = false;
 						break;
 					}
 				}
 				if(add) {
-					alDB.add(DistancesEtBlason.getDistancesEtBlasonForConcurrent(reglement, concurrent));
+					alDB.add(concurrent.getRankingCriterion().getDistanceAndFacesSet());
 				}
 			}
 		}
@@ -584,16 +581,16 @@ public class ConcurrentList {
 		if(sort) {
 			for(int i = 0; i < alDB.size() - 1; i++) {
 				for(int j = i + 1; j < alDB.size(); j++) {
-					if(alDB.get(i).getDistances().get(0).getDistance() < alDB.get(j).getDistances().get(0).getDistance()) {
-						Collections.swap(alDB, i, j);
-					}
+//					if(alDB.get(i).getDistancesAndFaces().get(0).getDistance() < alDB.get(j).getDistancesAndFaces().get(0).getDistance()) {
+//						Collections.swap(alDB, i, j);
+//					}
 				}
 			}
 			for(int i = 0; i < alDB.size() - 1; i++) {
 				for(int j = i + 1; j < alDB.size(); j++) {
-					if(alDB.get(i).getTargetFace().getNumordre() > alDB.get(j).getTargetFace().getNumordre() && alDB.get(i).getDistances().get(0).getDistance() == alDB.get(j).getDistances().get(0).getDistance()) {
-						Collections.swap(alDB, i, j);
-					}
+//					if(alDB.get(i).getDistancesAndFaces().getNumordre() > alDB.get(j).getTargetFace().getNumordre() && alDB.get(i).getDistances().get(0).getDistance() == alDB.get(j).getDistances().get(0).getDistance()) {
+//						Collections.swap(alDB, i, j);
+//					}
 				}
 			}
 		}
@@ -655,7 +652,7 @@ public class ConcurrentList {
 	 * @param depart le numéro du depart pour lequel retourner le nombre d'archer ou -1 si tous les départs
 	 * @return le nombre d'archer sur une distance donné
 	 */
-	public int countArcher(DistancesEtBlason distancesEtBlason, int depart) {
+	public int countArcher(DistanceAndFacesSet distancesEtBlason, int depart) {
 		return list(distancesEtBlason, depart, false).size();
 	}
 	
@@ -669,7 +666,7 @@ public class ConcurrentList {
 	 * @return le nombre d'archer sur une distance donné + le nombre de place bloqué par les archers
 	 * handicapé si handicap est à <i>true</i>
 	 */
-	public int countArcher(DistancesEtBlason distancesEtBlason, int depart, boolean handicap) {
+	public int countArcher(DistanceAndFacesSet distancesEtBlason, int depart, boolean handicap) {
 		return list(distancesEtBlason, depart, handicap).size();
 	}
 
@@ -768,7 +765,7 @@ public class ConcurrentList {
 	public static class NameComparator implements Comparator<Concurrent> {
 		@Override
 		public int compare(Concurrent o1, Concurrent o2) {
-			return o1.getFullName().compareToIgnoreCase(o2.getFullName());
+			return o1.getArcher().getFullName().compareToIgnoreCase(o2.getArcher().getFullName());
 		}
 	}
 	
@@ -797,7 +794,7 @@ public class ConcurrentList {
 	public static class ClubComparator implements Comparator<Concurrent> {
 		@Override
 		public int compare(Concurrent o1, Concurrent o2) {
-			return o1.getEntite().getNom().compareToIgnoreCase(o2.getEntite().getNom());
+			return o1.getArcher().getEntite().getNom().compareToIgnoreCase(o2.getArcher().getEntite().getNom());
 		}
 	}
 	

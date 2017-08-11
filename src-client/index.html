@@ -27,6 +27,11 @@
         <script src="node_modules/reflect-metadata/Reflect.js"></script>
         <script src="node_modules/jquery/dist/jquery.min.js"></script>
 
+        <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="node_modules/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+        <script src="node_modules/admin-lte/dist/js/app.js"></script>
+        <script src="node_modules/select2/dist/js/select2.js"></script>
+
         <!-- @ifdef DEBUG -->
         <script src="node_modules/systemjs/dist/system.src.js"></script>
        
@@ -42,7 +47,7 @@
         <!-- @endif -->
     </head>
     <!-- 3. Display the application -->
-    <body class="hold-transition skin-blue sidebar-mini fixed">
+    <body class="hold-transition skin-blue sidebar-mini fixed" debug="false">
         <div id="wrapper">
              <app>Chargement...</app>
         </div>
@@ -58,8 +63,6 @@
         <!-- @ifndef DEBUG -->
         <script src="scripts/app/bundle.js"></script>
         <!-- @endif -->
-        <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="node_modules/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-        <script src="node_modules/admin-lte/dist/js/app.min.js"></script>
+        <script src="node_modules/date-input-polyfill/date-input-polyfill.dist.js"></script>
     </body>
 </html>

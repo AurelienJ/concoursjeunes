@@ -1,10 +1,12 @@
+import { IRankingCriterion } from './IRankingCriterion';
+
 export class Rule {
 	public id : string;
 	public idCompetition : string;
 	public name : string;
 	public description : string; //$NON-NLS-1$
 	public nbSerie : number = 2;
-	public nbVoleeParSerie : number = 6;
+	public nbVoleeParSerie : number = 10;
 	public nbFlecheParVolee : number = 3;
 	public nbPointsParFleche : number = 10;
 	public nbMembresEquipe : number = 4;
@@ -17,4 +19,5 @@ export class Rule {
 	public libelleEntite : string;
 	public libelleCategorie : string;
 	public departages : string;
+	public rankingCriteria : IRankingCriterion[] = [];
 }

@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.ajdeveloppement.concours.data.CompetitionLevel;
+import org.ajdeveloppement.webserver.viewbinder.annotations.View;
 
+@View
 public interface CompetitionView {
 
 	/**

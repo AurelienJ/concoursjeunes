@@ -1,12 +1,9 @@
 ///<reference path="../_references.ts"/>
-import { Component, OnInit, Input } from '@angular/core';
-import { UrlSegment,Router, NavigationEnd } from '@angular/router';
+import { Component, Input } from '@angular/core';
 
 import { NavigatorService } from './navigator.service';
 
 import { NavigationSnapshot } from './NavigationSnapshot';
-
-import 'rxjs/add/operator/share';
 
 @Component({
 	selector: 'titlebar',
@@ -17,25 +14,19 @@ import 'rxjs/add/operator/share';
         <li *ngFor="let path of paths; let i = index"><a [routerLink]="path.path" [queryParams]="path.queryParams" (click)="clearAfter(i)">{{path.label}}</a></li>
     </ol></div>`
 })
-export class TitlebarComponent implements OnInit {
+export class TitlebarComponent {
 	@Input()
 	public title : string;
 
-	public paths = [];
+	public paths : NavigationSnapshot[] = [];
 
-	constructor(private router : Router, private navigatorService : NavigatorService) {
+	constructor(private navigatorService : NavigatorService) {
+		 this.navigatorService.subscribe(
+			 navigationStack => this.paths = navigationStack);
 	}
 
-	ngOnInit() {
-		this.router.events.subscribe((event : NavigationEnd)  => {
-			this.paths = [];
-			this.navigatorService.navigationStack.forEach(item => {
-				this.paths.push(item);
-			});
-		});
-	}
-
-	clearAfter(index : number) {
+	public clearAfter(index : number) {
 		this.navigatorService.clearAfter(index);
 	}
+
 }

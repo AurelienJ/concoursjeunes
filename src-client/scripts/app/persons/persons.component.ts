@@ -1,7 +1,7 @@
 ///<reference path="../_references.ts"/>
 import { Component, EventEmitter, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { InputData, DataEvent } from '../../libs/angular2-datatable'
+import { InputData, DataEvent } from '../datatable/DataTable';
 
 import { IEntite } from '../entites/ientite';
 import { IPerson } from './IPerson';
@@ -105,7 +105,9 @@ export class PersonServerSideInputDataFilterPipe implements PipeTransform {
                     </div>
                     <div class="box-body">
                         <div class="row">
-                            <div class="col-sm-6"><a href="#/persons/new" class="btn btn-app"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter</a>
+                            <div class="col-sm-6">
+                                <a href="#/persons/new" class="btn btn-app"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter un contact</a>
+                                <a href="#/persons/newArcher" class="btn btn-app"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter un archer</a>
                             </div>
                             <div class="col-sm-6 form-inline">
                                 <div class="pull-right form-group">
@@ -152,12 +154,12 @@ export class PersonServerSideInputDataFilterPipe implements PipeTransform {
 	`
 	})
 export class PersonsComponent implements OnInit {
-	private persons : PersonServerSideInputData;
+	public persons : PersonServerSideInputData;
     
     /**
      * Affichage pour seléction
      */
-    private forSelect : boolean;
+    public forSelect : boolean;
 
 	constructor(
         private route: ActivatedRoute,

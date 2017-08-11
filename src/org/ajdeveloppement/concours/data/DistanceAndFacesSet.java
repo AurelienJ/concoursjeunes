@@ -88,9 +88,11 @@
  */
 package org.ajdeveloppement.concours.data;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.UUID;
 
+import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
@@ -117,15 +119,18 @@ public class DistanceAndFacesSet implements SqlObjectPersistence {
 	private String name;
 	
 	@SqlChildCollection(foreignFields="ID_JEUX_DISTANCES_BLASONS",type=DistanceAndFaces.class)
-	private List<DistanceAndFaces> distancesAndFaces;
+	private LazyPersistentCollection<DistanceAndFaces, Void> distancesAndFaces = new LazyPersistentCollection<>(() ->
+		T_DistanceAndFaces.all().where(T_DistanceAndFaces.ID_JEUX_DISTANCES_BLASONS.equalTo(id)));
 	
 	@SqlChildCollection(foreignFields="ID_JEUX_DISTANCES_BLASONS",type=RankingCriterion.class)
-	private List<RankingCriterion> rankingCriteria;
+	private LazyPersistentCollection<RankingCriterion, Void> rankingCriteria = new LazyPersistentCollection<>(() ->
+		T_RankingCriterion.all().where(T_RankingCriterion.ID_JEUX_DISTANCES_BLASONS.equalTo(id)));
 
-	/**
-	 * @return id
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.DistanceAndFacesSetView#getId()
 	 */
 	public UUID getId() {
+		
 		return id;
 	}
 
@@ -150,8 +155,8 @@ public class DistanceAndFacesSet implements SqlObjectPersistence {
 		this.rule = rule;
 	}
 
-	/**
-	 * @return name
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.DistanceAndFacesSetView#getName()
 	 */
 	public String getName() {
 		return name;
@@ -164,31 +169,100 @@ public class DistanceAndFacesSet implements SqlObjectPersistence {
 		this.name = name;
 	}
 
-	/**
-	 * @return distancesAndFaces
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.DistanceAndFacesSetView#getDistancesAndFaces()
 	 */
-	public List<DistanceAndFaces> getDistancesAndFaces() {
+	public Collection<DistanceAndFaces> getDistancesAndFaces() {
 		return distancesAndFaces;
+	}
+	
+	public DistanceAndFaces getDistanceAndFaces(int serie) {
+		return distancesAndFaces.stream().filter(df -> df.getSerie() == serie).findFirst().orElse(null);
 	}
 
 	/**
+	 * @param distanceAndFaces distancesAndFaces à définir
+	 */
+	public void addDistancesAndFaces(DistanceAndFaces distanceAndFaces) {
+		distanceAndFaces.setDistanceAndFaceSet(this);
+		
+		this.distancesAndFaces.add(distanceAndFaces);
+	}
+	
+	/**
 	 * @param distancesAndFaces distancesAndFaces à définir
 	 */
-	public void setDistancesAndFaces(List<DistanceAndFaces> distancesAndFaces) {
-		this.distancesAndFaces = distancesAndFaces;
+	public void removeDistancesAndFaces(DistanceAndFaces distanceAndFaces) {
+		this.distancesAndFaces.remove(distanceAndFaces);
 	}
 
 	/**
 	 * @return rankingCriteria
 	 */
-	public List<RankingCriterion> getRankingCriteria() {
+	public Collection<RankingCriterion> getRankingCriteria() {
 		return rankingCriteria;
 	}
 
 	/**
-	 * @param rankingCriteria rankingCriteria à définir
+	 * @param rankingCriterion le critere de classement à associé au jeux de distances/blasons
 	 */
-	public void setRankingCriteria(List<RankingCriterion> rankingCriteria) {
-		this.rankingCriteria = rankingCriteria;
+	public void addRankingCriteria(RankingCriterion rankingCriterion) {
+		rankingCriterion.setDistanceAndFacesSet(this);
+		
+		this.rankingCriteria.add(rankingCriterion);
+	}
+	
+	public void removeRankingCriteria(RankingCriterion rankingCriterion) {
+		this.rankingCriteria.remove(rankingCriterion);
+	}
+	
+	/**
+	 * Compare si les 2 jeux de distances/blasons partage les mêmes distances
+	 * pour l'ensemble de leurs série
+	 * 
+	 * @param distanceAndFacesSet le jeux avec lequel comparer
+	 * @return true si les distances sont identique
+	 */
+	public boolean isSameDistances(DistanceAndFacesSet distanceAndFacesSet) {
+		if(this.distancesAndFaces.size() != distanceAndFacesSet.getDistancesAndFaces().size())
+			return false;
+		
+		double[] localDistances = this.distancesAndFaces
+				.stream()
+				.sorted((df1, df2) -> df2.getSerie()-df1.getSerie())
+				.mapToDouble(df -> df.getDistance())
+				.toArray();
+		double[] otherDistances = distanceAndFacesSet.getDistancesAndFaces()
+				.stream()
+				.sorted((df1, df2) -> df2.getSerie()-df1.getSerie())
+				.mapToDouble(df -> df.getDistance())
+				.toArray();
+		
+		return Arrays.equals(localDistances, otherDistances);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DistanceAndFacesSet other = (DistanceAndFacesSet) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 }

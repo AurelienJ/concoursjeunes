@@ -55,6 +55,10 @@ export class RulesService {
 		return this.http.get("api/rules/" + id, {headers: this.headers}).toPromise().then(r => r.json());
 	}
 
+	public saveRule(rule : Rule) : Promise<Rule> {
+		return this.http.put("api/rules", {headers: this.headers}).toPromise().then(r => r.json());
+	}
+
 	public getRulesCategories() : Promise<IRulesCategory[]> {
 		if(!this.rulesCategories)
 			this.rulesCategories = this.http.get("api/rulesCategories", {headers: this.headers}).toPromise().then(r => r.json());

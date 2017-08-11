@@ -30,18 +30,22 @@ System.register(["@angular/core", "@angular/common", "@angular/router", "./Navig
         ],
         execute: function () {
             NavigatorService = (function () {
-                //public navigationStack$ : Observable<NavigationSnapshot[]>;
                 function NavigatorService(router, route, location) {
                     this.router = router;
                     this.route = route;
                     this.location = location;
                     this.navigationStack = [];
+                    //public navigationStack$ : Observable<NavigationSnapshot[]>;
+                    this.onChangesListeners = [];
                 }
                 NavigatorService.prototype.push = function (snapshot) {
                     this.navigationStack.push(snapshot);
+                    this.onChange();
                 };
                 NavigatorService.prototype.pop = function () {
-                    return this.navigationStack.pop();
+                    var item = this.navigationStack.pop();
+                    this.onChange();
+                    return item;
                 };
                 NavigatorService.prototype.pushUrlSegments = function (label, url, queryParams) {
                     var urlSnapshot = new NavigationSnapshot_1.NavigationSnapshot(label, url, queryParams, null);
@@ -51,12 +55,30 @@ System.register(["@angular/core", "@angular/common", "@angular/router", "./Navig
                         this.pop();
                     else if (!currentTopUrl || currentTopUrl.toPathString() != urlSnapshot.toPathString())
                         this.push(urlSnapshot);
+                    this.onChange();
+                };
+                NavigatorService.prototype.subscribe = function (fn) {
+                    this.onChangesListeners.push(fn);
+                };
+                NavigatorService.prototype.unsubscribe = function (fn) {
+                    var i = this.onChangesListeners.indexOf(fn);
+                    if (i > -1) {
+                        this.onChangesListeners.splice(i, 1);
+                    }
+                };
+                NavigatorService.prototype.onChange = function () {
+                    for (var _i = 0, _a = this.onChangesListeners; _i < _a.length; _i++) {
+                        var handler = _a[_i];
+                        handler(this.navigationStack);
+                    }
                 };
                 NavigatorService.prototype.clear = function () {
                     this.navigationStack = [];
+                    this.onChange();
                 };
                 NavigatorService.prototype.clearAfter = function (index) {
                     this.navigationStack.length = index + 1;
+                    this.onChange();
                 };
                 NavigatorService.prototype.goBack = function (router, returnData, index) {
                     if (!index) {
@@ -94,12 +116,12 @@ System.register(["@angular/core", "@angular/common", "@angular/router", "./Navig
                         return this.navigationStack[this.navigationStack.length - 2];
                     return null;
                 };
+                NavigatorService = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [router_1.Router, router_1.ActivatedRoute, common_1.Location])
+                ], NavigatorService);
                 return NavigatorService;
             }());
-            NavigatorService = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [router_1.Router, router_1.ActivatedRoute, common_1.Location])
-            ], NavigatorService);
             exports_1("NavigatorService", NavigatorService);
         }
     };

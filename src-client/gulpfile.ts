@@ -25,13 +25,13 @@ gulp.task('clean', (cb) => {
  */
 gulp.task("compile", () => {
 
-    var tsResult = gulp.src("scripts/**/*.ts")
+    var tsResult = gulp.src("scripts/app/**/*.ts")
         .pipe(cache("compiling"))
         .pipe(sourcemaps.init())
         .pipe(tsProject());
     return tsResult.js
         .pipe(sourcemaps.write(".", {includeContent:false, sourceRoot:'./'}))
-        .pipe(gulp.dest(destinationDir));
+        .pipe(gulp.dest(destinationDir + "/app"));
 });
 
 gulp.task('bundle', ["compile"], () => {
@@ -122,11 +122,20 @@ gulp.task('distProd', ["bundle","dist"], () => {
         .pipe(gulp.dest(distDir + "/node_modules/jquery/dist"));
     gulp.src("node_modules/bootstrap/dist/js/**")
         .pipe(gulp.dest(distDir + "/node_modules/bootstrap/dist/js"));
+    gulp.src("node_modules/select2/dist/js/**")
+        .pipe(gulp.dest(distDir + "/node_modules/select2/dist/js"));
     gulp.src("node_modules/admin-lte/dist/js/**")
         .pipe(gulp.dest(distDir + "/node_modules/admin-lte/dist/js"));
+    gulp.src("node_modules/jquery-slimscroll/jquery.slimscroll.min.js")
+        .pipe(gulp.dest(distDir + "/node_modules/jquery-slimscroll"));
+    gulp.src("node_modules/date-input-polyfill/date-input-polyfill.dist.js")
+        .pipe(gulp.dest(distDir + "/node_modules/date-input-polyfill"));
+
+    gulp.src("node_modules/font-awesome/fonts/**")
+        .pipe(gulp.dest(distDir + "/node_modules/font-awesome/fonts"));  
 
     return gulp.src("index.html")
-        .pipe(preprocess({context: { DEBUG: true}}))
+        .pipe(preprocess())
         .pipe(gulp.dest(distDir));
 });
 

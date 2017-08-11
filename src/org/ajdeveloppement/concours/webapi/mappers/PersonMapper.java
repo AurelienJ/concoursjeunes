@@ -92,6 +92,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
+import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.concours.data.Archer;
 import org.ajdeveloppement.concours.data.CategoryContact;
 import org.ajdeveloppement.concours.data.CategoryContact.IdDefaultCategory;
@@ -104,6 +107,8 @@ import org.ajdeveloppement.concours.data.T_Civility;
 import org.ajdeveloppement.concours.data.T_Contact;
 import org.ajdeveloppement.concours.data.T_Coordinate;
 import org.ajdeveloppement.concours.data.T_Entite;
+import org.ajdeveloppement.concours.data.mappers.ArcherMapper;
+import org.ajdeveloppement.concours.webapi.views.ArcherView;
 import org.ajdeveloppement.concours.webapi.views.ContactView;
 import org.ajdeveloppement.concours.webapi.views.CoordinateView;
 import org.mapstruct.AfterMapping;
@@ -119,6 +124,9 @@ import org.mapstruct.MappingTarget;
  */
 @Mapper(componentModel="js330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
 public abstract class PersonMapper {
+	
+	@Inject
+	ArcherMapper archerMapper;
 	
 	@SuppressWarnings("nls")
 	public static String getType(Contact contact) {
@@ -201,6 +209,10 @@ public abstract class PersonMapper {
 		}
 	}
 	
+	private boolean isArcher(ContactView contactView) {
+		return contactView.getType().equals("archer") || (contactView.getCategories() != null && contactView.getCategories().contains(IdDefaultCategory.BOWMAN.value()));
+	}
+	
 	@BeforeMapping
 	public Contact getContact(ContactView contactView, @MappingTarget Class<?> type) {
 		Contact contact = null;
@@ -221,21 +233,34 @@ public abstract class PersonMapper {
 	
 	//public abstract Contact asContact(ContactView contactView);
 	
-	public Contact asContact(ContactView contactView) {
+	public Contact asContact(ArcherView contactView) {
 		Contact contact = null;
 		
 		if(contactView.getId() != null)
 			contact = T_Contact.getInstanceWithPrimaryKey(contactView.getId());
 		
-		if(contact == null) {
-			if(contactView.getCategories() != null && contactView.getCategories().contains(IdDefaultCategory.BOWMAN.value())) {
+		if(contact != null) {
+			if(isArcher(contactView) && !(contact instanceof Archer)) {
+				SqlContext.getDefaultContext().getCache().remove(contact);
+				contact = archerMapper.upgradeContact(contact);
+			} else if((contact instanceof Archer) 
+					&& !isArcher(contactView)) {
+				Archer archer = (Archer)contact;
+				contact = archerMapper.downgradeArcher(archer);
+				SqlContext.getDefaultContext().getCache().remove(archer);
+			}
+		} else if(contact == null) {
+			if(isArcher(contactView)) {
 				contact = new Archer();
 			} else {
 				contact = new Contact();
 			}
 		}
 		
-		updateContactFromContactView(contactView, contact);
+		if(contact instanceof Archer)
+			updateArcherFromArcherView(contactView, (Archer)contact);
+		else
+			updateContactFromContactView(contactView, contact);
 		
 		return contact;
 	}
@@ -248,6 +273,15 @@ public abstract class PersonMapper {
 	@Mapping(target = "managedProfiles", ignore = true)
 	@Mapping(target = "categoriesContact", source = "categories")
 	public abstract void updateContactFromContactView(ContactView view, @MappingTarget Contact contact);
+	
+	@Mapping(source = "id", target = "idContact")
+	@Mapping(source = "idCivility", target = "civility")
+	@Mapping(source = "idEntity", target = "entite")
+	@Mapping(target = "idpToken", ignore = true)
+	@Mapping(target = "passwordHash", ignore = true)
+	@Mapping(target = "managedProfiles", ignore = true)
+	@Mapping(target = "categoriesContact", source = "categories")
+	public abstract void updateArcherFromArcherView(ArcherView view, @MappingTarget Archer contact);
 	
 	@AfterMapping
 	public void afterUpdateContactFromContactView(ContactView view, @MappingTarget Contact contact) {

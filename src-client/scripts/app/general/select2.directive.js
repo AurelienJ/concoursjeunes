@@ -1,4 +1,4 @@
-System.register(["@angular/core", "jquery", "select2"], function (exports_1, context_1) {
+System.register(["@angular/core"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -15,10 +15,6 @@ System.register(["@angular/core", "jquery", "select2"], function (exports_1, con
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
-            },
-            function (_1) {
-            },
-            function (_2) {
             }
         ],
         execute: function () {
@@ -63,33 +59,33 @@ System.register(["@angular/core", "jquery", "select2"], function (exports_1, con
                     });
                     this.value.next(this.element.val());
                 };
+                __decorate([
+                    core_1.Input(),
+                    __metadata("design:type", String)
+                ], Select2Directive.prototype, "placeHolder", void 0);
+                __decorate([
+                    core_1.Input(),
+                    __metadata("design:type", Boolean),
+                    __metadata("design:paramtypes", [Boolean])
+                ], Select2Directive.prototype, "disable", null);
+                __decorate([
+                    core_1.Output(),
+                    __metadata("design:type", core_1.EventEmitter)
+                ], Select2Directive.prototype, "onSelect", void 0);
+                __decorate([
+                    core_1.Output(),
+                    __metadata("design:type", core_1.EventEmitter)
+                ], Select2Directive.prototype, "onUnselect", void 0);
+                __decorate([
+                    core_1.Output(),
+                    __metadata("design:type", core_1.EventEmitter)
+                ], Select2Directive.prototype, "value", void 0);
+                Select2Directive = __decorate([
+                    core_1.Directive({ selector: '[select2]' }),
+                    __metadata("design:paramtypes", [core_1.ElementRef, core_1.Renderer])
+                ], Select2Directive);
                 return Select2Directive;
             }());
-            __decorate([
-                core_1.Input(),
-                __metadata("design:type", String)
-            ], Select2Directive.prototype, "placeHolder", void 0);
-            __decorate([
-                core_1.Input(),
-                __metadata("design:type", Boolean),
-                __metadata("design:paramtypes", [Boolean])
-            ], Select2Directive.prototype, "disable", null);
-            __decorate([
-                core_1.Output(),
-                __metadata("design:type", core_1.EventEmitter)
-            ], Select2Directive.prototype, "onSelect", void 0);
-            __decorate([
-                core_1.Output(),
-                __metadata("design:type", core_1.EventEmitter)
-            ], Select2Directive.prototype, "onUnselect", void 0);
-            __decorate([
-                core_1.Output(),
-                __metadata("design:type", core_1.EventEmitter)
-            ], Select2Directive.prototype, "value", void 0);
-            Select2Directive = __decorate([
-                core_1.Directive({ selector: '[select2]' }),
-                __metadata("design:paramtypes", [core_1.ElementRef, core_1.Renderer])
-            ], Select2Directive);
             exports_1("Select2Directive", Select2Directive);
         }
     };

@@ -1,1 +1,1 @@
-{"version":3,"sources":["app/entites/Criterion.ts"],"names":[],"mappings":";;;;;;;YAEA;;eAEG;YACH;gBAAA;oBAOQ,sBAAiB,GAAyB,EAAE,CAAC;gBACrD,CAAC;gBAAD,gBAAC;YAAD,CARA,AAQC,IAAA;;QAAA,CAAC","file":"Criterion.js","sourceRoot":"../../"}
+{"version":3,"sources":["entites/Criterion.ts"],"names":[],"mappings":";;;;;;;YAEA;;eAEG;YACH;gBAAA;oBAOQ,sBAAiB,GAAyB,EAAE,CAAC;gBACrD,CAAC;gBAAD,gBAAC;YAAD,CARA,AAQC,IAAA;;QAAA,CAAC","file":"Criterion.js","sourceRoot":"../"}

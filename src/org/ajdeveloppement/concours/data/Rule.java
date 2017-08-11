@@ -90,33 +90,21 @@ package org.ajdeveloppement.concours.data;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Size;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.Session;
 import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
-import org.ajdeveloppement.commons.persistence.sql.PersitentCollection;
 import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.SqlSession;
@@ -127,7 +115,6 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
-
 
 /**
  * <p>
@@ -152,10 +139,8 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  * @author Aurélien JEOFFRAY
  * 
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
-@SqlTable(name="REGLEMENT")
-@SqlPrimaryKey(fields="ID_REGLEMENT", generatedidField=@SqlGeneratedIdField(name="ID_REGLEMENT",type=Types.JAVA_OBJECT))
+@SqlTable(name = "REGLEMENT")
+@SqlPrimaryKey(fields = "ID_REGLEMENT", generatedidField = @SqlGeneratedIdField(name = "ID_REGLEMENT", type = Types.JAVA_OBJECT))
 public class Rule implements SqlObjectPersistence, Cloneable {
 
 	/**
@@ -172,81 +157,58 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 		NATURE
 	}
 
-	/**
-	 * Le numéro de version courant du format de réglement
-	 */
-	public static final int CURRENT_VERSION = 1;
-	
-	@XmlAttribute
-	private int version = 1;
-	
-	@XmlAttribute(name="id")
-	@XmlID
-	private String xmlId = null;
-	
-	@XmlTransient
-	@SqlField(name="ID_REGLEMENT")
+	@SqlField(name = "ID_REGLEMENT")
 	private UUID idRule;
-	
-	@XmlTransient
-	@SqlForeignKey(mappedTo="ID_COMPETITION")
+
+	@SqlForeignKey(mappedTo = "ID_COMPETITION")
 	private Competition competition;
-	
-	@XmlAttribute
-	@XmlID
-	@SqlField(name="NOM")
+
+	@Size(max = 64)
+	@SqlField(name = "NOM")
 	private String name = "default"; //$NON-NLS-1$
 
-	@SqlField(name="DESCRIPTION")
+	@Size(max = 255)
+	@SqlField(name = "DESCRIPTION")
 	private String description = ""; //$NON-NLS-1$
 
-	@SqlField(name="NBSERIE")
+	@SqlField(name = "NBSERIE")
 	private int nbSerie = 2;
-	@SqlField(name="NBVOLEEPARSERIE")
+	@SqlField(name = "NBVOLEEPARSERIE")
 	private int nbVoleeParSerie = 6;
-	@SqlField(name="NBFLECHEPARVOLEE")
+	@SqlField(name = "NBFLECHEPARVOLEE")
 	private int nbFlecheParVolee = 3;
-	@SqlField(name="NBPOINTSPARFLECHE")
+	@SqlField(name = "NBPOINTSPARFLECHE")
 	private int nbPointsParFleche = 10;
-	@SqlField(name="NBMEMBRESEQUIPE")
+	@SqlField(name = "NBMEMBRESEQUIPE")
 	private int nbMembresEquipe = 4;
-	@SqlField(name="NBMEMBRESRETENU")
+	@SqlField(name = "NBMEMBRESRETENU")
 	private int nbMembresRetenu = 3;
-	@SqlField(name="ISOFFICIAL")
+	@SqlField(name = "ISOFFICIAL")
 	private boolean officialReglement = false;
+	
+	@SqlForeignKey(mappedTo = "ID_ENTITE")
+	private Entite entite = new Entite();
+	@SqlForeignKey(mappedTo = "NUMCATEGORIE_REGLEMENT")
+	private RulesCategory category;
+	@SqlField(name = "TYPEREGLEMENT")
+	private TypeReglement reglementType = TypeReglement.TARGET;
+	@SqlField(name = "REMOVABLE")
+	private boolean removable = true;
 
-	@XmlElementWrapper(name="criteria",required=true)
-    @XmlElement(name="criterion")
-	private List<Criterion> listCriteria = new ArrayList<>();
-	@XmlElementWrapper(name="distancesEtBlasons",required=true)
-    @XmlElement(name="distancesEtBlason")
-	private List<DistancesEtBlason> listDistancesEtBlason = new ArrayList<>();
-	@XmlElementWrapper(name="surclassements",required=true)
-	@XmlElement(name="surclassement")
-	private List<Surclassement> surclassements = new ArrayList<>();
-	@XmlElementWrapper(name="placementsCriteriaSet",required=true)
-	@XmlElement(name="placementCriteriaSet")
-	private List<CriteriaSet> listPlacementCriteriaSet = new ArrayList<>();
-	@XmlElementWrapper(name="departages",required=true)
-    @XmlElement(name="departage")
-	@SqlChildCollection(foreignFields="ID_REGLEMENT", type=Tie.class)
+	@SqlChildCollection(foreignFields = "ID_REGLEMENT", type = DistanceAndFacesSet.class)
+	private LazyPersistentCollection<DistanceAndFacesSet, Void> distancesAndFaces = new LazyPersistentCollection<>(
+			() -> T_DistanceAndFacesSet.all().where(T_DistanceAndFacesSet.ID_REGLEMENT.equalTo(idRule)));
+
+	@SqlChildCollection(foreignFields = "ID_REGLEMENT", type = Tie.class)
 	private LazyPersistentCollection<Tie, Void> ties = new LazyPersistentCollection<>(
 			() -> T_Tie.all().where(T_Tie.ID_REGLEMENT.equalTo(idRule)));
-	
-	@SqlChildCollection(foreignFields="ID_REGLEMENT", type=RankingCriterion.class)
-	private List<RankingCriterion> rankingCriteria;
 
-	@SqlForeignKey(mappedTo="ID_ENTITE")
-	private Entite entite = new Entite();
-	@SqlForeignKey(mappedTo="NUMCATEGORIE_REGLEMENT")
-	private RulesCategory category;
-	@SqlField(name="TYPEREGLEMENT")
-	private TypeReglement reglementType = TypeReglement.TARGET;
-	@SqlField(name="REMOVABLE")
-	private boolean removable = true;
+	@SqlChildCollection(foreignFields = "ID_REGLEMENT", type = RankingCriterion.class)
+	private LazyPersistentCollection<RankingCriterion, Void> rankingCriteria = new LazyPersistentCollection<>(
+			() -> T_RankingCriterion.all().where(T_RankingCriterion.ID_REGLEMENT.equalTo(idRule)));
+
 	
-	private transient Map<CriteriaSet, Surclassement> indexedSurclassement = new HashMap<CriteriaSet, Surclassement>();
-	
+
 	protected transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	/**
@@ -259,63 +221,41 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	/**
 	 * Initialise un règlement par défaut en le nommant
 	 * 
-	 * @param name le nom du règlement à créer
+	 * @param name
+	 *            le nom du règlement à créer
 	 */
 	public Rule(String name) {
 		this.name = name;
 	}
-	
-	private void reindexSurclassement() {
-		indexedSurclassement.clear();
-		for(Surclassement surclassement : surclassements)
-			indexedSurclassement.put(surclassement.getCriteriaSet(), surclassement);
-	}
-	
+
 	/**
 	 * Permet d'ajouter un auditeur PropertyChangeListener
-	 * @param l l'auditeur
+	 * 
+	 * @param l
+	 *            l'auditeur
 	 */
 	public void addPropertyChangeListener(PropertyChangeListener l) {
 		pcs.addPropertyChangeListener(l);
 	}
-	
+
 	/**
 	 * Permet de supprimer un auditeur PropertyChangeListener
-	 * @param l l'auditeur à supprimer
+	 * 
+	 * @param l
+	 *            l'auditeur à supprimer
 	 */
 	public void removePropertyChangeListener(PropertyChangeListener l) {
 		pcs.removePropertyChangeListener(l);
 	}
 
 	/**
-	 * Retourne le numéro de version interne du règlement.
-	 * La version courante retourné par un fichier sérialisé devrais être 2.
-	 * Si c'est 1 alors envisager de passer par une routine de mise à jour des réglements (opération
-	 * généralement effectué par l'extension PhoenixPlugin)
-	 * 
-	 * @return version le numéro de version du règlement.
-	 */
-	public int getVersion() {
-		return version;
-	}
-
-	/**
-	 * Définit le numéro interne de version du règlement. Doit
-	 * être actuellement définit à 2 utiliser la constante {@link #CURRENT_VERSION}.
-	 * 
-	 * @param version le numéro de version du règlement.
-	 */
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
-	/**
-	 * Retourne l'identifiant du réglement en base ou 0 si non lié à la base. Information non sérialisé en XML
+	 * Retourne l'identifiant du réglement en base ou 0 si non lié à la base.
+	 * Information non sérialisé en XML
 	 * 
 	 * @return Identifiant du réglement en base
 	 */
 	public UUID getIdRule() {
-		if(idRule == null)
+		if (idRule == null)
 			idRule = UUID.randomUUID();
 		return idRule;
 	}
@@ -323,13 +263,14 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	/**
 	 * Définit l'identifiant du réglement en base
 	 * 
-	 * @param idRule Identifiant du réglement en base
+	 * @param idRule
+	 *            Identifiant du réglement en base
 	 */
 	public void setIdRule(UUID idReglement) {
 		Object oldValue = this.idRule;
-		
+
 		this.idRule = idReglement;
-		
+
 		pcs.firePropertyChange("idRule", oldValue, idReglement); //$NON-NLS-1$
 	}
 
@@ -345,16 +286,17 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	/**
 	 * Donne ou change le nom du règlement
 	 * 
-	 * @param name le nom à donner au règlement
+	 * @param name
+	 *            le nom à donner au règlement
 	 */
 	public void setName(String name) {
 		Object oldValue = this.name;
-		
+
 		this.name = name;
-		
+
 		pcs.firePropertyChange("name", oldValue, name); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Retourne la description du réglement
 	 * 
@@ -363,17 +305,18 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	public String getDescription() {
 		return description;
 	}
-	
+
 	/**
 	 * Définit la description du réglement
 	 * 
-	 * @param description la description du règlement
+	 * @param description
+	 *            la description du règlement
 	 */
 	public void setDescription(String description) {
 		Object oldValue = this.description;
-		
+
 		this.description = description;
-		
+
 		pcs.firePropertyChange("description", oldValue, description); //$NON-NLS-1$
 	}
 
@@ -389,13 +332,14 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	/**
 	 * Définit le type de règlement
 	 * 
-	 * @param reglementType le type de règlement
+	 * @param reglementType
+	 *            le type de règlement
 	 */
 	public void setReglementType(TypeReglement reglementType) {
 		Object oldValue = this.reglementType;
-		
+
 		this.reglementType = reglementType;
-		
+
 		pcs.firePropertyChange("reglementType", oldValue, reglementType); //$NON-NLS-1$
 	}
 
@@ -407,274 +351,28 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	}
 
 	/**
-	 * @param competition competition à définir
+	 * @param competition
+	 *            competition à définir
 	 */
 	public void setCompetition(Competition competition) {
 		this.competition = competition;
 	}
 
 	/**
-	 * <p>
-	 * Retourne la liste des critères de distinction des archers pouvant être
-	 * utilisé sur les concours exploitant ce règlement.
-	 * </p>
-	 * <p>
-	 * Les critères retournés peuvent être soit determinant pour le classement,
-	 * le placement, les deux ou simplement informatif.
-	 * </p>
-	 * 
-	 * @return la liste des critères de distinction utilisé pour le règlement
-	 */
-	public List<Criterion> getListCriteria() {
-		return listCriteria;
-	}
-
-	/**
-	 * Définit la liste des critères de distinction du règlement.
-	 * 
-	 * <i>Méthode essentiellement utile à la déserialisation. Ne devrait pas être
-	 * utilisé directement.</i>
-	 * 
-	 * @param listCriteria la liste des critères de distinction du règlement.
-	 */
-	public void setListCriteria(List<Criterion> listCriteria) {
-		Object oldValue = this.listCriteria;
-		
-		this.listCriteria = listCriteria;
-
-		
-		pcs.firePropertyChange("listCriteria", oldValue, listCriteria); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Ajoute un critère au réglement
-	 * 
-	 * @param criterion le critère à ajouter au réglement
-	 */
-	public void addCriterion(Criterion criterion) {
-		listCriteria.add(criterion);
-	}
-	
-	/**
-	 * Supprime un critère du réglement.
-	 * 
-	 * @param criterion le critèrev à supprimer
-	 */
-	public void removeCriterion(Criterion criterion) {
-		listCriteria.remove(criterion);
-	}
-
-	/**
-	 * Retourne le tableau de surclassement à appliquer sur
-	 * le règlement
-	 * 
-	 * @return le tableau de surclassement
-	 */
-	public List<Surclassement> getSurclassements() {
-		return Collections.unmodifiableList(surclassements);
-	}
-
-	/**
-	 * Définit le tableau de surclassement à appliquer sur
-	 * le règlement
-	 * 
-	 * @param surclassements le tableau de surclassement
-	 */
-	public void setSurclassements(List<Surclassement> surclassements) {
-		Object oldValue = this.surclassements;
-		
-		this.surclassements = surclassements;
-		
-		for(Surclassement surclassement : surclassements) {
-			surclassement.setReglement(this);
-		}
-		reindexSurclassement();
-		
-		pcs.firePropertyChange("surclassements", oldValue, surclassements); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Retourne, si il existe, le surclassement associé au jeux de critère
-	 * 
-	 * @param criteriaSet le jeux de critère petentielement surclassé ou désactivé
-	 * @return le surclassement si exisant
-	 */
-	public Surclassement getSurclassement(CriteriaSet criteriaSet) {
-		if(indexedSurclassement.size() != surclassements.size())
-			reindexSurclassement();
-		return indexedSurclassement.get(criteriaSet);
-	}
-	
-	/**
-	 * 
-	 * @param criteriaSet
-	 * @return <code>true</code> si le critère doit être surclassé
-	 */
-	public boolean isSurclasseOrDisable(CriteriaSet criteriaSet) {
-		if(indexedSurclassement.size() != surclassements.size())
-			reindexSurclassement();
-		return indexedSurclassement.containsKey(criteriaSet);
-	}
-	
-	/**
-	 * Ajout d'un surclassement
-	 * 
-	 * @param criteriaSet
-	 * @param criteriaSetSurclasse
-	 */
-	public void addSurclassement(CriteriaSet criteriaSet, CriteriaSet criteriaSetSurclasse) {
-		Surclassement surclassement = new Surclassement(criteriaSet, criteriaSetSurclasse);
-		surclassement.setReglement(this);
-		
-		surclassements.add(surclassement);
-		indexedSurclassement.put(surclassement.getCriteriaSet(), surclassement);
-	}
-	
-	/**
-	 * Suppression d'un surclassement
-	 * 
-	 * @param criteriaSet
-	 */
-	public void removeSurclassement(CriteriaSet criteriaSet) {
-		Surclassement surclassement = indexedSurclassement.remove(criteriaSet);
-		surclassements.remove(surclassement);
-	}
-
-	/**
-	 * @return placementCriteriaSet
-	 */
-	public List<CriteriaSet> getListPlacementCriteriaSet() {
-		return Collections.unmodifiableList(listPlacementCriteriaSet);
-	}
-
-	/**
-	 * @param placementCriteriaSet placementCriteriaSet à définir
-	 */
-	public void setListPlacementCriteriaSet(List<CriteriaSet> placementCriteriaSet) {
-		this.listPlacementCriteriaSet = placementCriteriaSet;
-		
-		listDistancesEtBlason.clear();
-//		for(CriteriaSet criteriaSet : placementCriteriaSet) {
-//			criteriaSet.setReglement(this);
-//			
-//			if(!listDistancesEtBlason.contains(criteriaSet.getDistancesEtBlason())) {
-//				listDistancesEtBlason.add(criteriaSet.getDistancesEtBlason());
-//				if(criteriaSet.getDistancesEtBlasonAlternatifs() != null) {
-//					for (DistancesEtBlasonAlternatif alternative : criteriaSet.getDistancesEtBlasonAlternatifs()) {
-//						if(!listDistancesEtBlason.contains(alternative.getDistancesEtBlason())) {
-//							listDistancesEtBlason.add(alternative.getDistancesEtBlason());
-//						}
-//					}
-//				}
-//			}
-//		}
-	}
-	
-	/**
-	 * Retourne l'instance de placement lié au jeux de critère fournit
-	 * 
-	 * @param criteriaSet le jeux de critère de placement.
-	 * @return l'instance de placement (identique au jeux de critère fournit
-	 * mais avec un distance et blason associé)
-	 */
-	public CriteriaSet getPlacementCriteriaSet(CriteriaSet criteriaSet) {
-		return listPlacementCriteriaSet.get(listPlacementCriteriaSet.indexOf(criteriaSet));
-	}
-	
-	/**
 	 * @return listDistancesEtBlason
 	 */
-	public List<DistancesEtBlason> getListDistancesEtBlason() {
-		return listDistancesEtBlason;
-	}
-
-	/**
-	 * @param listDistancesEtBlason listDistancesEtBlason à définir
-	 */
-	public void setListDistancesEtBlason(
-			List<DistancesEtBlason> listDistancesEtBlason) {
-		this.listDistancesEtBlason = listDistancesEtBlason;
-	}
-
-	/**
-	 * Renvoi la politique de placement.
-	 * 
-	 * @return Renvoi le filtre de critère en place
-	 *         pour le placement des archers
-	 */
-	public Map<Criterion, Boolean> getPlacementFilter() {
-		Hashtable<Criterion, Boolean> filterCriteria = new Hashtable<Criterion, Boolean>();
-		for (Criterion criterion : listCriteria) {
-			filterCriteria.put(criterion, false);
-		}
-
-		return filterCriteria;
-	}
-
-	/**
-	 * Renvoi la politique de classement
-	 * 
-	 * @return Renvoi le filtre de critère en place
-	 *         pour le classement des archers
-	 */
-	public Map<Criterion, Boolean> getClassementFilter() {
-		Hashtable<Criterion, Boolean> filterCriteria = new Hashtable<Criterion, Boolean>();
-		for (Criterion criterion : listCriteria) {
-			filterCriteria.put(criterion, true);
-		}
-
-		return filterCriteria;
+	public Collection<DistanceAndFacesSet> getDistancesAndFaces() {
+		return distancesAndFaces;
 	}
 	
-	/**
-	 * Retourne la liste des critères de classement valide sur le règlement,
-	 * sont donc exclue de la liste les jeux de critères surclassé ou interdit
-	 * 
-	 * @return liste des critères de classement valide sur le règlement
-	 */
-	public List<CriteriaSet> getValidClassementCriteriaSet() {
-//		CriteriaSet[] lccs = CriteriaSet.listCriteriaSet(this, getClassementFilter());
-		List<CriteriaSet> validCS = new ArrayList<CriteriaSet>();
+	public void addDistancesAndFaces(DistanceAndFacesSet distanceAndFacesSet) {
+		distanceAndFacesSet.setRule(this);
 		
-		if(indexedSurclassement.size() != surclassements.size())
-			reindexSurclassement();
-		
-//		for(CriteriaSet cs : lccs) {
-//			if(!indexedSurclassement.containsKey(cs))
-//				validCS.add(cs);
-//		}
-		
-		return validCS;
+		distancesAndFaces.add(distanceAndFacesSet);
 	}
 	
-	/**
-	 * Retourne la liste des critères de placement valide sur le règlement,
-	 * sont donc exclue de la liste les jeux de critères surclassé ou interdit
-	 * 
-	 * @return liste des critères de placement valide sur le règlement
-	 */
-	public List<CriteriaSet> getValidPlacementCriteriaSet() {
-		//List<CriteriaSet> validCS = new ArrayList<CriteriaSet>();
-		List<CriteriaSet> placementCS = new ArrayList<CriteriaSet>();
-//		CriteriaSet[] lccs = CriteriaSet.listCriteriaSet(this, getClassementFilter());
-//		CriteriaSet[] lpcs = CriteriaSet.listCriteriaSet(this, getPlacementFilter());
-		
-		if(indexedSurclassement.size() != surclassements.size())
-			reindexSurclassement();
-//
-//		for(CriteriaSet cs : lccs) {
-//			CriteriaSet jeuxDePlacement = cs.getFilteredCriteriaSet(getPlacementFilter());
-//			if(indexedSurclassement.containsKey(cs) && !validCS.contains(jeuxDePlacement))
-//				validCS.add(jeuxDePlacement);
-//		}
-//		
-//		//permet de conserver l'ordre des critères de placements
-//		for(CriteriaSet cs : lpcs) {
-//			if(validCS.contains(cs))
-//				placementCS.add(cs);
-//		}
-		
-		return placementCS;
+	public void removeDistancesAndFaces(DistanceAndFacesSet distanceAndFacesSet) {
+		distancesAndFaces.remove(distanceAndFacesSet);
 	}
 
 	/**
@@ -691,16 +389,17 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	/**
 	 * Définit le nombre de flèches tiré par volée imposé par le règlement
 	 * 
-	 * @param nbFlecheParVolee le nombre de flèches tiré par volée
+	 * @param nbFlecheParVolee
+	 *            le nombre de flèches tiré par volée
 	 */
 	public void setNbFlecheParVolee(int nbFlecheParVolee) {
 		Object oldValue = this.nbFlecheParVolee;
-		
+
 		this.nbFlecheParVolee = nbFlecheParVolee;
-		
+
 		pcs.firePropertyChange("nbFlecheParVolee", oldValue, nbFlecheParVolee); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Donne le nombre de points maximum possible par flèche avec le réglement
 	 * 
@@ -713,19 +412,20 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	/**
 	 * Définit le nombre de points maximum possible par flèche avec le réglement
 	 * 
-	 * @param nbPointsParFleche le nombre de points maximum possible par flèche
+	 * @param nbPointsParFleche
+	 *            le nombre de points maximum possible par flèche
 	 */
 	public void setNbPointsParFleche(int nbPointsParFleche) {
 		Object oldValue = this.nbPointsParFleche;
-		
+
 		this.nbPointsParFleche = nbPointsParFleche;
-		
+
 		pcs.firePropertyChange("nbPointsParFleche", oldValue, nbPointsParFleche); //$NON-NLS-1$
 	}
 
 	/**
-	 * Retourne le nombre maximum de concurrents que peut contenir une équipe
-	 * sur un concours avec ce règlement
+	 * Retourne le nombre maximum de concurrents que peut contenir une équipe sur un
+	 * concours avec ce règlement
 	 * <p>
 	 * La valeur par défaut est fixé à 4
 	 * 
@@ -736,16 +436,17 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	}
 
 	/**
-	 * Définit le nombre maximum de concurrents que peut contenir une équipe
-	 * sur un concours avec ce règlement
+	 * Définit le nombre maximum de concurrents que peut contenir une équipe sur un
+	 * concours avec ce règlement
 	 * 
-	 * @param nbMembresEquipe le nombre maximum de concurrents que peut contenir une équipe
+	 * @param nbMembresEquipe
+	 *            le nombre maximum de concurrents que peut contenir une équipe
 	 */
 	public void setNbMembresEquipe(int nbMembresEquipe) {
 		Object oldValue = this.nbMembresEquipe;
-		
+
 		this.nbMembresEquipe = nbMembresEquipe;
-		
+
 		pcs.firePropertyChange("nbMembresEquipe", oldValue, nbMembresEquipe); //$NON-NLS-1$
 	}
 
@@ -755,7 +456,8 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	 * <p>
 	 * La valeur par défaut est fixé à 3
 	 * 
-	 * @return le nombre de concurrents d'une équipe dont les points seront comptabilisés
+	 * @return le nombre de concurrents d'une équipe dont les points seront
+	 *         comptabilisés
 	 */
 	public int getNbMembresRetenu() {
 		return nbMembresRetenu;
@@ -765,19 +467,21 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	 * Définit le nombre de concurrents, membre d'une équipe dont les points seront
 	 * comptabilisés pour le classement par équipe
 	 * 
-	 * @param nbMembresRetenu le nombre de concurrents d'une équipe dont les points seront comptabilisés
+	 * @param nbMembresRetenu
+	 *            le nombre de concurrents d'une équipe dont les points seront
+	 *            comptabilisés
 	 */
 	public void setNbMembresRetenu(int nbMembresRetenu) {
 		Object oldValue = this.nbMembresRetenu;
-		
+
 		this.nbMembresRetenu = nbMembresRetenu;
-		
+
 		pcs.firePropertyChange("nbMembresRetenu", oldValue, nbMembresRetenu); //$NON-NLS-1$
 	}
 
 	/**
 	 * Retourne le nombre de séries de volées (distances) que compte le concours
-	 *   
+	 * 
 	 * @return le nombre de séries devant être réalisé sur le concours
 	 */
 	public int getNbSerie() {
@@ -787,13 +491,14 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	/**
 	 * Définit le nombre de séries de volées (distances) que compte le concours
 	 * 
-	 * @param nbSerie le nombre de séries devant être réalisé sur le concours
+	 * @param nbSerie
+	 *            le nombre de séries devant être réalisé sur le concours
 	 */
 	public void setNbSerie(int nbSerie) {
 		Object oldValue = this.nbSerie;
-		
+
 		this.nbSerie = nbSerie;
-		
+
 		pcs.firePropertyChange("nbSerie", oldValue, nbSerie); //$NON-NLS-1$
 	}
 
@@ -809,13 +514,14 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	/**
 	 * Retourne le nombre de volées que devra tirer un archer dans une série
 	 * 
-	 * @param nbVoleeParSerie le nombre de volées dans une série
+	 * @param nbVoleeParSerie
+	 *            le nombre de volées dans une série
 	 */
 	public void setNbVoleeParSerie(int nbVoleeParSerie) {
 		Object oldValue = this.nbVoleeParSerie;
-		
+
 		this.nbVoleeParSerie = nbVoleeParSerie;
-		
+
 		pcs.firePropertyChange("nbVoleeParSerie", oldValue, nbVoleeParSerie); //$NON-NLS-1$
 	}
 
@@ -827,7 +533,7 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	public Collection<Tie> getTies() {
 		return ties;
 	}
-	
+
 	/**
 	 * Ajoute un item de départage
 	 * 
@@ -835,10 +541,10 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	 */
 	public void addTie(Tie tie) {
 		tie.setReglement(this);
-		
+
 		ties.add(tie);
 	}
-	
+
 	/**
 	 * Supprime u iteme de départage
 	 * 
@@ -873,17 +579,19 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	 */
 	public void setOfficialReglement(boolean officialReglement) {
 		Object oldValue = this.officialReglement;
-		
+
 		this.officialReglement = officialReglement;
-		
+
 		pcs.firePropertyChange("officialReglement", oldValue, officialReglement); //$NON-NLS-1$
 	}
 
 	/**
 	 * Détermine si un tableau de scores donnée est ou non valide sur le règlement
 	 * 
-	 * @param scores le tableau de scores à valider
-	 * @return <code>true</code> si le score est valide, <code>false</code> dans le cas contraire
+	 * @param scores
+	 *            le tableau de scores à valider
+	 * @return <code>true</code> si le score est valide, <code>false</code> dans le
+	 *         cas contraire
 	 */
 	public boolean isValidScore(Iterable<Integer> scores) {
 		boolean valid = true;
@@ -899,13 +607,14 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	/**
 	 * Définit l'entité associé au reglement
 	 * 
-	 * @param entite l'entité associé au reglement
+	 * @param entite
+	 *            l'entité associé au reglement
 	 */
 	public void setEntite(Entite entite) {
 		Object oldValue = this.entite;
-		
+
 		this.entite = entite;
-		
+
 		pcs.firePropertyChange("entite", oldValue, entite); //$NON-NLS-1$
 	}
 
@@ -920,23 +629,24 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 
 	/**
 	 * Définit le numéro de la catégorie du règlement<br>
-	 * La correspondance entre les numéros de catégorie et leurs libellé
-	 * est stocké dans la table CATEGORIE_REGLEMENT   
+	 * La correspondance entre les numéros de catégorie et leurs libellé est stocké
+	 * dans la table CATEGORIE_REGLEMENT
 	 * 
-	 * @param category le numéro de la catégorie du règlement
+	 * @param category
+	 *            le numéro de la catégorie du règlement
 	 */
 	public void setCategory(RulesCategory category) {
 		Object oldValue = this.category;
-		
+
 		this.category = category;
-		
+
 		pcs.firePropertyChange("category", oldValue, category); //$NON-NLS-1$
 	}
 
 	/**
 	 * Retourne le numéro de la catégorie du règlement<br>
-	 * La correspondance entre les numéros de catégorie et leurs libellé
-	 * sont stockés dans la table CATEGORIE_REGLEMENT
+	 * La correspondance entre les numéros de catégorie et leurs libellé sont
+	 * stockés dans la table CATEGORIE_REGLEMENT
 	 * 
 	 * @return le numéro de la catégorie du règlement
 	 */
@@ -947,7 +657,8 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	/**
 	 * Définit si le règlement peut ou non être supprimé de la base de données
 	 * 
-	 * @param removable <code>true</code> si le règlement peut être supprimé.
+	 * @param removable
+	 *            <code>true</code> si le règlement peut être supprimé.
 	 */
 	public void setRemovable(boolean removable) {
 		this.removable = removable;
@@ -965,146 +676,114 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	/**
 	 * @return rankingCriteria
 	 */
-	public List<RankingCriterion> getRankingCriteria() {
+	public Collection<RankingCriterion> getRankingCriteria() {
 		return rankingCriteria;
 	}
 
 	/**
-	 * @param rankingCriteria rankingCriteria à définir
+	 * @param rankingCriteria
+	 *            rankingCriteria à définir
 	 */
-	public void setRankingCriteria(List<RankingCriterion> rankingCriteria) {
-		this.rankingCriteria = rankingCriteria;
+	public void addRankingCriteria(RankingCriterion rankingCriterion) {
+		rankingCriterion.setRule(this);
+
+		this.rankingCriteria.add(rankingCriterion);
+	}
+
+	public void removeRankingCriteria(RankingCriterion rankingCriterion) {
+		this.rankingCriteria.remove(rankingCriterion);
+	}
+
+	@Override
+	public boolean validateBeforeSave() throws ObjectPersistenceException {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<Rule>> constraintViolations = validator.validate(this);
+		if (constraintViolations.size() > 0) {
+			System.out.println("Impossible de valider les donnees du bean : ");
+			for (ConstraintViolation<Rule> contraintes : constraintViolations) {
+				System.out.println(contraintes.getRootBeanClass().getSimpleName() + "." + contraintes.getPropertyPath()
+						+ " " + contraintes.getMessage());
+			}
+			return false;
+		}
+		return true;
 	}
 
 	/**
-	 * <p>Rend l'objet persistant. Sauvegarde l'ensemble des données de l'objet
-	 * dans la base de donnée de ArcCompetition.</p>
+	 * <p>
+	 * Rend l'objet persistant. Sauvegarde l'ensemble des données de l'objet dans la
+	 * base de donnée de ArcCompetition.
+	 * </p>
 	 * 
-	 * <p>Les arguments sont ignoré.</p>
+	 * <p>
+	 * Les arguments sont ignoré.
+	 * </p>
 	 */
 	@Override
 	public void save(Session session) throws ObjectPersistenceException {
-		if(Session.canExecute(session, this)) {
-			if(entite.getIdEntite() == null)
+		if (Session.canExecute(session, this)) {
+			if (entite.getIdEntite() == null)
 				entite.save(session);
-	
-			if(idRule == null) {
+
+			if (idRule == null) {
 				idRule = UUID.randomUUID();
 			}
-			
+
 			SqlContext context = SqlContext.getDefaultContext();
-			if(session instanceof SqlSession)
-				context = ((SqlSession)session).getContext();
-			
+			if (session instanceof SqlSession)
+				context = ((SqlSession) session).getContext();
+
 			StoreHelper<Rule> helper = SqlStoreHelperCache.getHelper(Rule.class, context);
 			helper.save(this);
-			
-			if(context != null)
+
+			if (context != null)
 				context.getCache().put(this);
-			
-			Session.addProcessedObject(session,this);
-	
+
+			Session.addProcessedObject(session, this);
+
 			saveTie(session);
-			// sauvegarde les tableaux de critères et correspondance
-			saveCriteria(session);
-			saveDistancesAndBlasons(session);
-			saveSurclassement(session);
 		}
 	}
-	
+
 	private void saveTie(Session session) throws ObjectPersistenceException {
 		int i = 1;
-		for(Tie d : ties) {
+		for (Tie d : ties) {
 			d.setNumOrdre(i++);
 		}
-		
+
 		ties.save(session);
 	}
 
-	/**
-	 * Sauvegarde en base les critères de distinction des archers actif pour le règlement
-	 * 
-	 * @throws SQLException
-	 */
-	private void saveCriteria(Session session) throws ObjectPersistenceException {
-		
-		int numordre = 1;
-		for (Criterion criterion : listCriteria) {
-			criterion.setNumordre(numordre++);
-		}
-		
-		PersitentCollection.save(listCriteria, session, 
-				Collections.<String, Object>singletonMap(T_Tie.ID_REGLEMENT.getFieldName(), idRule));
-	}
-	
-	/**
-	 * Sauvegarde en base le tableau de surclassement
-	 * 
-	 * @throws SQLException
-	 */
-	private void saveSurclassement(Session session) throws ObjectPersistenceException {
-		PersitentCollection.save(surclassements, session, 
-				Collections.<String, Object>singletonMap(T_Tie.ID_REGLEMENT.getFieldName(), idRule));
-	}
-
-	/**
-	 * Sauvegarde en base le tableau des distances/blasons
-	 * 
-	 * @throws SQLException
-	 */
-	private void saveDistancesAndBlasons(Session session) throws ObjectPersistenceException {
-//		PersitentCollection.save(listPlacementCriteriaSet, session,
-//				Collections.<String, Object>singletonMap(T_CriteriaSet.ID_REGLEMENT.getFieldName(), idRule));
-	}
-	
-	
 	@Override
 	public boolean validateBeforeDelete() {
 		return !officialReglement;
 	}
 
 	/**
-	 * Supprime la persistance du règlement. Cette persistance ne peut être
-	 * supprimé qu'à la condition que le règlement ne soit pas officiel
+	 * Supprime la persistance du règlement. Cette persistance ne peut être supprimé
+	 * qu'à la condition que le règlement ne soit pas officiel
 	 * 
 	 * @throws ObjectPersistenceException
 	 */
 	@Override
 	public void delete(Session session) throws ObjectPersistenceException {
 		if (validateBeforeDelete()) {
-			if(Session.canExecute(session, this)) {
+			if (Session.canExecute(session, this)) {
 				SqlContext context = SqlContext.getDefaultContext();
-				if(session instanceof SqlSession)
-					context = ((SqlSession)session).getContext();
-				
+				if (session instanceof SqlSession)
+					context = ((SqlSession) session).getContext();
+
 				StoreHelper<Rule> helper = SqlStoreHelperCache.getHelper(Rule.class, context);
 				helper.delete(this);
-				
-				if(context != null)
+
+				if (context != null)
 					context.getCache().remove(this);
-				
+
 				Session.addProcessedObject(session, this);
 			}
 		} else
 			throw new ObjectPersistenceException("delete this Rule is not authorized because there is official"); //$NON-NLS-1$
-	}
-	
-	protected void beforeMarshal(Marshaller marshaller) {
-		if(idRule == null)
-			idRule = UUID.randomUUID();
-		
-		xmlId = idRule.toString();
-	}
-	
-	/**
-	 * 
-	 * @param unmarshaller
-	 * @param parent
-	 */
-	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		idRule = UUID.fromString(xmlId);
-		
-		xmlId = null;
 	}
 
 	/*
@@ -1120,8 +799,10 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 
 		return result;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

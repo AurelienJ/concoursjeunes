@@ -2,9 +2,6 @@ import { Directive, ElementRef, Input, Output, Renderer, EventEmitter, HostListe
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import 'jquery';
-import 'jquery-slimscroll'
-
 @Directive({ selector: '[slimscroll]' })
 export class SlimScrollDirective {
 	private element : JQuery;

@@ -184,7 +184,7 @@ public class PhasesFinales implements PropertyChangeListener,FicheConcoursListen
 	public List<CriteriaSet> getCriteriaSetPhasesFinal() {
 		List<CriteriaSet> csUse = new ArrayList<CriteriaSet>(classement.getClassementPhaseQualificative().keySet());
 		
-		CriteriaSet.sortCriteriaSet(csUse, ficheConcours.getParametre().getReglement().getListCriteria());
+		//CriteriaSet.sortCriteriaSet(csUse, ficheConcours.getParametre().getReglement().getListCriteria());
 		
 		return csUse;
 	}
@@ -407,7 +407,7 @@ public class PhasesFinales implements PropertyChangeListener,FicheConcoursListen
 		
 		Set<CriteriaSet> scnalst = concurrentsClasse.keySet();
 		List<CriteriaSet> scnaUse = new ArrayList<CriteriaSet>(scnalst);
-		CriteriaSet.sortCriteriaSet(scnaUse, ficheConcours.getParametre().getReglement().getListCriteria());
+		//CriteriaSet.sortCriteriaSet(scnaUse, ficheConcours.getParametre().getReglement().getListCriteria());
 		
 		for (CriteriaSet scna : scnaUse) {
 			List<Concurrent> sortList = concurrentsClasse.get(scna);
@@ -445,8 +445,8 @@ public class PhasesFinales implements PropertyChangeListener,FicheConcoursListen
 					
 					tplClassement.parse("categories.classement.POSITION", "" + concurrent.getDepart() + concurrent.getPosition() + concurrent.getCible()); //$NON-NLS-1$ //$NON-NLS-2$
 					tplClassement.parse("categories.classement.PLACE", String.valueOf(place)); //$NON-NLS-1$
-					tplClassement.parse("categories.classement.IDENTITEE", concurrent.getFullName()); //$NON-NLS-1$
-					tplClassement.parse("categories.classement.CLUB", concurrent.getEntite().toString()); //$NON-NLS-1$
+					tplClassement.parse("categories.classement.IDENTITEE", concurrent.getArcher().getFullName()); //$NON-NLS-1$
+					tplClassement.parse("categories.classement.CLUB", concurrent.getArcher().getEntite().toString()); //$NON-NLS-1$
 					tplClassement.parse("categories.classement.PHASE", (phase > 0 || place < 3) ? ficheConcours.getProfile().getLocalisation().getResourceString("duel.phase."+phase) : ficheConcours.getProfile().getLocalisation().getResourceString("duel.phase.smallfinal")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					tplClassement.parse("categories.classement.SCORE", String.valueOf(concurrent.getScorePhasefinale(phase))); //$NON-NLS-1$
 					

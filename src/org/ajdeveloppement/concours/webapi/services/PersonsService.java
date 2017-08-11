@@ -202,6 +202,7 @@ public class PersonsService {
 			if(dbContact != null && !dbContact.getIdContact().equals(contact.getIdContact()))
 				throw new ObjectPersistenceException("Impossible d'inserer un archer en double");
 			
+			if(archerCategoryContact!= null)
 			contact.addCategoryContact(archerCategoryContact);
 		}
 		

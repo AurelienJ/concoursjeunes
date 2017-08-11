@@ -88,9 +88,10 @@
  */
 package org.ajdeveloppement.concours.data;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 
+import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
@@ -119,10 +120,11 @@ public class DistanceAndFaces implements SqlObjectPersistence {
 	private DistanceAndFacesSet distanceAndFaceSet;
 	
 	@SqlChildCollection(foreignFields="ID_DISTANCE_BLASONS",type=FaceDistanceAndFaces.class)
-	private List<FaceDistanceAndFaces> facesDistanceAndFaces;
+	private LazyPersistentCollection<FaceDistanceAndFaces, Void> facesDistanceAndFaces = new LazyPersistentCollection<>(() ->
+		T_FaceDistanceAndFaces.all().where(T_FaceDistanceAndFaces.ID_DISTANCE_BLASONS.equalTo(id)));
 	
-	/**
-	 * @return id
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.DistanceAndFacesView#getId()
 	 */
 	public UUID getId() {
 		return id;
@@ -135,8 +137,8 @@ public class DistanceAndFaces implements SqlObjectPersistence {
 		this.id = id;
 	}
 
-	/**
-	 * @return distance
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.DistanceAndFacesView#getDistance()
 	 */
 	public double getDistance() {
 		return distance;
@@ -149,8 +151,8 @@ public class DistanceAndFaces implements SqlObjectPersistence {
 		this.distance = distance;
 	}
 
-	/**
-	 * @return serie
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.DistanceAndFacesView#getSerie()
 	 */
 	public int getSerie() {
 		return serie;
@@ -177,17 +179,39 @@ public class DistanceAndFaces implements SqlObjectPersistence {
 		this.distanceAndFaceSet = distanceAndFaceSet;
 	}
 
-	/**
-	 * @return facesDistanceAndFaces
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.DistanceAndFacesView#getFacesDistanceAndFaces()
 	 */
-	public List<FaceDistanceAndFaces> getFacesDistanceAndFaces() {
+	public Collection<FaceDistanceAndFaces> getFacesDistanceAndFaces() {
 		return facesDistanceAndFaces;
 	}
 
 	/**
-	 * @param facesDistanceAndFaces facesDistanceAndFaces à définir
+	 * @param faceDistanceAndFaces facesDistanceAndFaces à définir
 	 */
-	public void setFacesDistanceAndFaces(List<FaceDistanceAndFaces> facesDistanceAndFaces) {
-		this.facesDistanceAndFaces = facesDistanceAndFaces;
+	public void addFacesDistanceAndFaces(FaceDistanceAndFaces faceDistanceAndFaces) {
+		faceDistanceAndFaces.setDistanceAndFaces(this);
+		
+		this.facesDistanceAndFaces.add(faceDistanceAndFaces);
+	}
+	
+	/**
+	 * @param faceDistanceAndFaces facesDistanceAndFaces à définir
+	 */
+	public void removeFacesDistanceAndFaces(FaceDistanceAndFaces faceDistanceAndFaces) {
+		this.facesDistanceAndFaces.remove(faceDistanceAndFaces);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.DistanceAndFacesView#getDefaultFace()
+	 */
+	public Face getDefaultFace() {
+		if(facesDistanceAndFaces.size() == 0)
+			return null;
+		
+		return facesDistanceAndFaces.stream()
+				.filter(fdf -> fdf.isPrincipal())
+				.findFirst()
+				.orElse(facesDistanceAndFaces.iterator().next()).getFace();
 	}
 }

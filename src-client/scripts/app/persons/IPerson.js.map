@@ -1,1 +1,1 @@
-{"version":3,"sources":["app/persons/IPerson.ts"],"names":[],"mappings":";;;;;;QAwBC,CAAC","file":"IPerson.js","sourceRoot":"../../"}
+{"version":3,"sources":["persons/IPerson.ts"],"names":[],"mappings":";;;;;;QAwBC,CAAC","file":"IPerson.js","sourceRoot":"../"}

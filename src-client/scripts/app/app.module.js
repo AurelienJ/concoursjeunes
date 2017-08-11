@@ -54,18 +54,18 @@ System.register(["@angular/core", "@angular/platform-browser", "@angular/router"
             AppModule = (function () {
                 function AppModule() {
                 }
+                AppModule = __decorate([
+                    core_1.NgModule({
+                        imports: [platform_browser_1.BrowserModule,
+                            router_1.RouterModule.forRoot(app_routes_1.AppRoutes, { useHash: true }),
+                            general_module_1.GeneralModule, references_module_1.ReferencesModule, parameters_module_1.ParametersModule, competitions_module_1.CompetitionModule, entites_module_1.EntitesModule, persons_module_1.PersonsModule, rules_module_1.RulesModule],
+                        declarations: [app_component_1.AppComponent, slimscroll_directive_1.SlimScrollDirective],
+                        bootstrap: [app_component_1.AppComponent],
+                        providers: []
+                    })
+                ], AppModule);
                 return AppModule;
             }());
-            AppModule = __decorate([
-                core_1.NgModule({
-                    imports: [platform_browser_1.BrowserModule,
-                        router_1.RouterModule.forRoot(app_routes_1.AppRoutes, { useHash: true }),
-                        general_module_1.GeneralModule, references_module_1.ReferencesModule, parameters_module_1.ParametersModule, competitions_module_1.CompetitionModule, entites_module_1.EntitesModule, persons_module_1.PersonsModule, rules_module_1.RulesModule],
-                    declarations: [app_component_1.AppComponent, slimscroll_directive_1.SlimScrollDirective],
-                    bootstrap: [app_component_1.AppComponent],
-                    providers: []
-                })
-            ], AppModule);
             exports_1("AppModule", AppModule);
         }
     };
