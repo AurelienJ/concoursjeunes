@@ -64,6 +64,9 @@ System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"
                 RulesService.prototype.getCriteria = function (idRule) {
                     return this.http.get("api/rules/" + idRule + "/criteria").toPromise().then(function (r) { return r.json(); });
                 };
+                RulesService.prototype.getFaces = function () {
+                    return this.http.get("api/faces").toPromise().then(function (r) { return r.json(); });
+                };
                 RulesService = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [http_1.Http])

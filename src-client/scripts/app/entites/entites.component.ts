@@ -182,31 +182,31 @@ export class EntitesComponent implements OnInit {
     /**
      * La liste des entites a afficher
      */
-    private entites : EntiteServerSideInputData;
+    public entites : EntiteServerSideInputData;
 
     /**
      * Liste des types d'entité existant
      */
-    private typesEntities : ITypeLabel[];
+    public typesEntities : ITypeLabel[];
 
     /**
      * Affiche la liste des clubs
      */
-    private displayTypes : number[] = [];
+    public displayTypes : number[] = [];
 
     /**
      * Affichage pour seléction
      */
-    private forSelect : boolean;
+    public forSelect : boolean;
 
     /**
      * Affiche les entités enfant de l'entité d'id de childOf
      */
-    private childOf : string;
+    public childOf : string;
 
-    private childOfName : string;
+    public childOfName : string;
 
-    private isFederationExclusive : boolean;
+    public isFederationExclusive : boolean;
 
     private dataLoading : boolean = false;
 

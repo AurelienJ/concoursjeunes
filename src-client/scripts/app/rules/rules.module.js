@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@angular/platform-browser", "@angular/forms", "../datatable", "../general", "../references/references.module", "./rules.service", "./rules.component", "./rule.component"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@angular/platform-browser", "@angular/forms", "../datatable", "../general", "../references/references.module", "./rules.service", "./rules.component", "./rule.component", "./distancesAndFaces.component", "./detailDistanceAndFaces.component", "./ranking.component", "./detailRanking.component"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7,7 +7,7 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, platform_browser_1, forms_1, datatable_1, general_1, references_module_1, rules_service_1, rules_component_1, rule_component_1, RulesModule;
+    var core_1, router_1, platform_browser_1, forms_1, datatable_1, general_1, references_module_1, rules_service_1, rules_component_1, rule_component_1, distancesAndFaces_component_1, detailDistanceAndFaces_component_1, ranking_component_1, detailRanking_component_1, RulesModule;
     return {
         setters: [
             function (core_1_1) {
@@ -39,6 +39,18 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
             },
             function (rule_component_1_1) {
                 rule_component_1 = rule_component_1_1;
+            },
+            function (distancesAndFaces_component_1_1) {
+                distancesAndFaces_component_1 = distancesAndFaces_component_1_1;
+            },
+            function (detailDistanceAndFaces_component_1_1) {
+                detailDistanceAndFaces_component_1 = detailDistanceAndFaces_component_1_1;
+            },
+            function (ranking_component_1_1) {
+                ranking_component_1 = ranking_component_1_1;
+            },
+            function (detailRanking_component_1_1) {
+                detailRanking_component_1 = detailRanking_component_1_1;
             }
         ],
         execute: function () {
@@ -47,8 +59,12 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
                 }
                 RulesModule = __decorate([
                     core_1.NgModule({
-                        imports: [router_1.RouterModule, platform_browser_1.BrowserModule, forms_1.FormsModule, datatable_1.DataTableModule, general_1.GeneralModule, references_module_1.ReferencesModule],
-                        declarations: [rule_component_1.RuleComponent, rules_component_1.RulesComponent, rules_component_1.RulesServerSideInputDataFilterPipe],
+                        imports: [router_1.RouterModule, platform_browser_1.BrowserModule, forms_1.FormsModule, datatable_1.DataTableModule, general_1.GeneralModule,
+                            references_module_1.ReferencesModule],
+                        declarations: [rule_component_1.RuleComponent, rules_component_1.RulesComponent,
+                            distancesAndFaces_component_1.DistancesAndFacesComponent, detailDistanceAndFaces_component_1.DetailDistancesAndFacesComponent,
+                            ranking_component_1.RankingComponent, detailRanking_component_1.DetailRankingComponent,
+                            rules_component_1.RulesServerSideInputDataFilterPipe],
                         bootstrap: [],
                         providers: [rules_service_1.RulesService],
                         exports: [rule_component_1.RuleComponent, rules_component_1.RulesComponent, rules_component_1.RulesServerSideInputDataFilterPipe]

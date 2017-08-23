@@ -11,10 +11,18 @@ import { RulesService } from './rules.service';
 
 import { RulesComponent, RulesServerSideInputDataFilterPipe } from './rules.component';
 import { RuleComponent } from './rule.component';
+import { DistancesAndFacesComponent } from './distancesAndFaces.component';
+import { DetailDistancesAndFacesComponent } from './detailDistanceAndFaces.component';
+import { RankingComponent } from './ranking.component';
+import { DetailRankingComponent } from './detailRanking.component';
 
 @NgModule({
-    imports:        [ RouterModule, BrowserModule, FormsModule, DataTableModule, GeneralModule, ReferencesModule ],
-    declarations:   [ RuleComponent, RulesComponent, RulesServerSideInputDataFilterPipe ],
+    imports:        [ RouterModule, BrowserModule, FormsModule, DataTableModule, GeneralModule, 
+        ReferencesModule ],
+    declarations:   [ RuleComponent, RulesComponent, 
+        DistancesAndFacesComponent, DetailDistancesAndFacesComponent, 
+        RankingComponent, DetailRankingComponent,
+        RulesServerSideInputDataFilterPipe ],
     bootstrap:      [],
     providers:      [ RulesService ],
     exports:        [ RuleComponent, RulesComponent, RulesServerSideInputDataFilterPipe ]

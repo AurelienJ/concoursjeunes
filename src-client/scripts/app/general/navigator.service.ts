@@ -91,6 +91,8 @@ export class NavigatorService {
                     indexView.returnData = returnData;
                     this.navigationStack.length = index+1;
 
+                    this.onChange();
+
                     router.navigate(indexView.path, { queryParams: indexView.queryParams } );
                 }
             }

@@ -6,9 +6,12 @@ import { ReferencesService } from '../references/references.service';
 import { RulesService } from './rules.service';
 
 import { NavigatorService, NavigationSnapshot } from '../general';
-import { Rule } from './Rule';
-import { IRulesCategory } from './IRulesCategory';
-import { IRankingCriterion } from './IRankingCriterion';
+import { IEntite } from '../entites/ientite';
+import { Rule } from './model/Rule';
+import { IRulesCategory } from './model/IRulesCategory';
+import { IRankingCriterion } from './model/IRankingCriterion';
+import { IFace } from './model/IFace';
+import { IDistanceAndFacesSet } from './model/IDistanceAndFacesSet';
 
 @Component({
 	selector: 'rule',
@@ -20,8 +23,9 @@ import { IRankingCriterion } from './IRankingCriterion';
 				<div class="nav-tabs-custom">
 					<ul class="nav nav-tabs">
 						<li [class.active]="!activePane || activePane=='general'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='general'">Général</a></li>
-						<li [class.active]="activePane=='classment'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='classment'">Classement</a></li>
-						<li [class.active]="activePane=='placement'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='placement'">Placement</a></li>
+						<li [class.active]="activePane=='distancesAndFaces'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='distancesAndFaces'">Distances et Blasons</a></li>
+						<li [class.active]="activePane=='ranking'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='ranking'">Classement</a></li>
+						
 					</ul>
 					<div class="tab-content">
 						<div id="general" class="tab-pane" [class.active]="!activePane || activePane=='general'">
@@ -30,7 +34,10 @@ import { IRankingCriterion } from './IRankingCriterion';
 
 								<div class="form-group">
 									<label class="col-md-3 col-lg-2 control-label">Réglement rattaché à</label>
-									<div class="col-md-9 col-lg-10"><a href="#/entities/{{rule.idEntite}}">{{rule.libelleEntite}}</a></div>
+									<div class="col-md-9 col-lg-10">
+									<a href="#/entities/{{rule.idEntite}}">{{rule.libelleEntite}}</a>
+									<a [routerLink]="['/federations']" [queryParams]="{forSelect : true}" id="entityFederation" class="input">Choisir...</a>
+									</div>
 								</div>
 
 								<div class="form-group">
@@ -97,62 +104,12 @@ import { IRankingCriterion } from './IRankingCriterion';
 							</section>
 						</div>
 
-						<div id="classment" class="tab-pane" [class.active]="activePane=='classment'">
-							<div class="row">
-								<div class="col-sm-6"><a href="javascript:void(0)" class="btn btn-app"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter</a>
-								</div>
-								<div class="col-sm-6 form-inline">
-									
-									<div class="modal modal-primary" id="confirmDeleteRankingCriterionItemModal" *ngIf="selectedRankingCriterionForDelete">
-										<div class="modal-dialog">
-											<div class="modal-content">
-											<div class="modal-header">
-												<button type="button" class="close" data-dismiss="modal" aria-label="Fermer" (click)="selectedRankingCriterionForDelete=null">
-												<span aria-hidden="true">×</span></button>
-												<h4 class="modal-title">Suppression d'un critère de classement</h4>
-											</div>
-											<div class="modal-body">
-												<p>Confirmer la suppression du critère <strong>"{{selectedRankingCriterionForDelete.name}}"</strong>?</p>
-											</div>
-											<div class="modal-footer">
-												<button type="button" class="btn btn-outline" (click)="deleteRankingCriterion(selectedRankingCriterionForDelete, true)">Supprimer</button>
-												<button type="button" class="btn btn-outline" data-dismiss="modal" (click)="selectedRankingCriterionForDelete=null">Fermer</button>
-											</div>
-											</div>
-											<!-- /.modal-content -->
-										</div>
-										<!-- /.modal-dialog -->
-									</div>
-									<div class="row">
-										<div class="col-sm-6">
-											<h3>Liste des critères</h3>
-											<div class="row">
-												<div class="col-sm-12">
-													<a href="javascript:void(0)" class="btn btn-app" (click)="addRankingCriterion()"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter</a>
-												</div>
-											</div>
-											<div class="row">
-												<div class="col-sm-12">
-													<ul class="list-group" id="criteria-collection">
-														<li class="list-group-item" *ngFor="let rankingCriterion of rule.rankingCriteria">
-															<!--<span class="badge" title="Nombre d'élément">{{criterion.criterionElements.length}}</span>-->
-															<a href="javascript:void(0)" (click)="selectedRankingCriterion = rankingCriterion">{{rankingCriterion.name}}</a>
-															<a href="javascript:void(0)" class="pull-right button-separator" (click)="deleteRankingCriterion(rankingCriterion)"><i class="fa fa-trash" title="Supprimer"></i></a>
-															<a href="javascript:void(0)" class="pull-right button-separator" [class.disabled]="rankingCriterion.numordre <= 1" (click)="upCriterion(criterion)"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
-															<a href="javascript:void(0)" class="pull-right button-separator" [class.disabled]="rankingCriterion.numordre >= rule.rankingCriteria.length" (click)="downCriterion(criterion)"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
-														</li>
-													</ul>
-												</div>
-											</div>
-										</div>
-										<div class="col-sm-6" *ngIf="selectedRankingCriterion">
-											
-										</div>
-									</div>
+						<div id="distancesAndFaces" class="tab-pane" [class.active]="activePane=='distancesAndFaces'">
+							<distances-faces [(distancesAndFacesSet)]="rule.distancesAndFaces" [nbSerie]="rule.nbSerie"></distances-faces>
+						</div>
 
-
-								</div>
-							</div>
+						<div id="ranking" class="tab-pane" [class.active]="activePane=='ranking'">
+							<ranking [(rankingCriteria)]="rule.rankingCriteria" [distancesAndFacesSet]="rule.distancesAndFaces"></ranking>
 						</div>
 					</div>
 				</div>
@@ -172,10 +129,11 @@ import { IRankingCriterion } from './IRankingCriterion';
 })
 export class RuleComponent implements OnInit, DoCheck {
 
-	private idRule : string;
-
-	public rule : Rule = new Rule();
 	public rulesCategories : IRulesCategory[];
+
+	private idRule : string;
+	public rule : Rule = new Rule();
+
 	public activePane : string;
 	public error : string;
 
@@ -194,7 +152,11 @@ export class RuleComponent implements OnInit, DoCheck {
 		this.rulesService.getRulesCategories().then(rc => this.rulesCategories = rc);
 
 		this.route.params.subscribe(params => {
-            this.idRule = params['id'];
+			let idRule = params['id'];
+			if(idRule != "new")
+				this.idRule = idRule;
+			else
+				this.idRule = undefined;
 
 			let currentNavigationSnapshot = this.navigation.getCurrentNavigationSnapshot();
 			let currentPath = NavigationSnapshot.getPath(this.route.snapshot.url).join("/");
@@ -205,11 +167,16 @@ export class RuleComponent implements OnInit, DoCheck {
 					&& (<Rule>currentNavigationSnapshot.stateData).id == this.idRule) {
 
 				this.rule = currentNavigationSnapshot.stateData;
+				if(currentNavigationSnapshot.returnData) {
+					let entite = <IEntite>currentNavigationSnapshot.returnData;
+					this.rule.idEntite = entite.id;
+					this.rule.libelleEntite = entite.nom;
+				}
 			} else {
 				this.navigation.pushUrlSegments("Reglement", this.route.snapshot.url, null);
 				currentNavigationSnapshot = this.navigation.getCurrentNavigationSnapshot();
 
-				if(this.idRule != "new") {
+				if(this.idRule) {
 					this.rulesService.getRule(this.idRule).then(r => {
 						this.rule = r;
 
@@ -218,7 +185,7 @@ export class RuleComponent implements OnInit, DoCheck {
 					});
 				} else {
 					this.rule = new Rule();
-					currentNavigationSnapshot.label = this.rule.name;
+					currentNavigationSnapshot.label = "Nouveau réglement";
 					currentNavigationSnapshot.stateData = this.rule;
 				}
 			}
@@ -243,23 +210,6 @@ export class RuleComponent implements OnInit, DoCheck {
 		if (!pattern.test(inputChar) && event.charCode>0) {
 		// invalid character, prevent input
 		event.preventDefault();
-		}
-	}
-
-	addRankingCriterion() {
-		this.selectedRankingCriterion = <IRankingCriterion>{
-			name: '<Nouveau critère de clasement>',
-			numordre: this.rule.rankingCriteria.length+1
-		};
-		this.rule.rankingCriteria.push(this.selectedRankingCriterion);
-	}
-
-	deleteRankingCriterion(rankingCriterion : IRankingCriterion, confirmation : boolean = false) {
-		if(!confirmation)
-			this.selectedRankingCriterionForDelete = rankingCriterion;
-		else {
-			this.rule.rankingCriteria.splice(rankingCriterion.numordre-1, 1);
-			this.selectedRankingCriterionForDelete = undefined;
 		}
 	}
 

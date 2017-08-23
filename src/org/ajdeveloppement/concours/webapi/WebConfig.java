@@ -128,6 +128,7 @@ public class WebConfig extends AbstractApiApplication {
 			
 			@Override
 			protected void configure() {
+				
 				//Service
 				bind(ReferenceService.class).in(Scopes.SINGLETON);
 				bind(PersonsService.class).in(Scopes.SINGLETON);
@@ -136,13 +137,13 @@ public class WebConfig extends AbstractApiApplication {
 				bind(RuleService.class).in(Scopes.SINGLETON);
 				bind(CompetitionsService.class).in(Scopes.SINGLETON);
 				
-				bind(ArcherMapper.class).to(ArcherMapperImpl.class).in(Scopes.SINGLETON);
-				bind(CriterionMapper.class).to(CriterionMapperImpl.class).in(Scopes.SINGLETON);
-				bind(DistanceAndFacesSetMapper.class).to(DistanceAndFacesSetMapperImpl.class).in(Scopes.SINGLETON);
-				bind(EntiteMapper.class).to(EntiteMapperImpl.class).in(Scopes.SINGLETON);
-				bind(PersonMapper.class).to(PersonMapperImpl.class).in(Scopes.SINGLETON);
-				bind(RankingCriterionMapper.class).to(RankingCriterionMapperImpl.class).in(Scopes.SINGLETON);
-				bind(RulesMapper.class).to(RulesMapperImpl.class).in(Scopes.SINGLETON);
+				bind(ArcherMapper.class).to(ArcherMapperImpl.class);
+				bind(CriterionMapper.class).to(CriterionMapperImpl.class);
+				bind(DistanceAndFacesSetMapper.class).to(DistanceAndFacesSetMapperImpl.class);
+				bind(EntiteMapper.class).to(EntiteMapperImpl.class);
+				bind(PersonMapper.class).to(PersonMapperImpl.class);
+				bind(RankingCriterionMapper.class).to(RankingCriterionMapperImpl.class);
+				bind(RulesMapper.class).to(RulesMapperImpl.class);
 			}
 		});
 	}

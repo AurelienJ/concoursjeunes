@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { InputData, DataEvent } from '../datatable';
 
 import { IEntite } from '../entites/ientite';
-import { Rule } from './Rule';
+import { Rule } from './model/Rule';
 //import { IPerson } from '../models/IPerson';
 
 //import { PersonsService } from '../services/persons';
@@ -146,9 +146,9 @@ export class RulesServerSideInputDataFilterPipe implements PipeTransform {
 	`
 	})
 export class RulesComponent implements OnInit{
-	private rules : RulesServerSideInputData;
+	public rules : RulesServerSideInputData;
 	
-	private forSelect : boolean = false;
+	public forSelect : boolean = false;
 
 	constructor(
         private route: ActivatedRoute,

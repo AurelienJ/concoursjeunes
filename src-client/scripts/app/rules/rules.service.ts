@@ -1,8 +1,9 @@
 import { Injectable }    from '@angular/core';
 import { Headers, Http } from '@angular/http';
 
-import { Rule } from './Rule';
-import { IRulesCategory } from './IRulesCategory';
+import { Rule } from './model/Rule';
+import { IRulesCategory } from './model/IRulesCategory';
+import { IFace } from './model/IFace';
 import { Criterion } from '../entites/Criterion';
 
 import 'rxjs/add/operator/toPromise';
@@ -67,5 +68,9 @@ export class RulesService {
 
 	public getCriteria(idRule : string) : Promise<Criterion[]> {
 		return this.http.get("api/rules/" + idRule + "/criteria").toPromise().then(r => r.json());
+	}
+
+	public getFaces() : Promise<IFace[]> {
+		return this.http.get("api/faces").toPromise().then(r => r.json());
 	}
 }

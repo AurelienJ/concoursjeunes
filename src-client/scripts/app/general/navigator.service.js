@@ -95,6 +95,7 @@ System.register(["@angular/core", "@angular/common", "@angular/router", "./Navig
                             if (indexView) {
                                 indexView.returnData = returnData;
                                 this.navigationStack.length = index + 1;
+                                this.onChange();
                                 router.navigate(indexView.path, { queryParams: indexView.queryParams });
                             }
                         }
