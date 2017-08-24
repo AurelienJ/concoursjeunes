@@ -107,6 +107,16 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel="jsr330",nullValueMappingStrategy=NullValueMappingStrategy.RETURN_DEFAULT)
 public abstract class EntiteMapper {
 	public static EntiteMapper INSTANCE = Mappers.getMapper(EntiteMapper.class);
+	
+	public static UUID getIdEntiteParent(Federation entite) {
+		return getIdEntiteParent((Entite)entite);
+	}
+	
+	public static UUID getIdEntiteParent(Entite entite) {
+		if(entite.getEntiteParent() != null)
+			return entite.getEntiteParent().getIdEntite();
+		return null;
+	}
 
 	public Entite asEntite(EntiteView entiteView) {
 		Entite entite = null;

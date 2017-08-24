@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit, DoCheck } from '@angular/core';
 
+import { IEntite } from '../entites/ientite';
 import { IRankingCriterion } from './model/IRankingCriterion';
 import { IDistanceAndFacesSet } from './model/IDistanceAndFacesSet';
 
@@ -49,7 +50,7 @@ import _ from 'lodash';
                 </div>
             </div>
             <div class="col-sm-6" *ngIf="selectedRankingCriterion">
-                <detail-ranking [(rankingCriterion)]="selectedRankingCriterion" [distanceAndFacesSets]="distancesAndFacesSet"></detail-ranking>
+                <detail-ranking [rankingCriterion]="selectedRankingCriterion" [distanceAndFacesSets]="distancesAndFacesSet" [idFederation]="idFederation"></detail-ranking>
             </div>
         </div>`,
     styles: [
@@ -64,6 +65,9 @@ export class RankingComponent implements OnInit {
 
     @Input()
     public distancesAndFacesSet : IDistanceAndFacesSet[];
+
+    @Input()
+    public idFederation : string;
 
     @Output()
     public rankingCriteriaChange : EventEmitter<IRankingCriterion[]> = new EventEmitter<IRankingCriterion[]>();

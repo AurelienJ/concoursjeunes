@@ -56,8 +56,8 @@ import 'rxjs/add/operator/share';
 								</div>
 								<div class="form-group" *ngIf="entite.type != 0">
 									<label class="col-sm-2 control-label">Fédération</label>
-									<div class="col-sm-10"><span *ngIf="entite.entiteParent != null">{{entite.entiteParent.nom}}</span>
-									<a [routerLink]="['/federations']" [queryParams]="{forSelect : true}" id="entityFederation" class="input">Choisir...</a></div>
+									<div class="col-sm-10"><span class="form-control no-border"><span *ngIf="entite.entiteParent != null"><a [routerLink]="['/entities', entite.entiteParent.id]">{{entite.entiteParent.nom}}</a> - </span>
+									<a [routerLink]="['/federations']" [queryParams]="{forSelect : true}" id="entityFederation">Choisir...</a></span></div>
 								</div>
 							</section>
 
@@ -164,12 +164,11 @@ import 'rxjs/add/operator/share';
 							</thead>
 							<tbody>
 							<tr *ngFor="let person of mf.data">
-								<td>{{person.name}} {{person.firstName}}</td>
-								<td>{{person.reference}}</td>
+								<td><a [routerLink]="['/persons', person.id]">{{person.name}} {{person.firstName}}</a></td>
+								<td>{{person.numLicenceArcher}}</td>
 								<td>{{person.city}}</td>
 								<td>
-									<a href="#/persons/{{person.id}}"><i class="fa fa-pencil" title="Editer"></i></a>
-									<a href="javascript:void(0)" *ngIf="forSelect" (click)="select(person)"><i class="fa fa-cart-plus" aria-hidden="true" title="Selectionner"></i></a>
+									<a [routerLink]="['/persons', person.id]"><i class="fa fa-pencil" title="Editer"></i></a>
 								</td>
 							</tr>
 							</tbody>

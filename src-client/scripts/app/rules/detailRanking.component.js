@@ -1,4 +1,4 @@
-System.register(["@angular/core", "./rules.service"], function (exports_1, context_1) {
+System.register(["@angular/core", "./rules.service", "../entites/entites.service", "lodash"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "./rules.service"], function (exports_1, conte
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, rules_service_1, DetailRankingComponent;
+    var core_1, rules_service_1, entites_service_1, lodash_1, DetailRankingComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -18,36 +18,70 @@ System.register(["@angular/core", "./rules.service"], function (exports_1, conte
             },
             function (rules_service_1_1) {
                 rules_service_1 = rules_service_1_1;
+            },
+            function (entites_service_1_1) {
+                entites_service_1 = entites_service_1_1;
+            },
+            function (lodash_1_1) {
+                lodash_1 = lodash_1_1;
             }
         ],
         execute: function () {
             DetailRankingComponent = (function () {
-                function DetailRankingComponent(rulesService) {
+                function DetailRankingComponent(rulesService, entitesService) {
                     this.rulesService = rulesService;
-                    this.rankingCriterionChange = new core_1.EventEmitter();
+                    this.entitesService = entitesService;
+                    this.displayAddDiscriminantCriteriaSet = false;
                     this.loading = false;
                 }
                 DetailRankingComponent.prototype.ngOnInit = function () {
                 };
                 DetailRankingComponent.prototype.ngOnChanges = function (changes) {
+                    var _this = this;
                     for (var propName in changes) {
-                        if (propName == "rankingCriterion") {
-                            this.loading = true;
+                        if (propName == 'idFederation') {
+                            var chng = changes[propName];
+                            this.entitesService.getCriteria(this.idFederation).then(function (c) { return _this.criteria = c; });
                         }
                     }
                 };
-                DetailRankingComponent.prototype.ngDoCheck = function () {
+                DetailRankingComponent.prototype.getCriterionElement = function (idCriterionElement) {
+                    for (var i = 0; i < this.criteria.length; i++) {
+                        var criterion = this.criteria[i];
+                        var element = lodash_1.default.find(criterion.criterionElements, function (e) { return e.id == idCriterionElement; });
+                        if (element)
+                            return { criterion: criterion, element: element };
+                    }
+                    ;
                 };
-                DetailRankingComponent.prototype.ngAfterViewChecked = function () {
-                    this.loading = false;
+                DetailRankingComponent.prototype.displayDiscriminantCriterionSet = function () {
+                    this.selectedCriterionElements = new Map();
+                    this.editedDiscriminantCriterionSet = {
+                        elements: []
+                    };
+                    this.displayAddDiscriminantCriteriaSet = true;
                 };
-                DetailRankingComponent.prototype.onValueChanged = function (value) {
-                    if (this.loading)
-                        return;
-                    if (value.startsWith("temp"))
-                        this.rankingCriterion.idTempDistancesAndFacesSet = value.substring(4);
-                    else
-                        this.rankingCriterion.idDistancesAndFacesSet = value;
+                DetailRankingComponent.prototype.validateDiscriminantCriterionSet = function () {
+                    var _this = this;
+                    var ordre = 0;
+                    this.editedDiscriminantCriterionSet.elements = [];
+                    this.editedDiscriminantCriterionSet.name = "";
+                    this.selectedCriterionElements.forEach(function (e) {
+                        _this.editedDiscriminantCriterionSet.elements.push({
+                            idCriterionElement: e.id,
+                            ordre: ordre++
+                        });
+                        if (ordre > 1)
+                            _this.editedDiscriminantCriterionSet.name += " / ";
+                        _this.editedDiscriminantCriterionSet.name += e.libelle;
+                    });
+                    if (!this.rankingCriterion.discriminantCriterionSets)
+                        this.rankingCriterion.discriminantCriterionSets = [];
+                    this.rankingCriterion.discriminantCriterionSets.push(this.editedDiscriminantCriterionSet);
+                    this.displayAddDiscriminantCriteriaSet = false;
+                };
+                DetailRankingComponent.prototype.deleteDiscriminantCriterionSet = function (discriminantCriterionSet) {
+                    lodash_1.default.remove(this.rankingCriterion.discriminantCriterionSets, function (e) { return e == discriminantCriterionSet; });
                 };
                 __decorate([
                     core_1.Input(),
@@ -58,15 +92,18 @@ System.register(["@angular/core", "./rules.service"], function (exports_1, conte
                     __metadata("design:type", Array)
                 ], DetailRankingComponent.prototype, "distanceAndFacesSets", void 0);
                 __decorate([
-                    core_1.Output(),
-                    __metadata("design:type", core_1.EventEmitter)
-                ], DetailRankingComponent.prototype, "rankingCriterionChange", void 0);
+                    core_1.Input(),
+                    __metadata("design:type", String)
+                ], DetailRankingComponent.prototype, "idFederation", void 0);
                 DetailRankingComponent = __decorate([
                     core_1.Component({
                         selector: 'detail-ranking',
-                        template: "<div *ngIf=\"rankingCriterion\">\n        <h3>D\u00E9tail</h3>\n        <div class=\"form-group\">\n            <label for=\"libelleRankingCriterion\" class=\"col-sm-2 control-label\">Libelle</label>\n            <div class=\"col-sm-10\"><input placeholder=\"Libelle\" id=\"libelleRankingCriterion\" name=\"libelleRankingCriterion\" class=\"form-control\" [(ngModel)]=\"rankingCriterion.name\"/></div>\n        </div>\n        \n        <div class=\"form-group\">\n            <label for=\"distanceAndFacesSet\" class=\"col-sm-2 control-label\">Jeux de distances et blasons</label>\n            <div class=\"col-sm-10\">\n                <select select2 (value)=\"onValueChanged($event)\" placeholder=\"Distances / Blasons\" id=\"distanceAndFacesSet\" name=\"distanceAndFacesSet\" class=\"form-control\"  style=\"width: 100%;\">\n                    <option *ngFor=\"let distanceAndFacesSet of distanceAndFacesSets\" [value]=\"distanceAndFacesSet.id || 'temp' + distanceAndFacesSet.tempId\" [attr.selected]=\"((distanceAndFacesSet.id == rankingCriterion.idDistancesAndFacesSet) || (distanceAndFacesSet.tempId == rankingCriterion.idTempDistancesAndFacesSet)) ? 'selected' : null\">{{distanceAndFacesSet.name}}</option>\n                </select>\n            </div>\n        </div>\n        <div class=\"form-group\">\n            <label for=\"discriminantCriteria\" class=\"col-sm-2 control-label\">Crit\u00E8res discriminants</label>\n            <div class=\"col-sm-10\">\n                <ul class=\"list-group\">\n                    <li class=\"list-group-item\">Test</li>\n                </ul>\n            </div>\n        </div>\n\n    </div>"
+                        template: "<div *ngIf=\"rankingCriterion\">\n        <div class=\"modal\" id=\"addDiscriminantCriteriaSet\" *ngIf=\"displayAddDiscriminantCriteriaSet\">\n            <div class=\"modal-dialog\">\n                <div class=\"modal-content\">\n                    <div class=\"modal-header\">\n                        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Fermer\" (click)=\"displayAddDiscriminantCriteriaSet=false\">\n                        <span aria-hidden=\"true\">\u00D7</span></button>\n                        <h4 class=\"modal-title\">S\u00E9l\u00E9ction d'un jeux de crit\u00E8res discriminant</h4>\n                    </div>\n                    <div class=\"modal-body\">\n                        <div *ngFor=\"let criterion of criteria\">\n                            <h4>{{criterion.libelle}}</h4>\n                            <div class=\"radio\" *ngFor=\"let criterionElement of criterion.criterionElements\">\n                                <label>\n                                    <input type=\"radio\" name=\"criterion-{{criterion.id}}\"\n                                        [value]=\"criterionElement\"\n                                        [ngModel]=\"selectedCriterionElements.get(criterion)\" (ngModelChange)=\"selectedCriterionElements.set(criterion, $event)\"/>\n                                    {{criterionElement.libelle}}\n                                </label>\n                            </div>\n                        </div>\n                    </div>\n                    <div class=\"modal-footer\">\n                        <button type=\"button\" class=\"btn btn-primary\" (click)=\"validateDiscriminantCriterionSet()\">Ajouter</button>\n                        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" (click)=\"displayAddDiscriminantCriteriaSet=false\">Fermer</button>\n                    </div>\n                    <!-- /.modal-content -->\n                </div>\n                <!-- /.modal-dialog -->\n            </div>\n        </div>\n\n        <h3>D\u00E9tail</h3>\n        <div class=\"form-group\">\n            <label for=\"libelleRankingCriterion\">Libelle</label>\n            <input placeholder=\"Libelle\" id=\"libelleRankingCriterion\" name=\"libelleRankingCriterion\" class=\"form-control\" [(ngModel)]=\"rankingCriterion.name\"/>\n        </div>\n        \n        <div class=\"form-group\">\n            <label for=\"distanceAndFacesSet\">Jeux de distances et blasons</label>\n            <div class=\"radio\" *ngFor=\"let distanceAndFacesSet of distanceAndFacesSets\">\n                <label>\n                    <input type=\"radio\" name=\"distanceAndFacesSet\"\n                        [value]=\"distanceAndFacesSet\"\n                        [(ngModel)]=\"rankingCriterion.distancesAndFacesSet\"/>\n                    {{distanceAndFacesSet.name}}\n                </label>\n            </div>\n        </div>\n        <div class=\"form-group\">\n            <label for=\"discriminantCriteria\">Crit\u00E8res discriminants</label>\n            <div class=\"form-control-static\">\n                <button class=\"btn btn-app\" (click)=\"displayDiscriminantCriterionSet(null)\"><i class=\"fa fa-plus-circle\" aria-hidden=\"true\"></i> Ajouter</button>\n\n                <ul class=\"list-group\">\n                    <li class=\"list-group-item\" *ngFor=\"let discriminantCriterionSet of rankingCriterion.discriminantCriterionSets\">\n                    {{discriminantCriterionSet.name}}\n                    <a href=\"javascript:void(0)\" class=\"pull-right button-separator\" (click)=\"deleteDiscriminantCriterionSet(discriminantCriterionSet)\"><i class=\"fa fa-trash\" title=\"Supprimer\"></i></a>\n                    </li>\n                </ul>\n            </div>\n        </div>\n    </div>",
+                        styles: [
+                            ":host #addDiscriminantCriteriaSet {\n\t\t\tdisplay: block;\n\t\t}"
+                        ]
                     }),
-                    __metadata("design:paramtypes", [rules_service_1.RulesService])
+                    __metadata("design:paramtypes", [rules_service_1.RulesService, entites_service_1.EntitesService])
                 ], DetailRankingComponent);
                 return DetailRankingComponent;
             }());

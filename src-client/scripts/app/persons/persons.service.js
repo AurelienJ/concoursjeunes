@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/http", "../general/date.service", "rxjs/add/operator/toPromise"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, http_1, PersonsService;
+    var core_1, http_1, date_service_1, PersonsService;
     return {
         setters: [
             function (core_1_1) {
@@ -19,17 +19,29 @@ System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"
             function (http_1_1) {
                 http_1 = http_1_1;
             },
+            function (date_service_1_1) {
+                date_service_1 = date_service_1_1;
+            },
             function (_1) {
             }
         ],
         execute: function () {
             PersonsService = (function () {
-                function PersonsService(http) {
+                function PersonsService(http, dateService) {
                     this.http = http;
+                    this.dateService = dateService;
                     this.headers = new http_1.Headers();
                     this.headers.append('Content-Type', 'application/json');
                     this.headers.append('Accept', 'application/json');
                 }
+                PersonsService.prototype.convertDates = function (person) {
+                    if (person.dateNaissance)
+                        person.dateNaissance = new Date(person.dateNaissance);
+                    if (person.certificat)
+                        person.certificat = new Date(person.certificat);
+                    if (person.dateModification)
+                        person.dateModification = new Date(person.dateModification);
+                };
                 PersonsService.prototype.getCivilities = function () {
                     if (this.civilities)
                         return this.civilities;
@@ -50,6 +62,7 @@ System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"
                     return this.http.get("api/contacts", {headers: this.headers}).toPromise().then(r => r.json());
                 }*/
                 PersonsService.prototype.getPersons = function (term, sortBy, sortOrder, startOffset, endOffset) {
+                    var _this = this;
                     var url = "api/contacts";
                     var params = [];
                     if (term)
@@ -65,33 +78,35 @@ System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"
                     if (params.length > 0)
                         url += "?" + params.join("&");
                     var contactsPromise = this.http.get(url, { headers: this.headers }).toPromise();
-                    return contactsPromise.then(function (r) { return r.json(); });
+                    return contactsPromise.then(function (r) { return _this.dateService.jsonWithDate(r.text()); });
                 };
                 PersonsService.prototype.getPersonsForEntity = function (idEntity) {
-                    return this.http.get("api/entities/" + idEntity + "/contacts", { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
+                    var _this = this;
+                    return this.http.get("api/entities/" + idEntity + "/contacts", { headers: this.headers })
+                        .toPromise()
+                        .then(function (r) { return _this.dateService.jsonWithDate(r.text()); });
                 };
                 PersonsService.prototype.getPerson = function (idPerson) {
-                    return this.http.get("api/contacts/" + idPerson, { headers: this.headers }).toPromise().then(function (r) { return r.json(); }).then(function (p) {
-                        p.certificat = new Date(p.certificat);
-                        return p;
-                    });
+                    var _this = this;
+                    return this.http.get("api/contacts/" + idPerson, { headers: this.headers }).toPromise().then(function (r) { return _this.dateService.jsonWithDate(r.text()); });
                 };
                 PersonsService.prototype.savePerson = function (person) {
+                    var _this = this;
                     var url = "api/contacts";
                     if (person.id) {
                         return this.http.post(url, person, { headers: this.headers })
                             .toPromise()
-                            .then(function (r) { return r.json(); });
+                            .then(function (r) { return _this.dateService.jsonWithDate(r.text()); });
                     }
                     else {
                         return this.http.put(url, person, { headers: this.headers })
                             .toPromise()
-                            .then(function (r) { return r.json(); });
+                            .then(function (r) { return _this.dateService.jsonWithDate(r.text()); });
                     }
                 };
                 PersonsService = __decorate([
                     core_1.Injectable(),
-                    __metadata("design:paramtypes", [http_1.Http])
+                    __metadata("design:paramtypes", [http_1.Http, date_service_1.DateService])
                 ], PersonsService);
                 return PersonsService;
             }());

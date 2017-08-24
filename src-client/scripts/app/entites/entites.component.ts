@@ -117,7 +117,7 @@ export class EntiteServerSideInputDataFilterPipe implements PipeTransform {
                                         <select select2 id="categories" name="categories" class="form-control input-sm" 
                                                 multiple="multiple" style="width: 100%;"
                                                 [disable]="isFederationExclusive" [placeHolder]="'Catégories'"
-                                                (value)="onValueChanged($event)">
+                                                (valueChange)="onValueChanged($event)">
                                             <option *ngFor="let typeEntity of typesEntities"
                                                 [value]="typeEntity.id" [attr.selected]="displayTypes && displayTypes.indexOf(typeEntity.id)>-1 ? 'selected' : null">{{typeEntity.label}}</option>
                                         </select>
@@ -148,7 +148,10 @@ export class EntiteServerSideInputDataFilterPipe implements PipeTransform {
                             </thead>
                             <tbody>
                             <tr *ngFor="let entite of mf.data">
-                                <td><a href="#/entities/{{entite.id}}">{{entite.nom}}</a></td>
+                                <td>
+                                    <a *ngIf="!forSelect" [routerLink]="['/entities', entite.id]">{{entite.nom}}</a>
+                                    <a *ngIf="forSelect" href="javascript:void(0)" (click)="select(entite)">{{entite.nom}}</a>
+                                </td>
                                 <td>{{entite.reference}}</td>
                                 <td>{{entite.ville}}</td>
                                 <td><span class="label" [class.label-success]="entite.type == 0" 
@@ -156,7 +159,7 @@ export class EntiteServerSideInputDataFilterPipe implements PipeTransform {
                                     [class.label-danger]="entite.type == 3">{{(typesEntities[entite.type]||{}).label || ''}}</span></td>
                                 <td>
                                     <a href="#/clubs?childOf={{entite.id}}" *ngIf="entite.type < 3"><i class="fa fa-list" aria-hidden="true" title="entités associées"></i></a>
-                                    <a href="#/entities/{{entite.id}}"><i class="fa fa-pencil" title="Editer"></i></a>
+                                    <a [routerLink]="['/entities', entite.id]"><i class="fa fa-pencil" title="Editer"></i></a>
                                     <a href="javascript:void(0)" *ngIf="forSelect" (click)="select(entite)"><i class="fa fa-cart-plus" aria-hidden="true" title="Selectionner"></i></a>
                                 </td>
                             </tr>

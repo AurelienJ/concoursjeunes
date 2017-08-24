@@ -1,5 +1,5 @@
 /*
- * Créé le 11 août 2017 à 11:52:27 pour ArcCompetition
+ * Créé le 24 août 2017 à 11:55:18 pour ArcCompetition
  *
  * Copyright 2002-2017 - Aurélien JEOFFRAY
  *
@@ -88,9 +88,15 @@
  */
 package org.ajdeveloppement.concours.webapi.mappers;
 
-import org.ajdeveloppement.concours.data.RankingCriterion;
-import org.ajdeveloppement.concours.data.T_RankingCriterion;
-import org.ajdeveloppement.concours.webapi.views.RankingCriterionView;
+import java.util.UUID;
+
+import org.ajdeveloppement.concours.data.CriterionElement;
+import org.ajdeveloppement.concours.data.DiscriminantCriterionSet;
+import org.ajdeveloppement.concours.data.DiscriminantCriterionSetElement;
+import org.ajdeveloppement.concours.data.T_CriterionElement;
+import org.ajdeveloppement.concours.data.T_DiscriminantCriterionSet;
+import org.ajdeveloppement.concours.webapi.views.DiscriminantCriterionSetElementView;
+import org.ajdeveloppement.concours.webapi.views.DiscriminantCriterionSetView;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
@@ -102,28 +108,44 @@ import org.mapstruct.ObjectFactory;
  * @author Aurélien JEOFFRAY
  *
  */
-@Mapper(uses = { DistanceAndFacesSetMapper.class, DiscriminantCriterionSetMapper.class }, componentModel="jsr330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
-public abstract class RankingCriterionMapper {
+@Mapper(uses = {  }, componentModel="jsr330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
+public abstract class DiscriminantCriterionSetMapper {
+	
+	public static UUID getIdCriterionElement(DiscriminantCriterionSetElement discriminantCriterionSetElement) {
+		if(discriminantCriterionSetElement.getCriterionElement() != null)
+			return discriminantCriterionSetElement.getCriterionElement().getId();
+		
+		return null;
+	}
 	
 	@ObjectFactory
-	public RankingCriterion getRankingCriterion(RankingCriterionView view) {
-		RankingCriterion rankingCriterion = null;
+	public DiscriminantCriterionSet getDiscriminantCriterionSet(DiscriminantCriterionSetView view) {
+		DiscriminantCriterionSet discriminantCriterionSet = null;
 		
-		if(view.getId() != null)
-			rankingCriterion = T_RankingCriterion.getInstanceWithPrimaryKey(view.getId());
+		if(view.getId() != null) 
+			discriminantCriterionSet = T_DiscriminantCriterionSet.getInstanceWithPrimaryKey(view.getId());
 		
-		if(rankingCriterion == null)
-			rankingCriterion = new RankingCriterion();
+		if(discriminantCriterionSet == null)
+			discriminantCriterionSet = new DiscriminantCriterionSet();
 		
-		return rankingCriterion;
+		return discriminantCriterionSet;
 	}
 	
 	@BeforeMapping
-	public void clearCollections(@MappingTarget RankingCriterion model) {
-		model.getDiscriminantCriterionSet().clear();
+	public void clearCollections(@MappingTarget DiscriminantCriterionSet model) {
+		model.getElements().clear();
 	}
 	
-	@Mapping(target = "discriminantCriterionSet", source = "discriminantCriterionSets")
-	@Mapping(target = "rule", ignore = true)
-	public abstract RankingCriterion toRankingCriterion(RankingCriterionView view);
+	@Mapping(target = "idDiscriminantCriterionSet", source = "id")
+	@Mapping(target = "rankingCriterion", ignore = true)
+	public abstract DiscriminantCriterionSet toDiscriminantCriterionSet(DiscriminantCriterionSetView view);
+	
+	
+	@Mapping(target = "criterionElement", source = "idCriterionElement")
+	@Mapping(target = "discriminantCriterionSet", ignore = true)
+	public abstract DiscriminantCriterionSetElement toDiscriminantCriterionSetElement(DiscriminantCriterionSetElementView view);
+	
+	public CriterionElement asCriterionElement(UUID idCriterionElement) {
+		return T_CriterionElement.getInstanceWithPrimaryKey(idCriterionElement);
+	}
 }

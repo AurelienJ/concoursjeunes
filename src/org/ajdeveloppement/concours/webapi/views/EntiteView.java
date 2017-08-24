@@ -2,6 +2,7 @@ package org.ajdeveloppement.concours.webapi.views;
 
 import java.util.UUID;
 
+import org.ajdeveloppement.concours.webapi.mappers.EntiteMapper;
 import org.ajdeveloppement.webserver.viewbinder.annotations.Implementation;
 import org.ajdeveloppement.webserver.viewbinder.annotations.View;
 
@@ -34,5 +35,6 @@ public interface EntiteView {
 	
 	public boolean isRemovable();
 	
+	@Implementation(mapperClass=EntiteMapper.class, methodModelToView="getIdEntiteParent")
 	public UUID getIdEntiteParent();
 }

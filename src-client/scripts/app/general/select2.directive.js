@@ -1,4 +1,4 @@
-System.register(["@angular/core"], function (exports_1, context_1) {
+System.register(["@angular/core", "lodash"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,11 +10,14 @@ System.register(["@angular/core"], function (exports_1, context_1) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, Select2Directive;
+    var core_1, lodash_1, Select2Directive;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (lodash_1_1) {
+                lodash_1 = lodash_1_1;
             }
         ],
         execute: function () {
@@ -32,15 +35,15 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 function Select2Directive(el, renderer) {
                     this.onSelect = new core_1.EventEmitter();
                     this.onUnselect = new core_1.EventEmitter();
-                    this.value = new core_1.EventEmitter();
+                    this.valueChange = new core_1.EventEmitter();
                     var that = this;
                     this.element = jQuery(el.nativeElement);
                     this.element.on('select2:select', function (e) {
-                        that.value.next(that.element.val());
+                        that.valueChange.next(that.element.val());
                         that.onSelect.emit(e);
                     });
                     this.element.on('select2:unselect', function (e) {
-                        that.value.next(that.element.val());
+                        that.valueChange.next(that.element.val());
                         that.onUnselect.emit(e);
                     });
                 }
@@ -53,11 +56,29 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 });
                 ;
                 Select2Directive.prototype.ngOnInit = function () {
+                };
+                Select2Directive.prototype.ngAfterViewInit = function () {
+                    this.initSelect2();
+                };
+                Select2Directive.prototype.ngOnChanges = function (changes) {
+                    for (var propName in changes) {
+                        if (propName == 'value') {
+                            var chng = changes[propName];
+                            if (!lodash_1.default.isEqual(chng.currentValue, chng.previousValue)) {
+                                this.initSelect2();
+                                this.element.val(chng.currentValue);
+                                this.element.trigger("change");
+                            }
+                        }
+                    }
+                };
+                Select2Directive.prototype.initSelect2 = function () {
+                    if (this.element.data('select2'))
+                        this.element.select2("destroy");
                     this.element.select2({
                         placeholder: this.placeHolder,
                         allowClear: true
                     });
-                    this.value.next(this.element.val());
                 };
                 __decorate([
                     core_1.Input(),
@@ -69,6 +90,10 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                     __metadata("design:paramtypes", [Boolean])
                 ], Select2Directive.prototype, "disable", null);
                 __decorate([
+                    core_1.Input(),
+                    __metadata("design:type", Object)
+                ], Select2Directive.prototype, "value", void 0);
+                __decorate([
                     core_1.Output(),
                     __metadata("design:type", core_1.EventEmitter)
                 ], Select2Directive.prototype, "onSelect", void 0);
@@ -79,7 +104,7 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 __decorate([
                     core_1.Output(),
                     __metadata("design:type", core_1.EventEmitter)
-                ], Select2Directive.prototype, "value", void 0);
+                ], Select2Directive.prototype, "valueChange", void 0);
                 Select2Directive = __decorate([
                     core_1.Directive({ selector: '[select2]' }),
                     __metadata("design:paramtypes", [core_1.ElementRef, core_1.Renderer])

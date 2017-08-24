@@ -45,6 +45,7 @@ System.register(["@angular/core", "lodash"], function (exports_1, context_1) {
                         this.distancesAndFacesSet = [];
                     this.distancesAndFacesSet.push(distanceAndFacesSet);
                     this.distancesAndFacesSetChange.emit(this.distancesAndFacesSet);
+                    this.selectedDistanceAndFacesSet = distanceAndFacesSet;
                 };
                 DistancesAndFacesComponent.prototype.deleteDistanceAndFacesSet = function (distanceAndFacesSet, confirmation) {
                     if (confirmation === void 0) { confirmation = false; }

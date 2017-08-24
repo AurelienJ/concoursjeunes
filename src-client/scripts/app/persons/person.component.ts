@@ -36,8 +36,10 @@ import * as moment from 'moment';
 								<div class="form-group">
 									<label for="personEntity" class="col-sm-2 control-label">Associé à l'entité</label>
 									<div class="col-sm-10">
-										<span *ngIf="entite" >{{entite.nom}}</span>
-										<a class="input" [routerLink]="['/entities']" [queryParams]="{forSelect : true}" id="entity">Choisir...</a>
+										<span class="form-control no-border">
+											<span *ngIf="entite" ><a [routerLink]="['/entities', entite.id]">{{entite.nom}}</a> - </span>
+											<a [routerLink]="['/entities']" [queryParams]="{forSelect : true}" id="entity">Choisir...</a>
+										</span>
 									</div>
 								</div>
 
@@ -61,6 +63,25 @@ import * as moment from 'moment';
 								<div class="form-group">
 									<label for="personFirstName" class="col-sm-2 control-label">Prenom</label>
 									<div class="col-sm-10"><input type="text" placeholder="Prenom" id="personFirstName" name="personFirstName" class="form-control" [(ngModel)]="person.firstName"/></div>
+								</div>
+
+								<div class="form-group" *ngIf="person.type == 'archer'">
+									<label for="dateNaissance" class="col-sm-2 control-label">Date de naissance</label>
+									<div class="col-sm-10">
+										<div class="input-group date">
+											<div class="input-group-addon">
+												<i class="fa fa-calendar"></i>
+											</div>
+											<input [ngModel]="person.dateNaissance | date: 'yyyy-MM-dd'" (ngModelChange)="setDateNaissance($event)" type="date" id="dateNaissance" name="dateNaissance" class="form-control" data-date-format="yyyy-mm-dd" lang="fr">
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group" *ngIf="person.type == 'archer'">
+								<label for="age" class="col-sm-2 control-label">Age</label>
+								<div class="col-sm-10">
+								<span class="form-control no-border">{{age}} ans</span>
+								</div>
 								</div>
 
 								<div class="form-group" *ngIf="person.type == 'archer'">
@@ -140,22 +161,24 @@ import * as moment from 'moment';
 	`
 })
 export class PersonComponent implements OnInit, DoCheck {
-	private person : IPerson = <IPerson>{
+	public person : IPerson = <IPerson>{
 		name: '',
 		firstName: ''
 	};
 
-	private entite : IEntite;
-	
-	private activePane : string;
+	public age : number;
 
-	private countries : ICountry[] = [];
-	private civilities : ICivility[] = [];
+	public entite : IEntite;
+	
+	public activePane : string;
+
+	public countries : ICountry[] = [];
+	public civilities : ICivility[] = [];
+
+	public error;
 
     private idPerson : string;
     private url : UrlSegment[];
-
-	private error;
 
     private mustUpdateView : boolean = false;
 
@@ -206,6 +229,8 @@ export class PersonComponent implements OnInit, DoCheck {
 			this.persons.getPerson(this.idPerson).then(p => {
 				this.person = p;
 
+				this.age = this.calculAge(p.dateNaissance);
+
 				if(currentNavigationSnapshot.returnData) {
 					this.entite = <IEntite>currentNavigationSnapshot.returnData;
 					this.person.idEntity = this.entite.id;
@@ -251,8 +276,45 @@ export class PersonComponent implements OnInit, DoCheck {
 		} catch(e) {}
 	}
 
+	setDateNaissance(date : string) {
+		try {
+			let validDate = this.toDate(date);
+			if(validDate.getFullYear() >= new Date().getFullYear() - 1
+					&& validDate.getFullYear() <= new Date().getFullYear())
+				this.person.dateNaissance = validDate;
+				this.age = this.calculAge(validDate);
+		} catch(e) {}
+	}
+
 	toDate(date : string) : Date{
 		return new Date(date);
+	}
+
+	calculAge(dateNaissance : Date) {
+		let td=new Date();// Le date d'ouverture de la page (aujourd'hui)		
+		var age=td.getFullYear()-dateNaissance.getFullYear(); // l'âge du patient
+	 
+		var mMois=td.getMonth()-dateNaissance.getMonth(); // On calcul  le mois de la date - le mois de la date de naissance
+	 
+		 
+		if(mMois < 0) // s'il est strictement inferieur a 0
+		{
+			age=age-1; // On enléve 1 ans a l'age
+		}  
+		else
+		{
+			if(mMois == 0)// s'il égal 0 on est sur le même mois
+			{
+				var mDate=td.getDate()-dateNaissance.getDate();
+				if(mDate < 0)
+				{
+					age=age-1;
+				}
+				 
+			}
+		}
+	 
+		return age; // que l'on place dans le input d'id Age
 	}
 
 	cancel() {

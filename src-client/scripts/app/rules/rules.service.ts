@@ -66,10 +66,6 @@ export class RulesService {
 		return this.rulesCategories;
 	}
 
-	public getCriteria(idRule : string) : Promise<Criterion[]> {
-		return this.http.get("api/rules/" + idRule + "/criteria").toPromise().then(r => r.json());
-	}
-
 	public getFaces() : Promise<IFace[]> {
 		return this.http.get("api/faces").toPromise().then(r => r.json());
 	}

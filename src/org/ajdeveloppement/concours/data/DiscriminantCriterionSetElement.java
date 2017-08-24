@@ -1,5 +1,5 @@
 /*
- * Créé le 11 août 2017 à 11:52:27 pour ArcCompetition
+ * Créé le 24 août 2017 à 11:22:52 pour ArcCompetition
  *
  * Copyright 2002-2017 - Aurélien JEOFFRAY
  *
@@ -86,44 +86,109 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi.mappers;
+package org.ajdeveloppement.concours.data;
 
-import org.ajdeveloppement.concours.data.RankingCriterion;
-import org.ajdeveloppement.concours.data.T_RankingCriterion;
-import org.ajdeveloppement.concours.webapi.views.RankingCriterionView;
-import org.mapstruct.BeforeMapping;
-import org.mapstruct.CollectionMappingStrategy;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ObjectFactory;
+import javax.validation.constraints.Min;
+
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@Mapper(uses = { DistanceAndFacesSetMapper.class, DiscriminantCriterionSetMapper.class }, componentModel="jsr330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
-public abstract class RankingCriterionMapper {
+@SqlTable(name="ELEMENT_JEUX_CRITERES_DISCRIMINANT")
+@SqlPrimaryKey(fields= {"ID_JEUX_CRITERES_DISCRIMINANT","ID_ELEMENT_CRITERE_DISCRIMINANT"})
+public class DiscriminantCriterionSetElement implements SqlObjectPersistence {
+	@SqlForeignKey(mappedTo="ID_JEUX_CRITERES_DISCRIMINANT")
+	private DiscriminantCriterionSet discriminantCriterionSet;
 	
-	@ObjectFactory
-	public RankingCriterion getRankingCriterion(RankingCriterionView view) {
-		RankingCriterion rankingCriterion = null;
-		
-		if(view.getId() != null)
-			rankingCriterion = T_RankingCriterion.getInstanceWithPrimaryKey(view.getId());
-		
-		if(rankingCriterion == null)
-			rankingCriterion = new RankingCriterion();
-		
-		return rankingCriterion;
+	@SqlForeignKey(mappedTo="ID_ELEMENT_CRITERE_DISCRIMINANT")
+	private CriterionElement criterionElement;
+	
+	@Min(0)
+	@SqlField(name="ORDRE")
+	private int ordre;
+
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.DiscriminantCriterionSetElementView#getDiscriminantCriterionSet()
+	 */
+	public DiscriminantCriterionSet getDiscriminantCriterionSet() {
+		return discriminantCriterionSet;
 	}
-	
-	@BeforeMapping
-	public void clearCollections(@MappingTarget RankingCriterion model) {
-		model.getDiscriminantCriterionSet().clear();
+
+	/**
+	 * @param discriminantCriterionSet discriminantCriterionSet à définir
+	 */
+	public void setDiscriminantCriterionSet(DiscriminantCriterionSet discriminantCriterionSet) {
+		this.discriminantCriterionSet = discriminantCriterionSet;
 	}
-	
-	@Mapping(target = "discriminantCriterionSet", source = "discriminantCriterionSets")
-	@Mapping(target = "rule", ignore = true)
-	public abstract RankingCriterion toRankingCriterion(RankingCriterionView view);
+
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.DiscriminantCriterionSetElementView#getCriterionElement()
+	 */
+	public CriterionElement getCriterionElement() {
+		return criterionElement;
+	}
+
+	/**
+	 * @param criterionElement criterionElement à définir
+	 */
+	public void setCriterionElement(CriterionElement criterionElement) {
+		this.criterionElement = criterionElement;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.DiscriminantCriterionSetElementView#getOrdre()
+	 */
+	public int getOrdre() {
+		return ordre;
+	}
+
+	/**
+	 * @param ordre ordre à définir
+	 */
+	public void setOrdre(int ordre) {
+		this.ordre = ordre;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((criterionElement == null) ? 0 : criterionElement.hashCode());
+		result = prime * result + ((discriminantCriterionSet == null) ? 0 : discriminantCriterionSet.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DiscriminantCriterionSetElement other = (DiscriminantCriterionSetElement) obj;
+		if (criterionElement == null) {
+			if (other.criterionElement != null)
+				return false;
+		} else if (!criterionElement.equals(other.criterionElement))
+			return false;
+		if (discriminantCriterionSet == null) {
+			if (other.discriminantCriterionSet != null)
+				return false;
+		} else if (!discriminantCriterionSet.equals(other.discriminantCriterionSet))
+			return false;
+		return true;
+	}
 }

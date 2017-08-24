@@ -99,6 +99,8 @@ export class DistancesAndFacesComponent implements OnInit {
         
         this.distancesAndFacesSet.push(distanceAndFacesSet);
         this.distancesAndFacesSetChange.emit(this.distancesAndFacesSet);
+
+        this.selectedDistanceAndFacesSet = distanceAndFacesSet;
     }
 
     public deleteDistanceAndFacesSet(distanceAndFacesSet : IDistanceAndFacesSet, confirmation : boolean = false) {

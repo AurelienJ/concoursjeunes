@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@angular/platform-browser", "@angular/http", "./navigator.service", "./titlebar.component", "./arraySearch.pipe", "./select2.directive", "./uppercase.pipe"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@angular/platform-browser", "@angular/http", "./navigator.service", "./date.service", "./titlebar.component", "./arraySearch.pipe", "./select2.directive", "./uppercase.pipe"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7,7 +7,7 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, platform_browser_1, http_1, navigator_service_1, titlebar_component_1, arraySearch_pipe_1, select2_directive_1, uppercase_pipe_1, GeneralModule;
+    var core_1, router_1, platform_browser_1, http_1, navigator_service_1, date_service_1, titlebar_component_1, arraySearch_pipe_1, select2_directive_1, uppercase_pipe_1, GeneralModule;
     return {
         setters: [
             function (core_1_1) {
@@ -24,6 +24,9 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
             },
             function (navigator_service_1_1) {
                 navigator_service_1 = navigator_service_1_1;
+            },
+            function (date_service_1_1) {
+                date_service_1 = date_service_1_1;
             },
             function (titlebar_component_1_1) {
                 titlebar_component_1 = titlebar_component_1_1;
@@ -47,7 +50,7 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
                         imports: [router_1.RouterModule, platform_browser_1.BrowserModule, http_1.HttpModule],
                         declarations: [titlebar_component_1.TitlebarComponent, arraySearch_pipe_1.TableFilterPipe, uppercase_pipe_1.UpperCasePipe, select2_directive_1.Select2Directive],
                         bootstrap: [],
-                        providers: [navigator_service_1.NavigatorService],
+                        providers: [navigator_service_1.NavigatorService, date_service_1.DateService],
                         exports: [titlebar_component_1.TitlebarComponent, arraySearch_pipe_1.TableFilterPipe, uppercase_pipe_1.UpperCasePipe, select2_directive_1.Select2Directive]
                     })
                 ], GeneralModule);

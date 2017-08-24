@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule } from '@angular/http';
 
 import { NavigatorService } from './navigator.service'
+import { DateService } from './date.service';
 
 import { TitlebarComponent } from './titlebar.component'
 
@@ -17,7 +18,7 @@ import { UpperCasePipe } from './uppercase.pipe';
     imports:        [ RouterModule, BrowserModule, HttpModule ],
     declarations:   [ TitlebarComponent, TableFilterPipe, UpperCasePipe, Select2Directive ],
     bootstrap:      [],
-    providers:      [ NavigatorService ],
+    providers:      [ NavigatorService, DateService ],
     exports:        [ TitlebarComponent, TableFilterPipe, UpperCasePipe, Select2Directive ]
 })
 export class GeneralModule {

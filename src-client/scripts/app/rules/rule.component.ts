@@ -19,7 +19,7 @@ import { IDistanceAndFacesSet } from './model/IDistanceAndFacesSet';
 	<div class="content body">
         <div class="row">
             <div class="col-xs-12">
-				<form class="form-horizontal" #ruleForm="ngForm">
+				<form #ruleForm="ngForm">
 				<div class="nav-tabs-custom">
 					<ul class="nav nav-tabs">
 						<li [class.active]="!activePane || activePane=='general'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='general'">Général</a></li>
@@ -28,15 +28,17 @@ import { IDistanceAndFacesSet } from './model/IDistanceAndFacesSet';
 						
 					</ul>
 					<div class="tab-content">
-						<div id="general" class="tab-pane" [class.active]="!activePane || activePane=='general'">
+						<div id="general" class="tab-pane form-horizontal" [class.active]="!activePane || activePane=='general'">
 							<section class="formulaire">
 								<h4>Détail</h4>
 
 								<div class="form-group">
 									<label class="col-md-3 col-lg-2 control-label">Réglement rattaché à</label>
 									<div class="col-md-9 col-lg-10">
-									<a href="#/entities/{{rule.idEntite}}">{{rule.libelleEntite}}</a>
-									<a [routerLink]="['/federations']" [queryParams]="{forSelect : true}" id="entityFederation" class="input">Choisir...</a>
+									<p class="form-control-static">
+									<a [routerLink]="['/entities', rule.idEntite]">{{rule.libelleEntite}}</a> - 
+									<a [routerLink]="['/federations']" [queryParams]="{forSelect : true}" id="entityFederation">Choisir...</a>
+									</p>
 									</div>
 								</div>
 
@@ -109,7 +111,7 @@ import { IDistanceAndFacesSet } from './model/IDistanceAndFacesSet';
 						</div>
 
 						<div id="ranking" class="tab-pane" [class.active]="activePane=='ranking'">
-							<ranking [(rankingCriteria)]="rule.rankingCriteria" [distancesAndFacesSet]="rule.distancesAndFaces"></ranking>
+							<ranking [(rankingCriteria)]="rule.rankingCriteria" [distancesAndFacesSet]="rule.distancesAndFaces" [idFederation]="rule.idEntite"></ranking>
 						</div>
 					</div>
 				</div>

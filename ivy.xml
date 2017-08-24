@@ -12,14 +12,14 @@
 		    <conf name="all" extends="windows32,windows64,macosx,linux" description="All platform dependencies"/>
 		</configurations>
         <dependencies>
-            <dependency org="org.ajdeveloppement" name="ajcommons" rev="2.0.8"/>
-            <dependency org="org.ajdeveloppement" name="ajcommons-ext" rev="2.0.8"/>
-            <dependency org="org.ajdeveloppement" name="ajcommons-persistence" rev="2.0.8"/>
-            <dependency org="org.ajdeveloppement" name="ajcommons-persistence-sql" rev="2.0.8"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-core" rev="2.0.9"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-ext" rev="2.0.9"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-persistence" rev="2.0.9"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-persistence-sql" rev="2.0.9"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-webserver" rev="[0.3,)"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-webserver-viewbinder" rev="[0.0,)"/>
-            <dependency org="org.ajdeveloppement" name="ajcommons-swing-ext" rev="2.0.8"/>
-            <dependency org="org.ajdeveloppement" name="ajcommons-updater" rev="2.0.8"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-swing-ext" rev="2.0.9"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-updater" rev="2.0.9"/>
 			<dependency org="org.mapstruct" name="mapstruct-jdk8" rev="1.2.0.CR1">
 				<exclude module="mapstruct-common"/>
 			</dependency>

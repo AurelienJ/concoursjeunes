@@ -1,5 +1,5 @@
 /*
- * Créé le 11 août 2017 à 11:52:27 pour ArcCompetition
+ * Créé le 24 août 2017 à 11:13:12 pour ArcCompetition
  *
  * Copyright 2002-2017 - Aurélien JEOFFRAY
  *
@@ -86,44 +86,123 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.ajdeveloppement.concours.webapi.mappers;
+package org.ajdeveloppement.concours.data;
 
-import org.ajdeveloppement.concours.data.RankingCriterion;
-import org.ajdeveloppement.concours.data.T_RankingCriterion;
-import org.ajdeveloppement.concours.webapi.views.RankingCriterionView;
-import org.mapstruct.BeforeMapping;
-import org.mapstruct.CollectionMappingStrategy;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ObjectFactory;
+import java.sql.Types;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
+import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-@Mapper(uses = { DistanceAndFacesSetMapper.class, DiscriminantCriterionSetMapper.class }, componentModel="jsr330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
-public abstract class RankingCriterionMapper {
+@SqlTable(name="JEUX_CRITERES_DISCRIMINANT")
+@SqlPrimaryKey(fields="ID_JEUX_CRITERES_DISCRIMINANT",generatedidField=@SqlGeneratedIdField(name="ID_JEUX_CRITERES_DISCRIMINANT",type=Types.OTHER))
+public class DiscriminantCriterionSet implements SqlObjectPersistence {
+	@SqlField(name="ID_JEUX_CRITERES_DISCRIMINANT")
+	private UUID idDiscriminantCriterionSet;
 	
-	@ObjectFactory
-	public RankingCriterion getRankingCriterion(RankingCriterionView view) {
-		RankingCriterion rankingCriterion = null;
-		
-		if(view.getId() != null)
-			rankingCriterion = T_RankingCriterion.getInstanceWithPrimaryKey(view.getId());
-		
-		if(rankingCriterion == null)
-			rankingCriterion = new RankingCriterion();
-		
+	@SqlForeignKey(mappedTo="ID_CRITERE_CLASSEMENT")
+	private RankingCriterion rankingCriterion;
+	
+	@SqlChildCollection(foreignFields="ID_JEUX_CRITERES_DISCRIMINANT",type=DiscriminantCriterionSetElement.class)
+	private LazyPersistentCollection<DiscriminantCriterionSetElement, Void> elements = new LazyPersistentCollection<>(
+			() -> T_DiscriminantCriterionSetElement.all()
+				.where(T_DiscriminantCriterionSetElement.ID_JEUX_CRITERES_DISCRIMINANT.equalTo(idDiscriminantCriterionSet))
+				.orderBy(T_DiscriminantCriterionSetElement.ORDRE));
+	
+	/**
+	 * @return idDiscriminantCriterionSet
+	 */
+	public UUID getIdDiscriminantCriterionSet() {
+		return idDiscriminantCriterionSet;
+	}
+
+	/**
+	 * @param idDiscriminantCriterionSet idDiscriminantCriterionSet à définir
+	 */
+	public void setIdDiscriminantCriterionSet(UUID idDiscriminantCriterionSet) {
+		this.idDiscriminantCriterionSet = idDiscriminantCriterionSet;
+	}
+
+	/**
+	 * @return rankingCriterion
+	 */
+	public RankingCriterion getRankingCriterion() {
 		return rankingCriterion;
 	}
-	
-	@BeforeMapping
-	public void clearCollections(@MappingTarget RankingCriterion model) {
-		model.getDiscriminantCriterionSet().clear();
+
+	/**
+	 * @param rankingCriterion rankingCriterion à définir
+	 */
+	public void setRankingCriterion(RankingCriterion rankingCriterion) {
+		this.rankingCriterion = rankingCriterion;
+	}
+
+	/**
+	 * @return elements
+	 */
+	public LazyPersistentCollection<DiscriminantCriterionSetElement, Void> getElements() {
+		return elements;
+	}
+
+	/**
+	 * @param elements elements à définir
+	 */
+	public void addElement(DiscriminantCriterionSetElement element) {
+		element.setDiscriminantCriterionSet(this);
+		this.elements.add(element);
 	}
 	
-	@Mapping(target = "discriminantCriterionSet", source = "discriminantCriterionSets")
-	@Mapping(target = "rule", ignore = true)
-	public abstract RankingCriterion toRankingCriterion(RankingCriterionView view);
+	/**
+	 * @param elements elements à définir
+	 */
+	public void removeElement(DiscriminantCriterionSetElement element) {
+		this.elements.remove(element);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((idDiscriminantCriterionSet == null) ? 0 : idDiscriminantCriterionSet.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DiscriminantCriterionSet other = (DiscriminantCriterionSet) obj;
+		if (idDiscriminantCriterionSet == null) {
+			if (other.idDiscriminantCriterionSet != null)
+				return false;
+		} else if (!idDiscriminantCriterionSet.equals(other.idDiscriminantCriterionSet))
+			return false;
+		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return elements.stream().map(e -> e.getCriterionElement().getLibelle()).collect(Collectors.joining(" / ")); //$NON-NLS-1$
+	}
 }

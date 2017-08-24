@@ -90,7 +90,9 @@ package org.ajdeveloppement.concours.data;
 
 import java.util.UUID;
 
+import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
@@ -118,6 +120,10 @@ public class RankingCriterion implements SqlObjectPersistence {
 	
 	@SqlForeignKey(mappedTo="ID_JEUX_DISTANCES_BLASONS")
 	private DistanceAndFacesSet distanceAndFacesSet;
+	
+	@SqlChildCollection(foreignFields="ID_CRITERE_CLASSEMENT",type=DiscriminantCriterionSet.class)
+	private LazyPersistentCollection<DiscriminantCriterionSet, Void> discriminantCriterionSet = new LazyPersistentCollection<>(
+			() -> T_DiscriminantCriterionSet.all().where(T_DiscriminantCriterionSet.ID_CRITERE_CLASSEMENT.equalTo(id)));
 
 	/* (non-Javadoc)
 	 * @see org.ajdeveloppement.concours.data.RankingCriterionView#getId()
@@ -187,6 +193,29 @@ public class RankingCriterion implements SqlObjectPersistence {
 	 */
 	public void setDistanceAndFacesSet(DistanceAndFacesSet distanceAndFacesSet) {
 		this.distanceAndFacesSet = distanceAndFacesSet;
+	}
+
+	/**
+	 * @return discriminantCriterionSet
+	 */
+	public LazyPersistentCollection<DiscriminantCriterionSet, Void> getDiscriminantCriterionSet() {
+		return discriminantCriterionSet;
+	}
+
+	/**
+	 * @param discriminantCriterionSet discriminantCriterionSet à définir
+	 */
+	public void addDiscriminantCriterionSet(DiscriminantCriterionSet discriminantCriterionSet) {
+		discriminantCriterionSet.setRankingCriterion(this);
+		
+		this.discriminantCriterionSet.add(discriminantCriterionSet);
+	}
+	
+	/**
+	 * @param discriminantCriterionSet discriminantCriterionSet à définir
+	 */
+	public void removeDiscriminantCriterionSet(DiscriminantCriterionSet discriminantCriterionSet) {
+		this.discriminantCriterionSet.remove(discriminantCriterionSet);
 	}
 
 	@Override

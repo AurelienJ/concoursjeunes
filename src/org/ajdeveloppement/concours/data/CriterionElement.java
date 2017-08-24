@@ -88,12 +88,6 @@ package org.ajdeveloppement.concours.data;
 
 import java.util.UUID;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
@@ -108,16 +102,9 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  * 
  * @author Aurélien JEOFFRAY
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="ELEMENT_CRITERE_DISCRIMINANT")
 @SqlPrimaryKey(fields={"ID_ELEMENT_CRITERE_DISCRIMINANT"})
-public class CriterionElement implements SqlObjectPersistence, Cloneable {
-
-	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
-	@XmlID
-	@XmlAttribute(name="id")
-	private String xmlId;
-	
+public class CriterionElement implements SqlObjectPersistence {
 	@SqlField(name="ID_ELEMENT_CRITERE_DISCRIMINANT")
 	private UUID id = UUID.randomUUID();
 	
@@ -135,12 +122,8 @@ public class CriterionElement implements SqlObjectPersistence, Cloneable {
 	
 	@SqlForeignKey(mappedTo={"ID_ELEMENT_CRITERE_DISCRIMINANT_REFERENCE"})
 	private CriterionElement elementReference;
-	/**
-	 * 
-	 */
-    public CriterionElement() {
-        
-    }
+	
+	public CriterionElement() {}
     
     /**
      * Construit un nouvel élément de critère avec le code fournit en paramètre
@@ -246,24 +229,6 @@ public class CriterionElement implements SqlObjectPersistence, Cloneable {
 	}
 	
 	/**
-	 * 
-	 * @param marshaller
-	 */
-	protected void beforeMarshal(Marshaller marshaller) {
-		xmlId = UUID.randomUUID().toString();
-	}
-
-	/**
-	 * 
-	 * @param unmarshaller
-	 * @param parent
-	 */
-	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		if(parent instanceof Criterion)
-			criterion = (Criterion)parent;
-	}
-
-	/**
      * retourne le libelle de l'élément
      */
     @Override
@@ -272,10 +237,33 @@ public class CriterionElement implements SqlObjectPersistence, Cloneable {
     }
 
 	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
+	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		return super.clone();
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CriterionElement other = (CriterionElement) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 }

@@ -118,6 +118,7 @@ import org.ajdeveloppement.commons.sql.SqlManager;
 import org.ajdeveloppement.concours.event.ApplicationCoreEvent;
 import org.ajdeveloppement.concours.event.ApplicationCoreListener;
 import org.ajdeveloppement.concours.managers.ConfigurationManager;
+import org.h2.jdbcx.JdbcConnectionPool;
 /**
  * Class principal de l'application, gère l'ensemble des ressources commune tel que
  * <ul>
@@ -268,10 +269,17 @@ public class ApplicationCore {
 	 */
 	private void openDatabase() throws SQLException {
 		ContextDomain contextDomain = new ContextDomain();
-		contextDomain.setDatabaseUrl(staticParameters.getResourceString("database.url", userRessources.getBasePath())); //$NON-NLS-1$
-		contextDomain.setUser(staticParameters.getResourceString("database.user")); //$NON-NLS-1$
-		contextDomain.setPassword(staticParameters.getResourceString("database.password")); //$NON-NLS-1$
+		//contextDomain.setDatabaseUrl(staticParameters.getResourceString("database.url", userRessources.getBasePath())); //$NON-NLS-1$
+		//contextDomain.setUser(staticParameters.getResourceString("database.user")); //$NON-NLS-1$
+		//contextDomain.setPassword(staticParameters.getResourceString("database.password")); //$NON-NLS-1$
 		contextDomain.setPersistenceDialect("h2"); //$NON-NLS-1$
+		
+		JdbcConnectionPool connectionPool = JdbcConnectionPool.create(
+				staticParameters.getResourceString("database.url", userRessources.getBasePath()), 
+				staticParameters.getResourceString("database.user"),
+				staticParameters.getResourceString("database.password"));
+		connectionPool.setMaxConnections(100);
+		contextDomain.setDataSource(connectionPool);
 		
 		SqlContext.getContextDomains().put(SqlContext.DEFAULT_DOMAIN, contextDomain);
 		//SqlContext.getContextDomains().put(HttpServer.WEBSERVER_DB_DOMAIN, contextDomain);

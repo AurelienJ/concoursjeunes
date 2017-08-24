@@ -1,6 +1,8 @@
 import { Injectable }    from '@angular/core';
 import { Headers, Http } from '@angular/http';
 
+import { DateService } from '../general/date.service';
+
 import { IEntite } from '../entites/ientite';
 import { ICountry } from '../references/ICountry'
 import { IPerson } from './IPerson'
@@ -14,10 +16,19 @@ export class PersonsService {
 
 	private civilities : Promise<ICivility[]>;
 
-	constructor(private http : Http) {
+	constructor(private http : Http, private dateService : DateService) {
 		this.headers = new Headers();
         this.headers.append('Content-Type', 'application/json');
         this.headers.append('Accept', 'application/json');
+	}
+
+	private convertDates(person : IPerson) {
+		if(person.dateNaissance)
+			person.dateNaissance = new Date(person.dateNaissance);
+		if(person.certificat)
+			person.certificat = new Date(person.certificat);
+		if(person.dateModification)
+			person.dateModification = new Date(person.dateModification);
 	}
 
 	public getCivilities() : Promise<ICivility[]> {
@@ -73,18 +84,17 @@ export class PersonsService {
 
         let contactsPromise = this.http.get(url, {headers: this.headers}).toPromise();
 
-		return contactsPromise.then(r => r.json());
+		return contactsPromise.then(r => this.dateService.jsonWithDate(r.text()));
 	}
 
 	public getPersonsForEntity(idEntity : string) : Promise<IPerson[]>{
-		return this.http.get("api/entities/" + idEntity + "/contacts", {headers: this.headers}).toPromise().then(r => r.json());
+		return this.http.get("api/entities/" + idEntity + "/contacts", {headers: this.headers})
+			.toPromise()
+			.then(r => this.dateService.jsonWithDate(r.text()));
 	}
 
 	public getPerson(idPerson : string) : Promise<IPerson> {
-		return this.http.get("api/contacts/" + idPerson, {headers: this.headers}).toPromise().then(r => r.json()).then((p : IPerson) => {
-			p.certificat = new Date(p.certificat);
-			return p;
-		});
+		return this.http.get("api/contacts/" + idPerson, {headers: this.headers}).toPromise().then(r => this.dateService.jsonWithDate(r.text()));
 	}
 
 	public savePerson(person : IPerson) : Promise<IPerson> {
@@ -93,11 +103,11 @@ export class PersonsService {
 		if(person.id) {
 			return this.http.post(url, person,{headers: this.headers})
 				.toPromise()
-				.then(r => r.json());
+				.then(r => this.dateService.jsonWithDate(r.text()));
 		} else {
 			return this.http.put(url, person,{headers: this.headers})
 				.toPromise()
-				.then(r => r.json());
+				.then(r => this.dateService.jsonWithDate(r.text()));
 		}
 	}
 }
