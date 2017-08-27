@@ -1,3 +1,5 @@
+import { IDiscriminantCriterionSet } from "../rules/model/IDiscriminantCriterionSet";
+
 export interface IPerson {
 	type : string;
 	id : string;
@@ -21,5 +23,6 @@ export interface IPerson {
 	handicape : boolean;
 	dateModification : Date;
 	coordinates : any[],
-	categories : string[]
+	categories : string[],
+	discriminantCriterionSet : IDiscriminantCriterionSet
 }

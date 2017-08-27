@@ -5,11 +5,14 @@ import { ActivatedRoute, Router, NavigationEnd,UrlSegment } from '@angular/route
 //import { IEntite } from '../models/ientite';
 import { EntitesService } from '../entites/entites.service';
 import { ReferencesService } from '../references/references.service';
+import { PersonsService } from './persons.service';
+import { NavigatorService, NavigationSnapshot } from '../general';
 import { IEntite } from '../entites/ientite';
 import { IPerson } from './IPerson';
 import { ICivility } from './ICivility';
-import { PersonsService } from './persons.service';
-import { NavigatorService, NavigationSnapshot } from '../general';
+
+import { Criterion } from '../entites/Criterion';
+import { ICriterionElement } from '../entites/ICriterionElement';
 
 //import { ITypeLabel } from '../models/ITypeLabel'
 import { ICountry } from '../references/ICountry';
@@ -27,8 +30,8 @@ import * as moment from 'moment';
 				<div class="nav-tabs-custom">
 					<ul class="nav nav-tabs">
 						<li [class.active]="!activePane || activePane=='identity'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='identity'">Identité</a></li>
-						<li [class.active]="activePane=='category'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='category'">Categorie</a></li>
-						<li [class.active]="activePane=='activity'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='activity'">Activités</a></li>
+						<li *ngIf="person.type == 'archer'" [class.active]="activePane=='category'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='category'">Categorie</a></li>
+						<li *ngIf="person.type == 'archer'" [class.active]="activePane=='activity'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='activity'">Activités</a></li>
 					</ul>
 					<div class="tab-content">
 						<div id="identity" class="tab-pane" [class.active]="!activePane || activePane=='identity'">
@@ -137,10 +140,17 @@ import * as moment from 'moment';
 								</div>
 							</section>
 						</div>
-						<div id="category" class="tab-pane" [class.active]="activePane=='category'">
-							Pour les archers - catégorie de classement
+						<div id="category" class="tab-pane" [class.active]="activePane=='category'" *ngIf="person.type == 'archer'">
+							<div *ngFor="let criterion of criteria" class="form-group">
+							<label for="criterion-elements-{{criterion.id}}" class="col-sm-2 control-label">{{criterion.libelle}}</label>
+							<div class="col-sm-10">
+							<select select2 name="criterion-elements-{{criterion.id}}" class="form-control" style="width: 200px;">
+								<option *ngFor="let element of criterion.criterionElements" value="{{element.id}}">{{element.libelle}}</option>
+							</select>
+							</div>
+							</div>
 						</div>
-						<div id="activity" class="tab-pane" [class.active]="activePane=='activity'">
+						<div id="activity" class="tab-pane" [class.active]="activePane=='activity'" *ngIf="person.type == 'archer'">
 							Pour les archers - activité de l'archer sur les compétitions
 						</div>
 					</div>
@@ -174,6 +184,7 @@ export class PersonComponent implements OnInit, DoCheck {
 
 	public countries : ICountry[] = [];
 	public civilities : ICivility[] = [];
+	public criteria : Criterion[] = [];
 
 	public error;
 
@@ -232,10 +243,10 @@ export class PersonComponent implements OnInit, DoCheck {
 				this.age = this.calculAge(p.dateNaissance);
 
 				if(currentNavigationSnapshot.returnData) {
-					this.entite = <IEntite>currentNavigationSnapshot.returnData;
+					this.setEntity(<IEntite>currentNavigationSnapshot.returnData);
 					this.person.idEntity = this.entite.id;
 				} else if(this.person.idEntity) {
-					this.entitesService.getEntity(this.person.idEntity).then(entity => this.entite = entity);
+					this.entitesService.getEntity(this.person.idEntity).then(entity => this.setEntity(entity));
 				}
 
 				currentNavigationSnapshot.label = p.name + " " + p.firstName;
@@ -246,10 +257,10 @@ export class PersonComponent implements OnInit, DoCheck {
 			let idEntity = null;
 			if(previousNavigationSnapshot && previousNavigationSnapshot.stateData
 					&& previousNavigationSnapshot.stateData._type == "Entite") {
-				this.entite = <IEntite>previousNavigationSnapshot.stateData;
+				this.setEntity(<IEntite>previousNavigationSnapshot.stateData);
 				idEntity = this.entite.id;
 			} else if(currentNavigationSnapshot.returnData) {
-				this.entite = <IEntite>currentNavigationSnapshot.returnData;
+				this.setEntity(<IEntite>currentNavigationSnapshot.returnData);
 				idEntity = this.entite.id;
 			}
 			this.person = <IPerson>{
@@ -266,6 +277,15 @@ export class PersonComponent implements OnInit, DoCheck {
 	/*formatDate(date : Date) : string{
 		return moment(date).format('DD/MM/YYYY');
 	}*/
+	private setEntity(entity : IEntite) {
+		this.entite = entity;
+		if(this.entite.idEntiteParent)
+			this.entitesService.getCriteria(this.entite.idEntiteParent).then(c => this.criteria = c);
+		else if(this.entite.type == 0)
+			this.entitesService.getCriteria(this.entite.id).then(c => this.criteria = c);
+		else
+			this.criteria = [];
+	}
 
 	setDateCertificat(date : string) {
 		try {

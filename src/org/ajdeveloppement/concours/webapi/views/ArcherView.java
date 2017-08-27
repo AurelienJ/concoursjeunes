@@ -28,5 +28,7 @@ public interface ArcherView extends ContactView {
 	 * @return true si l'archer est handicapé, false sinon
 	 */
 	boolean isHandicape();
+	
+	DiscriminantCriterionSetView getDiscriminantCriterionSet();
 
 }

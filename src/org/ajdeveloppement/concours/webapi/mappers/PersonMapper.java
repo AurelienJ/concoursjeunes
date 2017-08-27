@@ -122,7 +122,7 @@ import org.mapstruct.MappingTarget;
  * @author Aurélien JEOFFRAY
  *
  */
-@Mapper(componentModel="js330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
+@Mapper(uses = { DiscriminantCriterionSetMapper.class}, componentModel="js330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
 public abstract class PersonMapper {
 	
 	@Inject
