@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
+import { OrderModule } from 'ngx-order-pipe';
 import { DataTableModule } from '../datatable';
 import { GeneralModule } from '../general';
 import { ReferencesModule } from '../references/references.module';
@@ -17,7 +18,7 @@ import { RankingComponent } from './ranking.component';
 import { DetailRankingComponent } from './detailRanking.component';
 
 @NgModule({
-    imports:        [ RouterModule, BrowserModule, FormsModule, DataTableModule, GeneralModule, 
+    imports:        [ RouterModule, BrowserModule, FormsModule, DataTableModule, OrderModule, GeneralModule, 
         ReferencesModule ],
     declarations:   [ RuleComponent, RulesComponent, 
         DistancesAndFacesComponent, DetailDistancesAndFacesComponent, 

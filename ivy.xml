@@ -24,7 +24,6 @@
 				<exclude module="mapstruct-common"/>
 			</dependency>
 			<dependency org="org.mapstruct" name="mapstruct-processor" rev="1.2.0.CR1"/>
-			<dependency org="javax.validation" name="validation-api" rev="2.0.0.Final" />
             <dependency org="com.h2database" name="h2" rev="1.4.196" conf="runtime->default" />
             <dependency org="com.lowagie" name="itext" rev="2.1.7">
             	<exclude module="bcmail-jdk14"/>

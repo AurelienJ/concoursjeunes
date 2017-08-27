@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, DoCheck } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, DoCheck, OnChanges, SimpleChanges } from '@angular/core';
 
 import { IEntite } from '../entites/ientite';
 import { IRankingCriterion } from './model/IRankingCriterion';
@@ -39,11 +39,11 @@ import _ from 'lodash';
                 <div class="row">
                     <div class="col-sm-12">
                         <ul class="list-group" id="criteria-collection">
-                            <li class="list-group-item" *ngFor="let rankingCriterion of rankingCriteria">
-                                <a href="javascript:void(0)" (click)="selectedRankingCriterion = rankingCriterion">{{rankingCriterion.name || '&lt;Nouveau critère de classement&gt;'}}</a>
-                                <a href="javascript:void(0)" class="pull-right button-separator" (click)="deleteRankingCriterion(rankingCriterion)"><i class="fa fa-trash" title="Supprimer"></i></a>
-                                <a href="javascript:void(0)" class="pull-right button-separator" [class.disabled]="rankingCriterion.numordre <= 1" (click)="upRankingCriterion(rankingCriterion)"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
-                                <a href="javascript:void(0)" class="pull-right button-separator" [class.disabled]="rankingCriterion.numordre >= rankingCriteria.length" (click)="downRankingCriterion(rankingCriterion)"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
+                            <li class="list-group-item clearfix" *ngFor="let rankingCriterion of rankingCriteria">
+                                <a href="javascript:void(0)" class="button-align" (click)="selectedRankingCriterion = rankingCriterion">{{rankingCriterion.name || '&lt;Nouveau critère de classement&gt;'}}</a>
+                                <a href="javascript:void(0)" role="button" class="pull-right btn btn-link" (click)="deleteRankingCriterion(rankingCriterion)"><i class="fa fa-trash" title="Supprimer"></i></a>
+                                <a href="javascript:void(0)" role="button" class="pull-right btn btn-link" [class.disabled]="rankingCriterion.numordre <= 1" (click)="upRankingCriterion(rankingCriterion)"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
+                                <a href="javascript:void(0)" role="button" class="pull-right btn btn-link" [class.disabled]="rankingCriterion.numordre >= rankingCriteria.length" (click)="downRankingCriterion(rankingCriterion)"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
                             </li>
                         </ul>
                     </div>
@@ -54,7 +54,10 @@ import _ from 'lodash';
             </div>
         </div>`,
     styles: [
-        `:host #confirmDeleteDistanceAndFacesSetItemModal {
+        `:host .button-separator {
+			margin-right: 10px;
+		}`,
+        `:host #confirmDeleteRankingCriterionItemModal {
 			display: block;
 		}`
     ]
@@ -83,9 +86,21 @@ export class RankingComponent implements OnInit {
 
     }
 
+    ngOnChanges(changes : SimpleChanges) {
+		for (let propName in changes) {
+			if(propName == 'rankingCriteria') {
+				let chng = changes[propName];
+				
+                this.rankingCriteria = _.orderBy(this.rankingCriteria, ['ordre'], ['asc']);
+                let ordre : number = 0;
+                this.rankingCriteria.forEach(rc => rc.ordre = ordre++);
+            }
+		}
+    }
+
     addRankingCriterion() {
 		this.selectedRankingCriterion = <IRankingCriterion>{
-			numordre: this.rankingCriteria.length+1
+			ordre: this.rankingCriteria.length+1
 		};
 		this.rankingCriteria.push(this.selectedRankingCriterion);
 	}
@@ -94,34 +109,30 @@ export class RankingComponent implements OnInit {
 		if(!confirmation)
 			this.selectedRankingCriterionForDelete = rankingCriterion;
 		else {
-			this.rankingCriteria.splice(rankingCriterion.numordre-1, 1);
+            _.remove(this.rankingCriteria, rc => rc == rankingCriterion);
 			this.selectedRankingCriterionForDelete = undefined;
 		}
 	}
 
 	upRankingCriterion(rankingCriterion : IRankingCriterion) {
-		if(rankingCriterion.numordre > 1) {
+		if(rankingCriterion.ordre >= 1) {
 			//recupere l'element n-1
-			let previousCriterion = this.rankingCriteria[rankingCriterion.numordre-2];
+			let previousCriterion = _.find(this.rankingCriteria, rc => rc.ordre == rankingCriterion.ordre - 1);
+            previousCriterion.ordre = rankingCriterion.ordre;
+            rankingCriterion.ordre--;
 
-			this.rankingCriteria[rankingCriterion.numordre-2] = rankingCriterion;
-			this.rankingCriteria[rankingCriterion.numordre-1] = previousCriterion;
-			
-			rankingCriterion.numordre--;
-			previousCriterion.numordre++;
+            this.rankingCriteria = _.orderBy(this.rankingCriteria, ['ordre'], ['asc']);
 		}
 	}
 
 	downRankingCriterion(rankingCriterion : IRankingCriterion) {
-		if(rankingCriterion.numordre < this.rankingCriteria.length) {
+		if(rankingCriterion.ordre < this.rankingCriteria.length-1) {
 			//recupere l'element n+1
-			let nextElement = this.rankingCriteria[rankingCriterion.numordre];
-
-			this.rankingCriteria[rankingCriterion.numordre] = rankingCriterion;
-			this.rankingCriteria[rankingCriterion.numordre-1] = nextElement;
-
-			rankingCriterion.numordre++;
-			nextElement.numordre--;
+            let nextElement = _.find(this.rankingCriteria, rc => rc.ordre == rankingCriterion.ordre + 1);
+            nextElement.ordre = rankingCriterion.ordre;
+            rankingCriterion.ordre++;
+            
+            this.rankingCriteria = _.orderBy(this.rankingCriteria, ['ordre'], ['asc']);
 		}
 	}
 }

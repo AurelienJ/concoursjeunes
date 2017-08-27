@@ -160,7 +160,7 @@ public class Coordinate implements SqlObjectPersistence, Cloneable {
 	
 	@XmlAttribute(name="id",required=true)
 	@SqlField(name="ID_COORDINATE")
-	private UUID idCoordinate = null;
+	private UUID idCoordinate = UUID.randomUUID();
 	
 	@SqlField(name="CODE_COORDINATE_TYPE")
 	private Type coordinateType = Type.HOME_PHONE;

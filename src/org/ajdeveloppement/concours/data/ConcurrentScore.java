@@ -113,7 +113,7 @@ public class ConcurrentScore implements SqlObjectPersistence {
 	public static final int DEPARTAGE_PHASE_FINAL = 4;
 	
 	@SqlField(name="ID_SCORE")
-	private UUID idScore;
+	private UUID idScore = UUID.randomUUID();
 	
 	@SqlField(name="TYPE_SCORE")
 	private int typeScore;

@@ -39,9 +39,9 @@ import _ from 'lodash';
             <div class="row">
                 <div class="col-sm-12">
                     <ul class="list-group" id="criteria-collection">
-                        <li class="list-group-item" *ngFor="let distanceAndFaces of distancesAndFacesSet">
-                            <a href="javascript:void(0)" (click)="selectedDistanceAndFacesSet = distanceAndFaces">{{distanceAndFaces.name || '<Nouveau jeux de distances / blasons>'}}</a>
-                            <a href="javascript:void(0)" class="pull-right button-separator" (click)="deleteDistanceAndFacesSet(distanceAndFaces)"><i class="fa fa-trash" title="Supprimer"></i></a>
+                        <li class="list-group-item clearfix" *ngFor="let distanceAndFaces of distancesAndFacesSet">
+                            <a href="javascript:void(0)" class="button-align" (click)="selectedDistanceAndFacesSet = distanceAndFaces">{{distanceAndFaces.name || '<Nouveau jeux de distances / blasons>'}}</a>
+                            <a href="javascript:void(0)" class="pull-right btn btn-link" (click)="deleteDistanceAndFacesSet(distanceAndFaces)"><i class="fa fa-trash" title="Supprimer"></i></a>
                         </li>
                     </ul>
                 </div>

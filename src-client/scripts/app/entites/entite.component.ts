@@ -124,12 +124,12 @@ import 'rxjs/add/operator/share';
 									<div class="row">
 										<div class="col-sm-12">
 											<ul class="list-group" id="criteria-collection">
-												<li class="list-group-item" *ngFor="let criterion of criteria">
-													<span class="badge" title="Nombre d'élément">{{criterion.criterionElements.length}}</span>
-													<a href="javascript:void(0)" (click)="selectedCriterion = criterion">{{criterion.libelle}}</a>
-													<a href="javascript:void(0)" class="pull-right button-separator" (click)="deleteCriterion(criterion)"><i class="fa fa-trash" title="Supprimer"></i></a>
-													<a href="javascript:void(0)" class="pull-right button-separator" [class.disabled]="criterion.numordre <= 1" (click)="upCriterion(criterion)"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
-													<a href="javascript:void(0)" class="pull-right button-separator" [class.disabled]="criterion.numordre >= criteria.length" (click)="downCriterion(criterion)"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
+												<li class="list-group-item clearfix" *ngFor="let criterion of criteria">
+													<span class="badge button-align" title="Nombre d'élément">{{criterion.criterionElements.length}}</span>
+													<a href="javascript:void(0)" class="button-align" (click)="selectedCriterion = criterion">{{criterion.libelle}}</a>
+													<a href="javascript:void(0)" class="pull-right btn btn-link" (click)="deleteCriterion(criterion)"><i class="fa fa-trash" title="Supprimer"></i></a>
+													<a href="javascript:void(0)" class="pull-right btn btn-link" [class.disabled]="criterion.numordre <= 1" (click)="upCriterion(criterion)"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
+													<a href="javascript:void(0)" class="pull-right btn btn-link" [class.disabled]="criterion.numordre >= criteria.length" (click)="downCriterion(criterion)"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
 												</li>
 											</ul>
 										</div>
@@ -196,7 +196,7 @@ import 'rxjs/add/operator/share';
 	`,
 	styles: [
 		`:host #criteria-collection {
-			max-height: 400px;
+			max-height: calc(100vh - 400px);
 			overflow-y: auto;
 		}`,
 		`:host .button-separator {

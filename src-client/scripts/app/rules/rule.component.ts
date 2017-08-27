@@ -4,6 +4,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 
 import { ReferencesService } from '../references/references.service';
 import { RulesService } from './rules.service';
+import { EntitesService } from "../entites/entites.service";
 
 import { NavigatorService, NavigationSnapshot } from '../general';
 import { IEntite } from '../entites/ientite';
@@ -148,7 +149,8 @@ export class RuleComponent implements OnInit, DoCheck {
 		private router: Router,
 		private navigation : NavigatorService,
 		private references : ReferencesService,
-		private rulesService : RulesService) { }
+		private rulesService : RulesService,
+		private entiteService : EntitesService) { }
 
 	ngOnInit() {
 		this.rulesService.getRulesCategories().then(rc => this.rulesCategories = rc);
@@ -181,6 +183,10 @@ export class RuleComponent implements OnInit, DoCheck {
 				if(this.idRule) {
 					this.rulesService.getRule(this.idRule).then(r => {
 						this.rule = r;
+
+						this.entiteService.getEntity(r.idEntite).then(e => {
+							r.libelleEntite = e.nom;
+						});
 
 						currentNavigationSnapshot.label = r.name;
 						currentNavigationSnapshot.stateData = r;

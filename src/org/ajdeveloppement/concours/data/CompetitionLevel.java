@@ -129,7 +129,7 @@ import org.ajdeveloppement.concours.helpers.LibelleHelper;
 public class CompetitionLevel implements SqlObjectPersistence {
 	@XmlTransient
 	@SqlField(name="ID_NIVEAU_COMPETITION")
-	private UUID id;
+	private UUID id = UUID.randomUUID();
 	
 	@XmlTransient
 	@SqlField(name="ID_LIBELLE")

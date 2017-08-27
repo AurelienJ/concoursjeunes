@@ -52,12 +52,17 @@ export class RulesService {
 	}
 
 	public getRule(id : string) : Promise<Rule> {
-		
 		return this.http.get("api/rules/" + id, {headers: this.headers}).toPromise().then(r => r.json());
 	}
 
 	public saveRule(rule : Rule) : Promise<Rule> {
-		return this.http.put("api/rules", {headers: this.headers}).toPromise().then(r => r.json());
+		rule.rankingCriteria.forEach(rc => {
+			if(rc.distancesAndFacesSet) {
+				rc.idDistancesAndFacesSet = rc.distancesAndFacesSet.id;
+				rc.idTempDistancesAndFacesSet = rc.distancesAndFacesSet.tempId;
+			}
+		});
+		return this.http.put("api/rules", rule, {headers: this.headers}).toPromise().then(r => r.json());
 	}
 
 	public getRulesCategories() : Promise<IRulesCategory[]> {

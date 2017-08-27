@@ -88,7 +88,9 @@
  */
 package org.ajdeveloppement.concours.webapi.mappers;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
 import org.ajdeveloppement.concours.data.DistanceAndFaces;
 import org.ajdeveloppement.concours.data.DistanceAndFacesSet;
@@ -115,6 +117,12 @@ import org.mapstruct.ObjectFactory;
 @Mapper(uses = {  }, componentModel="jsr330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
 public abstract class DistanceAndFacesSetMapper {
 	
+	private Map<String, DistanceAndFacesSet> viewToModelMap = new WeakHashMap<>();
+	
+	public Map<String, DistanceAndFacesSet> getViewToModelDistanceAndFacesSetMap() {
+		return viewToModelMap;
+	}
+	
 	@ObjectFactory
 	public DistanceAndFacesSet getDistanceAndFacesSet(DistanceAndFacesSetView view) {
 		DistanceAndFacesSet distanceAndFaces = null;
@@ -124,6 +132,9 @@ public abstract class DistanceAndFacesSetMapper {
 		
 		if(distanceAndFaces == null)
 			distanceAndFaces = new DistanceAndFacesSet();
+		
+		if(view.getTempId() != null)
+			viewToModelMap.put(view.getTempId(), distanceAndFaces);
 		
 		return distanceAndFaces;
 	}
@@ -174,11 +185,28 @@ public abstract class DistanceAndFacesSetMapper {
 	@Mapping(target = "distanceAndFaces", ignore = true)
 	public abstract FaceDistanceAndFaces toFaceDistanceAndFaces(FaceDistanceAndFacesView view);
 	
-	public static UUID getIdFace(Face face) {
-		return face.getId();
+	public static UUID getIdFace(FaceDistanceAndFaces faceDistanceAndFaces) {
+		if(faceDistanceAndFaces.getFace() != null)
+			return faceDistanceAndFaces.getFace().getId();
+		
+		return null;
+	}
+	
+	public static UUID getIdFace(DistanceAndFaces distanceAndFaces) {
+		if(distanceAndFaces.getDefaultFace() != null)
+			return distanceAndFaces.getDefaultFace().getId();
+		
+		return null;
 	}
 	
 	public Face toFace(UUID idFace) {
 		return T_Face.getInstanceWithPrimaryKey(idFace);
+	}
+	
+	public DistanceAndFacesSet getDistanceAndFacesSet(UUID id) {
+		if(id != null)
+			return T_DistanceAndFacesSet.getInstanceWithPrimaryKey(id);
+		
+		return null;
 	}
 }

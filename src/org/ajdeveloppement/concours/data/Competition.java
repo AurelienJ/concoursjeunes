@@ -110,7 +110,7 @@ public class Competition implements SqlObjectPersistence {
 	
 
 	@SqlField(name="ID_COMPETITION")
-	private UUID idCompetition;
+	private UUID idCompetition = UUID.randomUUID();
 	
 	@SqlForeignKey(mappedTo="ID_ORGANISATEUR")
 	private Entite organisateur;

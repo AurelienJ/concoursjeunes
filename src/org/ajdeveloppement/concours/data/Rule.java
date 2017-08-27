@@ -92,23 +92,11 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.sql.Types;
 import java.util.Collection;
-import java.util.Set;
 import java.util.UUID;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import javax.validation.constraints.Size;
-
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
-import org.ajdeveloppement.commons.persistence.Session;
-import org.ajdeveloppement.commons.persistence.StoreHelper;
 import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
-import org.ajdeveloppement.commons.persistence.sql.SqlContext;
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
-import org.ajdeveloppement.commons.persistence.sql.SqlSession;
-import org.ajdeveloppement.commons.persistence.sql.SqlStoreHelperCache;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
@@ -158,16 +146,14 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 	}
 
 	@SqlField(name = "ID_REGLEMENT")
-	private UUID idRule;
+	private UUID idRule = UUID.randomUUID();
 
 	@SqlForeignKey(mappedTo = "ID_COMPETITION")
 	private Competition competition;
 
-	@Size(max = 64)
 	@SqlField(name = "NOM")
 	private String name = "default"; //$NON-NLS-1$
 
-	@Size(max = 255)
 	@SqlField(name = "DESCRIPTION")
 	private String description = ""; //$NON-NLS-1$
 
@@ -201,11 +187,11 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 
 	@SqlChildCollection(foreignFields = "ID_REGLEMENT", type = Tie.class)
 	private LazyPersistentCollection<Tie, Void> ties = new LazyPersistentCollection<>(
-			() -> T_Tie.all().where(T_Tie.ID_REGLEMENT.equalTo(idRule)));
+			() -> T_Tie.all().where(T_Tie.ID_REGLEMENT.equalTo(idRule)).orderBy(T_Tie.NUMORDRE));
 
 	@SqlChildCollection(foreignFields = "ID_REGLEMENT", type = RankingCriterion.class)
 	private LazyPersistentCollection<RankingCriterion, Void> rankingCriteria = new LazyPersistentCollection<>(
-			() -> T_RankingCriterion.all().where(T_RankingCriterion.ID_REGLEMENT.equalTo(idRule)));
+			() -> T_RankingCriterion.all().where(T_RankingCriterion.ID_REGLEMENT.equalTo(idRule)).orderBy(T_RankingCriterion.ORDRE));
 
 	
 
@@ -696,94 +682,33 @@ public class Rule implements SqlObjectPersistence, Cloneable {
 
 	@Override
 	public boolean validateBeforeSave() throws ObjectPersistenceException {
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<Rule>> constraintViolations = validator.validate(this);
-		if (constraintViolations.size() > 0) {
-			System.out.println("Impossible de valider les donnees du bean : ");
-			for (ConstraintViolation<Rule> contraintes : constraintViolations) {
-				System.out.println(contraintes.getRootBeanClass().getSimpleName() + "." + contraintes.getPropertyPath()
-						+ " " + contraintes.getMessage());
-			}
-			return false;
-		}
+//		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+//		Validator validator = factory.getValidator();
+//		Set<ConstraintViolation<Rule>> constraintViolations = validator.validate(this);
+//		if (constraintViolations.size() > 0) {
+//			System.out.println("Impossible de valider les donnees du bean : ");
+//			for (ConstraintViolation<Rule> contraintes : constraintViolations) {
+//				System.out.println(contraintes.getRootBeanClass().getSimpleName() + "." + contraintes.getPropertyPath()
+//						+ " " + contraintes.getMessage());
+//			}
+//			return false;
+//		}
+		
+		orderTie();
+		
 		return true;
 	}
 
-	/**
-	 * <p>
-	 * Rend l'objet persistant. Sauvegarde l'ensemble des données de l'objet dans la
-	 * base de donnée de ArcCompetition.
-	 * </p>
-	 * 
-	 * <p>
-	 * Les arguments sont ignoré.
-	 * </p>
-	 */
-	@Override
-	public void save(Session session) throws ObjectPersistenceException {
-		if (Session.canExecute(session, this)) {
-			if (entite.getIdEntite() == null)
-				entite.save(session);
-
-			if (idRule == null) {
-				idRule = UUID.randomUUID();
-			}
-
-			SqlContext context = SqlContext.getDefaultContext();
-			if (session instanceof SqlSession)
-				context = ((SqlSession) session).getContext();
-
-			StoreHelper<Rule> helper = SqlStoreHelperCache.getHelper(Rule.class, context);
-			helper.save(this);
-
-			if (context != null)
-				context.getCache().put(this);
-
-			Session.addProcessedObject(session, this);
-
-			saveTie(session);
-		}
-	}
-
-	private void saveTie(Session session) throws ObjectPersistenceException {
+	private void orderTie() {
 		int i = 1;
 		for (Tie d : ties) {
 			d.setNumOrdre(i++);
 		}
-
-		ties.save(session);
 	}
 
 	@Override
 	public boolean validateBeforeDelete() {
 		return !officialReglement;
-	}
-
-	/**
-	 * Supprime la persistance du règlement. Cette persistance ne peut être supprimé
-	 * qu'à la condition que le règlement ne soit pas officiel
-	 * 
-	 * @throws ObjectPersistenceException
-	 */
-	@Override
-	public void delete(Session session) throws ObjectPersistenceException {
-		if (validateBeforeDelete()) {
-			if (Session.canExecute(session, this)) {
-				SqlContext context = SqlContext.getDefaultContext();
-				if (session instanceof SqlSession)
-					context = ((SqlSession) session).getContext();
-
-				StoreHelper<Rule> helper = SqlStoreHelperCache.getHelper(Rule.class, context);
-				helper.delete(this);
-
-				if (context != null)
-					context.getCache().remove(this);
-
-				Session.addProcessedObject(session, this);
-			}
-		} else
-			throw new ObjectPersistenceException("delete this Rule is not authorized because there is official"); //$NON-NLS-1$
 	}
 
 	/*

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "../references/references.service", "./rules.service", "../general", "./model/Rule"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "../references/references.service", "./rules.service", "../entites/entites.service", "../general", "./model/Rule"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@angular/router", "../references/references.s
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, references_service_1, rules_service_1, general_1, Rule_1, RuleComponent;
+    var core_1, router_1, references_service_1, rules_service_1, entites_service_1, general_1, Rule_1, RuleComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -25,6 +25,9 @@ System.register(["@angular/core", "@angular/router", "../references/references.s
             function (rules_service_1_1) {
                 rules_service_1 = rules_service_1_1;
             },
+            function (entites_service_1_1) {
+                entites_service_1 = entites_service_1_1;
+            },
             function (general_1_1) {
                 general_1 = general_1_1;
             },
@@ -34,12 +37,13 @@ System.register(["@angular/core", "@angular/router", "../references/references.s
         ],
         execute: function () {
             RuleComponent = (function () {
-                function RuleComponent(route, router, navigation, references, rulesService) {
+                function RuleComponent(route, router, navigation, references, rulesService, entiteService) {
                     this.route = route;
                     this.router = router;
                     this.navigation = navigation;
                     this.references = references;
                     this.rulesService = rulesService;
+                    this.entiteService = entiteService;
                     this.rule = new Rule_1.Rule();
                     this.mustUpdateView = false;
                 }
@@ -71,6 +75,9 @@ System.register(["@angular/core", "@angular/router", "../references/references.s
                             if (_this.idRule) {
                                 _this.rulesService.getRule(_this.idRule).then(function (r) {
                                     _this.rule = r;
+                                    _this.entiteService.getEntity(r.idEntite).then(function (e) {
+                                        r.libelleEntite = e.nom;
+                                    });
                                     currentNavigationSnapshot.label = r.name;
                                     currentNavigationSnapshot.stateData = r;
                                 });
@@ -118,7 +125,8 @@ System.register(["@angular/core", "@angular/router", "../references/references.s
                         router_1.Router,
                         general_1.NavigatorService,
                         references_service_1.ReferencesService,
-                        rules_service_1.RulesService])
+                        rules_service_1.RulesService,
+                        entites_service_1.EntitesService])
                 ], RuleComponent);
                 return RuleComponent;
             }());

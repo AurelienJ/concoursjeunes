@@ -90,8 +90,12 @@ package org.ajdeveloppement.concours.webapi;
 
 import org.ajdeveloppement.concours.data.mappers.ArcherMapper;
 import org.ajdeveloppement.concours.data.mappers.ArcherMapperImpl;
+import org.ajdeveloppement.concours.webapi.mappers.CompetitionMapper;
+import org.ajdeveloppement.concours.webapi.mappers.CompetitionMapperImpl;
 import org.ajdeveloppement.concours.webapi.mappers.CriterionMapper;
 import org.ajdeveloppement.concours.webapi.mappers.CriterionMapperImpl;
+import org.ajdeveloppement.concours.webapi.mappers.DiscriminantCriterionSetMapper;
+import org.ajdeveloppement.concours.webapi.mappers.DiscriminantCriterionSetMapperImpl;
 import org.ajdeveloppement.concours.webapi.mappers.DistanceAndFacesSetMapper;
 import org.ajdeveloppement.concours.webapi.mappers.DistanceAndFacesSetMapperImpl;
 import org.ajdeveloppement.concours.webapi.mappers.EntiteMapper;
@@ -144,6 +148,8 @@ public class WebConfig extends AbstractApiApplication {
 				bind(PersonMapper.class).to(PersonMapperImpl.class);
 				bind(RankingCriterionMapper.class).to(RankingCriterionMapperImpl.class);
 				bind(RulesMapper.class).to(RulesMapperImpl.class);
+				bind(DiscriminantCriterionSetMapper.class).to(DiscriminantCriterionSetMapperImpl.class);
+				bind(CompetitionMapper.class).to(CompetitionMapperImpl.class);
 			}
 		});
 	}

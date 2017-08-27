@@ -144,7 +144,7 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	
 	@SqlField(name="ID_CONTACT")
 	@XmlTransient
-	private UUID idContact;
+	private UUID idContact = UUID.randomUUID();
 	
 	@SqlField(name="NAME")
 	private String name;

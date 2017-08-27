@@ -1,4 +1,4 @@
-System.register(["@angular/core"], function (exports_1, context_1) {
+System.register(["@angular/core", "lodash"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,11 +10,14 @@ System.register(["@angular/core"], function (exports_1, context_1) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, RankingComponent;
+    var core_1, lodash_1, RankingComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (lodash_1_1) {
+                lodash_1 = lodash_1_1;
             }
         ],
         execute: function () {
@@ -24,9 +27,23 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 }
                 RankingComponent.prototype.ngOnInit = function () {
                 };
+                RankingComponent.prototype.ngOnChanges = function (changes) {
+                    var _loop_1 = function (propName) {
+                        if (propName == 'rankingCriteria') {
+                            var chng = changes[propName];
+                            this_1.rankingCriteria = lodash_1.default.orderBy(this_1.rankingCriteria, ['ordre'], ['asc']);
+                            var ordre_1 = 0;
+                            this_1.rankingCriteria.forEach(function (rc) { return rc.ordre = ordre_1++; });
+                        }
+                    };
+                    var this_1 = this;
+                    for (var propName in changes) {
+                        _loop_1(propName);
+                    }
+                };
                 RankingComponent.prototype.addRankingCriterion = function () {
                     this.selectedRankingCriterion = {
-                        numordre: this.rankingCriteria.length + 1
+                        ordre: this.rankingCriteria.length + 1
                     };
                     this.rankingCriteria.push(this.selectedRankingCriterion);
                 };
@@ -35,28 +52,26 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                     if (!confirmation)
                         this.selectedRankingCriterionForDelete = rankingCriterion;
                     else {
-                        this.rankingCriteria.splice(rankingCriterion.numordre - 1, 1);
+                        lodash_1.default.remove(this.rankingCriteria, function (rc) { return rc == rankingCriterion; });
                         this.selectedRankingCriterionForDelete = undefined;
                     }
                 };
                 RankingComponent.prototype.upRankingCriterion = function (rankingCriterion) {
-                    if (rankingCriterion.numordre > 1) {
+                    if (rankingCriterion.ordre >= 1) {
                         //recupere l'element n-1
-                        var previousCriterion = this.rankingCriteria[rankingCriterion.numordre - 2];
-                        this.rankingCriteria[rankingCriterion.numordre - 2] = rankingCriterion;
-                        this.rankingCriteria[rankingCriterion.numordre - 1] = previousCriterion;
-                        rankingCriterion.numordre--;
-                        previousCriterion.numordre++;
+                        var previousCriterion = lodash_1.default.find(this.rankingCriteria, function (rc) { return rc.ordre == rankingCriterion.ordre - 1; });
+                        previousCriterion.ordre = rankingCriterion.ordre;
+                        rankingCriterion.ordre--;
+                        this.rankingCriteria = lodash_1.default.orderBy(this.rankingCriteria, ['ordre'], ['asc']);
                     }
                 };
                 RankingComponent.prototype.downRankingCriterion = function (rankingCriterion) {
-                    if (rankingCriterion.numordre < this.rankingCriteria.length) {
+                    if (rankingCriterion.ordre < this.rankingCriteria.length - 1) {
                         //recupere l'element n+1
-                        var nextElement = this.rankingCriteria[rankingCriterion.numordre];
-                        this.rankingCriteria[rankingCriterion.numordre] = rankingCriterion;
-                        this.rankingCriteria[rankingCriterion.numordre - 1] = nextElement;
-                        rankingCriterion.numordre++;
-                        nextElement.numordre--;
+                        var nextElement = lodash_1.default.find(this.rankingCriteria, function (rc) { return rc.ordre == rankingCriterion.ordre + 1; });
+                        nextElement.ordre = rankingCriterion.ordre;
+                        rankingCriterion.ordre++;
+                        this.rankingCriteria = lodash_1.default.orderBy(this.rankingCriteria, ['ordre'], ['asc']);
                     }
                 };
                 __decorate([
@@ -78,9 +93,10 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 RankingComponent = __decorate([
                     core_1.Component({
                         selector: 'ranking',
-                        template: "<div class=\"modal modal-primary\" id=\"confirmDeleteRankingCriterionItemModal\" *ngIf=\"selectedRankingCriterionForDelete\">\n        <div class=\"modal-dialog\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Fermer\" (click)=\"selectedRankingCriterionForDelete=null\">\n                    <span aria-hidden=\"true\">\u00D7</span></button>\n                    <h4 class=\"modal-title\">Suppression d'un crit\u00E8re de classement</h4>\n                </div>\n                <div class=\"modal-body\">\n                    <p>Confirmer la suppression du crit\u00E8re <strong>\"{{selectedRankingCriterionForDelete.name}}\"</strong>?</p>\n                </div>\n                <div class=\"modal-footer\">\n                    <button type=\"button\" class=\"btn btn-outline\" (click)=\"deleteRankingCriterion(selectedRankingCriterionForDelete, true)\">Supprimer</button>\n                    <button type=\"button\" class=\"btn btn-outline\" data-dismiss=\"modal\" (click)=\"selectedRankingCriterionForDelete=null\">Fermer</button>\n                </div>\n                </div>\n                <!-- /.modal-content -->\n            </div>\n            <!-- /.modal-dialog -->\n        </div>\n        <div class=\"row\">\n            <div class=\"col-sm-6\">\n                <h3>Liste des crit\u00E8res</h3>\n                <div class=\"row\">\n                    <div class=\"col-sm-12\">\n                        <a href=\"javascript:void(0)\" class=\"btn btn-app\" (click)=\"addRankingCriterion()\"><i class=\"fa fa-plus-circle\" aria-hidden=\"true\"></i> Ajouter</a>\n                    </div>\n                </div>\n                <div class=\"row\">\n                    <div class=\"col-sm-12\">\n                        <ul class=\"list-group\" id=\"criteria-collection\">\n                            <li class=\"list-group-item\" *ngFor=\"let rankingCriterion of rankingCriteria\">\n                                <a href=\"javascript:void(0)\" (click)=\"selectedRankingCriterion = rankingCriterion\">{{rankingCriterion.name || '&lt;Nouveau crit\u00E8re de classement&gt;'}}</a>\n                                <a href=\"javascript:void(0)\" class=\"pull-right button-separator\" (click)=\"deleteRankingCriterion(rankingCriterion)\"><i class=\"fa fa-trash\" title=\"Supprimer\"></i></a>\n                                <a href=\"javascript:void(0)\" class=\"pull-right button-separator\" [class.disabled]=\"rankingCriterion.numordre <= 1\" (click)=\"upRankingCriterion(rankingCriterion)\"><i class=\"fa fa-arrow-up\" aria-hidden=\"true\"></i></a>\n                                <a href=\"javascript:void(0)\" class=\"pull-right button-separator\" [class.disabled]=\"rankingCriterion.numordre >= rankingCriteria.length\" (click)=\"downRankingCriterion(rankingCriterion)\"><i class=\"fa fa-arrow-down\" aria-hidden=\"true\"></i></a>\n                            </li>\n                        </ul>\n                    </div>\n                </div>\n            </div>\n            <div class=\"col-sm-6\" *ngIf=\"selectedRankingCriterion\">\n                <detail-ranking [rankingCriterion]=\"selectedRankingCriterion\" [distanceAndFacesSets]=\"distancesAndFacesSet\" [idFederation]=\"idFederation\"></detail-ranking>\n            </div>\n        </div>",
+                        template: "<div class=\"modal modal-primary\" id=\"confirmDeleteRankingCriterionItemModal\" *ngIf=\"selectedRankingCriterionForDelete\">\n        <div class=\"modal-dialog\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Fermer\" (click)=\"selectedRankingCriterionForDelete=null\">\n                    <span aria-hidden=\"true\">\u00D7</span></button>\n                    <h4 class=\"modal-title\">Suppression d'un crit\u00E8re de classement</h4>\n                </div>\n                <div class=\"modal-body\">\n                    <p>Confirmer la suppression du crit\u00E8re <strong>\"{{selectedRankingCriterionForDelete.name}}\"</strong>?</p>\n                </div>\n                <div class=\"modal-footer\">\n                    <button type=\"button\" class=\"btn btn-outline\" (click)=\"deleteRankingCriterion(selectedRankingCriterionForDelete, true)\">Supprimer</button>\n                    <button type=\"button\" class=\"btn btn-outline\" data-dismiss=\"modal\" (click)=\"selectedRankingCriterionForDelete=null\">Fermer</button>\n                </div>\n                </div>\n                <!-- /.modal-content -->\n            </div>\n            <!-- /.modal-dialog -->\n        </div>\n        <div class=\"row\">\n            <div class=\"col-sm-6\">\n                <h3>Liste des crit\u00E8res</h3>\n                <div class=\"row\">\n                    <div class=\"col-sm-12\">\n                        <a href=\"javascript:void(0)\" class=\"btn btn-app\" (click)=\"addRankingCriterion()\"><i class=\"fa fa-plus-circle\" aria-hidden=\"true\"></i> Ajouter</a>\n                    </div>\n                </div>\n                <div class=\"row\">\n                    <div class=\"col-sm-12\">\n                        <ul class=\"list-group\" id=\"criteria-collection\">\n                            <li class=\"list-group-item clearfix\" *ngFor=\"let rankingCriterion of rankingCriteria\">\n                                <a href=\"javascript:void(0)\" class=\"button-align\" (click)=\"selectedRankingCriterion = rankingCriterion\">{{rankingCriterion.name || '&lt;Nouveau crit\u00E8re de classement&gt;'}}</a>\n                                <a href=\"javascript:void(0)\" role=\"button\" class=\"pull-right btn btn-link\" (click)=\"deleteRankingCriterion(rankingCriterion)\"><i class=\"fa fa-trash\" title=\"Supprimer\"></i></a>\n                                <a href=\"javascript:void(0)\" role=\"button\" class=\"pull-right btn btn-link\" [class.disabled]=\"rankingCriterion.numordre <= 1\" (click)=\"upRankingCriterion(rankingCriterion)\"><i class=\"fa fa-arrow-up\" aria-hidden=\"true\"></i></a>\n                                <a href=\"javascript:void(0)\" role=\"button\" class=\"pull-right btn btn-link\" [class.disabled]=\"rankingCriterion.numordre >= rankingCriteria.length\" (click)=\"downRankingCriterion(rankingCriterion)\"><i class=\"fa fa-arrow-down\" aria-hidden=\"true\"></i></a>\n                            </li>\n                        </ul>\n                    </div>\n                </div>\n            </div>\n            <div class=\"col-sm-6\" *ngIf=\"selectedRankingCriterion\">\n                <detail-ranking [rankingCriterion]=\"selectedRankingCriterion\" [distanceAndFacesSets]=\"distancesAndFacesSet\" [idFederation]=\"idFederation\"></detail-ranking>\n            </div>\n        </div>",
                         styles: [
-                            ":host #confirmDeleteDistanceAndFacesSetItemModal {\n\t\t\tdisplay: block;\n\t\t}"
+                            ":host .button-separator {\n\t\t\tmargin-right: 10px;\n\t\t}",
+                            ":host #confirmDeleteRankingCriterionItemModal {\n\t\t\tdisplay: block;\n\t\t}"
                         ]
                     }),
                     __metadata("design:paramtypes", [])

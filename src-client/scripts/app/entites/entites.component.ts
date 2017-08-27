@@ -136,12 +136,12 @@ export class EntiteServerSideInputDataFilterPipe implements PipeTransform {
                                 </div>
                             </div>
                         </div>
-                        <table class="table table-bordered table-hover" [mfData]="entites | entiteServerSideInputDataFilter : [search.value]" #mf="mfDataTable" [mfRowsOnPage]="10">
+                        <table class="table table-bordered table-hover table-valign-middle" [mfData]="entites | entiteServerSideInputDataFilter : [search.value]" #mf="mfDataTable" [mfRowsOnPage]="10">
                             <thead>
                             <tr>
                                 <th><mfDefaultSorter by="nom">Nom</mfDefaultSorter></th>
-                                <th><mfDefaultSorter by="reference">Référence</mfDefaultSorter></th>
-                                <th><mfDefaultSorter by="ville">Ville</mfDefaultSorter></th>
+                                <th class="hidden-xs"><mfDefaultSorter by="reference">Référence</mfDefaultSorter></th>
+                                <th class="hidden-xs"><mfDefaultSorter by="ville">Ville</mfDefaultSorter></th>
                                 <th><mfDefaultSorter by="category">Catégorie</mfDefaultSorter></th>
                                 <th></th>
                             </tr>
@@ -152,15 +152,15 @@ export class EntiteServerSideInputDataFilterPipe implements PipeTransform {
                                     <a *ngIf="!forSelect" [routerLink]="['/entities', entite.id]">{{entite.nom}}</a>
                                     <a *ngIf="forSelect" href="javascript:void(0)" (click)="select(entite)">{{entite.nom}}</a>
                                 </td>
-                                <td>{{entite.reference}}</td>
-                                <td>{{entite.ville}}</td>
+                                <td class="hidden-xs">{{entite.reference}}</td>
+                                <td class="hidden-xs">{{entite.ville}}</td>
                                 <td><span class="label" [class.label-success]="entite.type == 0" 
                                     [class.label-warning]="entite.type == 1" [class.label-primary]="entite.type == 2" 
                                     [class.label-danger]="entite.type == 3">{{(typesEntities[entite.type]||{}).label || ''}}</span></td>
                                 <td>
-                                    <a href="#/clubs?childOf={{entite.id}}" *ngIf="entite.type < 3"><i class="fa fa-list" aria-hidden="true" title="entités associées"></i></a>
-                                    <a [routerLink]="['/entities', entite.id]"><i class="fa fa-pencil" title="Editer"></i></a>
-                                    <a href="javascript:void(0)" *ngIf="forSelect" (click)="select(entite)"><i class="fa fa-cart-plus" aria-hidden="true" title="Selectionner"></i></a>
+                                    <a href="#/clubs?childOf={{entite.id}}" *ngIf="entite.type < 3" class="btn btn-link"><i class="fa fa-list" aria-hidden="true" title="entités associées"></i></a>
+                                    <a [routerLink]="['/entities', entite.id]" class="btn btn-link"><i class="fa fa-pencil" title="Editer"></i></a>
+                                    <a href="javascript:void(0)" *ngIf="forSelect" (click)="select(entite)" class="btn btn-link"><i class="fa fa-cart-plus" aria-hidden="true" title="Selectionner"></i></a>
                                 </td>
                             </tr>
                             </tbody>

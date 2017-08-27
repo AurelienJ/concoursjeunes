@@ -110,7 +110,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 public class DistanceAndFacesSet implements SqlObjectPersistence {
 	
 	@SqlField(name="ID_JEUX_DISTANCES_BLASONS")
-	private UUID id;
+	private UUID id = UUID.randomUUID();
 	
 	@SqlForeignKey(mappedTo="ID_REGLEMENT")
 	private Rule rule;

@@ -122,7 +122,7 @@ public class Civility implements SqlObjectPersistence {
 	
 	@XmlTransient
 	@SqlField(name="ID_CIVILITY")
-	private UUID idCivility;
+	private UUID idCivility = UUID.randomUUID();
 	
 	@SqlField(name="ABREVIATION")
 	private String abreviation;

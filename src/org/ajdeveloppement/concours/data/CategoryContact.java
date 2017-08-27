@@ -148,7 +148,7 @@ public class CategoryContact implements SqlObjectPersistence {
 	}
 
 	@SqlField(name="ID_CATEGORIE_CONTACT")
-	private UUID id;
+	private UUID id = UUID.randomUUID();
 	
 	@SqlField(name="ID_LIBELLE")
 	private UUID idLibelle;

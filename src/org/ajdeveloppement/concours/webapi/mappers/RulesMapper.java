@@ -88,8 +88,12 @@
  */
 package org.ajdeveloppement.concours.webapi.mappers;
 
+import java.util.UUID;
+
 import org.ajdeveloppement.concours.data.Rule;
+import org.ajdeveloppement.concours.data.RulesCategory;
 import org.ajdeveloppement.concours.data.T_Rule;
+import org.ajdeveloppement.concours.data.T_RulesCategory;
 import org.ajdeveloppement.concours.webapi.views.RuleView;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.CollectionMappingStrategy;
@@ -109,6 +113,20 @@ import org.mapstruct.ObjectFactory;
 		EntiteMapper.class },
 componentModel="jsr330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
 public abstract class RulesMapper {
+	
+	public static UUID getIdEntite(Rule rule) {
+		if(rule.getEntite() != null)
+			return rule.getEntite().getIdEntite();
+		
+		return null;
+	}
+	
+	public static int getIdCategory(Rule rule) {
+		if(rule.getCategory() != null)
+			return rule.getCategory().getId();
+		
+		return 0;
+	}
 	
 	@ObjectFactory
 	public Rule getRule(RuleView ruleView) {
@@ -138,5 +156,11 @@ public abstract class RulesMapper {
 	 */
 	@Mapping(target = "idRule", ignore = true)
 	@Mapping(target = "ties", source = "tie")
+	@Mapping(target = "entite", source = "idEntite")
+	@Mapping(target = "category", source = "idCategory")
 	public abstract Rule toRule(RuleView ruleView);
+	
+	public RulesCategory toRulesCategory(int idCategory) {
+		return T_RulesCategory.getInstanceWithPrimaryKey(idCategory);
+	}
 }

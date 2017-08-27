@@ -118,7 +118,7 @@ export class PersonServerSideInputDataFilterPipe implements PipeTransform {
                                 </div>
                             </div>
                         </div>
-                        <table class="table table-bordered table-hover" [mfData]="persons | personServerSideInputDataFilter : [search.value]" #mf="mfDataTable" [mfRowsOnPage]="10">
+                        <table class="table table-bordered table-hover table-valign-middle" [mfData]="persons | personServerSideInputDataFilter : [search.value]" #mf="mfDataTable" [mfRowsOnPage]="10">
                             <thead>
                             <tr>
                                 <th><mfDefaultSorter by="nom">Nom</mfDefaultSorter></th>
@@ -129,12 +129,12 @@ export class PersonServerSideInputDataFilterPipe implements PipeTransform {
                             </thead>
                             <tbody>
                             <tr *ngFor="let person of mf.data">
-                                <td><a href="#/persons/{{person.id}}">{{person.name}} {{person.firstName}}</a></td>
+                                <td><a [routerLink]="['/persons', person.id]">{{person.name}} {{person.firstName}}</a></td>
                                 <td>{{person.numLicenceArcher}}</td>
                                 <td>{{person.city}}</td>
                                 <td>
-                                    <a href="#/persons/{{person.id}}"><i class="fa fa-pencil" title="Editer"></i></a>
-                                    <a href="javascript:void(0)" *ngIf="forSelect" (click)="select(person)"><i class="fa fa-cart-plus" aria-hidden="true" title="Selectionner"></i></a>
+                                    <a [routerLink]="['/persons', person.id]" class="btn btn-link"><i class="fa fa-pencil" title="Editer"></i></a>
+                                    <a href="javascript:void(0)" *ngIf="forSelect" (click)="select(person)" class="btn btn-link"><i class="fa fa-cart-plus" aria-hidden="true" title="Selectionner"></i></a>
                                 </td>
                             </tr>
                             </tbody>

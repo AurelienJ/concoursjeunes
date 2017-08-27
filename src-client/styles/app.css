@@ -2,6 +2,11 @@ body {
 	 -webkit-app-region:drag;
 }
 
+.modal-body {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
 .navbar-titre {
 	font-size: 17px;
 	line-height: 50px;
@@ -31,4 +36,13 @@ body {
 .formulaire > h4 {
 	font-size: 24px;
 	padding: 20px 70px;
+}
+
+.button-align {
+	margin: 8px auto;
+	display: inline-block;
+}
+
+.table-valign-middle > tbody > tr > td {
+	vertical-align: middle;
 }

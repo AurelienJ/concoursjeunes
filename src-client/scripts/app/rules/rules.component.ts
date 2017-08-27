@@ -111,7 +111,7 @@ export class RulesServerSideInputDataFilterPipe implements PipeTransform {
                                 </div>
                             </div>
                         </div>
-                        <table class="table table-bordered table-hover" [mfData]="rules | rulesServerSideInputDataFilter : [search.value]" #mf="mfDataTable" [mfRowsOnPage]="10">
+                        <table class="table table-bordered table-hover table-valign-middle" [mfData]="rules | rulesServerSideInputDataFilter : [search.value]" #mf="mfDataTable" [mfRowsOnPage]="10">
                             <thead>
                             <tr>
                                 <th><mfDefaultSorter by="nom">Nom</mfDefaultSorter></th>
@@ -125,8 +125,8 @@ export class RulesServerSideInputDataFilterPipe implements PipeTransform {
                                 <td>{{rule.entite}}</td>
                                 
                                 <td>
-                                    <a href="#/rules/{{rule.id}}"><i class="fa fa-pencil" title="Editer"></i></a>
-                                    <a href="javascript:void(0)" *ngIf="forSelect" (click)="select(rule)"><i class="fa fa-cart-plus" aria-hidden="true" title="Selectionner"></i></a>
+                                    <a [routerLink]="['/rules', rule.id]" class="btn btn-link"><i class="fa fa-pencil" title="Editer"></i></a>
+                                    <a href="javascript:void(0)" *ngIf="forSelect" (click)="select(rule)" class="btn btn-link"><i class="fa fa-cart-plus" aria-hidden="true" title="Selectionner"></i></a>
                                 </td>
                             </tr>
                             </tbody>

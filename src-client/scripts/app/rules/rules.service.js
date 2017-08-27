@@ -54,7 +54,13 @@ System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"
                     return this.http.get("api/rules/" + id, { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
                 };
                 RulesService.prototype.saveRule = function (rule) {
-                    return this.http.put("api/rules", { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
+                    rule.rankingCriteria.forEach(function (rc) {
+                        if (rc.distancesAndFacesSet) {
+                            rc.idDistancesAndFacesSet = rc.distancesAndFacesSet.id;
+                            rc.idTempDistancesAndFacesSet = rc.distancesAndFacesSet.tempId;
+                        }
+                    });
+                    return this.http.put("api/rules", rule, { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
                 };
                 RulesService.prototype.getRulesCategories = function () {
                     if (!this.rulesCategories)

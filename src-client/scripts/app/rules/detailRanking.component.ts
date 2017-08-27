@@ -65,20 +65,22 @@ import _ from 'lodash';
             </div>
         </div>
         <div class="form-group">
-            <label for="discriminantCriteria">Critères discriminants</label>
+            <label for="discriminantCriteria">Critères discriminants <button class="btn btn-link btn-lg" (click)="displayDiscriminantCriterionSet(null)"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter</button></label>
             <div class="form-control-static">
-                <button class="btn btn-app" (click)="displayDiscriminantCriterionSet(null)"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter</button>
-
-                <ul class="list-group">
+                
+                <ul class="list-group clearfix">
                     <li class="list-group-item" *ngFor="let discriminantCriterionSet of rankingCriterion.discriminantCriterionSets">
-                    {{discriminantCriterionSet.name}}
-                    <a href="javascript:void(0)" class="pull-right button-separator" (click)="deleteDiscriminantCriterionSet(discriminantCriterionSet)"><i class="fa fa-trash" title="Supprimer"></i></a>
+                    <span class="button-align">{{discriminantCriterionSet.name}}</span>
+                    <a href="javascript:void(0)" class="pull-right btn btn-link" (click)="deleteDiscriminantCriterionSet(discriminantCriterionSet)"><i class="fa fa-trash" title="Supprimer"></i></a>
                     </li>
                 </ul>
             </div>
         </div>
     </div>`,
     styles: [
+        `:host .button-separator {
+			margin-right: 10px;
+		}`,
         `:host #addDiscriminantCriteriaSet {
 			display: block;
 		}`
@@ -115,7 +117,11 @@ export class DetailRankingComponent implements OnInit, OnChanges {
 				let chng = changes[propName];
 				
 				this.entitesService.getCriteria(this.idFederation).then(c => this.criteria = c);
-			}
+            } else if(propName == 'rankingCriterion') {
+                if(!this.rankingCriterion.distancesAndFacesSet && this.rankingCriterion.idDistancesAndFacesSet) {
+                    this.rankingCriterion.distancesAndFacesSet = _.find(this.distanceAndFacesSets, df => df.id == this.rankingCriterion.idDistancesAndFacesSet);
+                }
+            }
 		}
     }
 

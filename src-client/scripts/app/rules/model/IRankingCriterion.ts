@@ -6,7 +6,8 @@ export interface IRankingCriterion {
     name : string;
     teamCriterion: boolean;
     idDistancesAndFacesSet: string;
+    idTempDistancesAndFacesSet: string;
     distancesAndFacesSet: IDistanceAndFacesSet;
-    numordre: number;
+    ordre: number;
     discriminantCriterionSets : IDiscriminantCriterionSet[];
 }

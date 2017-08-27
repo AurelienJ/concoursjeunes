@@ -108,7 +108,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @SqlPrimaryKey(fields="ID_DISTANCE_BLASONS",generatedidField=@SqlGeneratedIdField(name="ID_DISTANCE_BLASONS"))
 public class DistanceAndFaces implements SqlObjectPersistence {
 	@SqlField(name="ID_DISTANCE_BLASONS")
-	private UUID id;
+	private UUID id = UUID.randomUUID();
 	
 	@SqlField(name="DISTANCE")
 	private double distance;

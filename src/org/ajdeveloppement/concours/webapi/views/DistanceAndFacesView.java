@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.ajdeveloppement.concours.webapi.mappers.DistanceAndFacesSetMapper;
+import org.ajdeveloppement.webserver.viewbinder.annotations.CollectionType;
 import org.ajdeveloppement.webserver.viewbinder.annotations.Implementation;
 import org.ajdeveloppement.webserver.viewbinder.annotations.View;
 
@@ -28,6 +29,7 @@ public interface DistanceAndFacesView {
 	/**
 	 * @return facesDistanceAndFaces
 	 */
+	@CollectionType(FaceDistanceAndFacesView.class)
 	List<FaceDistanceAndFacesView> getFacesDistanceAndFaces();
 
 	/**

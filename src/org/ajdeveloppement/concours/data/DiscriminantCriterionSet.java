@@ -109,7 +109,7 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @SqlPrimaryKey(fields="ID_JEUX_CRITERES_DISCRIMINANT",generatedidField=@SqlGeneratedIdField(name="ID_JEUX_CRITERES_DISCRIMINANT",type=Types.OTHER))
 public class DiscriminantCriterionSet implements SqlObjectPersistence {
 	@SqlField(name="ID_JEUX_CRITERES_DISCRIMINANT")
-	private UUID idDiscriminantCriterionSet;
+	private UUID idDiscriminantCriterionSet = UUID.randomUUID();
 	
 	@SqlForeignKey(mappedTo="ID_CRITERE_CLASSEMENT")
 	private RankingCriterion rankingCriterion;

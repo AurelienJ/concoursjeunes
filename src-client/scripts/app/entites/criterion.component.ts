@@ -11,7 +11,7 @@ import { ICriterionElement } from './ICriterionElement';
 			<label for="libelleCriterion" class="col-sm-2 control-label">Libelle</label>
 			<div class="col-sm-10"><input placeholder="Libelle" id="libelleCriterion" name="libelleCriterion" class="form-control" [(ngModel)]="criterion.libelle"/></div>
 		</div>
-		<h4>Elements: <a href="javascript:void(0)" (click)="addElement()"><i class="fa fa-plus-circle" aria-hidden="true" title="Ajouter"></i></a></h4>
+		<h4>Elements: <a href="javascript:void(0)" (click)="addElement()"><i class="fa fa-plus-circle btn btn-link btn-lg" aria-hidden="true" title="Ajouter"></i></a></h4>
 		<div *ngIf="selectedElement" class="panel panel-default">
 			<div class="panel-heading">Edition de l'élément n° {{selectedElement.numordre}}</div>
 			<div class="panel-body">
@@ -38,18 +38,18 @@ import { ICriterionElement } from './ICriterionElement';
 			</div>
 		</div>
 		<ul class="list-group">
-			<li class="list-group-item" *ngFor="let criterionElement of criterion.criterionElements">
-			{{criterionElement.code}} - {{criterionElement.libelle}}
-			<a href="javascript:void(0)" class="pull-right" (click)="deleteElement(criterionElement)"><i class="fa fa-trash" title="Supprimer"></i></a>
-			<a href="javascript:void(0)" class="pull-right button-separator" [class.disabled]="criterionElement.numordre <= 1" (click)="upElement(criterionElement)"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
-			<a href="javascript:void(0)" class="pull-right button-separator" [class.disabled]="criterionElement.numordre >= criterion.criterionElements.length" (click)="downElement(criterionElement)"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
-			<a href="javascript:void(0)" class="pull-right button-separator" (click)="selectedElement = criterionElement"><i class="fa fa-pencil" title="Editer"></i></a>
+			<li class="list-group-item clearfix" *ngFor="let criterionElement of criterion.criterionElements">
+				<span class="button-align">{{criterionElement.code}} - {{criterionElement.libelle}}</span>
+				<a href="javascript:void(0)" class="pull-right btn btn-link" (click)="deleteElement(criterionElement)"><i class="fa fa-trash" title="Supprimer"></i></a>
+				<a href="javascript:void(0)" class="pull-right btn btn-link" [class.disabled]="criterionElement.numordre <= 1" (click)="upElement(criterionElement)"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
+				<a href="javascript:void(0)" class="pull-right btn btn-link" [class.disabled]="criterionElement.numordre >= criterion.criterionElements.length" (click)="downElement(criterionElement)"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
+				<a href="javascript:void(0)" class="pull-right btn btn-link" (click)="selectedElement = criterionElement"><i class="fa fa-pencil" title="Editer"></i></a>
 			</li>
 		</ul>
 	</div>`,
 	styles: [
 		`:host .list-group {
-			max-height: 200px;
+			max-height: calc(100vh - 400px);
     		overflow-y: auto;
 		}`,
 		`:host .button-separator {

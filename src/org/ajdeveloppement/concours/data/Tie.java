@@ -91,12 +91,9 @@ package org.ajdeveloppement.concours.data;
 import java.sql.Types;
 import java.util.UUID;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
@@ -113,17 +110,11 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="DEPARTAGE")
 @SqlPrimaryKey(fields="ID_DEPARTAGE", generatedidField=@SqlGeneratedIdField(name="ID_DEPARTAGE",type=Types.OTHER))
-public class Tie implements SqlObjectPersistence,Cloneable {
-	
-	//private static StoreHelper<Tie> helper = SqlStoreHelperFactory.getStoreHelper(Tie.class);
-
-	@XmlAttribute(name="id")
-	@XmlID
-	private String xmlId = null;
+public class Tie implements SqlObjectPersistence {
 	
 	@XmlTransient
 	@SqlField(name="ID_DEPARTAGE")
-	private UUID idDepartage;
+	private UUID idDepartage = UUID.randomUUID();
 	
 	@XmlTransient
 	@SqlForeignKey(mappedTo="ID_REGLEMENT")
@@ -238,38 +229,5 @@ public class Tie implements SqlObjectPersistence,Cloneable {
 			return false;
 		return true;
 	}
-	
-	/**
-	 * 
-	 * @param marshaller
-	 */
-	protected void beforeMarshal(Marshaller marshaller) {
-		if(idDepartage == null)
-			idDepartage = UUID.randomUUID();
-		xmlId = idDepartage.toString();
-	}
-	
-	/**
-	 * 
-	 * @param unmarshaller
-	 * @param parent
-	 */
-	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		idDepartage = UUID.fromString(xmlId);
-		
-		xmlId = null;
-		
-		if(parent instanceof Rule)
-			setReglement((Rule)parent);
-	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		Tie clone = (Tie)super.clone();
-		clone.idDepartage = null;
-		return clone;
-	}
 }

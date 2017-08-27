@@ -88,9 +88,14 @@
  */
 package org.ajdeveloppement.concours.webapi.mappers;
 
+import java.util.UUID;
+
+import javax.inject.Inject;
+
 import org.ajdeveloppement.concours.data.RankingCriterion;
 import org.ajdeveloppement.concours.data.T_RankingCriterion;
 import org.ajdeveloppement.concours.webapi.views.RankingCriterionView;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
@@ -104,6 +109,9 @@ import org.mapstruct.ObjectFactory;
  */
 @Mapper(uses = { DistanceAndFacesSetMapper.class, DiscriminantCriterionSetMapper.class }, componentModel="jsr330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
 public abstract class RankingCriterionMapper {
+	
+	@Inject
+	private DistanceAndFacesSetMapper distanceAndFacesSetMapper;
 	
 	@ObjectFactory
 	public RankingCriterion getRankingCriterion(RankingCriterionView view) {
@@ -124,6 +132,21 @@ public abstract class RankingCriterionMapper {
 	}
 	
 	@Mapping(target = "discriminantCriterionSet", source = "discriminantCriterionSets")
+	@Mapping(target = "distanceAndFacesSet", source = "idDistancesAndFacesSet")
 	@Mapping(target = "rule", ignore = true)
 	public abstract RankingCriterion toRankingCriterion(RankingCriterionView view);
+	
+	@AfterMapping
+	public void afterRuleMapping(RankingCriterionView rankingCriterionView, @MappingTarget RankingCriterion rankingCriterion) {
+		//re-link disantsAnfFacesSet with RankinCriterion
+		if(rankingCriterionView.getIdDistancesAndFacesSet() == null && rankingCriterionView.getIdTempDistancesAndFacesSet() != null)
+			rankingCriterion.setDistanceAndFacesSet(distanceAndFacesSetMapper.getViewToModelDistanceAndFacesSetMap().get(rankingCriterionView.getIdTempDistancesAndFacesSet()));
+	}
+	
+	public static UUID getIdDistancesAndFacesSet(RankingCriterion rankingCriterion) {
+		if(rankingCriterion.getDistanceAndFacesSet() != null)
+			return rankingCriterion.getDistanceAndFacesSet().getId();
+		
+		return null;
+	}
 }

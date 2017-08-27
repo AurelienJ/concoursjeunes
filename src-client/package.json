@@ -24,6 +24,7 @@
 
     "ng2-datetime": "^1.4.0",
     "angular-tree-component": "^4.1.0",
+    "ngx-order-pipe": "^1.0.2",
     "select2": "^4.0.3",
     
     "core-js": "^2.5.0",

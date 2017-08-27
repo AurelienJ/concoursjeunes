@@ -88,6 +88,7 @@
  */
 package org.ajdeveloppement.concours.data;
 
+import java.util.Collection;
 import java.util.UUID;
 
 import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
@@ -107,13 +108,16 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 @SqlPrimaryKey(fields="ID_CRITERE_CLASSEMENT",generatedidField=@SqlGeneratedIdField(name="ID_CRITERE_CLASSEMENT"))
 public class RankingCriterion implements SqlObjectPersistence {
 	@SqlField(name="ID_CRITERE_CLASSEMENT")
-	private UUID id;
+	private UUID id = UUID.randomUUID();
 	
 	@SqlField(name="NOM")
 	private String name;
 	
 	@SqlField(name="CRITERE_EQUIPE")
 	private boolean teamCriterion = false;
+	
+	@SqlField(name="ORDRE")
+	private int ordre;
 	
 	@SqlForeignKey(mappedTo="ID_REGLEMENT")
 	private Rule rule;
@@ -167,6 +171,20 @@ public class RankingCriterion implements SqlObjectPersistence {
 		this.teamCriterion = teamCriterion;
 	}
 
+	/**
+	 * @return ordre
+	 */
+	public int getOrdre() {
+		return ordre;
+	}
+
+	/**
+	 * @param ordre ordre à définir
+	 */
+	public void setOrdre(int ordre) {
+		this.ordre = ordre;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.ajdeveloppement.concours.data.RankingCriterionView#getRule()
 	 */
@@ -198,7 +216,7 @@ public class RankingCriterion implements SqlObjectPersistence {
 	/**
 	 * @return discriminantCriterionSet
 	 */
-	public LazyPersistentCollection<DiscriminantCriterionSet, Void> getDiscriminantCriterionSet() {
+	public Collection<DiscriminantCriterionSet> getDiscriminantCriterionSet() {
 		return discriminantCriterionSet;
 	}
 

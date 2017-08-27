@@ -94,6 +94,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
@@ -116,6 +117,9 @@ public class Archer extends Contact {
 
 	@SqlField(name="CERTIFMEDICAL",sqlType="DATE")
 	private Date certificat;
+	
+	@SqlForeignKey(mappedTo="ID_JEUX_CRITERES_DISCRIMINANT")
+	private DiscriminantCriterionSet discriminantCriterionSet;
 	
 	private boolean handicape		= false;
 
@@ -195,6 +199,22 @@ public class Archer extends Contact {
 		
 		pcs.firePropertyChange("handicape", oldValue, handicape); //$NON-NLS-1$
 	}
+
+	/**
+	 * @return discriminantCriterionSet
+	 */
+	public DiscriminantCriterionSet getDiscriminantCriterionSet() {
+		return discriminantCriterionSet;
+	}
+
+
+	/**
+	 * @param discriminantCriterionSet discriminantCriterionSet à définir
+	 */
+	public void setDiscriminantCriterionSet(DiscriminantCriterionSet discriminantCriterionSet) {
+		this.discriminantCriterionSet = discriminantCriterionSet;
+	}
+
 
 	/**
 	 * Test si l'archer possède dans la base des homonymes (même nom et prenom)

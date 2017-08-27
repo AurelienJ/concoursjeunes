@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.ajdeveloppement.concours.data.Rule.TypeReglement;
 import org.ajdeveloppement.concours.data.Tie;
+import org.ajdeveloppement.concours.webapi.mappers.RulesMapper;
 import org.ajdeveloppement.webserver.viewbinder.annotations.CollectionType;
 import org.ajdeveloppement.webserver.viewbinder.annotations.Implementation;
 import org.ajdeveloppement.webserver.viewbinder.annotations.View;
@@ -119,7 +120,8 @@ public interface RuleView {
 	 * 
 	 * @return l'entité associé au reglement
 	 */
-	EntiteView getEntite();
+	@Implementation(mapperClass=RulesMapper.class, methodModelToView="getIdEntite")
+	UUID getIdEntite();
 
 	/**
 	 * Retourne le numéro de la catégorie du règlement<br>
@@ -128,6 +130,7 @@ public interface RuleView {
 	 * 
 	 * @return le numéro de la catégorie du règlement
 	 */
+	@Implementation(mapperClass=RulesMapper.class, methodModelToView="getIdCategory")
 	int getIdCategory();
 
 	/**

@@ -129,13 +129,18 @@ public class RuleService {
 	
 	@SuppressWarnings("nls")
 	private QResults<Rule, Void> queryRulesByGlobalSearchValue(String search, int length, int offset) {
-		return T_Rule.all()
+		QResults<Rule, Void> results = T_Rule.all()
 				.leftJoin(RulesCategory.class, T_Rule.NUMCATEGORIE_REGLEMENT.equalTo(T_RulesCategory.NUMCATEGORIE_REGLEMENT))
 				.leftJoin(Entite.class, T_Rule.ID_ENTITE.equalTo(T_Entite.ID_ENTITE))
-				.where(T_Rule.NOM.like("%" + search + "%")
-						.or(T_RulesCategory.NOMCATEGORIE.like("%" + search + "%"))
-						.or(T_Entite.NOM.like("%" + search + "%")))
 				.limit(length, offset);
+		
+		if(search != null) {
+			results = results.where(T_Rule.NOM.like("%" + search + "%")
+					.or(T_RulesCategory.NOMCATEGORIE.like("%" + search + "%"))
+					.or(T_Entite.NOM.like("%" + search + "%")));
+		}
+		
+		return results;
 	}
 	
 	public int countAllRules() {

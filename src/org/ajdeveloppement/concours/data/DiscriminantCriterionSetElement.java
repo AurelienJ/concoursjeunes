@@ -88,8 +88,6 @@
  */
 package org.ajdeveloppement.concours.data;
 
-import javax.validation.constraints.Min;
-
 import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
@@ -109,7 +107,6 @@ public class DiscriminantCriterionSetElement implements SqlObjectPersistence {
 	@SqlForeignKey(mappedTo="ID_ELEMENT_CRITERE_DISCRIMINANT")
 	private CriterionElement criterionElement;
 	
-	@Min(0)
 	@SqlField(name="ORDRE")
 	private int ordre;
 
