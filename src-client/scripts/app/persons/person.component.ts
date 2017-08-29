@@ -13,6 +13,8 @@ import { ICivility } from './ICivility';
 
 import { Criterion } from '../entites/Criterion';
 import { ICriterionElement } from '../entites/ICriterionElement';
+import { IDiscriminantCriterionSet } from '../rules/model/IDiscriminantCriterionSet';
+import { IDiscriminantCriterionSetElement } from '../rules/model/IDiscriminantCriterionSetElement';
 
 //import { ITypeLabel } from '../models/ITypeLabel'
 import { ICountry } from '../references/ICountry';
@@ -144,8 +146,8 @@ import * as moment from 'moment';
 							<div *ngFor="let criterion of criteria" class="form-group">
 							<label for="criterion-elements-{{criterion.id}}" class="col-sm-2 control-label">{{criterion.libelle}}</label>
 							<div class="col-sm-10">
-							<select select2 name="criterion-elements-{{criterion.id}}" class="form-control" style="width: 200px;">
-								<option *ngFor="let element of criterion.criterionElements" value="{{element.id}}">{{element.libelle}}</option>
+							<select select2  [value]="getCriterionElement(criterion)" (valueChange)="setCriterionElement(criterion, $event)" name="criterion-elements-{{criterion.id}}" class="form-control" style="width: 200px;">
+								<option *ngFor="let element of criterion.criterionElements" value="{{element.id}}" [attr.selected]="getCriterionElement(criterion) == element.id ? 'selected' : null">{{element.libelle}}</option>
 							</select>
 							</div>
 							</div>
@@ -287,7 +289,46 @@ export class PersonComponent implements OnInit, DoCheck {
 			this.criteria = [];
 	}
 
-	setDateCertificat(date : string) {
+	private getCriterionElementById(idCriterionElement : string) : any {
+        for(let i = 0; i < this.criteria.length; i++) {
+            let criterion = this.criteria[i];
+            let element = criterion.criterionElements.find(e => e.id == idCriterionElement);
+            if(element)
+                return { criterion: criterion, element: element};
+        };
+	}
+
+	public getCriterionElement(criterion : Criterion) : string {
+		if(this.person.discriminantCriterionSet && this.person.discriminantCriterionSet.elements) {
+			let element = this.person.discriminantCriterionSet.elements.find(
+					e => this.getCriterionElementById(e.idCriterionElement).criterion.id == criterion.id);
+			if(element)
+				return element.idCriterionElement;
+		}
+	}
+
+	public setCriterionElement(criterion : Criterion, idCriterionElement : string) {
+		if(!this.person.discriminantCriterionSet) {
+			this.person.discriminantCriterionSet = <IDiscriminantCriterionSet>{
+				elements: []
+			}
+		} else if(!this.person.discriminantCriterionSet.elements) {
+			this.person.discriminantCriterionSet.elements = [];
+		}
+
+		let discriminantCriterionSetElement : IDiscriminantCriterionSetElement = this.person.discriminantCriterionSet.elements.find(
+			e => this.getCriterionElementById(e.idCriterionElement).criterion.id == criterion.id);
+		if(discriminantCriterionSetElement) {
+			discriminantCriterionSetElement.idCriterionElement = idCriterionElement;
+		} else {
+			this.person.discriminantCriterionSet.elements.push(<IDiscriminantCriterionSetElement>{
+				idCriterionElement: idCriterionElement,
+				ordre: this.person.discriminantCriterionSet.elements.length+1
+			});
+		}
+	}
+
+	public setDateCertificat(date : string) {
 		try {
 			let validDate = this.toDate(date);
 			if(validDate.getFullYear() >= new Date().getFullYear() - 1
@@ -296,7 +337,7 @@ export class PersonComponent implements OnInit, DoCheck {
 		} catch(e) {}
 	}
 
-	setDateNaissance(date : string) {
+	public setDateNaissance(date : string) {
 		try {
 			let validDate = this.toDate(date);
 			if(validDate.getFullYear() >= new Date().getFullYear() - 1
@@ -310,7 +351,7 @@ export class PersonComponent implements OnInit, DoCheck {
 		return new Date(date);
 	}
 
-	calculAge(dateNaissance : Date) {
+	public calculAge(dateNaissance : Date) {
 		let td=new Date();// Le date d'ouverture de la page (aujourd'hui)		
 		var age=td.getFullYear()-dateNaissance.getFullYear(); // l'âge du patient
 	 
@@ -337,11 +378,11 @@ export class PersonComponent implements OnInit, DoCheck {
 		return age; // que l'on place dans le input d'id Age
 	}
 
-	cancel() {
+	public cancel() {
         this.navigation.goBack(this.router, null, -1);
     }
 
-    validate() {
+    public validate() {
         this.persons.savePerson(this.person).then(person => {
             this.navigation.goBack(this.router, null, -1);
         }).catch(reason => {

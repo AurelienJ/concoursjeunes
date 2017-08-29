@@ -7,6 +7,10 @@ body {
     overflow-y: auto;
 }
 
+.full-height-container {
+	min-height: calc(100vh - 220px);
+}
+
 .navbar-titre {
 	font-size: 17px;
 	line-height: 50px;

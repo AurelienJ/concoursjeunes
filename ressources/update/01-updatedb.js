@@ -97,6 +97,10 @@ if(dbVersion == 0) {
 	if(dbVersion < 43) {
 		sql.executeUpdate("ALTER TABLE CRITERE_CLASSEMENT ADD COLUMN ORDRE INTEGER");
 	}
+	
+	if(dbVersion < 45) {
+		sql.executeUpdate("ALTER TABLE JEUX_CRITERES_DISCRIMINANT ALTER COLUMN ID_CRITERE_CLASSEMENT UUID NULL");
+	}
 }
 
 if(dbVersion != org.ajdeveloppement.concours.ApplicationCore.DB_RELEASE_REQUIRED) {
