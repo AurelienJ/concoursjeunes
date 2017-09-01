@@ -197,7 +197,7 @@ public class PersonsController {
 	}
 	
 	@HttpService(key="contacts", methods={HttpMethod.PUT, HttpMethod.POST})
-	public ArcherView createOrUpdateContact(@Body ArcherView contactView) throws ObjectPersistenceException {
+	public ContactView createOrUpdateContact(@Body ArcherView contactView) throws ObjectPersistenceException {
 		if(contactView != null) {
 			Contact contact = contactViewMapper.asContact(contactView);
 			
@@ -205,7 +205,7 @@ public class PersonsController {
 			
 			if(context.getHttpRequest().getRequestMethod() == HttpMethod.POST)
 				context.setReturnCode(Success.CREATED);
-			return contactView;
+			return toView(contact);
 		}
 		return null;
 	}

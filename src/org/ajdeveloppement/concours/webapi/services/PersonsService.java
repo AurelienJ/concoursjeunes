@@ -88,10 +88,15 @@
  */
 package org.ajdeveloppement.concours.webapi.services;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
+import org.ajdeveloppement.commons.persistence.sql.LazyPersistentCollection;
 import org.ajdeveloppement.commons.persistence.sql.QField;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
@@ -101,6 +106,9 @@ import org.ajdeveloppement.concours.data.CategoryContact.IdDefaultCategory;
 import org.ajdeveloppement.concours.data.Civility;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.Coordinate;
+import org.ajdeveloppement.concours.data.Criterion;
+import org.ajdeveloppement.concours.data.DiscriminantCriterionSet;
+import org.ajdeveloppement.concours.data.DiscriminantCriterionSetElement;
 import org.ajdeveloppement.concours.data.T_Archer;
 import org.ajdeveloppement.concours.data.T_CategoryContact;
 import org.ajdeveloppement.concours.data.T_Civility;
@@ -202,8 +210,37 @@ public class PersonsService {
 			if(dbContact != null && !dbContact.getIdContact().equals(contact.getIdContact()))
 				throw new ObjectPersistenceException("Impossible d'inserer un archer en double");
 			
+			Archer archer = (Archer)contact;
+			
+			List<Criterion> criteria = archer.getEntite().getFederation().getCriteria();
+			
+			Map<Criterion, DiscriminantCriterionSetElement> selectedElements;
+			if(archer.getDiscriminantCriterionSet() != null) {
+				LazyPersistentCollection<DiscriminantCriterionSetElement, Void> elements
+					= (LazyPersistentCollection<DiscriminantCriterionSetElement, Void>)archer.getDiscriminantCriterionSet().getElements();
+	
+				selectedElements = StreamSupport.stream(elements.getUncommitedItems().spliterator(), false)
+						.collect(Collectors.toMap(e -> {
+							return e.getCriterionElement().getCriterion();
+						}, e -> e));
+			} else {
+				selectedElements = Collections.emptyMap();
+				archer.setDiscriminantCriterionSet(new DiscriminantCriterionSet());
+			}
+			
+			int ordre = archer.getDiscriminantCriterionSet().getElements().size();
+			for (Criterion criterion : criteria) {
+				if(criterion.getCriterionElements().size() > 0 && !selectedElements.containsKey(criterion)) {
+					DiscriminantCriterionSetElement element = new DiscriminantCriterionSetElement();
+					element.setCriterionElement(criterion.getCriterionElements().get(0));
+					element.setDiscriminantCriterionSet(archer.getDiscriminantCriterionSet());
+					element.setOrdre(ordre++);
+					archer.getDiscriminantCriterionSet().addElement(element);
+				}
+			}
+
 			if(archerCategoryContact!= null)
-			contact.addCategoryContact(archerCategoryContact);
+				contact.addCategoryContact(archerCategoryContact);
 		}
 		
 		contact.save();

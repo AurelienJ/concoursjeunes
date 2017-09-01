@@ -190,6 +190,8 @@ System.register(["@angular/core", "@angular/router", "../entites/entites.service
                     return new Date(date);
                 };
                 PersonComponent.prototype.calculAge = function (dateNaissance) {
+                    if (!dateNaissance)
+                        return 0;
                     var td = new Date(); // Le date d'ouverture de la page (aujourd'hui)		
                     var age = td.getFullYear() - dateNaissance.getFullYear(); // l'âge du patient
                     var mMois = td.getMonth() - dateNaissance.getMonth(); // On calcul  le mois de la date - le mois de la date de naissance

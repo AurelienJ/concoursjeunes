@@ -24,7 +24,7 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 };
                 UpperCasePipe = __decorate([
                     core_1.Pipe({
-                        name: 'upperCase'
+                        name: "upperCase"
                     })
                 ], UpperCasePipe);
                 return UpperCasePipe;

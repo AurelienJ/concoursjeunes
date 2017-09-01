@@ -1,7 +1,7 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({
-    name: 'upperCase'
+    name: "upperCase"
 })
 export class UpperCasePipe implements PipeTransform {
     transform(value: any, args: string[]): any {

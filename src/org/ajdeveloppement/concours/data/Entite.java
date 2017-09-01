@@ -470,7 +470,7 @@ public class Entite implements SqlObjectPersistence {
 	 */
 	public Federation getFederation() {
 		if(type == FEDERATION)
-			return QResults.from(Federation.class).where(T_Federation.ID_ENTITE.equalTo(idEntite)).first();
+			return (Federation)this;
 		
 		if(entiteParent != null) {
 			return entiteParent.getFederation();

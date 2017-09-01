@@ -89,6 +89,7 @@
 package org.ajdeveloppement.concours.data;
 
 import java.sql.Types;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -151,7 +152,7 @@ public class DiscriminantCriterionSet implements SqlObjectPersistence {
 	/**
 	 * @return elements
 	 */
-	public LazyPersistentCollection<DiscriminantCriterionSetElement, Void> getElements() {
+	public Collection<DiscriminantCriterionSetElement> getElements() {
 		return elements;
 	}
 

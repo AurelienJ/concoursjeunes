@@ -352,6 +352,9 @@ export class PersonComponent implements OnInit, DoCheck {
 	}
 
 	public calculAge(dateNaissance : Date) {
+		if(!dateNaissance)
+			return 0;
+
 		let td=new Date();// Le date d'ouverture de la page (aujourd'hui)		
 		var age=td.getFullYear()-dateNaissance.getFullYear(); // l'âge du patient
 	 
