@@ -102,6 +102,7 @@ import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
+import org.ajdeveloppement.webserver.services.webapi.helpers.HttpSessionHelper;
 import org.ajdeveloppement.webserver.viewbinder.ViewsFactory;
 
 /**
@@ -155,6 +156,8 @@ public class AccountController {
 		
 		if(contact != null) {
 			if(service.verifyContactPassword(contact, account.getPassword())) {
+				HttpSessionHelper.addSessionCookieHeader(context, 60 * 60 * 24); // 24 H
+				
 				return ViewsFactory.getView(AccountView.class, contact);
 			}
 			
