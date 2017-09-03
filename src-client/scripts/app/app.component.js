@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "./general/navigator.service"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "./general/navigator.service", "moment"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@angular/router", "./general/navigator.servic
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, navigator_service_1, AppComponent;
+    var core_1, router_1, navigator_service_1, moment_1, AppComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -21,6 +21,9 @@ System.register(["@angular/core", "@angular/router", "./general/navigator.servic
             },
             function (navigator_service_1_1) {
                 navigator_service_1 = navigator_service_1_1;
+            },
+            function (moment_1_1) {
+                moment_1 = moment_1_1;
             }
         ],
         execute: function () {
@@ -31,6 +34,7 @@ System.register(["@angular/core", "@angular/router", "./general/navigator.servic
                 }
                 AppComponent.prototype.ngOnInit = function () {
                     //this.route.
+                    moment_1.default.locale('fr');
                 };
                 AppComponent.prototype.clearNavigationPaths = function () {
                     this.navigatorService.clear();

@@ -121,7 +121,10 @@ export class RulesServerSideInputDataFilterPipe implements PipeTransform {
                             </thead>
                             <tbody>
                             <tr *ngFor="let rule of mf.data">
-                                <td><a href="#/rules/{{rule.id}}">{{rule.name}}</a></td>
+                                <td>
+                                    <a [routerLink]="['/rules', rule.id]" *ngIf="!forSelect">{{rule.name}}</a>
+                                    <a href="javascript:void(0)" *ngIf="forSelect" (click)="select(rule)">{{rule.name}}</a>
+                                </td>
                                 <td>{{rule.entite}}</td>
                                 
                                 <td>

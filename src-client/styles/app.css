@@ -7,6 +7,12 @@ body {
     overflow-y: auto;
 }
 
+.login-box, .register-box {
+	padding-top: 5%;
+	margin-top: 0;
+	margin-bottom: auto;
+}
+
 .full-height-container {
 	min-height: calc(100vh - 220px);
 }
@@ -49,4 +55,33 @@ body {
 
 .table-valign-middle > tbody > tr > td {
 	vertical-align: middle;
+}
+
+.cgu-box {
+	width: 760px;
+	margin: 0 auto;
+}
+
+.cgu-logo {
+	font-size: 35px;
+	text-align: center;
+	margin-bottom: 25px;
+	font-weight: 300;
+}
+
+.cgu-logo a {
+	color: #444;
+}
+
+.cgu-box-body {
+	background: #fff;
+	padding: 20px;
+	border-top: 0;
+	color: #666;
+}
+
+.cgu-box-title {
+	margin: 0;
+	text-align: center;
+	padding: 0 20px 20px 20px;
 }

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router", "@angular/platform-browser", "../datatable/DataTableModule", "../general", "./competitions.service", "./competitions.component"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/router", "@angular/platform-browser", "@angular/forms", "ngx-bootstrap", "../datatable/DataTableModule", "../general", "./competitions.service", "./competitions.component", "./competition.component"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7,7 +7,7 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, platform_browser_1, DataTableModule_1, general_1, competitions_service_1, competitions_component_1, CompetitionModule;
+    var core_1, router_1, platform_browser_1, forms_1, ngx_bootstrap_1, DataTableModule_1, general_1, competitions_service_1, competitions_component_1, competition_component_1, CompetitionModule;
     return {
         setters: [
             function (core_1_1) {
@@ -18,6 +18,12 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
             },
             function (platform_browser_1_1) {
                 platform_browser_1 = platform_browser_1_1;
+            },
+            function (forms_1_1) {
+                forms_1 = forms_1_1;
+            },
+            function (ngx_bootstrap_1_1) {
+                ngx_bootstrap_1 = ngx_bootstrap_1_1;
             },
             function (DataTableModule_1_1) {
                 DataTableModule_1 = DataTableModule_1_1;
@@ -30,6 +36,9 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
             },
             function (competitions_component_1_1) {
                 competitions_component_1 = competitions_component_1_1;
+            },
+            function (competition_component_1_1) {
+                competition_component_1 = competition_component_1_1;
             }
         ],
         execute: function () {
@@ -38,11 +47,11 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
                 }
                 CompetitionModule = __decorate([
                     core_1.NgModule({
-                        imports: [router_1.RouterModule, platform_browser_1.BrowserModule, DataTableModule_1.DataTableModule, general_1.GeneralModule],
-                        declarations: [competitions_component_1.CompetitionsComponent],
+                        imports: [router_1.RouterModule, platform_browser_1.BrowserModule, forms_1.FormsModule, ngx_bootstrap_1.BsDatepickerModule, DataTableModule_1.DataTableModule, general_1.GeneralModule],
+                        declarations: [competitions_component_1.CompetitionsComponent, competition_component_1.CompetitionComponent],
                         bootstrap: [],
                         providers: [competitions_service_1.CompetitionsService],
-                        exports: [competitions_component_1.CompetitionsComponent]
+                        exports: [competitions_component_1.CompetitionsComponent, competition_component_1.CompetitionComponent]
                     })
                 ], CompetitionModule);
                 return CompetitionModule;

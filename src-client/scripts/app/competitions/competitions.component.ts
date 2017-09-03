@@ -5,7 +5,7 @@ import { InputData, DataEvent } from "../datatable/DataTable";
 import { NavigatorService } from '../general';
 import { CompetitionsService } from './competitions.service';
 
-import { ICompetitionDescription, Competition } from './Competition';
+import { ICompetitionDescription, ICompetition } from './Competition';
 
 @Component({
 	selector: 'competitions',
@@ -25,6 +25,8 @@ export class CompetitionsComponent implements OnInit {
 			private competitionsService : CompetitionsService) { }
 
 	ngOnInit() {
+		this.navigatorService.pushUrlSegments("Compétitions", this.route.snapshot.url, this.route.snapshot.queryParams);
+        
 		this.competitionsService.getCompetitionsDescription().then(c => this.competitions = c);
 		
 		if(this.route.snapshot.queryParams["forSelect"]) {

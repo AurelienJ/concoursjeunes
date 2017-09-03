@@ -36,6 +36,7 @@ System.register(["@angular/core", "@angular/router", "../general", "./competitio
                 }
                 CompetitionsComponent.prototype.ngOnInit = function () {
                     var _this = this;
+                    this.navigatorService.pushUrlSegments("Compétitions", this.route.snapshot.url, this.route.snapshot.queryParams);
                     this.competitionsService.getCompetitionsDescription().then(function (c) { return _this.competitions = c; });
                     if (this.route.snapshot.queryParams["forSelect"]) {
                         this.forSelect = true;

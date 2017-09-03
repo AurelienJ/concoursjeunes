@@ -81,18 +81,30 @@ gulp.task("dist", ["clean", "build"], () => {
 })
 
 gulp.task('distDebug', ["dist"], () => {
-  var modules = Object.keys(packageJson.dependencies);
-  var moduleFiles = modules.map((module) => {
-    return 'node_modules/' + module + '/**/*.*';
-  });
+    var modules = Object.keys(packageJson.dependencies);
+    var moduleFiles = modules.map((module) => {
+        return 'node_modules/' + module + '/**/*.*';
+    });
 
-  gulp.src(moduleFiles, { base: 'node_modules' })
-    .pipe(gulp.dest(distDir + '/node_modules'));
+    gulp.src(moduleFiles, { base: 'node_modules' })
+        .pipe(gulp.dest(distDir + '/node_modules'));
 
-  gulp.src("scripts/**")
+    gulp.src("scripts/**")
         .pipe(gulp.dest(distDir + "/scripts"));
 
-  gulp.src("index.html")
+    gulp.src("login.html")
+        .pipe(preprocess({context: { DEBUG: true}}))
+        .pipe(gulp.dest(distDir));
+
+    gulp.src("register.html")
+        .pipe(preprocess({context: { DEBUG: true}}))
+        .pipe(gulp.dest(distDir));
+
+    gulp.src("cgu.html")
+        .pipe(preprocess())
+        .pipe(gulp.dest(distDir));
+
+    gulp.src("index.html")
         .pipe(preprocess({context: { DEBUG: true}}))
         .pipe(gulp.dest(distDir));
 });
@@ -132,7 +144,19 @@ gulp.task('distProd', ["bundle","dist"], () => {
         .pipe(gulp.dest(distDir + "/node_modules/date-input-polyfill"));
 
     gulp.src("node_modules/font-awesome/fonts/**")
-        .pipe(gulp.dest(distDir + "/node_modules/font-awesome/fonts"));  
+        .pipe(gulp.dest(distDir + "/node_modules/font-awesome/fonts")); 
+
+    gulp.src("login.html")
+        .pipe(preprocess())
+        .pipe(gulp.dest(distDir));
+
+    gulp.src("register.html")
+        .pipe(preprocess())
+        .pipe(gulp.dest(distDir));
+
+    gulp.src("cgu.html")
+        .pipe(preprocess())
+        .pipe(gulp.dest(distDir));
 
     return gulp.src("index.html")
         .pipe(preprocess())

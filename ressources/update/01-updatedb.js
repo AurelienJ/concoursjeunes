@@ -98,8 +98,12 @@ if(dbVersion == 0) {
 		sql.executeUpdate("ALTER TABLE CRITERE_CLASSEMENT ADD COLUMN ORDRE INTEGER");
 	}
 	
-	if(dbVersion < 45) {
+	if(dbVersion < 44) {
 		sql.executeUpdate("ALTER TABLE JEUX_CRITERES_DISCRIMINANT ALTER COLUMN ID_CRITERE_CLASSEMENT UUID NULL");
+	}
+	
+	if(dbVersion < 45){
+		sql.executeUpdate("ALTER TABLE CONTACT ADD COLUMN AUTH_TOKEN UUID");
 	}
 }
 

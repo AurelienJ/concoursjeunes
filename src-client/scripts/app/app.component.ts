@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { NavigatorService } from './general/navigator.service';
 
+import moment from 'moment';
+
 @Component({
     selector: 'app',
     templateUrl: 'scripts/app/app.html',
@@ -14,6 +16,7 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         //this.route.
+        moment.locale('fr')
     }
 
     clearNavigationPaths() {

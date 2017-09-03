@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { RouterModule } from '@angular/router';
 
+import { BsDatepickerModule } from 'ngx-bootstrap';
+
 import { GeneralModule } from './general/general.module';
 import { ReferencesModule } from './references/references.module';
 import { CompetitionModule } from './competitions/competitions.module';
@@ -20,6 +22,7 @@ import { AppRoutes } from './app.routes';
 @NgModule({
     imports:        [ BrowserModule, 
         RouterModule.forRoot(AppRoutes, { useHash: true }),
+        BsDatepickerModule.forRoot(),
         GeneralModule, ReferencesModule, ParametersModule, CompetitionModule, EntitesModule, PersonsModule, RulesModule],
     declarations:   [ AppComponent, SlimScrollDirective ],
     bootstrap:      [ AppComponent],

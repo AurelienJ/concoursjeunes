@@ -97,14 +97,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.ajdeveloppement.commons.UncheckedException;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
@@ -119,9 +112,6 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlSubTables;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlUnmappedFields;
-import org.ajdeveloppement.concours.managers.CivilityManager;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Represent a contact person. This class can be serialised with JAXB.
@@ -129,21 +119,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author Aurélien JEOFFRAY
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @SqlTable(name="CONTACT")
 @SqlSubTables(Archer.class)
 @SqlPrimaryKey(fields="ID_CONTACT",generatedidField=@SqlGeneratedIdField(name="ID_CONTACT",type=Types.JAVA_OBJECT))
 @SqlUnmappedFields(fields="UPPER_NAME",typeFields=String.class)
 public class Contact implements SqlObjectPersistence, Cloneable {
 	
-	//utilisé pour donnée un identifiant unique à la sérialisation de l'objet
-	@XmlID
-	@XmlAttribute(name="id")
-	private String xmlId;
-	
-	
 	@SqlField(name="ID_CONTACT")
-	@XmlTransient
 	private UUID idContact = UUID.randomUUID();
 	
 	@SqlField(name="NAME")
@@ -185,6 +167,9 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	
 	@SqlField(name="MOT_DE_PASSE")
 	private String passwordHash;
+	
+	@SqlField(name="AUTH_TOKEN")
+	private UUID authToken;
 	
 	@SqlField(name="TOKEN_IDP_EXTERNE")
 	private String idpToken;
@@ -492,8 +477,6 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	/**
 	 * @return passwordHash
 	 */
-	@JsonIgnore
-	@XmlTransient
 	public String getPasswordHash() {
 		return passwordHash;
 	}
@@ -505,11 +488,17 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 		this.passwordHash = passwordHash;
 	}
 
+	public UUID getAuthToken() {
+		return authToken;
+	}
+
+	public void setAuthToken(UUID authToken) {
+		this.authToken = authToken;
+	}
+
 	/**
 	 * @return idpToken
 	 */
-	@JsonIgnore
-	@XmlTransient
 	public String getIdpToken() {
 		return idpToken;
 	}
@@ -633,8 +622,6 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	 * 
 	 * @return the identity of contact
 	 */
-	@JsonIgnore
-	@XmlTransient
 	public String getFullName() {
 		return name + " " + firstName; //$NON-NLS-1$
 	}
@@ -644,8 +631,6 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	 * 
 	 * @return the identity of contact
 	 */
-	@JsonIgnore
-	@XmlTransient
 	public String getFullNameWithCivility() {
 		return ((civility != null && civility.getAbreviation() != null) ? civility.getAbreviation() + " " : "")  + name + " " + firstName; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
@@ -683,52 +668,6 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 	 */
 	public void setDateModification(Date dateModification) {
 		this.dateModification = dateModification;
-	}
-
-	/**
-	 * For JAXB Usage only. Do not use.
-	 * 
-	 * @param marshaller
-	 */
-	protected void beforeMarshal(Marshaller marshaller) {
-		if(idContact == null)
-			idContact = UUID.randomUUID();
-		xmlId = idContact.toString();
-		
-		if(entite != null)
-			entite.beforeMarshal(marshaller);
-	}
-	
-	/**
-	 * For JAXB Usage only. Do not use.
-	 * 
-	 * @param unmarshaller
-	 * @param parent
-	 */
-	protected void afterUnmarshal(Unmarshaller unmarshaller, Object parent) {
-		if(xmlId != null)
-			idContact = UUID.fromString(xmlId);
-		
-		xmlId = null;
-		
-		//met à null les instances vide de civilité
-		if(civility != null) {
-			if(civility.getAbreviation() == null || civility.getAbreviation().isEmpty())
-				civility = null;
-			else {
-				List<Civility> civilities = CivilityManager.getAllCivilities();
-				
-				for(Civility c : civilities) {
-					if(c.getIdCivility().equals(civility.getIdCivility()) || (c.getAbreviation().equals(civility.getAbreviation()) && c.getLibelle().equals(civility.getLibelle()))) {
-						civility = c;
-						break;
-					}
-				}
-			}
-		}
-		
-		if(entite != null)
-			entite.afterUnmarshal(unmarshaller, this);
 	}
 	
 	@Override
@@ -778,43 +717,6 @@ public class Contact implements SqlObjectPersistence, Cloneable {
 		return getFullNameWithCivility();
 	}
 	
-//	/**
-//	 * clone the contact and all non-immutable properties
-//	 * 
-//	 * @return the cloned contact
-//	 * @throws CloneNotSupportedException
-//	 */
-//	@Override
-//	protected Contact clone() throws CloneNotSupportedException {
-//		return clone(true);
-//	}
-//	
-//	/**
-//	 * clone the contact and all non-immutable properties.
-//	 * 
-//	 * @param conserveId if true, the id is conserved else id is reset to null
-//	 * @return the cloned contact
-//	 * @throws CloneNotSupportedException
-//	 */
-//	protected Contact clone(boolean conserveId) throws CloneNotSupportedException {
-//		Contact clone = (Contact)super.clone();
-//		if(!conserveId)
-//			clone.setIdContact(null);
-//		clone.pcs = new PropertyChangeSupport(clone);
-//		
-//		List<Coordinate> clonedCoordinates = new ArrayList<Coordinate>();
-//		if(coordinates != null) {
-//			for(Coordinate coordinate : clone.getCoordinates()) {
-//				Coordinate clonedCoordinate = coordinate.clone();
-//				clonedCoordinate.setContact(clone);
-//				clonedCoordinates.add(clonedCoordinate);
-//			}
-//			clone.setCoordinates(clonedCoordinates);
-//		}
-//		
-//		return clone;
-//	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;

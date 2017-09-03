@@ -158,7 +158,7 @@ export class EntiteServerSideInputDataFilterPipe implements PipeTransform {
                                     [class.label-warning]="entite.type == 1" [class.label-primary]="entite.type == 2" 
                                     [class.label-danger]="entite.type == 3">{{(typesEntities[entite.type]||{}).label || ''}}</span></td>
                                 <td>
-                                    <a href="#/clubs?childOf={{entite.id}}" *ngIf="entite.type < 3" class="btn btn-link"><i class="fa fa-list" aria-hidden="true" title="entités associées"></i></a>
+                                    <a [routerLink]="['/clubs']" [queryParams]="{ childOf: entite.id }" *ngIf="entite.type < 3" class="btn btn-link"><i class="fa fa-list" aria-hidden="true" title="entités associées"></i></a>
                                     <a [routerLink]="['/entities', entite.id]" class="btn btn-link"><i class="fa fa-pencil" title="Editer"></i></a>
                                     <a href="javascript:void(0)" *ngIf="forSelect" (click)="select(entite)" class="btn btn-link"><i class="fa fa-cart-plus" aria-hidden="true" title="Selectionner"></i></a>
                                 </td>

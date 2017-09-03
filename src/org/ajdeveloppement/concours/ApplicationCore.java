@@ -137,7 +137,7 @@ public class ApplicationCore {
 	/**
 	 * Numéro de version de la base de donnée nécessaire au fonctionnement du programme
 	 */
-	public static final int DB_RELEASE_REQUIRED = 44;
+	public static final int DB_RELEASE_REQUIRED = 45;
 
 	/**
 	 * Chargement des paramétrages statiques

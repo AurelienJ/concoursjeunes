@@ -1,8 +1,8 @@
 /**
  * 
  */
-function verifyAccess(session) {
-	var authorization = session.getHeaderValues().get("authorization");
+function verifyAccess(session, request) {
+	var authorization = request.getHeaderValues().get("authorization");
 	var credential = "";
 	if(authorization != null) {
 		var authValues = authorization.split(" ");
@@ -14,7 +14,25 @@ function verifyAccess(session) {
 	
 	//print((new Date()) + "\t" + session.getHost() + "\t" + session.getProtocol()+ "\t" + session.getRequestMethod() + "\t" + session.getRequestUri());
 	
-	if(session.getRequestUri().startsWith("/admin") 
+	if(request.getRequestUri().startsWith("/index.html")
+			|| request.getRequestUri().equals("/")
+			|| request.getRequestUri().startsWith("/api")) {
+		var authToken = request.getCookiesParameters().get("authToken");
+		
+		if(!authToken) {
+			//redirect sur login
+			var response = new org.ajdeveloppement.webserver.HttpResponse(
+					org.ajdeveloppement.webserver.HttpReturnCode.Redirection.MovedTemporarily, 
+					"text/plain",
+					"Authentification nécessaire");
+			response.addHeader("Location", "http"
+					+ (session.isTlsSession() ? "s" : "")
+					+ "://" + request.getHost() + "/login.html");
+			return response;
+		}
+	}
+	
+	if(request.getRequestUri().startsWith("/admin") 
 			&& ((!session.getRemoteAddress().isAnyLocalAddress()
 					&& !session.getRemoteAddress().isLoopbackAddress() 
 					) && (credential != "admin:admin") )) {

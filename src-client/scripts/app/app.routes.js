@@ -1,7 +1,7 @@
-System.register(["./parameters/parameters.component", "./entites/entites.component", "./entites/entite.component", "./persons/persons.component", "./persons/person.component", "./rules/rules.component", "./rules/rule.component", "./competitions/competitions.component"], function (exports_1, context_1) {
+System.register(["./parameters/parameters.component", "./entites/entites.component", "./entites/entite.component", "./persons/persons.component", "./persons/person.component", "./rules/rules.component", "./rules/rule.component", "./competitions/competitions.component", "./competitions/competition.component"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var parameters_component_1, entites_component_1, entite_component_1, persons_component_1, person_component_1, rules_component_1, rule_component_1, competitions_component_1, AppRoutes;
+    var parameters_component_1, entites_component_1, entite_component_1, persons_component_1, person_component_1, rules_component_1, rule_component_1, competitions_component_1, competition_component_1, AppRoutes;
     return {
         setters: [
             function (parameters_component_1_1) {
@@ -27,6 +27,9 @@ System.register(["./parameters/parameters.component", "./entites/entites.compone
             },
             function (competitions_component_1_1) {
                 competitions_component_1 = competitions_component_1_1;
+            },
+            function (competition_component_1_1) {
+                competition_component_1 = competition_component_1_1;
             }
         ],
         execute: function () {
@@ -43,6 +46,7 @@ System.register(["./parameters/parameters.component", "./entites/entites.compone
                 { path: 'rules', component: rules_component_1.RulesComponent },
                 { path: 'rules/:id', component: rule_component_1.RuleComponent },
                 { path: 'competitions', component: competitions_component_1.CompetitionsComponent },
+                { path: 'competitions/:id', component: competition_component_1.CompetitionComponent },
                 { path: 'dashboard', component: competitions_component_1.CompetitionsComponent }
                 //{ path: 'authToken/:token', component: LoginComponent},
                 //{ path: 'user',component: UserComponent}

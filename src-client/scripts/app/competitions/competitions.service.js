@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/http"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/http", "../rules/rules.service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@angular/http"], function (exports_1, context
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, http_1, CompetitionsService;
+    var core_1, http_1, rules_service_1, CompetitionsService;
     return {
         setters: [
             function (core_1_1) {
@@ -18,12 +18,16 @@ System.register(["@angular/core", "@angular/http"], function (exports_1, context
             },
             function (http_1_1) {
                 http_1 = http_1_1;
+            },
+            function (rules_service_1_1) {
+                rules_service_1 = rules_service_1_1;
             }
         ],
         execute: function () {
             CompetitionsService = (function () {
-                function CompetitionsService(http) {
+                function CompetitionsService(http, rulesService) {
                     this.http = http;
+                    this.rulesService = rulesService;
                     this.headers = new http_1.Headers();
                     this.headers.append('Content-Type', 'application/json');
                     this.headers.append('Accept', 'application/json');
@@ -32,11 +36,20 @@ System.register(["@angular/core", "@angular/http"], function (exports_1, context
                     return this.http.get("api/competitions").toPromise().then(function (r) { return r.json(); });
                 };
                 CompetitionsService.prototype.getCompetition = function (idCompetition) {
-                    return this.http.get("api/competitions/" + idCompetition).toPromise().then(function (r) { return r.json(); });
+                    var _this = this;
+                    return this.http.get("api/competitions/" + idCompetition)
+                        .toPromise()
+                        .then(function (r) { return r.json(); })
+                        .then(function (c) {
+                        return _this.rulesService.getRule(c.idRule).then(function (r) {
+                            c.rule = r;
+                            return c;
+                        });
+                    });
                 };
                 CompetitionsService = __decorate([
                     core_1.Injectable(),
-                    __metadata("design:paramtypes", [http_1.Http])
+                    __metadata("design:paramtypes", [http_1.Http, rules_service_1.RulesService])
                 ], CompetitionsService);
                 return CompetitionsService;
             }());

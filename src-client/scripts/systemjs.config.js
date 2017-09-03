@@ -31,7 +31,8 @@
         'select2':                   'node_modules/select2/dist/js/select2.js',
         'general':                   'scripts/app/general',
         'datatable':                 'scripts/app/datatable',
-        'ngx-order-pipe':            'node_modules/ngx-order-pipe/dist/bundles/ngx-order-pipe.umd.js'
+        'ngx-order-pipe':            'node_modules/ngx-order-pipe/dist/bundles/ngx-order-pipe.umd.js',
+        'ngx-bootstrap':             'node_modules/ngx-bootstrap/bundles/ngx-bootstrap.umd.min.js'
     };
     
     // packages tells the System loader how to load when no filename and/or no extension

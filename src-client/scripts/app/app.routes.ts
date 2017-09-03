@@ -9,6 +9,7 @@ import { RulesComponent } from './rules/rules.component';
 import { RuleComponent } from './rules/rule.component';
 
 import { CompetitionsComponent } from './competitions/competitions.component';
+import { CompetitionComponent } from './competitions/competition.component';
 //import { UserComponent } from './user.component';
 
 export const AppRoutes = [
@@ -23,6 +24,7 @@ export const AppRoutes = [
     { path: 'rules', component: RulesComponent },
     { path: 'rules/:id', component: RuleComponent },
     { path: 'competitions', component: CompetitionsComponent },
+    { path: 'competitions/:id', component: CompetitionComponent },
 	{ path: 'dashboard', component: CompetitionsComponent }
     //{ path: 'authToken/:token', component: LoginComponent},
     //{ path: 'user',component: UserComponent}
