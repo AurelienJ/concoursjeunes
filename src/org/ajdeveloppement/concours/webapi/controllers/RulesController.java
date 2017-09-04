@@ -100,6 +100,7 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.Profile;
 import org.ajdeveloppement.concours.webapi.UserSessionData;
+import org.ajdeveloppement.concours.webapi.annotations.Authorize;
 import org.ajdeveloppement.concours.webapi.models.RulesCategoryModelView;
 import org.ajdeveloppement.concours.webapi.services.RuleService;
 import org.ajdeveloppement.concours.webapi.views.EntiteView;
@@ -144,11 +145,13 @@ public class RulesController {
 	}
 	
 	@HttpService(key="countrules")
+	@Authorize(value={})
 	public Object countRules(@UrlParameter("search") String search) {
 		return service.countRulesByGlobalSearchValue(search);
 	}
 	
 	@HttpService(key="rules")
+	@Authorize(value={})
 	public List<RuleView> getRules(
 			@UrlParameter("search") String search,
 			@UrlParameter("start") int offset,
@@ -159,11 +162,13 @@ public class RulesController {
 	}
 	
 	@HttpService(key="rules")
+	@Authorize(value={})
 	public RuleView getRules(@HttpServiceId UUID idRule) {
 		return service.getRuleById(idRule);
 	}
 
 	@HttpService(key="rules",methods={HttpMethod.PUT, HttpMethod.POST})
+	@Authorize(value={})
 	public Object createOrUpdateRule( @Body RuleView modelView) {
 		try {
 			service.createOrUpdateRule(modelView);
@@ -182,6 +187,7 @@ public class RulesController {
 	}
 	
 	@HttpService(key="availableEntitiesForRulesCreation")
+	@Authorize(value={})
 	public List<EntiteView> getAvailableEntitiesForRulesCreation() {
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
 		

@@ -100,6 +100,7 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.Rate;
 import org.ajdeveloppement.concours.webapi.UserSessionData;
+import org.ajdeveloppement.concours.webapi.annotations.Authorize;
 import org.ajdeveloppement.concours.webapi.models.ProfileModelView;
 import org.ajdeveloppement.concours.webapi.services.ProfilesService;
 import org.ajdeveloppement.webserver.HttpMethod;
@@ -130,6 +131,7 @@ public class ProfileController {
 	}
 	
 	@HttpService(key="profiles")
+	@Authorize(value={})
 	public Object getProfiles(@HttpServiceId UUID id) {
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
 		
@@ -144,6 +146,7 @@ public class ProfileController {
 	}
 	
 	@HttpService(key="profiles", methods=HttpMethod.PUT)
+	@Authorize(value={})
 	public Object updateProfile(@Body ProfileModelView profileModelView) {
 		try {
 			if(profileModelView != null) {
@@ -163,6 +166,7 @@ public class ProfileController {
 	
 	@SuppressWarnings("nls")
 	@HttpService(key="profiles", methods=HttpMethod.POST)
+	@Authorize(value={})
 	public Object createProfile(@Body ProfileModelView profileModelView) {		
 		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
 		
@@ -194,6 +198,7 @@ public class ProfileController {
 	}
 	
 	@HttpService(key="profiles/rates")
+	@Authorize(value={})
 	public List<Rate> getRates(@HttpServiceId(0) UUID idProfile, @HttpServiceId(1) UUID idRate) {
 		
 		if(idProfile != null) {

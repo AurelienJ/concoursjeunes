@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.concours.data.T_Competition;
+import org.ajdeveloppement.concours.webapi.annotations.Authorize;
 import org.ajdeveloppement.concours.webapi.models.CompetitionModelView;
 import org.ajdeveloppement.concours.webapi.models.JsDataTables;
 import org.ajdeveloppement.concours.webapi.services.CompetitionsService;
@@ -70,6 +71,7 @@ public class CompetitionsController {
 	 * @return
 	 */
 	@HttpService(key="competitions")
+	@Authorize(value={})
 	public List<CompetitionModelView> getCompetitions() {
 		return service.getAllCompetitions();
 	}

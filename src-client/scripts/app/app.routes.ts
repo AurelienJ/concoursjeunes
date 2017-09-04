@@ -25,7 +25,8 @@ export const AppRoutes = [
     { path: 'rules/:id', component: RuleComponent },
     { path: 'competitions', component: CompetitionsComponent },
     { path: 'competitions/:id', component: CompetitionComponent },
-	{ path: 'dashboard', component: CompetitionsComponent }
+    { path: 'dashboard', component: CompetitionsComponent }
+    //{ path: 'login',  co }
     //{ path: 'authToken/:token', component: LoginComponent},
     //{ path: 'user',component: UserComponent}
 ]

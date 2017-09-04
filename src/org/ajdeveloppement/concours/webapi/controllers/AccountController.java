@@ -92,6 +92,7 @@ import javax.inject.Inject;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.webapi.annotations.Authorize;
 import org.ajdeveloppement.concours.webapi.mappers.AccountMapper;
 import org.ajdeveloppement.concours.webapi.services.AccountService;
 import org.ajdeveloppement.concours.webapi.views.AccountView;
@@ -156,6 +157,8 @@ public class AccountController {
 		
 		if(contact != null) {
 			if(service.verifyContactPassword(contact, account.getPassword())) {
+				HttpSessionHelper.putUserSessionData(context.getHttpRequest(), contact, "User"); //$NON-NLS-1$
+				
 				HttpSessionHelper.addSessionCookieHeader(context, 60 * 60 * 24); // 24 H
 				
 				return ViewsFactory.getView(AccountView.class, contact);
@@ -170,5 +173,15 @@ public class AccountController {
 		}
 
 		return null;
+	}
+	
+	@HttpService(key = "logout")
+	@Authorize(value={})
+	public String logout() {
+		HttpSessionHelper.removeUserSessionData(context.getHttpRequest(), "User"); //$NON-NLS-1$
+		
+		HttpSessionHelper.addSessionCookieHeader(context, -1); //delete cookie
+		
+		return "logout"; //$NON-NLS-1$
 	}
 }

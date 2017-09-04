@@ -98,6 +98,7 @@ import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.concours.data.Archer;
 import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.webapi.annotations.Authorize;
 import org.ajdeveloppement.concours.webapi.mappers.PersonMapper;
 import org.ajdeveloppement.concours.webapi.services.PersonsService;
 import org.ajdeveloppement.concours.webapi.views.ArcherView;
@@ -158,6 +159,7 @@ public class PersonsController {
 	}
 	
 	@HttpService(key="countcontacts")
+	@Authorize(value={})
 	public int countContacts(@UrlParameter("search") String search) {
 		QFilter filter = service.getFilter( search);
 		
@@ -165,6 +167,7 @@ public class PersonsController {
 	}
 	
 	@HttpService(key="contacts")
+	@Authorize(value={})
 	public List<ContactView> getContact(
 			@UrlParameter("search") String search,
 			@UrlParameter("start") int offset,
@@ -177,6 +180,7 @@ public class PersonsController {
 	}
 	
 	@HttpService(key="entities/contacts")
+	@Authorize(value={})
 	public List<ContactView> getContactsForEntity(
 			@HttpServiceId UUID idEntity) {
 		
@@ -184,6 +188,7 @@ public class PersonsController {
 	}
 	
 	@HttpService(key="contacts")
+	@Authorize(value={})
 	public ContactView getContact(@HttpServiceId UUID id) {
 		if(id != null) {
 
@@ -197,6 +202,7 @@ public class PersonsController {
 	}
 	
 	@HttpService(key="contacts", methods={HttpMethod.PUT, HttpMethod.POST})
+	@Authorize(value={})
 	public ContactView createOrUpdateContact(@Body ArcherView contactView) throws ObjectPersistenceException {
 		if(contactView != null) {
 			Contact contact = contactViewMapper.asContact(contactView);

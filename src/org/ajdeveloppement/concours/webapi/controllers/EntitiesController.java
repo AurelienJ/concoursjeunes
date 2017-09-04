@@ -100,6 +100,7 @@ import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.concours.data.Criterion;
 import org.ajdeveloppement.concours.data.CriterionElement;
 import org.ajdeveloppement.concours.data.Entite;
+import org.ajdeveloppement.concours.webapi.annotations.Authorize;
 import org.ajdeveloppement.concours.webapi.mappers.CriterionMapper;
 import org.ajdeveloppement.concours.webapi.mappers.EntiteMapper;
 import org.ajdeveloppement.concours.webapi.models.TypeLabel;
@@ -144,6 +145,7 @@ public class EntitiesController {
 	}
 	
 	@HttpService(key="countentities")
+	@Authorize(value={})
 	public int countEntities(
 			@UrlParameter("types") String types,
 			@UrlParameter("childOf") UUID childOf,
@@ -158,6 +160,7 @@ public class EntitiesController {
 	
 	
 	@HttpService(key="entities")
+	@Authorize(value={})
 	public List<EntiteView> getEntities(
 			@UrlParameter("types") String types,
 			@UrlParameter("childOf") UUID childOf,
@@ -175,16 +178,19 @@ public class EntitiesController {
 	}
 	
 	@HttpService(key="entities")
+	@Authorize(value={})
 	public EntiteView getEntities(@HttpServiceId UUID id) {
 		return ViewsFactory.getView(EntiteView.class, service.getEntiteById(id));
 	}
 	
 	@HttpService(key="entityname")
+	@Authorize(value={})
 	public String getEntityName(@HttpServiceId UUID id) throws SQLException {
 		return service.getEntiteNameById(id);
 	}
 	
 	@HttpService(key="entities",methods={HttpMethod.PUT, HttpMethod.POST})
+	@Authorize(value={})
 	public EntiteView createOrUpdateEntity(@Body EntiteView entiteView) throws ObjectPersistenceException {
 		Entite entite = entiteMapper.asEntite(entiteView);
 		
@@ -197,6 +203,7 @@ public class EntitiesController {
 	}
 	
 	@HttpService(key="entities/criteria")
+	@Authorize(value={})
 	public List<CriterionView> getCriteria(@HttpServiceId UUID idEntity) {
 		return service.getCriteria(idEntity).stream()
 				.map(c -> ViewsFactory.getView(CriterionView.class, c, c.getClass().getClassLoader()))
@@ -204,6 +211,7 @@ public class EntitiesController {
 	}
 	
 	@HttpService(key="entities/criteria",methods={HttpMethod.PUT, HttpMethod.POST})
+	@Authorize(value={})
 	public List<CriterionView> saveCriteria(@HttpServiceId UUID idEntity, @Body CriterionView[] criterionViews) throws ObjectPersistenceException {
 		List<Criterion> criteria = criterionMapper.criterionViewListToCriterionList(criterionViews);
 
