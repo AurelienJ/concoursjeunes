@@ -14,7 +14,7 @@ function verifyAccess(session, request) {
 	
 	//print((new Date()) + "\t" + session.getHost() + "\t" + session.getProtocol()+ "\t" + session.getRequestMethod() + "\t" + session.getRequestUri());
 	
-	if(request.getRequestUri().startsWith("/index.html")
+	/*if(request.getRequestUri().startsWith("/index.html")
 			|| request.getRequestUri().equals("/")
 			|| request.getRequestUri().startsWith("/api")) {
 		var authToken = request.getCookiesParameters().get("authToken");
@@ -30,7 +30,7 @@ function verifyAccess(session, request) {
 					+ "://" + request.getHost() + "/login.html");
 			return response;
 		}
-	}
+	}*/
 	
 	if(request.getRequestUri().startsWith("/admin") 
 			&& ((!session.getRemoteAddress().isAnyLocalAddress()

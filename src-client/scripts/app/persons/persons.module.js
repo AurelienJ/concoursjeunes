@@ -42,7 +42,7 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
             }
         ],
         execute: function () {
-            PersonsModule = (function () {
+            PersonsModule = /** @class */ (function () {
                 function PersonsModule() {
                 }
                 PersonsModule = __decorate([

@@ -42,7 +42,7 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
             }
         ],
         execute: function () {
-            CompetitionModule = (function () {
+            CompetitionModule = /** @class */ (function () {
                 function CompetitionModule() {
                 }
                 CompetitionModule = __decorate([

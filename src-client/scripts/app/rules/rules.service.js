@@ -23,7 +23,7 @@ System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"
             }
         ],
         execute: function () {
-            RulesService = (function () {
+            RulesService = /** @class */ (function () {
                 function RulesService(http) {
                     this.http = http;
                     this.headers = new http_1.Headers();

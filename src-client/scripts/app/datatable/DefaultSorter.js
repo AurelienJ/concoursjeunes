@@ -21,7 +21,7 @@ System.register(["@angular/core", "./DataTable"], function (exports_1, context_1
             }
         ],
         execute: function () {
-            DefaultSorter = (function () {
+            DefaultSorter = /** @class */ (function () {
                 function DefaultSorter(mfTable) {
                     this.mfTable = mfTable;
                     this.isSortedByMeAsc = false;

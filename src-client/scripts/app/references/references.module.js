@@ -21,7 +21,7 @@ System.register(["@angular/core", "../general", "./references.service"], functio
             }
         ],
         execute: function () {
-            ReferencesModule = (function () {
+            ReferencesModule = /** @class */ (function () {
                 function ReferencesModule() {
                 }
                 ReferencesModule = __decorate([

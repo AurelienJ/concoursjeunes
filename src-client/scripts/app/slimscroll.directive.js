@@ -18,7 +18,7 @@ System.register(["@angular/core"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            SlimScrollDirective = (function () {
+            SlimScrollDirective = /** @class */ (function () {
                 function SlimScrollDirective(el, renderer) {
                     var that = this;
                     this.element = jQuery(el.nativeElement);

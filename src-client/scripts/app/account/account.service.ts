@@ -8,6 +8,8 @@ export class AccountService {
 
     private headers : Headers;
 
+    private account : IAccount;
+
     constructor(private http : Http) {
         this.headers = new Headers();
         this.headers.append('Content-Type', 'application/json');
@@ -15,11 +17,17 @@ export class AccountService {
     }
 
     public register(account : IAccount) : Promise<IAccount> {
-        return this.http.post("api/register", account, {headers: this.headers}).toPromise().then(r => r.json());
+        return this.http.post("api/register", account, {headers: this.headers}).toPromise().then(r => {
+            this.account = r.json();
+            return this.account;
+        });
     }
 
     public login(account : IAccount) : Promise<IAccount> {
-        return this.http.post("api/login", account, {headers: this.headers}).toPromise().then(r => r.json());
+        return this.http.post("api/login", account, {headers: this.headers}).toPromise().then(r => {
+            this.account = r.json();
+            return this.account;
+        });
     }
 
     public logout() : Promise<string> {

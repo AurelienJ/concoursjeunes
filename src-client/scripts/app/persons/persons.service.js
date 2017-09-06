@@ -26,7 +26,7 @@ System.register(["@angular/core", "@angular/http", "../general/date.service", "r
             }
         ],
         execute: function () {
-            PersonsService = (function () {
+            PersonsService = /** @class */ (function () {
                 function PersonsService(http, dateService) {
                     this.http = http;
                     this.dateService = dateService;

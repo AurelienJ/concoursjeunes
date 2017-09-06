@@ -21,7 +21,7 @@ System.register(["@angular/core", "./Criterion"], function (exports_1, context_1
             }
         ],
         execute: function () {
-            CriterionComponent = (function () {
+            CriterionComponent = /** @class */ (function () {
                 function CriterionComponent() {
                 }
                 CriterionComponent.prototype.ngOnInit = function () { };

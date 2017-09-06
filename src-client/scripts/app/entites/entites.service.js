@@ -23,7 +23,7 @@ System.register(["@angular/core", "@angular/http", "rxjs/add/operator/toPromise"
             }
         ],
         execute: function () {
-            EntitesService = (function () {
+            EntitesService = /** @class */ (function () {
                 function EntitesService(http) {
                     this.http = http;
                     this.entites = new Map();

@@ -30,7 +30,7 @@ System.register(["@angular/core", "@angular/common", "./DataTable", "./DefaultSo
             }
         ],
         execute: function () {
-            DataTableModule = (function () {
+            DataTableModule = /** @class */ (function () {
                 function DataTableModule() {
                 }
                 DataTableModule = __decorate([

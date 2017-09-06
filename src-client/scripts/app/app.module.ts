@@ -7,6 +7,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap';
 
 import { GeneralModule } from './general/general.module';
 import { ReferencesModule } from './references/references.module';
+import { AccountModule } from "./account/account.module";
 import { CompetitionModule } from './competitions/competitions.module';
 import { EntitesModule } from './entites/entites.module';
 import { PersonsModule } from './persons/persons.module';
@@ -23,7 +24,7 @@ import { AppRoutes } from './app.routes';
     imports:        [ BrowserModule, 
         RouterModule.forRoot(AppRoutes, { useHash: true }),
         BsDatepickerModule.forRoot(),
-        GeneralModule, ReferencesModule, ParametersModule, CompetitionModule, EntitesModule, PersonsModule, RulesModule],
+        GeneralModule, ReferencesModule, AccountModule, ParametersModule, CompetitionModule, EntitesModule, PersonsModule, RulesModule],
     declarations:   [ AppComponent, SlimScrollDirective ],
     bootstrap:      [ AppComponent],
     providers:      [  ]

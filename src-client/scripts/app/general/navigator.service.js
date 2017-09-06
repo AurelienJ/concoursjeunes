@@ -29,7 +29,7 @@ System.register(["@angular/core", "@angular/common", "@angular/router", "./Navig
             }
         ],
         execute: function () {
-            NavigatorService = (function () {
+            NavigatorService = /** @class */ (function () {
                 function NavigatorService(router, route, location) {
                     this.router = router;
                     this.route = route;

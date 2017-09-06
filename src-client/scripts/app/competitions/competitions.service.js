@@ -24,7 +24,7 @@ System.register(["@angular/core", "@angular/http", "../rules/rules.service"], fu
             }
         ],
         execute: function () {
-            CompetitionsService = (function () {
+            CompetitionsService = /** @class */ (function () {
                 function CompetitionsService(http, rulesService) {
                     this.http = http;
                     this.rulesService = rulesService;

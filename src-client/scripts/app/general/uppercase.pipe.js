@@ -15,7 +15,7 @@ System.register(["@angular/core"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            UpperCasePipe = (function () {
+            UpperCasePipe = /** @class */ (function () {
                 function UpperCasePipe() {
                 }
                 UpperCasePipe.prototype.transform = function (value, args) {

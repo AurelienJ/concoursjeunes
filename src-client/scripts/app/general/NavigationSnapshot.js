@@ -5,7 +5,7 @@ System.register([], function (exports_1, context_1) {
     return {
         setters: [],
         execute: function () {
-            NavigationSnapshot = (function () {
+            NavigationSnapshot = /** @class */ (function () {
                 function NavigationSnapshot(label, currentUrl, queryParams, stateData) {
                     this.label = label;
                     this.currentUrl = currentUrl;

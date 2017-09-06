@@ -21,7 +21,7 @@ System.register(["@angular/core", "lodash"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            RankingComponent = (function () {
+            RankingComponent = /** @class */ (function () {
                 function RankingComponent() {
                     this.rankingCriteriaChange = new core_1.EventEmitter();
                 }

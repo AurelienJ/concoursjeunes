@@ -41,7 +41,7 @@ System.register(["@angular/core", "@angular/router", "../general/NavigationSnaps
             }
         ],
         execute: function () {
-            EntiteComponent = (function () {
+            EntiteComponent = /** @class */ (function () {
                 function EntiteComponent(router, route, references, entitesService, personsService, navigatorService) {
                     this.router = router;
                     this.route = route;

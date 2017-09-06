@@ -21,7 +21,7 @@ System.register(["@angular/core", "@angular/http"], function (exports_1, context
             }
         ],
         execute: function () {
-            AccountService = (function () {
+            AccountService = /** @class */ (function () {
                 function AccountService(http) {
                     this.http = http;
                     this.headers = new http_1.Headers();
@@ -29,10 +29,18 @@ System.register(["@angular/core", "@angular/http"], function (exports_1, context
                     this.headers.append('Accept', 'application/json');
                 }
                 AccountService.prototype.register = function (account) {
-                    return this.http.post("api/register", account, { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
+                    var _this = this;
+                    return this.http.post("api/register", account, { headers: this.headers }).toPromise().then(function (r) {
+                        _this.account = r.json();
+                        return _this.account;
+                    });
                 };
                 AccountService.prototype.login = function (account) {
-                    return this.http.post("api/login", account, { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
+                    var _this = this;
+                    return this.http.post("api/login", account, { headers: this.headers }).toPromise().then(function (r) {
+                        _this.account = r.json();
+                        return _this.account;
+                    });
                 };
                 AccountService.prototype.logout = function () {
                     return this.http.get("api/logout", { headers: this.headers }).toPromise().then(function (r) { return r.text(); });

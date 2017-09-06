@@ -21,7 +21,7 @@ System.register(["@angular/core", "lodash"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            DistancesAndFacesComponent = (function () {
+            DistancesAndFacesComponent = /** @class */ (function () {
                 function DistancesAndFacesComponent() {
                     this.distancesAndFacesSetChange = new core_1.EventEmitter();
                 }

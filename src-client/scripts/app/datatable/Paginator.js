@@ -24,7 +24,7 @@ System.register(["@angular/core", "./DataTable"], function (exports_1, context_1
             }
         ],
         execute: function () {
-            Paginator = (function () {
+            Paginator = /** @class */ (function () {
                 function Paginator(injectMfTable) {
                     var _this = this;
                     this.injectMfTable = injectMfTable;

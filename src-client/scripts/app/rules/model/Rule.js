@@ -5,7 +5,7 @@ System.register([], function (exports_1, context_1) {
     return {
         setters: [],
         execute: function () {
-            Rule = (function () {
+            Rule = /** @class */ (function () {
                 function Rule() {
                     this.nbSerie = 2;
                     this.nbVoleeParSerie = 10;

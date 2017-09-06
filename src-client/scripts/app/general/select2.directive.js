@@ -21,7 +21,7 @@ System.register(["@angular/core", "lodash"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            Select2Directive = (function () {
+            Select2Directive = /** @class */ (function () {
                 // @HostListener('select2:select')
                 // private select(e: Event) {
                 // 	this.value.next(this.element.val());

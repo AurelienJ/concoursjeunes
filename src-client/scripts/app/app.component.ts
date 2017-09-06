@@ -1,7 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-
-import { NavigatorService } from './general/navigator.service';
 
 import moment from 'moment';
 
@@ -10,16 +7,12 @@ import moment from 'moment';
     templateUrl: 'scripts/app/app.html',
 })
 export class AppComponent implements OnInit {
-    constructor(private route : ActivatedRoute, private navigatorService : NavigatorService) {
+    constructor() {
 
     }
 
     ngOnInit() {
         //this.route.
         moment.locale('fr')
-    }
-
-    clearNavigationPaths() {
-        this.navigatorService.clear();
     }
 }

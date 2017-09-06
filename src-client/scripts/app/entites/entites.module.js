@@ -45,7 +45,7 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
             }
         ],
         execute: function () {
-            EntitesModule = (function () {
+            EntitesModule = /** @class */ (function () {
                 function EntitesModule() {
                 }
                 EntitesModule = __decorate([

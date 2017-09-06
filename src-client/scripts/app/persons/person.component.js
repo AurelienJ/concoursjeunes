@@ -35,7 +35,7 @@ System.register(["@angular/core", "@angular/router", "../entites/entites.service
             }
         ],
         execute: function () {
-            PersonComponent = (function () {
+            PersonComponent = /** @class */ (function () {
                 function PersonComponent(route, router, navigation, references, persons, entitesService) {
                     this.route = route;
                     this.router = router;

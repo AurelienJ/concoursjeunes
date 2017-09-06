@@ -21,7 +21,7 @@ System.register(["@angular/core", "lodash"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            LocalInputData = (function () {
+            LocalInputData = /** @class */ (function () {
                 function LocalInputData(data) {
                     this.data = data;
                     this.onDataChange = new core_1.EventEmitter();
@@ -62,7 +62,7 @@ System.register(["@angular/core", "lodash"], function (exports_1, context_1) {
                 return LocalInputData;
             }());
             exports_1("LocalInputData", LocalInputData);
-            DataTable = (function () {
+            DataTable = /** @class */ (function () {
                 function DataTable() {
                     /**
                      * input data

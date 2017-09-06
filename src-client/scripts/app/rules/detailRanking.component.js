@@ -27,7 +27,7 @@ System.register(["@angular/core", "./rules.service", "../entites/entites.service
             }
         ],
         execute: function () {
-            DetailRankingComponent = (function () {
+            DetailRankingComponent = /** @class */ (function () {
                 function DetailRankingComponent(rulesService, entitesService) {
                     this.rulesService = rulesService;
                     this.entitesService = entitesService;

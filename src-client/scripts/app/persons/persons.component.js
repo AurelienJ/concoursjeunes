@@ -27,7 +27,7 @@ System.register(["@angular/core", "@angular/router", "./persons.service", "../ge
             }
         ],
         execute: function () {
-            PersonServerSideInputData = (function () {
+            PersonServerSideInputData = /** @class */ (function () {
                 function PersonServerSideInputData(personsService) {
                     this.personsService = personsService;
                     this.mustReload = true;
@@ -71,7 +71,7 @@ System.register(["@angular/core", "@angular/router", "./persons.service", "../ge
                 return PersonServerSideInputData;
             }());
             exports_1("PersonServerSideInputData", PersonServerSideInputData);
-            PersonServerSideInputDataFilterPipe = (function () {
+            PersonServerSideInputDataFilterPipe = /** @class */ (function () {
                 function PersonServerSideInputDataFilterPipe() {
                 }
                 PersonServerSideInputDataFilterPipe.prototype.transform = function (value, args) {
@@ -94,7 +94,7 @@ System.register(["@angular/core", "@angular/router", "./persons.service", "../ge
                 return PersonServerSideInputDataFilterPipe;
             }());
             exports_1("PersonServerSideInputDataFilterPipe", PersonServerSideInputDataFilterPipe);
-            PersonsComponent = (function () {
+            PersonsComponent = /** @class */ (function () {
                 function PersonsComponent(route, router, navigatorService, personsService) {
                     this.route = route;
                     this.router = router;

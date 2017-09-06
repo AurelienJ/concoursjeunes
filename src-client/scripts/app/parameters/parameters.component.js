@@ -15,7 +15,7 @@ System.register(["@angular/core"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            ParametersComponent = (function () {
+            ParametersComponent = /** @class */ (function () {
                 function ParametersComponent() {
                 }
                 ParametersComponent = __decorate([

@@ -21,7 +21,7 @@ System.register(["@angular/core", "./DataTable"], function (exports_1, context_1
             }
         ],
         execute: function () {
-            BootstrapPaginator = (function () {
+            BootstrapPaginator = /** @class */ (function () {
                 function BootstrapPaginator() {
                     this.rowsOnPageSet = [];
                     this.minRowsOnPage = 0;

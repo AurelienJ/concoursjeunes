@@ -24,7 +24,7 @@ System.register(["@angular/core", "./rules.service", "lodash"], function (export
             }
         ],
         execute: function () {
-            DetailDistancesAndFacesComponent = (function () {
+            DetailDistancesAndFacesComponent = /** @class */ (function () {
                 function DetailDistancesAndFacesComponent(rulesService) {
                     var _this = this;
                     this.rulesService = rulesService;

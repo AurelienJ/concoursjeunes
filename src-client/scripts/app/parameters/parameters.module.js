@@ -27,7 +27,7 @@ System.register(["@angular/core", "@angular/platform-browser", "../general/gener
             }
         ],
         execute: function () {
-            ParametersModule = (function () {
+            ParametersModule = /** @class */ (function () {
                 function ParametersModule() {
                 }
                 ParametersModule = __decorate([

@@ -57,7 +57,7 @@ System.register(["@angular/core", "@angular/router", "@angular/platform-browser"
             }
         ],
         execute: function () {
-            RulesModule = (function () {
+            RulesModule = /** @class */ (function () {
                 function RulesModule() {
                 }
                 RulesModule = __decorate([

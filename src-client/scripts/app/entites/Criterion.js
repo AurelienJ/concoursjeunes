@@ -8,7 +8,7 @@ System.register([], function (exports_1, context_1) {
             /**
              * Represent a rules criterion
              */
-            Criterion = (function () {
+            Criterion = /** @class */ (function () {
                 function Criterion() {
                     this.criterionElements = [];
                 }

@@ -15,7 +15,7 @@ System.register(["@angular/core"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            DateService = (function () {
+            DateService = /** @class */ (function () {
                 function DateService() {
                 }
                 DateService.prototype.jsonWithDate = function (value) {

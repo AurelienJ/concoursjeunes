@@ -10,7 +10,7 @@ System.register(["@angular/core", "./navigator.service"], function (exports_1, c
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, navigator_service_1, TitlebarComponent;
+    var core_1, navigator_service_1, MainComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -21,32 +21,26 @@ System.register(["@angular/core", "./navigator.service"], function (exports_1, c
             }
         ],
         execute: function () {
-            TitlebarComponent = /** @class */ (function () {
-                function TitlebarComponent(navigatorService) {
-                    var _this = this;
+            MainComponent = /** @class */ (function () {
+                function MainComponent(navigatorService) {
                     this.navigatorService = navigatorService;
-                    this.paths = [];
-                    this.navigatorService.subscribe(function (navigationStack) { return _this.paths = navigationStack; });
                 }
-                TitlebarComponent.prototype.clearAfter = function (index) {
-                    this.navigatorService.clearAfter(index);
+                MainComponent.prototype.ngOnInit = function () { };
+                MainComponent.prototype.clearNavigationPaths = function () {
+                    this.navigatorService.clear();
                 };
-                __decorate([
-                    core_1.Input(),
-                    __metadata("design:type", String)
-                ], TitlebarComponent.prototype, "title", void 0);
-                TitlebarComponent = __decorate([
+                MainComponent = __decorate([
                     core_1.Component({
-                        selector: 'titlebar',
-                        template: "<div class=\"content-header\">\n\t<h1>{{title}}</h1>\n\t<ol class=\"breadcrumb\">\n        <li><i class=\"fa fa-home\"></i></li>\n        <li *ngFor=\"let path of paths; let i = index\"><a [routerLink]=\"path.path\" [queryParams]=\"path.queryParams\" (click)=\"clearAfter(i)\">{{path.label}}</a></li>\n    </ol></div>"
+                        selector: 'main',
+                        templateUrl: 'scripts/app/general/main.component.html'
                     }),
                     __metadata("design:paramtypes", [navigator_service_1.NavigatorService])
-                ], TitlebarComponent);
-                return TitlebarComponent;
+                ], MainComponent);
+                return MainComponent;
             }());
-            exports_1("TitlebarComponent", TitlebarComponent);
+            exports_1("MainComponent", MainComponent);
         }
     };
 });
 
-//# sourceMappingURL=titlebar.component.js.map
+//# sourceMappingURL=main.component.js.map

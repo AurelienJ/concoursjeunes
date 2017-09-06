@@ -36,7 +36,7 @@ System.register(["@angular/core", "@angular/router", "../references/references.s
             }
         ],
         execute: function () {
-            RuleComponent = (function () {
+            RuleComponent = /** @class */ (function () {
                 function RuleComponent(route, router, navigation, references, rulesService, entiteService) {
                     this.route = route;
                     this.router = router;

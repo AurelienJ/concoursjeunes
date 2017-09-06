@@ -27,7 +27,7 @@ System.register(["@angular/core", "@angular/router", "./rules.service", "../gene
             }
         ],
         execute: function () {
-            RulesServerSideInputData = (function () {
+            RulesServerSideInputData = /** @class */ (function () {
                 function RulesServerSideInputData(rulesService) {
                     this.rulesService = rulesService;
                     this.mustReload = true;
@@ -71,7 +71,7 @@ System.register(["@angular/core", "@angular/router", "./rules.service", "../gene
                 return RulesServerSideInputData;
             }());
             exports_1("RulesServerSideInputData", RulesServerSideInputData);
-            RulesServerSideInputDataFilterPipe = (function () {
+            RulesServerSideInputDataFilterPipe = /** @class */ (function () {
                 function RulesServerSideInputDataFilterPipe() {
                 }
                 RulesServerSideInputDataFilterPipe.prototype.transform = function (value, args) {
@@ -89,7 +89,7 @@ System.register(["@angular/core", "@angular/router", "./rules.service", "../gene
                 return RulesServerSideInputDataFilterPipe;
             }());
             exports_1("RulesServerSideInputDataFilterPipe", RulesServerSideInputDataFilterPipe);
-            RulesComponent = (function () {
+            RulesComponent = /** @class */ (function () {
                 function RulesComponent(route, router, navigatorService, rulesService) {
                     this.route = route;
                     this.router = router;

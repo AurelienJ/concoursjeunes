@@ -27,7 +27,7 @@ System.register(["@angular/core", "@angular/router", "./entites.service", "../ge
             }
         ],
         execute: function () {
-            EntiteServerSideInputData = (function () {
+            EntiteServerSideInputData = /** @class */ (function () {
                 function EntiteServerSideInputData(entitesService) {
                     this.entitesService = entitesService;
                     this.mustReload = true;
@@ -73,7 +73,7 @@ System.register(["@angular/core", "@angular/router", "./entites.service", "../ge
                 return EntiteServerSideInputData;
             }());
             exports_1("EntiteServerSideInputData", EntiteServerSideInputData);
-            EntiteServerSideInputDataFilterPipe = (function () {
+            EntiteServerSideInputDataFilterPipe = /** @class */ (function () {
                 function EntiteServerSideInputDataFilterPipe() {
                 }
                 EntiteServerSideInputDataFilterPipe.prototype.transform = function (value, args) {
@@ -96,7 +96,7 @@ System.register(["@angular/core", "@angular/router", "./entites.service", "../ge
                 return EntiteServerSideInputDataFilterPipe;
             }());
             exports_1("EntiteServerSideInputDataFilterPipe", EntiteServerSideInputDataFilterPipe);
-            EntitesComponent = (function () {
+            EntitesComponent = /** @class */ (function () {
                 //private typesEntitiesSelectorElement: JQuery;
                 function EntitesComponent(router, route, entitesService, navigatorService) {
                     this.router = router;

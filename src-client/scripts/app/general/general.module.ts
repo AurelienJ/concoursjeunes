@@ -6,20 +6,22 @@ import { HttpModule } from '@angular/http';
 import { NavigatorService } from './navigator.service'
 import { DateService } from './date.service';
 
+import { MainComponent } from "./main.component";
 import { TitlebarComponent } from './titlebar.component'
 
 import { NavigationSnapshot } from './NavigationSnapshot'
 
 import { TableFilterPipe } from './arraySearch.pipe';
-import { Select2Directive } from './select2.directive';
 import { UpperCasePipe } from './uppercase.pipe';
+import { Select2Directive } from './select2.directive';
+import { ICheckDirective } from "./icheck.directive";
 
 @NgModule({
     imports:        [ RouterModule, BrowserModule, HttpModule ],
-    declarations:   [ TitlebarComponent, TableFilterPipe, UpperCasePipe, Select2Directive ],
+    declarations:   [ MainComponent, TitlebarComponent, TableFilterPipe, UpperCasePipe, Select2Directive, ICheckDirective ],
     bootstrap:      [],
     providers:      [ NavigatorService, DateService ],
-    exports:        [ TitlebarComponent, TableFilterPipe, UpperCasePipe, Select2Directive ]
+    exports:        [ MainComponent, TitlebarComponent, TableFilterPipe, UpperCasePipe, Select2Directive, ICheckDirective ]
 })
 export class GeneralModule {
 

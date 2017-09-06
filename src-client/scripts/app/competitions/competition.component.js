@@ -27,7 +27,7 @@ System.register(["@angular/core", "@angular/router", "../general", "./competitio
             }
         ],
         execute: function () {
-            CompetitionComponent = (function () {
+            CompetitionComponent = /** @class */ (function () {
                 function CompetitionComponent(route, navigation, competitionService) {
                     this.route = route;
                     this.navigation = navigation;
