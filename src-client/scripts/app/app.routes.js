@@ -48,6 +48,7 @@ System.register(["./parameters/parameters.component", "./entites/entites.compone
                 { path: 'competitions', component: competitions_component_1.CompetitionsComponent },
                 { path: 'competitions/:id', component: competition_component_1.CompetitionComponent },
                 { path: 'dashboard', component: competitions_component_1.CompetitionsComponent }
+                //{ path: 'login',  co }
                 //{ path: 'authToken/:token', component: LoginComponent},
                 //{ path: 'user',component: UserComponent}
             ]);
