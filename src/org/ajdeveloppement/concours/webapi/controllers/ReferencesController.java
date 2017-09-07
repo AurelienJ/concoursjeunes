@@ -89,26 +89,14 @@
 package org.ajdeveloppement.concours.webapi.controllers;
 
 import java.util.List;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
-import org.ajdeveloppement.concours.data.Contact;
-import org.ajdeveloppement.concours.data.ManagerProfile;
-import org.ajdeveloppement.concours.data.Profile;
-import org.ajdeveloppement.concours.data.T_Contact;
-import org.ajdeveloppement.concours.data.T_ManagerProfile;
-import org.ajdeveloppement.concours.webapi.UserSessionData;
-import org.ajdeveloppement.concours.webapi.models.AuthenticationModelView;
 import org.ajdeveloppement.concours.webapi.models.CountryModelView;
 import org.ajdeveloppement.concours.webapi.services.ReferenceService;
-import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
-import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
-import org.ajdeveloppement.webserver.services.webapi.helpers.HttpSessionHelper;
-import org.ajdeveloppement.webserver.services.webapi.helpers.JsonHelper;
 
 /**
  * @author Aurélien JEOFFRAY
@@ -129,31 +117,5 @@ public class ReferencesController {
 	@HttpService(key="countries")
 	public List<CountryModelView> getCountries() {
 		return service.getCountries();
-	}
-	
-	@HttpService(key="authenticate",methods=HttpMethod.POST)
-	public String authenticate(@Body AuthenticationModelView authenticationData) {
-		UserSessionData userSessionData = HttpSessionHelper.getUserSessionData(context.getHttpRequest());
-		//Pour debug: devra être adapté lors du développement réel
-		//de l'authentification
-		if(authenticationData.getIdpToken() != null) {
-			Contact utilisateur = T_Contact.getInstanceWithPrimaryKey(UUID.fromString(authenticationData.getIdpToken()));
-			if(utilisateur != null) {
-				ManagerProfile managerProfile = T_ManagerProfile.all().where(T_ManagerProfile.ID_CONTACT.equalTo(utilisateur.getIdContact())).first();
-				if(managerProfile != null) {
-					Profile profile = managerProfile.getProfile();
-					
-					if(userSessionData == null)
-						userSessionData = new UserSessionData();
-				
-					userSessionData.setSessionUser(utilisateur);
-					userSessionData.setSessionProfile(profile);
-					
-					HttpSessionHelper.putUserSessionData(context.getHttpRequest(), userSessionData);
-				}
-			}
-		}
-		
-		return JsonHelper.getSuccessResponse(null);
 	}
 }

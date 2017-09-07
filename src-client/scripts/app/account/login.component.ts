@@ -18,18 +18,18 @@ import { IAccount } from "./iaccount";
   
 	  <form>
 		<div class="form-group has-feedback">
-		  <input type="email" class="form-control" placeholder="Email" name="email" [ngModel]="account.login" />
+		  <input type="email" class="form-control" placeholder="Email" name="email" [(ngModel)]="account.login" />
 		  <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
 		</div>
 		<div class="form-group has-feedback">
-		  <input type="password" class="form-control" placeholder="Password" name="password" [ngModel]="account.password"/>
+		  <input type="password" class="form-control" placeholder="Password" name="password" [(ngModel)]="account.password"/>
 		  <span class="glyphicon glyphicon-lock form-control-feedback"></span>
 		</div>
 		<div class="row">
 		  <div class="col-xs-7">
 			<div class="checkbox icheck">
 			  <label>
-				<input icheck type="checkbox" [ngModel]="keepAuth" name="keepAuth" /> Se souvenir de moi
+				<input icheck type="checkbox" [(ngModel)]="keepAuth" name="keepAuth" /> Se souvenir de moi
 			  </label>
 			</div>
 		  </div>

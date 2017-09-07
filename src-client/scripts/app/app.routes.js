@@ -1,11 +1,17 @@
-System.register(["./account/login.component", "./general/main.component", "./entites/entites.component", "./entites/entite.component", "./persons/persons.component", "./persons/person.component", "./rules/rules.component", "./rules/rule.component", "./competitions/competitions.component", "./competitions/competition.component"], function (exports_1, context_1) {
+System.register(["./account/login.component", "./account/register.component", "./account/secureaccess.service", "./general/main.component", "./entites/entites.component", "./entites/entite.component", "./persons/persons.component", "./persons/person.component", "./rules/rules.component", "./rules/rule.component", "./competitions/competitions.component", "./competitions/competition.component"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var login_component_1, main_component_1, entites_component_1, entite_component_1, persons_component_1, person_component_1, rules_component_1, rule_component_1, competitions_component_1, competition_component_1, AppRoutes;
+    var login_component_1, register_component_1, secureaccess_service_1, main_component_1, entites_component_1, entite_component_1, persons_component_1, person_component_1, rules_component_1, rule_component_1, competitions_component_1, competition_component_1, AppRoutes;
     return {
         setters: [
             function (login_component_1_1) {
                 login_component_1 = login_component_1_1;
+            },
+            function (register_component_1_1) {
+                register_component_1 = register_component_1_1;
+            },
+            function (secureaccess_service_1_1) {
+                secureaccess_service_1 = secureaccess_service_1_1;
             },
             function (main_component_1_1) {
                 main_component_1 = main_component_1_1;
@@ -41,7 +47,9 @@ System.register(["./account/login.component", "./general/main.component", "./ent
                 {
                     path: '',
                     component: main_component_1.MainComponent,
+                    canActivate: [secureaccess_service_1.SecureAccessService],
                     children: [
+                        { path: '*', redirectTo: 'dashboard' },
                         { path: 'entities', component: entites_component_1.EntitesComponent },
                         { path: 'federations', component: entites_component_1.EntitesComponent },
                         { path: 'clubs', component: entites_component_1.EntitesComponent },
@@ -59,6 +67,10 @@ System.register(["./account/login.component", "./general/main.component", "./ent
                 {
                     path: 'login',
                     component: login_component_1.LoginComponent
+                },
+                {
+                    path: 'register',
+                    component: register_component_1.RegisterComponent
                 }
                 //{ path: 'authToken/:token', component: LoginComponent},
                 //{ path: 'user',component: UserComponent}

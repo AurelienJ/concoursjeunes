@@ -20,15 +20,24 @@ System.register(["@angular/core"], function (exports_1, context_1) {
         execute: function () {
             ICheckDirective = /** @class */ (function () {
                 function ICheckDirective(el) {
+                    this.change = new core_1.EventEmitter();
                     this.element = jQuery(el.nativeElement);
                 }
                 ICheckDirective.prototype.ngAfterViewInit = function () {
+                    var that = this;
                     this.element.iCheck({
                         checkboxClass: 'icheckbox_square-blue',
                         radioClass: 'iradio_square-blue',
                         increaseArea: '20%' // optional
                     });
+                    this.element.on('ifToggled', function (event) {
+                        that.change.emit(that.element[0].checked);
+                    });
                 };
+                __decorate([
+                    core_1.Output(),
+                    __metadata("design:type", core_1.EventEmitter)
+                ], ICheckDirective.prototype, "change", void 0);
                 ICheckDirective = __decorate([
                     core_1.Directive({ selector: '[icheck]' }),
                     __metadata("design:paramtypes", [core_1.ElementRef])

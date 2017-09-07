@@ -88,7 +88,9 @@
  */
 package org.ajdeveloppement.concours.webapi.controllers;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -127,11 +129,17 @@ public class PersonsController {
 	
 	private PersonMapper contactViewMapper;
 	
+	private static SimpleDateFormat gmtFrmt = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US); //$NON-NLS-1$
+	
 	@Inject
 	public PersonsController(HttpContext context, PersonsService service, PersonMapper contactViewMapper) {
 		this.context = context;
 		this.service = service;
 		this.contactViewMapper = contactViewMapper;
+		
+		context.addHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1. //$NON-NLS-1$ //$NON-NLS-2$
+		context.addHeader("Pragma", "no-cache"); // HTTP 1.0. //$NON-NLS-1$ //$NON-NLS-2$
+		context.addHeader("Expires", "0"); // Proxies. //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -175,6 +183,7 @@ public class PersonsController {
 			@UrlParameter("sortBy") String sortBy,
 			@UrlParameter("sortOrder") String sortOrder) {
 		QFilter filter = service.getFilter( search);
+
 
 		return toViewsList(service.getContactWithFilter(filter, length, offset).asList());
 	}

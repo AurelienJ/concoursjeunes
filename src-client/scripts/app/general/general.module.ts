@@ -15,13 +15,14 @@ import { TableFilterPipe } from './arraySearch.pipe';
 import { UpperCasePipe } from './uppercase.pipe';
 import { Select2Directive } from './select2.directive';
 import { ICheckDirective } from "./icheck.directive";
+import { SlimScrollDirective } from './slimscroll.directive';
 
 @NgModule({
     imports:        [ RouterModule, BrowserModule, HttpModule ],
-    declarations:   [ MainComponent, TitlebarComponent, TableFilterPipe, UpperCasePipe, Select2Directive, ICheckDirective ],
+    declarations:   [ MainComponent, TitlebarComponent, TableFilterPipe, UpperCasePipe, Select2Directive, ICheckDirective, SlimScrollDirective ],
     bootstrap:      [],
     providers:      [ NavigatorService, DateService ],
-    exports:        [ MainComponent, TitlebarComponent, TableFilterPipe, UpperCasePipe, Select2Directive, ICheckDirective ]
+    exports:        [ MainComponent, TitlebarComponent, TableFilterPipe, UpperCasePipe, Select2Directive, ICheckDirective, SlimScrollDirective ]
 })
 export class GeneralModule {
 

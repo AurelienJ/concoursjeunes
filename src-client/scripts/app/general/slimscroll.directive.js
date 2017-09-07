@@ -22,16 +22,18 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 function SlimScrollDirective(el, renderer) {
                     var that = this;
                     this.element = jQuery(el.nativeElement);
+                }
+                SlimScrollDirective.prototype.ngAfterViewInit = function () {
                     this.element.slimScroll({
                         height: 'auto',
                         railVisible: true,
                         railColor: '#eeeeee',
                         railOpacity: 0.3,
                     });
-                }
+                };
                 SlimScrollDirective.prototype.onResize = function (event) {
                     this.element.slimScroll({
-                        height: event.target.innerHeight - 50
+                        height: event.target.innerHeight
                     });
                 };
                 __decorate([
@@ -41,7 +43,7 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                     __metadata("design:returntype", void 0)
                 ], SlimScrollDirective.prototype, "onResize", null);
                 SlimScrollDirective = __decorate([
-                    core_1.Directive({ selector: '[slimscroll]' }),
+                    core_1.Directive({ selector: '[slimscroll]', exportAs: "slimscroll" }),
                     __metadata("design:paramtypes", [core_1.ElementRef, core_1.Renderer])
                 ], SlimScrollDirective);
                 return SlimScrollDirective;

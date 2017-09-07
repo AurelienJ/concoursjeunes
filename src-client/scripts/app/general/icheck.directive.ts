@@ -1,7 +1,10 @@
-import { Directive, ElementRef } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, Output } from '@angular/core';
 
 @Directive({ selector: '[icheck]' })
 export class ICheckDirective {
+	@Output()
+	public change : EventEmitter<boolean> = new EventEmitter<boolean>();
+
 	private element : any;
 
 	constructor(el: ElementRef) {
@@ -9,10 +12,16 @@ export class ICheckDirective {
 	}
 
 	ngAfterViewInit() {
+		let that = this;
+
 		this.element.iCheck({
             checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square-blue',
             increaseArea: '20%' // optional
-            });
+			});
+
+		this.element.on('ifToggled', function(event){
+			that.change.emit(that.element[0].checked);
+		});
    }
 }

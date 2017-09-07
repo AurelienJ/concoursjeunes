@@ -8,13 +8,15 @@ import { FormsModule } from '@angular/forms';
 import { GeneralModule } from "../general/general.module";
 
 import { AccountService } from "./account.service";
+import { SecureAccessService } from "./secureaccess.service";
 
 import { LoginComponent } from "./login.component";
+import { RegisterComponent } from "./register.component";
 
 @NgModule({
-    declarations: [ LoginComponent ],
+    declarations: [ LoginComponent, RegisterComponent ],
     imports: [ CommonModule, RouterModule, HttpModule, BrowserModule, FormsModule, GeneralModule ],
-    exports: [ LoginComponent ],
-    providers: [ AccountService ],
+    exports: [ LoginComponent, RegisterComponent ],
+    providers: [ AccountService, SecureAccessService ],
 })
 export class AccountModule {}

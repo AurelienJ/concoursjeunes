@@ -112,6 +112,9 @@ import org.ajdeveloppement.webserver.viewbinder.ViewsFactory;
  */
 @WebApiController
 public class AccountController {
+	
+	private static final String USER_SESSION_KEY = "User"; //$NON-NLS-1$
+	
 	private HttpContext context;
 	
 	private AccountService service;
@@ -123,6 +126,23 @@ public class AccountController {
 		this.context = context;
 		this.service = service;
 		this.accountMapper = accountMapper;
+		
+		context.addHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1. //$NON-NLS-1$ //$NON-NLS-2$
+		context.addHeader("Pragma", "no-cache"); // HTTP 1.0. //$NON-NLS-1$ //$NON-NLS-2$
+		context.addHeader("Expires", "0"); // Proxies. //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	@HttpService(key = "authenticate")
+	public AccountView authenticate() {
+		Contact contact = HttpSessionHelper.getUserSessionData(context.getHttpRequest(), USER_SESSION_KEY);
+		
+		if(contact != null)
+			return ViewsFactory.getView(AccountView.class,contact);
+		
+		context.setCustomResponse(new HttpResponse(
+				HttpReturnCode.ClientError.Unauthorized, "text/plain", "Bad authentification token")); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		return null;
 	}
 	
 	@HttpService(key = "register",methods=HttpMethod.POST)
@@ -136,7 +156,7 @@ public class AccountController {
 		
 		Contact contact = service.getContactWithLogin(account.getLogin());
 		if(contact == null) {
-			contact = accountMapper.getContact(account);
+			contact = accountMapper.toContact(account);
 			
 			return ViewsFactory.getView(AccountView.class, service.saveAccount(contact));
 		}
@@ -157,7 +177,7 @@ public class AccountController {
 		
 		if(contact != null) {
 			if(service.verifyContactPassword(contact, account.getPassword())) {
-				HttpSessionHelper.putUserSessionData(context.getHttpRequest(), contact, "User"); //$NON-NLS-1$
+				HttpSessionHelper.putUserSessionData(context.getHttpRequest(), contact, USER_SESSION_KEY);
 				
 				HttpSessionHelper.addSessionCookieHeader(context, 60 * 60 * 24); // 24 H
 				
@@ -178,7 +198,7 @@ public class AccountController {
 	@HttpService(key = "logout")
 	@Authorize(value={})
 	public String logout() {
-		HttpSessionHelper.removeUserSessionData(context.getHttpRequest(), "User"); //$NON-NLS-1$
+		HttpSessionHelper.removeUserSessionData(context.getHttpRequest(), USER_SESSION_KEY);
 		
 		HttpSessionHelper.addSessionCookieHeader(context, -1); //delete cookie
 		

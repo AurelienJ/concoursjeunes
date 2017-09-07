@@ -146,6 +146,9 @@ gulp.task('distProd', ["bundle","dist"], () => {
     gulp.src("node_modules/font-awesome/fonts/**")
         .pipe(gulp.dest(distDir + "/node_modules/font-awesome/fonts")); 
 
+        gulp.src("node_modules/admin-lte/plugins/iCheck/**")
+        .pipe(gulp.dest(distDir + "/node_modules/admin-lte/plugins/iCheck"));
+
     gulp.src("login.html")
         .pipe(preprocess())
         .pipe(gulp.dest(distDir));

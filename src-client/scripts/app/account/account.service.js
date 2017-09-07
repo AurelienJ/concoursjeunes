@@ -28,19 +28,27 @@ System.register(["@angular/core", "@angular/http"], function (exports_1, context
                     this.headers.append('Content-Type', 'application/json');
                     this.headers.append('Accept', 'application/json');
                 }
-                AccountService.prototype.register = function (account) {
-                    var _this = this;
-                    return this.http.post("api/register", account, { headers: this.headers }).toPromise().then(function (r) {
-                        _this.account = r.json();
-                        return _this.account;
+                AccountService.prototype.isLogged = function () {
+                    return this.getAccount().then(function (a) {
+                        if (a)
+                            return true;
+                        return false;
                     });
                 };
+                AccountService.prototype.getAccount = function () {
+                    return this.account;
+                };
+                AccountService.prototype.register = function (account) {
+                    this.account = this.http.post("api/register", account, { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
+                    return this.account;
+                };
+                AccountService.prototype.authenticate = function () {
+                    this.account = this.http.get("api/authenticate", { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
+                    return this.account;
+                };
                 AccountService.prototype.login = function (account) {
-                    var _this = this;
-                    return this.http.post("api/login", account, { headers: this.headers }).toPromise().then(function (r) {
-                        _this.account = r.json();
-                        return _this.account;
-                    });
+                    this.account = this.http.post("api/login", account, { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
+                    return this.account;
                 };
                 AccountService.prototype.logout = function () {
                     return this.http.get("api/logout", { headers: this.headers }).toPromise().then(function (r) { return r.text(); });

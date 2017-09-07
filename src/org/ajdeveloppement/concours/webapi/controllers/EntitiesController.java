@@ -137,6 +137,10 @@ public class EntitiesController {
 		this.service = service;
 		this.criterionMapper = criterionMapper;
 		this.entiteMapper = entiteMapper;
+		
+		context.addHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1. //$NON-NLS-1$ //$NON-NLS-2$
+		context.addHeader("Pragma", "no-cache"); // HTTP 1.0. //$NON-NLS-1$ //$NON-NLS-2$
+		context.addHeader("Expires", "0"); // Proxies. //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@HttpService(key="typeentity")

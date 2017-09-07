@@ -1,6 +1,9 @@
 ///<reference path="_references.ts"/>
 import { Route } from "@angular/router";
 import { LoginComponent } from "./account/login.component";
+import { RegisterComponent } from "./account/register.component";
+
+import { SecureAccessService } from "./account/secureaccess.service";
 
 import { MainComponent } from "./general/main.component";
 
@@ -21,7 +24,9 @@ export const AppRoutes : Route[] = [
     {
         path: '',
         component: MainComponent,
+        canActivate: [SecureAccessService],
         children: [
+            { path: '*', redirectTo: 'dashboard'},
             { path: 'entities', component: EntitesComponent },
             { path: 'federations', component: EntitesComponent },
             { path: 'clubs', component: EntitesComponent },
@@ -39,6 +44,10 @@ export const AppRoutes : Route[] = [
     {
         path: 'login', 
         component: LoginComponent
+    },
+    {
+        path: 'register', 
+        component: RegisterComponent
     }
     //{ path: 'authToken/:token', component: LoginComponent},
     //{ path: 'user',component: UserComponent}

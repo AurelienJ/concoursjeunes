@@ -8,7 +8,7 @@ export class AccountService {
 
     private headers : Headers;
 
-    private account : IAccount;
+    private account : Promise<IAccount>;
 
     constructor(private http : Http) {
         this.headers = new Headers();
@@ -16,18 +16,32 @@ export class AccountService {
         this.headers.append('Accept', 'application/json');
     }
 
-    public register(account : IAccount) : Promise<IAccount> {
-        return this.http.post("api/register", account, {headers: this.headers}).toPromise().then(r => {
-            this.account = r.json();
-            return this.account;
+    public isLogged() : Promise<boolean> {
+        return this.getAccount().then(a => {
+            if(a)
+                return true;
+    
+            return false;
         });
     }
 
+    public getAccount() : Promise<IAccount> {
+        return this.account;
+    }
+
+    public register(account : IAccount) : Promise<IAccount> {
+        this.account = this.http.post("api/register", account, {headers: this.headers}).toPromise().then(r => r.json());
+        return this.account;
+    }
+
+    public authenticate() : Promise<IAccount> {
+        this.account = this.http.get("api/authenticate", {headers: this.headers}).toPromise().then(r => r.json());
+        return this.account;
+    }
+
     public login(account : IAccount) : Promise<IAccount> {
-        return this.http.post("api/login", account, {headers: this.headers}).toPromise().then(r => {
-            this.account = r.json();
-            return this.account;
-        });
+        this.account = this.http.post("api/login", account, {headers: this.headers}).toPromise().then(r => r.json());
+        return this.account;
     }
 
     public logout() : Promise<string> {

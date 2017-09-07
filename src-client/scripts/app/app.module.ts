@@ -14,8 +14,6 @@ import { PersonsModule } from './persons/persons.module';
 import { RulesModule } from './rules/rules.module';
 import { ParametersModule } from './parameters/parameters.module';
 
-import { SlimScrollDirective } from './slimscroll.directive';
-
 import { AppComponent } from './app.component';
 
 import { AppRoutes } from './app.routes';
@@ -25,7 +23,7 @@ import { AppRoutes } from './app.routes';
         RouterModule.forRoot(AppRoutes, { useHash: true }),
         BsDatepickerModule.forRoot(),
         GeneralModule, ReferencesModule, AccountModule, ParametersModule, CompetitionModule, EntitesModule, PersonsModule, RulesModule],
-    declarations:   [ AppComponent, SlimScrollDirective ],
+    declarations:   [ AppComponent ],
     bootstrap:      [ AppComponent],
     providers:      [  ]
 })

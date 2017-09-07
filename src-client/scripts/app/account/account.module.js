@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/common", "@angular/router", "@angular/http", "@angular/platform-browser", "@angular/forms", "../general/general.module", "./account.service", "./login.component"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/common", "@angular/router", "@angular/http", "@angular/platform-browser", "@angular/forms", "../general/general.module", "./account.service", "./secureaccess.service", "./login.component", "./register.component"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7,7 +7,7 @@ System.register(["@angular/core", "@angular/common", "@angular/router", "@angula
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, common_1, router_1, http_1, platform_browser_1, forms_1, general_module_1, account_service_1, login_component_1, AccountModule;
+    var core_1, common_1, router_1, http_1, platform_browser_1, forms_1, general_module_1, account_service_1, secureaccess_service_1, login_component_1, register_component_1, AccountModule;
     return {
         setters: [
             function (core_1_1) {
@@ -34,8 +34,14 @@ System.register(["@angular/core", "@angular/common", "@angular/router", "@angula
             function (account_service_1_1) {
                 account_service_1 = account_service_1_1;
             },
+            function (secureaccess_service_1_1) {
+                secureaccess_service_1 = secureaccess_service_1_1;
+            },
             function (login_component_1_1) {
                 login_component_1 = login_component_1_1;
+            },
+            function (register_component_1_1) {
+                register_component_1 = register_component_1_1;
             }
         ],
         execute: function () {
@@ -44,10 +50,10 @@ System.register(["@angular/core", "@angular/common", "@angular/router", "@angula
                 }
                 AccountModule = __decorate([
                     core_1.NgModule({
-                        declarations: [login_component_1.LoginComponent],
+                        declarations: [login_component_1.LoginComponent, register_component_1.RegisterComponent],
                         imports: [common_1.CommonModule, router_1.RouterModule, http_1.HttpModule, platform_browser_1.BrowserModule, forms_1.FormsModule, general_module_1.GeneralModule],
-                        exports: [login_component_1.LoginComponent],
-                        providers: [account_service_1.AccountService],
+                        exports: [login_component_1.LoginComponent, register_component_1.RegisterComponent],
+                        providers: [account_service_1.AccountService, secureaccess_service_1.SecureAccessService],
                     })
                 ], AccountModule);
                 return AccountModule;

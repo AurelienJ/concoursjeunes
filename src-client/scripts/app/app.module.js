@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/platform-browser", "@angular/router", "ngx-bootstrap", "./general/general.module", "./references/references.module", "./account/account.module", "./competitions/competitions.module", "./entites/entites.module", "./persons/persons.module", "./rules/rules.module", "./parameters/parameters.module", "./slimscroll.directive", "./app.component", "./app.routes"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/platform-browser", "@angular/router", "ngx-bootstrap", "./general/general.module", "./references/references.module", "./account/account.module", "./competitions/competitions.module", "./entites/entites.module", "./persons/persons.module", "./rules/rules.module", "./parameters/parameters.module", "./app.component", "./app.routes"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7,7 +7,7 @@ System.register(["@angular/core", "@angular/platform-browser", "@angular/router"
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, platform_browser_1, router_1, ngx_bootstrap_1, general_module_1, references_module_1, account_module_1, competitions_module_1, entites_module_1, persons_module_1, rules_module_1, parameters_module_1, slimscroll_directive_1, app_component_1, app_routes_1, AppModule;
+    var core_1, platform_browser_1, router_1, ngx_bootstrap_1, general_module_1, references_module_1, account_module_1, competitions_module_1, entites_module_1, persons_module_1, rules_module_1, parameters_module_1, app_component_1, app_routes_1, AppModule;
     return {
         setters: [
             function (core_1_1) {
@@ -46,9 +46,6 @@ System.register(["@angular/core", "@angular/platform-browser", "@angular/router"
             function (parameters_module_1_1) {
                 parameters_module_1 = parameters_module_1_1;
             },
-            function (slimscroll_directive_1_1) {
-                slimscroll_directive_1 = slimscroll_directive_1_1;
-            },
             function (app_component_1_1) {
                 app_component_1 = app_component_1_1;
             },
@@ -66,7 +63,7 @@ System.register(["@angular/core", "@angular/platform-browser", "@angular/router"
                             router_1.RouterModule.forRoot(app_routes_1.AppRoutes, { useHash: true }),
                             ngx_bootstrap_1.BsDatepickerModule.forRoot(),
                             general_module_1.GeneralModule, references_module_1.ReferencesModule, account_module_1.AccountModule, parameters_module_1.ParametersModule, competitions_module_1.CompetitionModule, entites_module_1.EntitesModule, persons_module_1.PersonsModule, rules_module_1.RulesModule],
-                        declarations: [app_component_1.AppComponent, slimscroll_directive_1.SlimScrollDirective],
+                        declarations: [app_component_1.AppComponent],
                         bootstrap: [app_component_1.AppComponent],
                         providers: []
                     })

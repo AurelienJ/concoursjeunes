@@ -8,7 +8,15 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome",
-            "runtimeExecutable": "chromium-browser",
+            "windows": {
+                "runtimeArgs": [
+                    "--remote-debugging-port=9222"
+                ],
+                "runtimeExecutable": "C:\\Users\\a.jeoffray\\AppData\\Local\\Chromium\\Application\\chrome.exe"
+            },
+            "linux": {
+                "runtimeExecutable": "chromium-browser"
+            },
             "url": "http://localhost:8080",
             "webRoot": "${workspaceRoot}"
         },
