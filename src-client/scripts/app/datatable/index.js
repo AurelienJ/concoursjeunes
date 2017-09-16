@@ -1,37 +1,14 @@
-System.register(["./DataTableModule", "./DataTable", "./BootstrapPaginator", "./Paginator", "./DefaultSorter"], function (exports_1, context_1) {
-    "use strict";
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [
-            function (DataTableModule_1_1) {
-                exports_1({
-                    "DataTableModule": DataTableModule_1_1["DataTableModule"]
-                });
-            },
-            function (DataTable_1_1) {
-                exports_1({
-                    "DataTable": DataTable_1_1["DataTable"]
-                });
-            },
-            function (BootstrapPaginator_1_1) {
-                exports_1({
-                    "BootstrapPaginator": BootstrapPaginator_1_1["BootstrapPaginator"]
-                });
-            },
-            function (Paginator_1_1) {
-                exports_1({
-                    "Paginator": Paginator_1_1["Paginator"]
-                });
-            },
-            function (DefaultSorter_1_1) {
-                exports_1({
-                    "DefaultSorter": DefaultSorter_1_1["DefaultSorter"]
-                });
-            }
-        ],
-        execute: function () {
-        }
-    };
-});
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var DataTableModule_1 = require("./DataTableModule");
+exports.DataTableModule = DataTableModule_1.DataTableModule;
+var DataTable_1 = require("./DataTable");
+exports.DataTable = DataTable_1.DataTable;
+var BootstrapPaginator_1 = require("./BootstrapPaginator");
+exports.BootstrapPaginator = BootstrapPaginator_1.BootstrapPaginator;
+var Paginator_1 = require("./Paginator");
+exports.Paginator = Paginator_1.Paginator;
+var DefaultSorter_1 = require("./DefaultSorter");
+exports.DefaultSorter = DefaultSorter_1.DefaultSorter;
 
 //# sourceMappingURL=index.js.map

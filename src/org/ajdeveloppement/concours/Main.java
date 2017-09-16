@@ -86,12 +86,21 @@
  */
 package org.ajdeveloppement.concours;
 
+import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
 import java.awt.SplashScreen;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -104,9 +113,10 @@ import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.nio.file.Paths;
+import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -125,7 +135,14 @@ import javax.crypto.SecretKey;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkEvent.EventType;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.html.HTMLEditorKit;
 import javax.xml.bind.JAXBException;
 
 import org.ajdeveloppement.apps.AppUtilities;
@@ -133,6 +150,7 @@ import org.ajdeveloppement.apps.ApplicationContext;
 import org.ajdeveloppement.apps.annotations.AppInfos;
 import org.ajdeveloppement.commons.AjResourcesReader;
 import org.ajdeveloppement.commons.UncheckedException;
+import org.ajdeveloppement.commons.io.InputStreamUtils;
 import org.ajdeveloppement.commons.io.XMLSerializer;
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
@@ -155,17 +173,6 @@ import org.ajdeveloppement.webserver.HttpServer;
 import org.ajdeveloppement.webserver.ResourcesSelector;
 import org.ajdeveloppement.webserver.services.ExtensibleHttpRequestProcessor;
 import org.ajdeveloppement.webserver.services.files.FilesService;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.VisibilityWindowListener;
-import org.eclipse.swt.browser.WindowEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Monitor;
-import org.eclipse.swt.widgets.Shell;
 import org.h2.tools.DeleteDbFiles;
 import org.jdesktop.swingx.error.ErrorInfo;
 
@@ -192,6 +199,7 @@ public class Main {
 	private static ApplicationCore core;
 	
 	private static final String WEBSERVER_CONFIG = "webserver"; //$NON-NLS-1$
+	private static final String APP_CONFIG = "parametre"; //$NON-NLS-1$
 
 	private static final String WEBSERVER_LISTEN_PORT = "webserver.listen.port"; //$NON-NLS-1$
 	private static final String WEBSERVER_SSLLISTEN_PORT = "webserver.ssllisten.port"; //$NON-NLS-1$
@@ -204,6 +212,7 @@ public class Main {
 	private static final String WEBSERVER_PKCS12_KEY_STORE_FILE = "webserver.pkcs12KeyStore.file"; //$NON-NLS-1$
 
 	private static AjResourcesReader staticParameters = new AjResourcesReader(WEBSERVER_CONFIG);
+	private static AjResourcesReader staticAppParameters = new AjResourcesReader(APP_CONFIG);
 	
 	private static int webServerListenPort = 0;
 	private static HttpServer httpServer;
@@ -228,7 +237,7 @@ public class Main {
 		}
 		fileSelector.setDeploymentService(deployment);
 
-		//initErrorManaging();
+		initErrorManaging();
 		initNetworkManaging();
 		initCore();
 		try {
@@ -261,102 +270,129 @@ public class Main {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
-//		String baseContainer = ""; //$NON-NLS-1$
-//		if(fileSelector != null)
-//			baseContainer = fileSelector.getBasePath().toString();
-		
-//		WebConfig.init(httpServer, baseContainer);
-		
+
 		System.out.println("Http listen on port: " + webServerListenPort); //$NON-NLS-1$
-				
-		Display display = Display.getDefault();
-		Display.setAppName("ArcCompetition 0.0.1");
-        final Shell shell = new Shell(display, SWT.SHELL_TRIM);
-        shell.setSize(1280, 768);
-        shell.setLayout(new FillLayout());
-       
-        Browser browser = new Browser(shell, SWT.NONE);
-        /*browser.addTitleListener(new TitleListener() {
-            public void changed(TitleEvent event) {
-                shell.setText(event.title);
-             }
-          });*/
-        initialize(display, browser);
-        browser.setBounds(0,0,1024,768);
-        browser.setUrl("http://localhost:" + webServerListenPort + "/index.html"); //$NON-NLS-1$ //$NON-NLS-2$
-        //browser.setUrl("javascript:(function(F,i,r,e,b,u,g,L,I,T,E){if(F.getElementById(b))return;E=F[i+'NS']&&F.documentElement.namespaceURI;E=E?F[i+'NS'](E,'script'):F[i]('script');E[r]('id',b);E[r]('src',I+g+T);E[r](b,u);(F[e]('head')[0]||F[e]('body')[0]).appendChild(E);E=new%20Image;E[r]('src',I+L);})(document,'createElement','setAttribute','getElementsByTagName','FirebugLite','4','firebug-lite.js','releases/lite/latest/skin/xp/sprite.png','https://getfirebug.com/','#startOpened');");
-        
-        
-        
-        
-        Monitor primary = display.getPrimaryMonitor();
-        Rectangle bounds = primary.getBounds();
-        Rectangle rect = shell.getBounds();
-        
-        int x = bounds.x + (bounds.width - rect.width) / 2;
-        int y = bounds.y + (bounds.height - rect.height) / 2;
-        
-        System.out.println(Paths.get("").toAbsolutePath().toString()); //$NON-NLS-1$
-        
-        shell.setLocation(x, y);
-        shell.setText("ArcCompetition 0.0.1");
-        shell.setImage(new Image(display, "ressources/graphics/iconCJ.jpg")); //$NON-NLS-1$
-        shell.open();
-        
-        
-         
-        while (!shell.isDisposed()) {
-        	if (!display.readAndDispatch())
-        		display.sleep();
-        }
-        
-        display.dispose();
-        
-        try {
-			httpServer.stop();
-		} catch (IOException e) {
+		
+		SwingUtilities.invokeLater(() -> {
+			
+			if (SystemTray.isSupported() && !ApplicationContext.getContext().getOSName().toLowerCase().startsWith("linux")) {
+				displaySystemTray();
+			} else {
+				displayFrame();
+			}
+		});
+	}
+
+	/**
+	 * @throws HeadlessException
+	 */
+	@SuppressWarnings("nls")
+	private static void displaySystemTray() throws HeadlessException {
+		SystemTray systemTray = SystemTray.getSystemTray();
+		
+		Dimension dimension = systemTray.getTrayIconSize();
+		
+		Image image = Toolkit.getDefaultToolkit().getImage(
+				staticAppParameters.getResourceString("path.ressources") 
+					+ File.separator + staticAppParameters.getResourceString("file.icon.application")).getScaledInstance(dimension.width, //$NON-NLS-1$ //$NON-NLS-2$
+				dimension.height, Image.SCALE_SMOOTH);
+		PopupMenu popup = new PopupMenu();
+		
+		MenuItem miOpenArcCompetition = new MenuItem("Ouvrir ArcCompetition");
+		miOpenArcCompetition.addActionListener(e -> {
+			try {
+				browse(new URI("http://localhost:" + webServerListenPort));
+			} catch (URISyntaxException e2) {
+				e2.printStackTrace();
+			}
+		});
+		popup.add(miOpenArcCompetition);
+		
+		MenuItem miCloseArcCompetition = new MenuItem("Arreter le serveur ArcCompetition");
+		miCloseArcCompetition.addActionListener(e -> {
+			close();
+			System.exit(0);
+		});
+		popup.add(miCloseArcCompetition);
+		
+		TrayIcon trayIcon = new TrayIcon(image, "ArcCompetition", popup);
+		
+		try {
+			systemTray.add(trayIcon);
+		} catch (AWTException e1) {
 			// TODO Bloc catch auto-généré
-			e.printStackTrace();
+			e1.printStackTrace();
 		}
-        
-        System.exit(0);
 	}
 	
-	private static void initialize(final Display display, Browser browser) {
-		browser.addOpenWindowListener(event -> {
-			if (!event.required) return;	/* only do it if necessary */
-			Shell shell = new Shell(display);
-			shell.setText("New Window");
-			shell.setLayout(new FillLayout());
-			Browser browser1 = new Browser(shell, SWT.NONE);
-			initialize(display, browser1);
-			event.browser = browser1;
-		});
-		browser.addVisibilityWindowListener(new VisibilityWindowListener() {
-			@Override
-			public void hide(WindowEvent event) {
-				Browser browser = (Browser)event.widget;
-				Shell shell = browser.getShell();
-				shell.setVisible(false);
+	/**
+	 * @param webAddress
+	 */
+	private static void browse(URI webAddress) {
+		if(Desktop.isDesktopSupported())
+		{
+			try {
+				Desktop.getDesktop().browse(webAddress);
+			} catch (IOException ex) {
+				// TODO Bloc catch auto-généré
+				ex.printStackTrace();
 			}
+		}
+	}
+	
+	private static void close() {
+		try {
+			httpServer.stop();
+		} catch (IOException ex) {
+			// TODO Bloc catch auto-généré
+			ex.printStackTrace();
+		}
+	}
+
+
+	/**
+	 * @throws HeadlessException
+	 */
+	private static void displayFrame() throws HeadlessException {
+		String template = "";
+		URL url = Main.class.getResource("mainFrame.html");
+		try {
+			template = InputStreamUtils.dumpAsString(url.openStream(), Charset.forName("UTF-8")).replaceAll("\\{PORT\\}", Integer.toString(webServerListenPort));
+		} catch (IOException e1) {
+			// TODO Bloc catch auto-généré
+			e1.printStackTrace();
+		}		
+
+		
+		JEditorPane mainPane = new JEditorPane();
+		mainPane.setEditorKit(new HTMLEditorKit());
+		mainPane.setEditable(false);
+		mainPane.setText(template);
+		mainPane.addHyperlinkListener(new HyperlinkListener() {
+			
 			@Override
-			public void show(WindowEvent event) {
-				Browser browser = (Browser)event.widget;
-				final Shell shell = browser.getShell();
-				if (event.location != null) shell.setLocation(event.location);
-				if (event.size != null) {
-					Point size = event.size;
-					shell.setSize(shell.computeSize(size.x, size.y));
+			public void hyperlinkUpdate(HyperlinkEvent e) {
+				if(e.getEventType() == EventType.ACTIVATED) {
+					try {
+						URI webAddress = e.getURL().toURI();
+						browse(webAddress);
+					} catch (URISyntaxException e1) {
+						// TODO Bloc catch auto-généré
+						e1.printStackTrace();
+					}
+					
 				}
-				shell.open();
 			}
 		});
-		browser.addCloseWindowListener(event -> {
-			Browser browser1 = (Browser)event.widget;
-			Shell shell = browser1.getShell();
-			shell.close();
-		});
+		
+		
+		JFrame mainFrame = new JFrame("ArcCompetition 0.0.1");
+		mainFrame.setSize(640, 400);
+		mainFrame.setResizable(false);
+		mainFrame.setVisible(true);
+		mainFrame.add(mainPane);
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setLocationRelativeTo(null);
 	}
 	
 	/**
@@ -650,6 +686,8 @@ public class Main {
 							dbfile.setWritable(true, false);
 						}
 					}
+					
+					close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

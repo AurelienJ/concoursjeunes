@@ -88,10 +88,14 @@
  */
 package org.ajdeveloppement.concours.webapi.controllers;
 
+import java.util.Calendar;
+import java.util.UUID;
+
 import javax.inject.Inject;
 
 import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.T_Contact;
 import org.ajdeveloppement.concours.webapi.annotations.Authorize;
 import org.ajdeveloppement.concours.webapi.mappers.AccountMapper;
 import org.ajdeveloppement.concours.webapi.services.AccountService;
@@ -99,6 +103,7 @@ import org.ajdeveloppement.concours.webapi.views.AccountView;
 import org.ajdeveloppement.webserver.HttpMethod;
 import org.ajdeveloppement.webserver.HttpResponse;
 import org.ajdeveloppement.webserver.HttpReturnCode;
+import org.ajdeveloppement.webserver.HttpReturnCode.Success;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
 import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
@@ -114,6 +119,8 @@ import org.ajdeveloppement.webserver.viewbinder.ViewsFactory;
 public class AccountController {
 	
 	private static final String USER_SESSION_KEY = "User"; //$NON-NLS-1$
+	private static final int SESSION_DELAY = 60 * 60 * 24; //24H
+	private static final int SESSION_LONG_DELAY = SESSION_DELAY * 182; //6 mois
 	
 	private HttpContext context;
 	
@@ -132,12 +139,28 @@ public class AccountController {
 		context.addHeader("Expires", "0"); // Proxies. //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
+	/**
+	 * @param contact
+	 */
+	private void putInSessionCache(Contact contact, boolean keepAuth) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.SECOND,  keepAuth ? SESSION_LONG_DELAY : SESSION_DELAY);
+
+		HttpSessionHelper.putUserSessionData(context.getHttpRequest(), contact.getIdContact(), USER_SESSION_KEY, true, calendar.getTime());
+		
+		HttpSessionHelper.addSessionCookieHeader(context, keepAuth ? SESSION_LONG_DELAY : SESSION_DELAY, true);
+	}
+	
 	@HttpService(key = "authenticate")
 	public AccountView authenticate() {
-		Contact contact = HttpSessionHelper.getUserSessionData(context.getHttpRequest(), USER_SESSION_KEY);
-		
-		if(contact != null)
-			return ViewsFactory.getView(AccountView.class,contact);
+		UUID idContact = HttpSessionHelper.getUserSessionData(context.getHttpRequest(), USER_SESSION_KEY);
+		if(idContact != null) {
+			Contact contact = T_Contact.getInstanceWithPrimaryKey(idContact);
+			if(contact != null) {
+				
+				return ViewsFactory.getView(AccountView.class,contact);
+			}
+		}
 		
 		context.setCustomResponse(new HttpResponse(
 				HttpReturnCode.ClientError.Unauthorized, "text/plain", "Bad authentification token")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -158,6 +181,8 @@ public class AccountController {
 		if(contact == null) {
 			contact = accountMapper.toContact(account);
 			
+			putInSessionCache(contact, false);
+			
 			return ViewsFactory.getView(AccountView.class, service.saveAccount(contact));
 		}
 		
@@ -177,9 +202,7 @@ public class AccountController {
 		
 		if(contact != null) {
 			if(service.verifyContactPassword(contact, account.getPassword())) {
-				HttpSessionHelper.putUserSessionData(context.getHttpRequest(), contact, USER_SESSION_KEY);
-				
-				HttpSessionHelper.addSessionCookieHeader(context, 60 * 60 * 24); // 24 H
+				putInSessionCache(contact, account.isKeepAuth());
 				
 				return ViewsFactory.getView(AccountView.class, contact);
 			}
@@ -194,14 +217,71 @@ public class AccountController {
 
 		return null;
 	}
+
 	
 	@HttpService(key = "logout")
 	@Authorize(value={})
 	public String logout() {
 		HttpSessionHelper.removeUserSessionData(context.getHttpRequest(), USER_SESSION_KEY);
 		
-		HttpSessionHelper.addSessionCookieHeader(context, -1); //delete cookie
+		HttpSessionHelper.addSessionCookieHeader(context, -1, true); //delete cookie
 		
 		return "logout"; //$NON-NLS-1$
+	}
+	
+	@HttpService(key = "account")
+	@Authorize(value={})
+	public AccountView getAccount() {
+		Contact sessionContact = context.getMetadata("User");
+		if(sessionContact != null) {
+			return ViewsFactory.getView(AccountView.class, sessionContact);
+		}
+		
+		return null;
+	}
+	
+	@HttpService(key = "account",methods=HttpMethod.POST)
+	@Authorize(value={})
+	public AccountView updateAccount(@Body AccountView accountView) throws ObjectPersistenceException {
+		if(accountView != null) {
+			Contact sessionContact = context.getMetadata("User"); //$NON-NLS-1$
+			if(sessionContact !=null && accountView.getId().equals(sessionContact.getIdContact())) {
+			
+				Contact contact =  null;
+				if(accountView.getPassword() != null && !accountView.getPassword().isEmpty()
+						&& accountView.getNewPassword() != null && !accountView.getNewPassword().isEmpty()
+						&& !accountView.getPassword().equals(accountView.getNewPassword())) {
+					
+
+					if(service.verifyContactPassword(sessionContact, accountView.getPassword())) {
+						contact = accountMapper.toContact(accountView);
+						
+						contact.setPasswordHash(service.getPasswordHash(contact, accountView.getNewPassword()));
+					} else {
+						context.setCustomResponse(new HttpResponse(
+								HttpReturnCode.ClientError.Forbidden, "text/plain", "Invalid password")); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				} else {
+					//do not change password
+					accountView.setPassword("");
+					contact = accountMapper.toContact(accountView);
+				}
+				
+				if(contact != null) {
+					service.saveAccount(contact);
+					
+					if(context.getHttpRequest().getRequestMethod() == HttpMethod.POST)
+						context.setReturnCode(Success.CREATED);
+					
+					return ViewsFactory.getView(AccountView.class,contact);
+				}				
+				
+				return null;
+			} 
+			
+			context.setCustomResponse(new HttpResponse(
+					HttpReturnCode.ClientError.Forbidden, "text/plain", "Invalid account")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return null;
 	}
 }

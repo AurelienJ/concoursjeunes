@@ -110,7 +110,8 @@ import org.mapstruct.ObjectFactory;
 		CompetitionMapper.class, 
 		RankingCriterionMapper.class, 
 		DistanceAndFacesSetMapper.class,
-		EntiteMapper.class },
+		EntiteMapper.class,
+		CompetitionMapper.class},
 componentModel="jsr330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
 public abstract class RulesMapper {
 	
@@ -159,6 +160,12 @@ public abstract class RulesMapper {
 	@Mapping(target = "entite", source = "idEntite")
 	@Mapping(target = "category", source = "idCategory")
 	public abstract Rule toRule(RuleView ruleView);
+	
+	public Rule toRule(UUID idRule) {
+		if(idRule != null)
+			return T_Rule.getInstanceWithPrimaryKey(idRule);
+		return null;
+	}
 	
 	public RulesCategory toRulesCategory(int idCategory) {
 		return T_RulesCategory.getInstanceWithPrimaryKey(idCategory);

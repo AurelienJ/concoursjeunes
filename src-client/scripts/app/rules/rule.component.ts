@@ -6,7 +6,8 @@ import { ReferencesService } from '../references/references.service';
 import { RulesService } from './rules.service';
 import { EntitesService } from "../entites/entites.service";
 
-import { NavigatorService, NavigationSnapshot } from '../general';
+import { NavigatorService } from '../general/navigator.service';
+import { NavigationSnapshot } from '../general/NavigationSnapshot';
 import { IEntite } from '../entites/ientite';
 import { Rule } from './model/Rule';
 import { IRulesCategory } from './model/IRulesCategory';
@@ -28,7 +29,7 @@ import { IDistanceAndFacesSet } from './model/IDistanceAndFacesSet';
 						<li [class.active]="activePane=='ranking'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='ranking'">Classement</a></li>
 						
 					</ul>
-					<div class="tab-content">
+					<div class="tab-content main-pane">
 						<div id="general" class="tab-pane form-horizontal" [class.active]="!activePane || activePane=='general'">
 							<section class="formulaire">
 								<h4>Détail</h4>

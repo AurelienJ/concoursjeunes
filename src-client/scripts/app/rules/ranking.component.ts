@@ -4,7 +4,7 @@ import { IEntite } from '../entites/ientite';
 import { IRankingCriterion } from './model/IRankingCriterion';
 import { IDistanceAndFacesSet } from './model/IDistanceAndFacesSet';
 
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 @Component({
 	selector: 'ranking',

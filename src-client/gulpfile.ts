@@ -13,6 +13,8 @@ const preprocess = require('gulp-preprocess');
 const destinationDir = "./scripts/";
 const distDir = "../WebContent/root/dev/www";
 var packageJson = require('./package.json');
+
+var isDebug = true;
 /**
  * Remove build directory.
  */
@@ -27,6 +29,7 @@ gulp.task("compile", () => {
 
     var tsResult = gulp.src("scripts/app/**/*.ts")
         .pipe(cache("compiling"))
+        .pipe(preprocess({context: { DEBUG: isDebug}}))
         .pipe(sourcemaps.init())
         .pipe(tsProject());
     return tsResult.js
@@ -78,6 +81,9 @@ gulp.task("dist", ["clean", "build"], () => {
 
     gulp.src("styles/**")
         .pipe(gulp.dest(distDir + "/styles"));
+
+    gulp.src("node_modules/ngx-bootstrap/datepicker/themes/bs/bs-datepicker-view.html")
+    .pipe(gulp.dest(distDir + ""));
 })
 
 gulp.task('distDebug', ["dist"], () => {
@@ -91,14 +97,6 @@ gulp.task('distDebug', ["dist"], () => {
 
     gulp.src("scripts/**")
         .pipe(gulp.dest(distDir + "/scripts"));
-
-    gulp.src("login.html")
-        .pipe(preprocess({context: { DEBUG: true}}))
-        .pipe(gulp.dest(distDir));
-
-    gulp.src("register.html")
-        .pipe(preprocess({context: { DEBUG: true}}))
-        .pipe(gulp.dest(distDir));
 
     gulp.src("cgu.html")
         .pipe(preprocess())
@@ -123,6 +121,8 @@ gulp.task('distProd', ["bundle","dist"], () => {
         .pipe(gulp.dest(distDir + "/node_modules/font-awesome/css"));  
     gulp.src("node_modules/admin-lte/dist/css/**")
         .pipe(gulp.dest(distDir + "/node_modules/admin-lte/dist/css"));
+    gulp.src("node_modules/ngx-bootstrap/datepicker/bs-datepicker.css")
+        .pipe(gulp.dest(distDir + "/node_modules/ngx-bootstrap/datepicker"));
 
     gulp.src("node_modules/core-js/client/**")
         .pipe(gulp.dest(distDir + "/node_modules/core-js/client"));
@@ -149,14 +149,6 @@ gulp.task('distProd', ["bundle","dist"], () => {
         gulp.src("node_modules/admin-lte/plugins/iCheck/**")
         .pipe(gulp.dest(distDir + "/node_modules/admin-lte/plugins/iCheck"));
 
-    gulp.src("login.html")
-        .pipe(preprocess())
-        .pipe(gulp.dest(distDir));
-
-    gulp.src("register.html")
-        .pipe(preprocess())
-        .pipe(gulp.dest(distDir));
-
     gulp.src("cgu.html")
         .pipe(preprocess())
         .pipe(gulp.dest(distDir));
@@ -172,4 +164,7 @@ gulp.task('watch', function(){
 
 gulp.task('default', ['watch', 'distDebug']);
 
-gulp.task('prod', ['distProd']);
+gulp.task('prod', () => {
+    isDebug = false;
+    gulp.start("distProd");
+});

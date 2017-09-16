@@ -9,20 +9,20 @@
   },
   "license": "CECILL-2.1",
   "dependencies": {
-    "@angular/common": "^4.3.3",
-    "@angular/compiler": "^4.3.3",
-    "@angular/core": "^4.3.3",
-    "@angular/forms": "^4.3.3",
-    "@angular/http": "^4.3.3",
-    "@angular/platform-browser": "^4.3.3",
-    "@angular/platform-browser-dynamic": "^4.3.3",
-    "@angular/router": "^4.3.3",
+    "@angular/common": "4.3.4",
+    "@angular/compiler": "4.3.4",
+    "@angular/core": "4.3.4",
+    "@angular/forms": "4.3.4",
+    "@angular/http": "4.3.4",
+    "@angular/platform-browser": "4.3.4",
+    "@angular/platform-browser-dynamic": "4.3.4",
+    "@angular/router": "4.3.4",
 
     "bootstrap": "^3.3.7",
     "font-awesome":"^4.7.0",
     "admin-lte": "^2.3.11",
 
-    "ngx-bootstrap": "^1.9.1",
+    "ngx-bootstrap": "1.9.3",
     "angular-tree-component": "^4.1.0",
     "ngx-order-pipe": "^1.0.2",
     "select2": "^4.0.3",
@@ -35,8 +35,7 @@
     "systemjs": "^0.20.18",
     "zone.js": "^0.8.17",
     "lodash": "^4.17.4",
-    "moment": "^2.18.1",
-    "date-input-polyfill": "^2.14.0"
+    "moment": "^2.18.1"
   },
   "devDependencies": {
     "@types/chai": "^4.0.4",

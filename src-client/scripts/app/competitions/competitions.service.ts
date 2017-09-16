@@ -30,4 +30,8 @@ export class CompetitionsService {
 				});
 			});
 	}
+
+	saveCompetition(competition : ICompetition) : Promise<ICompetition> {
+		return this.http.post("api/competitions", competition, { headers : this.headers }).toPromise().then(r => r.json());
+	}
 }

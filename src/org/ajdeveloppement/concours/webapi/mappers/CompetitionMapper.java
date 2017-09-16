@@ -88,14 +88,19 @@
  */
 package org.ajdeveloppement.concours.webapi.mappers;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.ajdeveloppement.concours.data.Archer;
 import org.ajdeveloppement.concours.data.Competition;
 import org.ajdeveloppement.concours.data.CompetitionJudge;
+import org.ajdeveloppement.concours.data.CompetitionLevel;
 import org.ajdeveloppement.concours.data.T_Archer;
 import org.ajdeveloppement.concours.data.T_Competition;
 import org.ajdeveloppement.concours.data.T_CompetitionJudge;
+import org.ajdeveloppement.concours.data.T_CompetitionLevel;
 import org.ajdeveloppement.concours.webapi.views.CompetitionJudgeView;
 import org.ajdeveloppement.concours.webapi.views.CompetitionView;
 import org.mapstruct.AfterMapping;
@@ -114,6 +119,42 @@ import org.mapstruct.ObjectFactory;
 	componentModel="jsr330",collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
 public abstract class CompetitionMapper {
 	
+	/**
+	 * Return id of rule associate with the given competition
+	 * 
+	 * @param competition the competition of id rule
+	 * @return the id rule of competition
+	 */
+	public static UUID getIdRule(Competition competition) {
+		if(competition.getReglement() != null)
+			return competition.getReglement().getIdRule();
+		
+		return null;
+	}
+	
+	public static UUID getIdOrganisator(Competition competition) {
+		if(competition.getOrganisateur() != null)
+			return competition.getOrganisateur().getIdEntite();
+		
+		return null;
+	}
+	
+	public static UUID getIdNiveauCompetition(Competition competition) {
+		if(competition.getCompetitionLevel() != null)
+			return competition.getCompetitionLevel().getId();
+		
+		return null;
+	}
+	
+	public static List<Date> getDates(Competition competition) {
+		List<Date> dates = new ArrayList<>();
+		
+		dates.add(competition.getDateDebutConcours() != null ? competition.getDateDebutConcours() : null);
+		dates.add(competition.getDateFinConcours() != null ? competition.getDateFinConcours() : null);
+		
+		return dates;
+	}
+	
 	@ObjectFactory
 	public Competition getCompetition(CompetitionView view) {
 		Competition competition = null;
@@ -128,7 +169,7 @@ public abstract class CompetitionMapper {
 	}
 	
 	@ObjectFactory
-	public CompetitionJudge getCompetition(CompetitionJudgeView view, Competition competition) {
+	public CompetitionJudge getCompetitionJudge(CompetitionJudgeView view, Competition competition) {
 		CompetitionJudge competitionJudge = null;
 		
 		if(view.getIdJudge() != null && competition.getIdCompetition() != null)
@@ -156,8 +197,24 @@ public abstract class CompetitionMapper {
 	}
 	
 	@Mapping(target = "idCompetition", ignore = true)
+	@Mapping(target = "nom", source = "name")
+	@Mapping(target = "lieuCompetition", source = "place")
 	@Mapping(target = "judges", ignore = true)
+	@Mapping(target = "competitionLevel", source = "idNiveauCompetition")
+	@Mapping(target = "gestionDuel", source = "duel")
+	@Mapping(target = "organisateur", source = "idOrganisator")
+	@Mapping(target = "reglement", source = "idRule")
+	@Mapping(target = "dateDebutConcours", ignore = true)
+	@Mapping(target = "dateFinConcours", ignore = true)
 	public abstract Competition toCompetition(CompetitionView view);
+	
+	@AfterMapping
+	public void finalizeMapping(CompetitionView view, @MappingTarget Competition competition) {
+		if(view.getDates() != null && view.getDates().size() > 0) {
+			competition.setDateDebutConcours(view.getDates().get(0));
+			competition.setDateFinConcours(view.getDates().get(view.getDates().size() - 1));
+		}
+	}
 	
 	@Mapping(target = "judge", source = "competitionJudgeView.idJudge")
 	@Mapping(target = "competition", source = "competition")
@@ -169,5 +226,9 @@ public abstract class CompetitionMapper {
 	
 	public Competition asCompetition(UUID idCompetition) {
 		return T_Competition.getInstanceWithPrimaryKey(idCompetition);
+	}
+	
+	public CompetitionLevel getCompetitionLevel(UUID idCompetitionLevel) {
+		return T_CompetitionLevel.getInstanceWithPrimaryKey(idCompetitionLevel);
 	}
 }

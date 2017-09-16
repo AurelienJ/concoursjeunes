@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core'
+import { NgModule } from '@angular/core';
 
-import { GeneralModule } from '../general'
+import { GeneralModule } from '../general/general.module';
 
-import { ReferencesService } from './references.service'
+import { ReferencesService } from './references.service';
 
 
 @NgModule({

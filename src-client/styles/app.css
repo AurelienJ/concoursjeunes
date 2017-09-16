@@ -2,9 +2,27 @@ body {
 	 -webkit-app-region:drag;
 }
 
+a.disabled {
+    color: gray;
+    cursor: not-allowed;
+}
+
 .modal-body {
     max-height: calc(100vh - 200px);
     overflow-y: auto;
+}
+
+.bs-datepicker {
+	z-index: 1000;
+}
+
+.tab-content.main-pane {
+	height: calc(100vh - 220px);
+	overflow: auto;
+}
+
+.tab-content.main-pane > .tab-pane {
+	max-width: 1000px;
 }
 
 .login-box, .register-box {
@@ -84,4 +102,8 @@ body {
 	margin: 0;
 	text-align: center;
 	padding: 0 20px 20px 20px;
+}
+
+.main-sidebar {
+	
 }

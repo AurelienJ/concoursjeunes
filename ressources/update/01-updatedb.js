@@ -102,8 +102,14 @@ if(dbVersion == 0) {
 		sql.executeUpdate("ALTER TABLE JEUX_CRITERES_DISCRIMINANT ALTER COLUMN ID_CRITERE_CLASSEMENT UUID NULL");
 	}
 	
-	if(dbVersion < 45){
+	if(dbVersion < 45) {
 		sql.executeUpdate("ALTER TABLE CONTACT ADD COLUMN AUTH_TOKEN UUID");
+	}
+	
+	if(dbVersion < 46) {
+		sql.executeUpdate("ALTER TABLE COMPETITION ADD COLUMN NOM VARCHAR(128)");
+		sql.executeUpdate("ALTER TABLE COMPETITION ADD COLUMN NOMBRE_CIBLES INTEGER");
+		sql.executeUpdate("ALTER TABLE COMPETITION ADD COLUMN NOMBRE_DEPARTS INTEGER");
 	}
 }
 

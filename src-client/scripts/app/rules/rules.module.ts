@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 
 import { OrderModule } from 'ngx-order-pipe';
 import { DataTableModule } from '../datatable';
-import { GeneralModule } from '../general';
+import { GeneralModule } from '../general/general.module';
 import { ReferencesModule } from '../references/references.module';
 
 import { RulesService } from './rules.service';

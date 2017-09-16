@@ -90,6 +90,7 @@ package org.ajdeveloppement.concours.webapi;
 
 import org.ajdeveloppement.concours.data.mappers.ArcherMapper;
 import org.ajdeveloppement.concours.data.mappers.ArcherMapperImpl;
+import org.ajdeveloppement.concours.webapi.filters.AuthorizeFilter;
 import org.ajdeveloppement.concours.webapi.mappers.AccountMapper;
 import org.ajdeveloppement.concours.webapi.mappers.AccountMapperImpl;
 import org.ajdeveloppement.concours.webapi.mappers.CompetitionMapper;
@@ -157,6 +158,8 @@ public class WebConfig extends AbstractApiApplication {
 				bind(AccountMapper.class).to(AccountMapperImpl.class);
 			}
 		});
+		
+		webApiService.addRequestFilter(org.ajdeveloppement.concours.webapi.annotations.Authorize.class, new AuthorizeFilter());
 	}
 
 	@Override

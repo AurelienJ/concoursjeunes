@@ -6,7 +6,7 @@ import { InputData, DataEvent } from '../datatable/DataTable';
 import { ITypeLabel } from './ITypeLabel';
 import { IEntite } from './ientite';
 import { EntitesService } from './entites.service';
-import { NavigatorService } from '../general';
+import { NavigatorService } from '../general/navigator.service';
 
 export class EntiteServerSideInputData implements InputData {
     private cachedData : IEntite[];

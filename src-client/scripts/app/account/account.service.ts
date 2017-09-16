@@ -14,6 +14,8 @@ export class AccountService {
         this.headers = new Headers();
         this.headers.append('Content-Type', 'application/json');
         this.headers.append('Accept', 'application/json');
+
+        this.account = this.http.get("api/account", {headers: this.headers}).toPromise().then(r => r.json());
     }
 
     public isLogged() : Promise<boolean> {
@@ -25,17 +27,17 @@ export class AccountService {
         });
     }
 
-    public getAccount() : Promise<IAccount> {
-        return this.account;
-    }
-
     public register(account : IAccount) : Promise<IAccount> {
-        this.account = this.http.post("api/register", account, {headers: this.headers}).toPromise().then(r => r.json());
         return this.account;
     }
 
-    public authenticate() : Promise<IAccount> {
-        this.account = this.http.get("api/authenticate", {headers: this.headers}).toPromise().then(r => r.json());
+    public getAccount() : Promise<IAccount> {
+        this.account = this.http.get("api/account", {headers: this.headers}).toPromise().then(r => r.json());
+        return this.account;
+    }
+
+    public saveAccount(account) : Promise<IAccount> {
+        this.account = this.http.post("api/account", account, {headers: this.headers}).toPromise().then(r => r.json());
         return this.account;
     }
 

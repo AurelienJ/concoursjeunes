@@ -91,18 +91,22 @@ package org.ajdeveloppement.concours.webapi.services;
 import java.util.List;
 import java.util.UUID;
 
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
 import org.ajdeveloppement.commons.persistence.sql.QResults;
 import org.ajdeveloppement.concours.data.Competition;
 import org.ajdeveloppement.concours.data.T_Competition;
-import org.ajdeveloppement.concours.webapi.adapters.ModelViewAdapterHelper;
-import org.ajdeveloppement.concours.webapi.models.CompetitionModelView;
-
 /**
  * @author Aurélien JEOFFRAY
  *
  */
 public class CompetitionsService {
+	
+	public QFilter getFilter(String search) {
+		if(search != null && !search.isEmpty())
+			return T_Competition.NOM.like("%" + search + "%").or(T_Competition.LIEU.like("%" + search + "%"));
+		return null;
+	}
 	
 	/**
 	 * Return total number of competitions
@@ -120,7 +124,9 @@ public class CompetitionsService {
 	 * @return
 	 */
 	public int countCompetitionsWithFilter(QFilter filter) {
-		return T_Competition.all().where(filter).count();
+		if(filter != null)
+			return T_Competition.all().where(filter).count();
+		return T_Competition.all().count();
 	}
 	
 	/**
@@ -128,10 +134,10 @@ public class CompetitionsService {
 	 * 
 	 * @return
 	 */
-	public List<CompetitionModelView> getAllCompetitions() {
+	public List<Competition> getAllCompetitions() {
 		QResults<Competition, Void> competitions = T_Competition.all();
 		
-		return ModelViewAdapterHelper.asModelViewList(CompetitionModelView.class, competitions.asList());
+		return competitions.asList();
 	}
 	
 	/**
@@ -140,13 +146,16 @@ public class CompetitionsService {
 	 * @param filter
 	 * @return
 	 */
-	public List<CompetitionModelView> getCompetitionsForFilter(QFilter filter, int length, int offset) {
-		QResults<Competition, Void> competitions = T_Competition.all().where(filter);
+	public List<Competition> getCompetitionsForFilter(QFilter filter, int length, int offset) {
+		QResults<Competition, Void> competitions = T_Competition.all();
+		if(filter != null)
+			competitions = competitions.where(filter);
+		
 		if(length > 0) {
 			competitions = competitions.limit(length, offset);
 		}
 		
-		return ModelViewAdapterHelper.asModelViewList(CompetitionModelView.class, competitions.asList());
+		return competitions.asList();
 	}
 	
 	/**
@@ -155,7 +164,7 @@ public class CompetitionsService {
 	 * @param idRule
 	 * @return
 	 */
-	public List<CompetitionModelView> getCompetitionsForRule(UUID idRule) {
+	public List<Competition> getCompetitionsForRule(UUID idRule) {
 		return getCompetitionsForFilter(T_Competition.ID_REGLEMENT.equalTo(idRule), 0, -1);
 	}
 	
@@ -165,7 +174,21 @@ public class CompetitionsService {
 	 * @param idEntity
 	 * @return
 	 */
-	public List<CompetitionModelView> getCompetitionsForOrganisator(UUID idEntity) {
+	public List<Competition> getCompetitionsForOrganisator(UUID idEntity) {
 		return getCompetitionsForFilter(T_Competition.ID_ORGANISATEUR.equalTo(idEntity), 0, -1);
+	}
+	
+	/**
+	 * Return a competition identified by id
+	 * 
+	 * @param idCompetition
+	 * @return
+	 */
+	public Competition getCompetition(UUID idCompetition) {
+		return T_Competition.getInstanceWithPrimaryKey(idCompetition);
+	}
+	
+	public void saveCompetition(Competition competition) throws ObjectPersistenceException {
+		competition.save();
 	}
 }

@@ -90,7 +90,6 @@ package org.ajdeveloppement.concours.webapi.views;
 
 import java.util.UUID;
 
-import org.ajdeveloppement.webserver.viewbinder.annotations.Implementation;
 import org.ajdeveloppement.webserver.viewbinder.annotations.View;
 
 /**
@@ -98,23 +97,7 @@ import org.ajdeveloppement.webserver.viewbinder.annotations.View;
  *
  */
 @View
-public interface AccountView {
-	@Implementation(methodModelToView="getIdContact")
-	UUID getId();
-	
-	/**
-	 * Get the name of contact
-	 * 
-	 * @return name of contact
-	 */
-	String getName();
-
-	/**
-	 * Get the first Name of contact 
-	 * 
-	 * @return the first Name of contact
-	 */
-	String getFirstName();
+public interface AccountView  extends ArcherView {
 	
 	/**
 	 * Get the login of user
@@ -124,11 +107,26 @@ public interface AccountView {
 	String getLogin();
 	
 	/**
-	 * Get the password hash of user
+	 * Get the password of user
 	 * 
-	 * @return the password hash of user
+	 * @return the password of user
 	 */
 	String getPassword();
+	
+	/**
+	 * Use to reset password send by client before mappings
+	 * 
+	 * @param password
+	 * @return
+	 */
+	String setPassword(String password);
+	
+	/**
+	 * If user change password, the new password
+	 *  
+	 * @return the new password of user
+	 */
+	String getNewPassword();
 	
 	/**
 	 * Get the Auth token of user
@@ -136,4 +134,11 @@ public interface AccountView {
 	 * @return the Auth token of user
 	 */
 	UUID getAuthToken();
+	
+	/**
+	 * If true, the auth token must be unlimited
+	 * 
+	 * @return
+	 */
+	boolean isKeepAuth();
 }

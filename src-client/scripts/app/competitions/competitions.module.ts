@@ -6,11 +6,11 @@ import { FormsModule } from '@angular/forms';
 import { BsDatepickerModule } from 'ngx-bootstrap';
 
 import { DataTableModule } from "../datatable/DataTableModule";
-import { GeneralModule } from '../general'
+import { GeneralModule } from '../general/general.module';
 
-import { CompetitionsService } from './competitions.service'
+import { CompetitionsService } from './competitions.service';
 
-import { CompetitionsComponent } from './competitions.component'
+import { CompetitionsComponent } from './competitions.component';
 import { CompetitionComponent } from "./competition.component";
 
 @NgModule({

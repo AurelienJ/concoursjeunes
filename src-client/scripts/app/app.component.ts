@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
-import moment from 'moment';
+import * as moment from 'moment';
 
 @Component({
     selector: 'app',
-    templateUrl: 'scripts/app/app.html',
+    templateUrl: './app.html',
 })
 export class AppComponent implements OnInit {
     constructor() {

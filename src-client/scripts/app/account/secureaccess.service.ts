@@ -8,7 +8,6 @@ import { AccountService } from './account.service';
 export class SecureAccessService implements CanActivate{
 
     constructor(private router: Router, private accountService : AccountService) {
-        this.accountService.authenticate();
     }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean>|Promise<boolean>|boolean {

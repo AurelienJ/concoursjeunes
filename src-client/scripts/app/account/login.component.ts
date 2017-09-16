@@ -29,7 +29,7 @@ import { IAccount } from "./iaccount";
 		  <div class="col-xs-7">
 			<div class="checkbox icheck">
 			  <label>
-				<input icheck type="checkbox" [(ngModel)]="keepAuth" name="keepAuth" /> Se souvenir de moi
+				<input icheck type="checkbox" [checked]="account.keepAuth" (change)="account.keepAuth = $event" name="keepAuth" /> Se souvenir de moi
 			  </label>
 			</div>
 		  </div>
@@ -66,7 +66,6 @@ export class LoginComponent implements OnInit {
 
 	public loginError: string;
 	public passwordError: string;
-	public keepAuth : boolean;
 
 	private bodyClasses : string = "hold-transition login-page";
 

@@ -88,12 +88,21 @@
  */
 package org.ajdeveloppement.concours.webapi.mappers;
 
+import java.util.UUID;
+
 import javax.inject.Inject;
 
+import org.ajdeveloppement.concours.data.CategoryContact;
+import org.ajdeveloppement.concours.data.Civility;
 import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.Coordinate;
+import org.ajdeveloppement.concours.data.T_CategoryContact;
+import org.ajdeveloppement.concours.data.T_Civility;
 import org.ajdeveloppement.concours.data.T_Contact;
+import org.ajdeveloppement.concours.data.T_Coordinate;
 import org.ajdeveloppement.concours.webapi.services.AccountService;
 import org.ajdeveloppement.concours.webapi.views.AccountView;
+import org.ajdeveloppement.concours.webapi.views.CoordinateView;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
@@ -105,7 +114,7 @@ import org.mapstruct.ObjectFactory;
  * @author Aurélien JEOFFRAY
  *
  */
-@Mapper(componentModel="js330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
+@Mapper(uses = { EntiteMapper.class }, componentModel="js330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
 public abstract class AccountMapper {
 	
 	@Inject
@@ -125,28 +134,48 @@ public abstract class AccountMapper {
 	}
 	
 	@Mapping(target = "idContact", source = "id")
-	@Mapping(target = "address", ignore = true)
-	@Mapping(target = "city", ignore = true)
-	@Mapping(target = "civility", ignore = true)
-	@Mapping(target = "countryCode", ignore = true)
-	@Mapping(target = "dateModification", ignore = true)
-	@Mapping(target = "dateNaissance", ignore = true)
-	@Mapping(target = "entite", ignore = true)
-	@Mapping(target = "highlightExAequo", ignore = true)
+	@Mapping(target = "entite", source = "idEntity")
+	@Mapping(target = "civility", source = "idCivility")
 	@Mapping(target = "idpToken", ignore = true)
-	@Mapping(target = "language", ignore = true)
-	@Mapping(target = "note", ignore = true)
 	@Mapping(target = "passwordHash", ignore = true)
-	@Mapping(target = "sexe", ignore = true)
-	@Mapping(target = "uncumuledInput", ignore = true)
-	@Mapping(target = "zipCode", ignore = true)
-	@Mapping(target = "categoriesContact", ignore = true)
-	@Mapping(target = "coordinates", ignore = true)
 	@Mapping(target = "managedProfiles", ignore = true)
+	@Mapping(target = "categoriesContact", source = "categories")
 	public abstract Contact toContact(AccountView view);
 	
 	@AfterMapping
 	public void setContactPassword(AccountView view, @MappingTarget Contact contact) {
-		contact.setPasswordHash(accountService.getPasswordHash(contact, view.getPassword()));
+		if(view.getPassword() != null && !view.getPassword().isEmpty())
+			contact.setPasswordHash(accountService.getPasswordHash(contact, view.getPassword()));
 	}
+	
+	public Civility toCivility(UUID id) {
+		if(id != null)
+			return T_Civility.getInstanceWithPrimaryKey(id);
+		return null;
+	}
+	
+	@ObjectFactory
+	public Coordinate getCoordinate(CoordinateView view) {
+		Coordinate coordinate = null;
+		
+		if(view.getIdCoordinate() != null)
+			coordinate = T_Coordinate.getInstanceWithPrimaryKey(view.getIdCoordinate());
+		
+		if(coordinate == null)
+			coordinate = new Coordinate();
+		
+		return coordinate;
+	}
+	
+	@Mapping(target = "contact", ignore = true)
+	public abstract Coordinate toCoordinateFrom(CoordinateView view);
+	
+	public CategoryContact toCategoryContact(UUID id) {
+		if(id != null) {
+			return T_CategoryContact.getInstanceWithPrimaryKey(id);
+		}
+		
+		return null;
+	}
+	
 }

@@ -11,7 +11,7 @@ import { IEntite } from '../entites/ientite';
 import { Criterion } from '../entites/Criterion';
 import { ICriterionElement } from '../entites/ICriterionElement';
 
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 @Component({
 	selector: 'detail-ranking',

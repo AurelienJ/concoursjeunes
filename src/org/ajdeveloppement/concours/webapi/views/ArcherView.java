@@ -29,6 +29,10 @@ public interface ArcherView extends ContactView {
 	 */
 	boolean isHandicape();
 		
+	/**
+	 * Retourne le jeux de critère discriminant associé à un archer
+	 * @return
+	 */
 	DiscriminantCriterionSetView getDiscriminantCriterionSet();
 
 }

@@ -9,7 +9,7 @@ import { Rule } from './model/Rule';
 
 //import { PersonsService } from '../services/persons';
 import { RulesService } from './rules.service';
-import { NavigatorService } from '../general';
+import { NavigatorService } from '../general/navigator.service';
 
 export class RulesServerSideInputData implements InputData {
     private cachedData : Rule[];

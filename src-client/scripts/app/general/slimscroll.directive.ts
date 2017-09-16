@@ -7,25 +7,24 @@ export class SlimScrollDirective {
 	private element : JQuery;
 
     constructor(el: ElementRef, renderer: Renderer) {
-    	let that = this;
-
 		this.element = jQuery(el.nativeElement);
 	}
 	ngAfterViewInit() {
-		(<any>this.element).slimScroll({
-            height: 'auto',
+		let that = this;
+
+		(<any>that.element).slimScroll({
+            height: window.innerHeight - that.element.offset().top,
 			railVisible: true,
 			railColor: '#eeeeee',
 			railOpacity: 0.3,
-        });
+		});
 	}
 
 	@HostListener('window:resize', ['$event'])
 	onResize(event) {
-		(<any>this.element).slimScroll({
-            height: event.target.innerHeight
+		let that = this;
+		(<any>that.element).slimScroll({
+            height: window.innerHeight - that.element.offset().top
         });
-
-		
 	}
 }

@@ -34,6 +34,7 @@ export const AppRoutes : Route[] = [
             { path: 'entities/:id', component: EntiteComponent },
             { path: 'persons', component: PersonsComponent },
             { path: 'persons/:id', component: PersonComponent },
+            { path: 'account', component: PersonComponent },
             { path: 'rules', component: RulesComponent },
             { path: 'rules/:id', component: RuleComponent },
             { path: 'competitions', component: CompetitionsComponent },

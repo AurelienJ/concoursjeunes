@@ -29,18 +29,23 @@
         //'jquery':                    'node_modules/jquery/dist/jquery.min.js',
         //'jquery-slimscroll':         'node_modules/jquery-slimscroll/jquery.slimscroll.min.js',
         'select2':                   'node_modules/select2/dist/js/select2.js',
-        'general':                   'scripts/app/general',
         'datatable':                 'scripts/app/datatable',
         'ngx-order-pipe':            'node_modules/ngx-order-pipe/dist/bundles/ngx-order-pipe.umd.js',
-        'ngx-bootstrap':             'node_modules/ngx-bootstrap/bundles/ngx-bootstrap.umd.min.js'
+        'ngx-bootstrap':             'node_modules/ngx-bootstrap'
     };
     
     // packages tells the System loader how to load when no filename and/or no extension
     var packages = {
-        'app':                        { main: 'main.js',  defaultExtension: 'js' },
-        'general':                    { main: 'index.js',  defaultExtension: 'js' },
+        'app':                        { main: 'main.js',  defaultExtension: 'js',
+                                        meta: {
+                                            './*.js': {
+                                               loader: 'scripts/systemjs-angular-loader.js'
+                                            }
+                                        }
+                                      },
         'rxjs':                       { defaultExtension: 'js' },
-        'datatable':                  { main: 'index.js', defaultExtension: 'js' }
+        'datatable':                  { main: 'index.js', defaultExtension: 'js' },
+        'ngx-bootstrap':              { format: 'cjs', main: 'bundles/ngx-bootstrap.umd.js', defaultExtension: 'js' }
     };
     
 //    var ngPackageNames = [

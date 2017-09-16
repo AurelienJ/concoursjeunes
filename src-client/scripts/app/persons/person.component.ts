@@ -1,15 +1,20 @@
 ///<reference path="../_references.ts"/>
-import { Component, OnInit, DoCheck } from '@angular/core';
+import { Component, OnInit, DoCheck, ChangeDetectorRef} from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd,UrlSegment } from '@angular/router';
+import { AbstractControl, Validator, ValidatorFn, Validators } from "@angular/forms";
 
 //import { IEntite } from '../models/ientite';
+import { AccountService } from '../account/account.service';
 import { EntitesService } from '../entites/entites.service';
 import { ReferencesService } from '../references/references.service';
 import { PersonsService } from './persons.service';
-import { NavigatorService, NavigationSnapshot } from '../general';
+import { NavigatorService, } from '../general/navigator.service';
+
+import { NavigationSnapshot } from '../general/NavigationSnapshot';
 import { IEntite } from '../entites/ientite';
 import { IPerson } from './IPerson';
 import { ICivility } from './ICivility';
+import { IAccount } from '../account/iaccount';
 
 import { Criterion } from '../entites/Criterion';
 import { ICriterionElement } from '../entites/ICriterionElement';
@@ -20,7 +25,6 @@ import { IDiscriminantCriterionSetElement } from '../rules/model/IDiscriminantCr
 import { ICountry } from '../references/ICountry';
 
 import 'rxjs/add/operator/share';
-import * as moment from 'moment';
 
 @Component({
     selector: 'person',
@@ -28,22 +32,28 @@ import * as moment from 'moment';
 	<div class="content body">
         <div class="row">
             <div class="col-xs-12">
-				<form class="form-horizontal">
+				<form class="form-horizontal" #personForm="ngForm" (ngSubmit)="validate(personForm)">
 				<div class="nav-tabs-custom">
 					<ul class="nav nav-tabs">
 						<li [class.active]="!activePane || activePane=='identity'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='identity'">Identité</a></li>
+						<li *ngIf="accountMode" [class.active]="activePane=='account'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='account'">Compte <!--<span class="badge bg-red">{{personForm.controls["newPassword"]?.errors?.length + personForm.controls["confirmPassword"]?.errors?.length}}</span>--></a></li>
 						<li *ngIf="person.type == 'archer'" [class.active]="activePane=='category'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='category'">Categorie</a></li>
 						<li *ngIf="person.type == 'archer'" [class.active]="activePane=='activity'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='activity'">Activités</a></li>
 					</ul>
-					<div class="tab-content">
+					<div class="tab-content main-pane">
 						<div id="identity" class="tab-pane" [class.active]="!activePane || activePane=='identity'">
 							<section class="formulaire">
-								<div class="form-group">
+								<div class="form-group" [ngClass]="{'has-error' : personEntityField.invalid}">
 									<label for="personEntity" class="col-sm-2 control-label">Associé à l'entité</label>
 									<div class="col-sm-10">
-										<span class="form-control no-border">
-											<span *ngIf="entite" ><a [routerLink]="['/entities', entite.id]">{{entite.nom}}</a> - </span>
-											<a [routerLink]="['/entities']" [queryParams]="{forSelect : true}" id="entity">Choisir...</a>
+										<p class="form-control-static">
+											<entite-selector
+												id="personEntity" name="personEntity" #personEntityField="ngModel"
+												[(ngModel)]="person.idEntity"
+												required></entite-selector>
+										</p>
+										<span class="help-block" *ngIf="personEntityField.errors?.required">
+											La personne doit être associé à une entité
 										</span>
 									</div>
 								</div>
@@ -60,14 +70,34 @@ import * as moment from 'moment';
 									</div>
 								</div>
 
-								<div class="form-group">
+								<div class="form-group" [ngClass]="{'has-error' : personNameField.invalid}">
 									<label for="personName" class="col-sm-2 control-label">Nom</label>
-									<div class="col-sm-10"><input type="text" placeholder="Nom" id="personName" name="personName" class="form-control" [(ngModel)]="person.name"/></div>
+									<div class="col-sm-10">
+										<input type="text"
+											id="personName" name="personName" #personNameField="ngModel"
+											[(ngModel)]="person.name"
+											required
+											placeholder="Nom" 
+											class="form-control"/>
+										<span class="help-block" *ngIf="personNameField.errors?.required">
+											Un nom est obligatoire
+										</span>
+									</div>
 								</div>
 
-								<div class="form-group">
+								<div class="form-group" [ngClass]="{'has-error' : personFirstNameField.invalid}">
 									<label for="personFirstName" class="col-sm-2 control-label">Prenom</label>
-									<div class="col-sm-10"><input type="text" placeholder="Prenom" id="personFirstName" name="personFirstName" class="form-control" [(ngModel)]="person.firstName"/></div>
+									<div class="col-sm-10">
+										<input type="text"
+											id="personFirstName" name="personFirstName" #personFirstNameField="ngModel"
+											[(ngModel)]="person.firstName"
+											required
+											placeholder="Prenom" 
+											class="form-control"/>
+										<span class="help-block" *ngIf="personFirstNameField.errors?.required">
+											Un prénom est obligatoire
+										</span>
+									</div>
 								</div>
 
 								<div class="form-group" *ngIf="person.type == 'archer'">
@@ -77,16 +107,16 @@ import * as moment from 'moment';
 											<div class="input-group-addon">
 												<i class="fa fa-calendar"></i>
 											</div>
-											<input [ngModel]="person.dateNaissance | date: 'yyyy-MM-dd'" (ngModelChange)="setDateNaissance($event)" type="date" id="dateNaissance" name="dateNaissance" class="form-control" data-date-format="yyyy-mm-dd" lang="fr">
+											<input bsDatepicker [bsConfig]="{ containerClass: 'theme-dark-blue', locale: 'fr'}" [(ngModel)]="person.dateNaissance" type="text" id="dateNaissance" name="dateNaissance" class="form-control" data-date-format="yyyy-mm-dd" lang="fr">
 										</div>
 									</div>
 								</div>
 
 								<div class="form-group" *ngIf="person.type == 'archer'">
-								<label for="age" class="col-sm-2 control-label">Age</label>
-								<div class="col-sm-10">
-								<span class="form-control no-border">{{age}} ans</span>
-								</div>
+									<label for="age" class="col-sm-2 control-label">Age</label>
+									<div class="col-sm-10">
+										<p class="form-control-static">{{age}} ans</p>
+									</div>
 								</div>
 
 								<div class="form-group" *ngIf="person.type == 'archer'">
@@ -101,7 +131,7 @@ import * as moment from 'moment';
 											<div class="input-group-addon">
 												<i class="fa fa-calendar"></i>
 											</div>
-											<input [ngModel]="person.certificat | date: 'yyyy-MM-dd'" (ngModelChange)="setDateCertificat($event)" type="date" id="certificat" name="certificat" class="form-control" data-date-format="yyyy-mm-dd" lang="fr">
+											<input bsDatepicker [bsConfig]="{ containerClass: 'theme-dark-blue', locale: 'fr', firstDayOfWeek: 1}" [(ngModel)]="person.certificat" type="text" id="certificat" name="certificat" class="form-control" data-date-format="yyyy-mm-dd" lang="fr">
 										</div>
 									</div>
 								</div>
@@ -142,6 +172,67 @@ import * as moment from 'moment';
 								</div>
 							</section>
 						</div>
+						<div id="account" class="tab-pane" [class.active]="activePane=='account'" *ngIf="accountMode">
+							<div class="form-group" [ngClass]="{'has-error' : loginField.invalid}">
+								<label for="login" class="col-sm-2 control-label">E-mail</label>
+								<div class="col-sm-10">
+									<input type="email" email required placeholder="E-Mail" id="login" #loginField="ngModel" name="login" class="form-control" [(ngModel)]="person.login"/>
+
+									<span class="help-block" *ngIf="loginField.errors?.email">
+										L'email doit être de la forme mon.nom@domaine.tld
+									</span>
+
+									<span class="help-block" *ngIf="loginField.errors?.required">
+										L'email est obligatoire
+									</span>
+								</div>
+							</div>
+
+							<div class="form-group" [ngClass]="{'has-error' : passwordField.invalid}">
+								<label for="password" class="col-sm-2 control-label">Mot de passe actuel</label>
+								<div class="col-sm-10">
+									<input type="password"
+										id="password" name="password" #passwordField="ngModel"
+										[(ngModel)]="person.password"
+										[required]="checkPasswordRequired ? 'true' : 'false'"
+										placeholder="Mot de passe actuel"
+										class="form-control" />
+									<span class="help-block" *ngIf="passwordField.errors?.required">
+										Vous devez saisir votre mot de passe actuel pour pouvoir le changer
+									</span>
+									</div>
+							</div>
+
+							<div class="form-group" [ngClass]="{'has-error' : newPasswordField.invalid}">
+								<label for="newPassword" class="col-sm-2 control-label">Nouveau mot de passe</label>
+								<div class="col-sm-10">
+									<input type="password"
+										id="newPassword" #newPasswordField="ngModel" name="newPassword"
+										[(ngModel)]="person.newPassword"
+										minlength="8" validateEqual="confirmPassword" reverse="true"
+										placeholder="Nouveau mot de passe"
+										class="form-control" />
+									<span class="help-block" *ngIf="newPasswordField.errors?.minlength">
+										Le mot de passe doit faire au moins {{newPasswordField.errors.minlength.requiredLength}} caractères
+										({{newPasswordField.errors.minlength.actualLength}} actuellement)
+									</span>
+								</div>
+							</div>
+							<div class="form-group" [ngClass]="{'has-error' : confirmPasswordField.errors}">
+								<label for="confirmPassword" class="col-sm-2 control-label">Confirmation mot de passe</label>
+								<div class="col-sm-10">
+									<input type="password"
+										id="confirmPassword" #confirmPasswordField="ngModel" name="confirmPassword"
+										[(ngModel)]="confirmPassword"
+										validateEqual="newPassword"
+										placeholder="Confirmation mot de passe"
+										class="form-control" />
+									<span class="help-block" *ngIf="confirmPasswordField.errors?.validateEqual === false">
+										La confirmation ne correspond pas!
+									</span>
+								</div>
+							</div>
+						</div>
 						<div id="category" class="tab-pane" [class.active]="activePane=='category'" *ngIf="person.type == 'archer'">
 							<div *ngFor="let criterion of criteria" class="form-group">
 							<label for="criterion-elements-{{criterion.id}}" class="col-sm-2 control-label">{{criterion.libelle}}</label>
@@ -165,7 +256,9 @@ import * as moment from 'moment';
 				</div>
 
 				<button class="btn btn-primary pull-right" type="button" (click)="cancel()">Annuler</button>
-				<button class="btn btn-success pull-right" style="margin-right: 5px;" type="button" (click)="validate()">Valider</button>
+				<button class="btn btn-success pull-right" style="margin-right: 5px;" type="submit"
+					[disabled]="personForm.invalid">Valider</button>
+				<span class="text-danger pull-right" style="padding: 6px 12px;" role="alert" *ngIf="personForm.invalid">Tous les champs ne sont pas valide. Validation impossible!</span>
 				</form>
 			</div>
 		</div>
@@ -173,7 +266,7 @@ import * as moment from 'moment';
 	`
 })
 export class PersonComponent implements OnInit, DoCheck {
-	public person : IPerson = <IPerson>{
+	public person : IPerson | IAccount = <IPerson>{
 		name: '',
 		firstName: ''
 	};
@@ -184,6 +277,17 @@ export class PersonComponent implements OnInit, DoCheck {
 	
 	public activePane : string;
 
+	public confirmPassword : string = "";
+
+	private isPasswordRequired : boolean = false;
+	public get checkPasswordRequired() : boolean {
+		let passwordRequired : boolean = false;
+		if((<IAccount>this.person).newPassword && (<IAccount>this.person).newPassword.length > 0)
+			passwordRequired = true;
+
+		return passwordRequired;
+	}
+
 	public countries : ICountry[] = [];
 	public civilities : ICivility[] = [];
 	public criteria : Criterion[] = [];
@@ -191,15 +295,18 @@ export class PersonComponent implements OnInit, DoCheck {
 	public error;
 
     private idPerson : string;
-    private url : UrlSegment[];
+	private url : UrlSegment[];
+	private accountMode : boolean = false;
 
     private mustUpdateView : boolean = false;
 
 	constructor(
 		private route : ActivatedRoute,
 		private router: Router,
+		private cdf: ChangeDetectorRef,
 		private navigation : NavigatorService,
 		private references : ReferencesService,
+		private accountService : AccountService,
 		private persons : PersonsService,
 		private entitesService : EntitesService) {
 	}
@@ -208,12 +315,24 @@ export class PersonComponent implements OnInit, DoCheck {
 		this.route.params.subscribe(params => {
             this.idPerson = params['id'];
 
-            this.mustUpdateView = true;
-        });
+			this.mustUpdateView = true;
+			this.accountMode = false;
+		});
+		
         this.route.url.subscribe(url => {
-            this.url = url;
-
-            this.mustUpdateView = true;
+			this.url = url;
+			
+			if(url[0].path == "account") {
+				this.accountService.getAccount().then(a => {
+					this.person = a;
+					a.newPassword = "";
+					this.mustUpdateView = true;
+					this.accountMode = true;
+				});
+			} else {
+				this.mustUpdateView = true;
+				this.accountMode = false;
+			}
         });
 
 		this.references.getCountries().then(c => this.countries = c);
@@ -221,6 +340,7 @@ export class PersonComponent implements OnInit, DoCheck {
 	}
 
 	ngDoCheck() {
+		this.cdf.detectChanges();
 		if(this.mustUpdateView) {
 			this.mustUpdateView = false;
 			
@@ -238,21 +358,11 @@ export class PersonComponent implements OnInit, DoCheck {
 		this.navigation.pushUrlSegments("Personne", this.url, null);
 		currentNavigationSnapshot = this.navigation.getCurrentNavigationSnapshot();
 
-		if(this.idPerson && !this.idPerson.startsWith("new")) {
+		if(this.accountMode) {
+			this.setPerson(this.person, currentNavigationSnapshot);
+		} else if(this.idPerson && !this.idPerson.startsWith("new")) {
 			this.persons.getPerson(this.idPerson).then(p => {
-				this.person = p;
-
-				this.age = this.calculAge(p.dateNaissance);
-
-				if(currentNavigationSnapshot.returnData) {
-					this.setEntity(<IEntite>currentNavigationSnapshot.returnData);
-					this.person.idEntity = this.entite.id;
-				} else if(this.person.idEntity) {
-					this.entitesService.getEntity(this.person.idEntity).then(entity => this.setEntity(entity));
-				}
-
-				currentNavigationSnapshot.label = p.name + " " + p.firstName;
-                currentNavigationSnapshot.stateData = p;
+				this.setPerson(p, currentNavigationSnapshot);
 			});
 		} else {
 			let previousNavigationSnapshot = this.navigation.getPreviousNavigationSnapshot();
@@ -276,9 +386,21 @@ export class PersonComponent implements OnInit, DoCheck {
 		}
 	}
 
-	/*formatDate(date : Date) : string{
-		return moment(date).format('DD/MM/YYYY');
-	}*/
+	private setPerson(person : IPerson, currentNavigationSnapshot : NavigationSnapshot) {
+		this.person = person;
+		
+		this.age = this.calculAge(person.dateNaissance);
+
+		if(currentNavigationSnapshot.returnData) {
+			this.setEntity(<IEntite>currentNavigationSnapshot.returnData);
+			this.person.idEntity = this.entite.id;
+		} else if(this.person.idEntity) {
+			this.entitesService.getEntity(this.person.idEntity).then(entity => this.setEntity(entity));
+		}
+
+		currentNavigationSnapshot.label = person.name + " " + person.firstName;
+		currentNavigationSnapshot.stateData = person;
+	}
 	private setEntity(entity : IEntite) {
 		this.entite = entity;
 		if(this.entite.idEntiteParent)
@@ -383,13 +505,21 @@ export class PersonComponent implements OnInit, DoCheck {
 
 	public cancel() {
         this.navigation.goBack(this.router, null, -1);
-    }
-
-    public validate() {
-        this.persons.savePerson(this.person).then(person => {
-            this.navigation.goBack(this.router, null, -1);
-        }).catch(reason => {
-            this.error = reason;
-        });
+	}
+	
+    public validate(f) {
+		if(!this.accountMode) {
+			this.persons.savePerson(this.person).then(person => {
+				this.navigation.goBack(this.router, null, -1);
+			}).catch(reason => {
+				this.error = reason;
+			});
+		} else {
+			this.accountService.saveAccount(this.person).then(person => {
+				this.navigation.goBack(this.router, null, -1);
+			}).catch(reason => {
+				this.error = reason;
+			})
+		}
     }
 }

@@ -88,6 +88,7 @@
  */
 package org.ajdeveloppement.concours.data;
 
+import java.sql.Types;
 import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
@@ -97,6 +98,7 @@ import org.ajdeveloppement.commons.persistence.sql.SqlObjectPersistence;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlChildCollection;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlForeignKey;
+import org.ajdeveloppement.commons.persistence.sql.annotations.SqlGeneratedIdField;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlPrimaryKey;
 import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
 
@@ -105,21 +107,24 @@ import org.ajdeveloppement.commons.persistence.sql.annotations.SqlTable;
  *
  */
 @SqlTable(name="COMPETITION")
-@SqlPrimaryKey(fields="ID_COMPETITION")
+@SqlPrimaryKey(fields="ID_COMPETITION", generatedidField=@SqlGeneratedIdField(name="ID_COMPETITION", type=Types.JAVA_OBJECT))
 public class Competition implements SqlObjectPersistence {
 	
 
 	@SqlField(name="ID_COMPETITION")
 	private UUID idCompetition = UUID.randomUUID();
 	
+	@SqlField(name="NOM", sqlType="VARCHAR", size=128)
+	private String nom;
+	
+	@SqlForeignKey(mappedTo = "ID_REGLEMENT")
+	private Rule reglement;
+	
 	@SqlForeignKey(mappedTo="ID_ORGANISATEUR")
 	private Entite organisateur;
 	
-	@SqlField(name="LIEU")
+	@SqlField(name="LIEU", sqlType="VARCHAR", size=128)
 	private String lieuCompetition;
-	
-	@SqlForeignKey(mappedTo={"ID_NIVEAU_COMPETITION"})
-	private CompetitionLevel competitionLevel;
 	
 	@SqlField(name="DATE_DEBUT")
 	private Date dateDebutConcours;
@@ -127,12 +132,17 @@ public class Competition implements SqlObjectPersistence {
 	@SqlField(name="DATE_FIN")
 	private Date dateFinConcours;
 	
-
 	@SqlField(name="DUEL")
 	private boolean gestionDuel = true;
 	
-	@SqlForeignKey(mappedTo = "ID_REGLEMENT")
-	private Rule reglement;
+	@SqlForeignKey(mappedTo={"ID_NIVEAU_COMPETITION"})
+	private CompetitionLevel competitionLevel;
+	
+	@SqlField(name="NOMBRE_CIBLES")
+	private int targetsNumber;
+	
+	@SqlField(name="NOMBRE_DEPARTS")
+	private int startsNumber;
 	
 	@SqlChildCollection(foreignFields = "ID_COMPETITION")
 	private LazyPersistentCollection<CompetitionJudge, Void> judges = new LazyPersistentCollection<>(
@@ -177,6 +187,20 @@ public class Competition implements SqlObjectPersistence {
 	}
 
 
+	/**
+	 * @return nom
+	 */
+	public String getNom() {
+		return nom;
+	}
+
+	/**
+	 * @param nom nom à définir
+	 */
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.ajdeveloppement.concours.data.CompetitionView#getLieuCompetition()
 	 */
@@ -208,6 +232,34 @@ public class Competition implements SqlObjectPersistence {
 		this.competitionLevel = competitionLevel;
 	}
 
+
+	/**
+	 * @return targetsNumber
+	 */
+	public int getTargetsNumber() {
+		return targetsNumber;
+	}
+
+	/**
+	 * @param targetsNumber targetsNumber à définir
+	 */
+	public void setTargetsNumber(int targetsNumber) {
+		this.targetsNumber = targetsNumber;
+	}
+
+	/**
+	 * @return startsNumber
+	 */
+	public int getStartsNumber() {
+		return startsNumber;
+	}
+
+	/**
+	 * @param startsNumber startsNumber à définir
+	 */
+	public void setStartsNumber(int startsNumber) {
+		this.startsNumber = startsNumber;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.ajdeveloppement.concours.data.CompetitionView#getDateDebutConcours()

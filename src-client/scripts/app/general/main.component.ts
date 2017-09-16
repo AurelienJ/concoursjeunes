@@ -1,18 +1,31 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from "@angular/router";
 
 import { NavigatorService } from "./navigator.service";
+import { AccountService } from "../account/account.service";
+import { IAccount } from '../account/iaccount';
 
 @Component({
 	selector: 'main',
-	templateUrl: 'scripts/app/general/main.component.html'
+	templateUrl: './main.component.html'
 })
 
 export class MainComponent implements OnInit {
-	constructor(private navigatorService : NavigatorService) { }
+	public account : IAccount;
 
-	ngOnInit() { }
+	constructor(private router : Router, private navigatorService : NavigatorService, private accountService : AccountService) { }
 
-	clearNavigationPaths() {
+	ngOnInit() {
+		this.accountService.getAccount().then(a => this.account = a);
+	}
+
+	public clearNavigationPaths() {
         this.navigatorService.clear();
-    }
+	}
+	
+	public logout() {
+		this.accountService.logout().then(r => {
+			this.router.navigate(["/login"]);
+		})
+	}
 }

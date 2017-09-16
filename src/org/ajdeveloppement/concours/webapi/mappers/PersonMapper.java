@@ -101,7 +101,6 @@ import org.ajdeveloppement.concours.data.CategoryContact.IdDefaultCategory;
 import org.ajdeveloppement.concours.data.Civility;
 import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.data.Coordinate;
-import org.ajdeveloppement.concours.data.Entite;
 import org.ajdeveloppement.concours.data.T_CategoryContact;
 import org.ajdeveloppement.concours.data.T_Civility;
 import org.ajdeveloppement.concours.data.T_Contact;
@@ -122,7 +121,7 @@ import org.mapstruct.MappingTarget;
  * @author Aurélien JEOFFRAY
  *
  */
-@Mapper(uses = { DiscriminantCriterionSetMapper.class}, componentModel="js330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
+@Mapper(uses = { DiscriminantCriterionSetMapper.class, EntiteMapper.class}, componentModel="js330", collectionMappingStrategy=CollectionMappingStrategy.ADDER_PREFERRED)
 public abstract class PersonMapper {
 	
 	@Inject
@@ -210,7 +209,7 @@ public abstract class PersonMapper {
 	}
 	
 	private boolean isArcher(ContactView contactView) {
-		return contactView.getType().equals("archer") || (contactView.getCategories() != null && contactView.getCategories().contains(IdDefaultCategory.BOWMAN.value()));
+		return contactView.getType().equals("archer") || (contactView.getCategories() != null && contactView.getCategories().contains(IdDefaultCategory.BOWMAN.value())); //$NON-NLS-1$
 	}
 	
 	@BeforeMapping
@@ -272,6 +271,7 @@ public abstract class PersonMapper {
 	@Mapping(target = "passwordHash", ignore = true)
 	@Mapping(target = "managedProfiles", ignore = true)
 	@Mapping(target = "categoriesContact", source = "categories")
+	@Mapping(target = "authToken", ignore = true)
 	public abstract void updateContactFromContactView(ContactView view, @MappingTarget Contact contact);
 	
 	@Mapping(source = "id", target = "idContact")
@@ -281,6 +281,7 @@ public abstract class PersonMapper {
 	@Mapping(target = "passwordHash", ignore = true)
 	@Mapping(target = "managedProfiles", ignore = true)
 	@Mapping(target = "categoriesContact", source = "categories")
+	@Mapping(target = "authToken", ignore = true)
 	public abstract void updateArcherFromArcherView(ArcherView view, @MappingTarget Archer contact);
 	
 	@AfterMapping
@@ -291,12 +292,6 @@ public abstract class PersonMapper {
 	public Civility asCivility(UUID id) {
 		if(id != null)
 			return T_Civility.getInstanceWithPrimaryKey(id);
-		return null;
-	}
-	
-	public Entite asEntite(UUID id) {
-		if(id != null)
-			return T_Entite.getInstanceWithPrimaryKey(id);
 		return null;
 	}
 	

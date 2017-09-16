@@ -1,19 +1,29 @@
 package org.ajdeveloppement.concours.webapi.controllers;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.ajdeveloppement.commons.persistence.ObjectPersistenceException;
 import org.ajdeveloppement.commons.persistence.sql.QFilter;
-import org.ajdeveloppement.concours.data.T_Competition;
+import org.ajdeveloppement.concours.data.Competition;
+import org.ajdeveloppement.concours.data.Contact;
 import org.ajdeveloppement.concours.webapi.annotations.Authorize;
-import org.ajdeveloppement.concours.webapi.models.CompetitionModelView;
-import org.ajdeveloppement.concours.webapi.models.JsDataTables;
+import org.ajdeveloppement.concours.webapi.mappers.CompetitionMapper;
 import org.ajdeveloppement.concours.webapi.services.CompetitionsService;
+import org.ajdeveloppement.concours.webapi.views.CompetitionView;
+import org.ajdeveloppement.webserver.HttpMethod;
+import org.ajdeveloppement.webserver.HttpResponse;
+import org.ajdeveloppement.webserver.HttpReturnCode;
 import org.ajdeveloppement.webserver.services.webapi.HttpContext;
+import org.ajdeveloppement.webserver.services.webapi.annotations.Body;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
+import org.ajdeveloppement.webserver.services.webapi.annotations.HttpServiceId;
 import org.ajdeveloppement.webserver.services.webapi.annotations.UrlParameter;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
+import org.ajdeveloppement.webserver.viewbinder.ViewsFactory;
 
 @WebApiController
 public class CompetitionsController {
@@ -22,10 +32,13 @@ public class CompetitionsController {
 	
 	private CompetitionsService service;
 	
+	private CompetitionMapper mapper;
+	
 	@Inject
-	public CompetitionsController(HttpContext context, CompetitionsService service) {
+	public CompetitionsController(HttpContext context, CompetitionsService service, CompetitionMapper mapper) {
 		this.context = context;
 		this.service = service;
+		this.mapper = mapper;
 		
 		context.addHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1. //$NON-NLS-1$ //$NON-NLS-2$
 		context.addHeader("Pragma", "no-cache"); // HTTP 1.0. //$NON-NLS-1$ //$NON-NLS-2$
@@ -33,50 +46,88 @@ public class CompetitionsController {
 	}
 	
 	/**
-	 * Renvoie toutes les competitions
-	 * @param context
+	 * Convert a Competition to CompetitionView
+	 * 
+	 * @param contact
 	 * @return
 	 */
-	@HttpService(key="competitionsDataTable")
-	public JsDataTables getCompetitionsDataTable(
-			@UrlParameter("search[value]") String searchValue,
+	private CompetitionView toView(Competition competition) {
+		return ViewsFactory.getView(CompetitionView.class, null, Competition.class, competition, service.getClass().getClassLoader());
+	}
+	
+	/**
+	 * Convert a Competition list to CompetitionView list
+	 * 
+	 * @param contacts
+	 * @return
+	 */
+	private List<CompetitionView> toViewsList(List<Competition> competitions) {
+		return competitions.stream()
+				.map(c -> toView(c))
+				.collect(Collectors.toList());
+	}
+	
+	@HttpService(key = "countcompetitions")
+	@Authorize(value={})
+	public int countCompetitions(@UrlParameter("search") String search) {
+		QFilter filter = service.getFilter( search);
+
+		return service.countCompetitionsWithFilter(filter);
+	}
+	
+	@HttpService(key="competitions")
+	@Authorize(value={})
+	public List<CompetitionView> getCompetitions(
+			@UrlParameter("search") String search,
+			@UrlParameter("start") int offset,
 			@UrlParameter("length") int length,
-			@UrlParameter("start") int start,
-			@UrlParameter("draw") int draw) {
-		int nbTotalEntites = service.countAllCompetitions();
-		
-		QFilter filter = null;
-		if(searchValue != null && !searchValue.isEmpty()) {
-			@SuppressWarnings("nls")
-			String searchPattern = String.format("%%%s%%", searchValue.toUpperCase());
-			filter = T_Competition.LIEU.upper().like(searchPattern);
-		}
-		
-		int nbFilteredEntites =  nbTotalEntites;
-		if(filter != null)
-			nbFilteredEntites = service.countCompetitionsWithFilter(filter);
-		
-		int offset = -1;
-		if(length > 0)
-			offset = start;
-				
-		JsDataTables jsDataTables = new JsDataTables();
-		jsDataTables.setDraw(draw);
-		jsDataTables.setRecordsTotal(nbTotalEntites);
-		jsDataTables.setRecordsFiltered(nbFilteredEntites);
-		jsDataTables.setData(service.getCompetitionsForFilter(filter, length, offset));
-		
-		return jsDataTables;
+			@UrlParameter("sortBy") String sortBy,
+			@UrlParameter("sortOrder") String sortOrder) {
+		QFilter filter = service.getFilter( search);
+
+		return toViewsList(service.getCompetitionsForFilter(filter, length, offset));
 	}
 	
 	/**
 	 * Renvoie toutes les competitions
+	 * 
 	 * @param context
 	 * @return
 	 */
 	@HttpService(key="competitions")
 	@Authorize(value={})
-	public List<CompetitionModelView> getCompetitions() {
-		return service.getAllCompetitions();
+	public List<CompetitionView> getCompetitions() {
+		return toViewsList(service.getAllCompetitions());
+	}
+	
+	@HttpService(key="competitions")
+	@Authorize(value={})
+	public CompetitionView getCompetition(@HttpServiceId UUID idCompetition) {
+		return toView(service.getCompetition(idCompetition));
+	}
+	
+	@HttpService(key="competitions", methods={ HttpMethod.PUT, HttpMethod.POST })
+	@Authorize(value={})
+	public CompetitionView saveCompetition(@Body CompetitionView view) throws ObjectPersistenceException {
+		Competition competition = mapper.toCompetition(view);
+		
+		Contact user = context.getMetadata("User");
+		if(user != null && user.getEntite() != null) {
+			
+			if(competition.getOrganisateur() == null)
+				competition.setOrganisateur(user.getEntite());
+			else if(competition.getOrganisateur() != user.getEntite()) {
+				context.setCustomResponse(new HttpResponse(HttpReturnCode.ClientError.Forbidden, "plain/text",
+						"You are not owner of this competition"));
+				
+				return null;
+			}
+			
+			service.saveCompetition(competition);
+			
+			return toView(competition);
+		}
+		
+		return null;
 	}
 }

@@ -12,7 +12,7 @@ import { Criterion } from './Criterion';
 import { EntitesService } from './entites.service';
 import { PersonsService } from '../persons/persons.service';
 import { ReferencesService } from '../references/references.service';
-import { NavigatorService } from '../general';
+import { NavigatorService } from '../general/navigator.service';
 
 import 'rxjs/add/operator/share';
 
@@ -31,7 +31,7 @@ import 'rxjs/add/operator/share';
 						</li>
 						<li [class.active]="activePane=='contacts'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='contacts'">Contacts</a></li>
 					</ul>
-					<div class="tab-content">
+					<div class="tab-content main-pane">
 						<div id="identity" class="tab-pane" [class.active]="!activePane || activePane=='identity'">
 							<section class="formulaire">
 								<h4>Identité</h4>
@@ -56,8 +56,8 @@ import 'rxjs/add/operator/share';
 								</div>
 								<div class="form-group" *ngIf="entite.type != 0">
 									<label class="col-sm-2 control-label">Fédération</label>
-									<div class="col-sm-10"><span class="form-control no-border"><span *ngIf="entite.entiteParent != null"><a [routerLink]="['/entities', entite.entiteParent.id]">{{entite.entiteParent.nom}}</a> - </span>
-									<a [routerLink]="['/federations']" [queryParams]="{forSelect : true}" id="entityFederation">Choisir...</a></span></div>
+									<div class="col-sm-10"><p class="form-control-static"><span *ngIf="entite.entiteParent != null"><a [routerLink]="['/entities', entite.entiteParent.id]">{{entite.entiteParent.nom}}</a> - </span>
+									<a [routerLink]="['/federations']" [queryParams]="{forSelect : true}" id="entityFederation">Choisir...</a></p></div>
 								</div>
 							</section>
 

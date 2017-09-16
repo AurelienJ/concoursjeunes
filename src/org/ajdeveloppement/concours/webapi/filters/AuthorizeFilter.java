@@ -88,9 +88,12 @@
  */
 package org.ajdeveloppement.concours.webapi.filters;
 
+import java.util.UUID;
+
 import javax.inject.Inject;
 
 import org.ajdeveloppement.concours.data.Contact;
+import org.ajdeveloppement.concours.data.T_Contact;
 import org.ajdeveloppement.concours.webapi.annotations.Authorize;
 import org.ajdeveloppement.concours.webapi.services.AccountService;
 import org.ajdeveloppement.webserver.HttpResponse;
@@ -115,7 +118,7 @@ public class AuthorizeFilter implements RequestFilter {
 	@SuppressWarnings("nls")
 	@Override
 	public HttpResponse filter(HttpContext httpContext) {
-		String[] groups = null;
+		//String[] groups = null;
 		String responseMessage = "Access reserved";
 		String responseMimeType = "text/plain";
 		ReturnCode returnCode = ClientError.Forbidden;
@@ -123,7 +126,7 @@ public class AuthorizeFilter implements RequestFilter {
 		
 		if(httpContext.getFilterAnnotation() instanceof Authorize) {
 			Authorize authorize = (Authorize)httpContext.getFilterAnnotation();
-			groups = authorize.value();
+			//groups = authorize.value();
 			responseMessage = authorize.failResponse();
 			responseMimeType = authorize.failMimeType();
 			returnCode = authorize.failReturnCode();
@@ -131,10 +134,15 @@ public class AuthorizeFilter implements RequestFilter {
 			continueOnFail = authorize.continueIfFail();
 		}
 		
-		Contact user = HttpSessionHelper.getUserSessionData(httpContext.getHttpRequest(), "User");
-		if(user != null)
-			httpContext.addMetadata("User", user);
-		else if(!continueOnFail)
+		UUID idContact = HttpSessionHelper.getUserSessionData(httpContext.getHttpRequest(), "User");
+		Contact user = null;
+		if(idContact != null) {
+			user = T_Contact.getInstanceWithPrimaryKey(idContact);
+			
+			if(user != null)
+				httpContext.addMetadata("User", user);
+		}
+		if(user == null && !continueOnFail)
 			return new HttpResponse(returnCode, responseMimeType, responseMessage);
 		
 //		if(!AuthenticateHelper.isAuthorizedUser(authenticator, httpContext, groups)) {
