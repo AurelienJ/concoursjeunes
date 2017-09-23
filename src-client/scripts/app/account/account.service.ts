@@ -28,6 +28,7 @@ export class AccountService {
     }
 
     public register(account : IAccount) : Promise<IAccount> {
+        this.account = this.http.post("api/register", account, {headers: this.headers}).toPromise().then(r => r.json());
         return this.account;
     }
 

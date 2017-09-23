@@ -10,27 +10,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var moment = require("moment");
-var AppComponent = /** @class */ (function () {
-    function AppComponent() {
+var ControlSidebarDirective = /** @class */ (function () {
+    function ControlSidebarDirective(el, renderer) {
+        this.element = jQuery(el.nativeElement);
     }
-    AppComponent.prototype.ngOnInit = function () {
-        //this.route.
-        moment.locale('fr');
+    ControlSidebarDirective.prototype.ngAfterViewInit = function () {
+        //(<any>$).AdminLTE.controlSidebar.activate();
+        //if(typeof (<any>this.element).controlSidebar === "function")
+        //    (<any>this.element).controlSidebar();
     };
-    AppComponent.prototype.ngAfterViewInit = function () {
-        //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-        $.getScript("node_modules/admin-lte/dist/js/app.js");
-    };
-    AppComponent = __decorate([
-        core_1.Component({
-            selector: 'app',
-            templateUrl: './app.html',
+    ControlSidebarDirective = __decorate([
+        core_1.Directive({
+            selector: '[control-sidebar]',
         }),
-        __metadata("design:paramtypes", [])
-    ], AppComponent);
-    return AppComponent;
+        __metadata("design:paramtypes", [core_1.ElementRef, core_1.Renderer])
+    ], ControlSidebarDirective);
+    return ControlSidebarDirective;
 }());
-exports.AppComponent = AppComponent;
+exports.ControlSidebarDirective = ControlSidebarDirective;
 
-//# sourceMappingURL=app.component.js.map
+//# sourceMappingURL=control-sidebar.directive.js.map

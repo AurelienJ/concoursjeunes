@@ -31,66 +31,85 @@ import 'rxjs/add/operator/share';
 						</li>
 						<li [class.active]="activePane=='contacts'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='contacts'">Contacts</a></li>
 					</ul>
-					<div class="tab-content main-pane">
+					<div class="tab-content">
 						<div id="identity" class="tab-pane" [class.active]="!activePane || activePane=='identity'">
-							<section class="formulaire">
-								<h4>Identité</h4>
-								
-								<div class="form-group">
-									<label for="entityName" class="col-sm-2 control-label">Nom</label>
-									<div class="col-sm-10"><input type="text" placeholder="Nom" id="entityName" name="entityName" class="form-control" [(ngModel)]="entite.nom"/></div>
+							<div class="row row-eq-height">
+								<div class="col-lg-6">
+									<div class="box box-primary">
+										<div class="box-header with-border">
+											<h4>Identité</h4>
+										</div>
+										<div class="box-body">
+											<div class="form-group">
+												<label for="entityName" class="col-sm-2 control-label">Nom</label>
+												<div class="col-sm-10"><input type="text" placeholder="Nom" id="entityName" name="entityName" class="form-control" [(ngModel)]="entite.nom"/></div>
+											</div>
+											<div class="form-group" *ngIf="entite.type == 0">
+												<label for="entitySigle" class="col-sm-2 control-label">Sigle</label>
+												<div class="col-sm-10"><input type="text" placeholder="Sigle" id="entitySigle" name="entitySigle" class="form-control" [(ngModel)]="entite.sigle" /></div>
+											</div>
+											<div class="form-group">
+												<label for="entityReference" class="col-sm-2 control-label">Référence</label>
+												<div class="col-sm-10"><input type="text" placeholder="Référence" id="entityReference" name="entityReference" class="form-control" [(ngModel)]="entite.reference" /></div>
+											</div>
+											<div class="form-group">
+												<label for="entityType" class="col-sm-2 control-label">Type</label>
+												<div class="col-sm-10"><select id="entityType" name="entityType" class="form-control" [(ngModel)]="entite.type">
+													<option *ngFor="let typeEntite of typesEntite" value="{{typeEntite.id}}">{{typeEntite.label}}</option>
+												</select></div>
+											</div>
+											<div class="form-group" *ngIf="entite.type != 0">
+												<label class="col-sm-2 control-label">Fédération</label>
+												<div class="col-sm-10"><p class="form-control-static"><span *ngIf="entite.entiteParent != null"><a [routerLink]="['/entities', entite.entiteParent.id]">{{entite.entiteParent.nom}}</a> - </span>
+												<a [routerLink]="['/federations']" [queryParams]="{forSelect : true}" id="entityFederation">Choisir...</a></p></div>
+											</div>
+										</div>
+									</div>
 								</div>
-								<div class="form-group" *ngIf="entite.type == 0">
-									<label for="entitySigle" class="col-sm-2 control-label">Sigle</label>
-									<div class="col-sm-10"><input type="text" placeholder="Sigle" id="entitySigle" name="entitySigle" class="form-control" [(ngModel)]="entite.sigle" /></div>
+								<div class="col-lg-6">
+									<div class="box box-info">
+										<div class="box-header with-border">
+											<h4>Coordonnées</h4>
+										</div>
+										<div class="box-body">
+											<div class="form-group">
+												<label for="entityAddress" class="col-sm-2 control-label">Adresse</label>
+												<div class="col-sm-10"><textarea rows="4" placeholder="Adresse" id="entityAddress" name="entityAddress" class="form-control" [(ngModel)]="entite.adresse"></textarea></div>
+											</div>
+											<div class="form-group">
+												<label for="entityZipCode" class="col-sm-2 control-label">Code postal</label>
+												<div class="col-sm-10"><input type="text" placeholder="Code postal" id="entityZipCode" name="entityZipCode" class="form-control" [(ngModel)]="entite.codePostal"/></div>
+											</div>
+											<div class="form-group">
+												<label for="entityCity" class="col-sm-2 control-label">Ville</label>
+												<div class="col-sm-10"><input placeholder="Ville" id="entityCity" name="entityCity" class="form-control" [(ngModel)]="entite.ville" /></div>
+											</div>
+											<div class="form-group">
+												<label for="entityCountry" class="col-sm-2 control-label">Pays</label>
+												<div class="col-sm-10"><select id="entityCountry" name="entityCountry" class="form-control" [(ngModel)]="entite.pays">
+													<option *ngFor="let country of countries" value="{{country.code}}">{{country.libelle}}</option>
+												</select></div>
+											</div>
+										</div>
+									</div>
 								</div>
-								<div class="form-group">
-									<label for="entityReference" class="col-sm-2 control-label">Référence</label>
-									<div class="col-sm-10"><input type="text" placeholder="Référence" id="entityReference" name="entityReference" class="form-control" [(ngModel)]="entite.reference" /></div>
+							</div>
+							<div class="row row-eq-height">
+								<div class="col-lg-12">
+									<div class="box box-default">
+										<div class="box-header with-border">
+											<h4>Divers</h4>
+										</div>
+										<div class="box-body">
+											<div class="form-group">
+												<label for="entityNotes" class="col-sm-2 control-label">Notes</label>
+												<div class="col-sm-10"><textarea rows="8" placeholder="Notes" id="entityNotes" name="entityNotes" class="form-control" [(ngModel)]="entite.note"></textarea></div>
+											</div>
+										</div>
+									</div>
 								</div>
-								<div class="form-group">
-									<label for="entityType" class="col-sm-2 control-label">Type</label>
-									<div class="col-sm-10"><select id="entityType" name="entityType" class="form-control" [(ngModel)]="entite.type">
-										<option *ngFor="let typeEntite of typesEntite" value="{{typeEntite.id}}">{{typeEntite.label}}</option>
-									</select></div>
-								</div>
-								<div class="form-group" *ngIf="entite.type != 0">
-									<label class="col-sm-2 control-label">Fédération</label>
-									<div class="col-sm-10"><p class="form-control-static"><span *ngIf="entite.entiteParent != null"><a [routerLink]="['/entities', entite.entiteParent.id]">{{entite.entiteParent.nom}}</a> - </span>
-									<a [routerLink]="['/federations']" [queryParams]="{forSelect : true}" id="entityFederation">Choisir...</a></p></div>
-								</div>
-							</section>
-
-							<section class="formulaire">
-								<h4>Coordonnées</h4>
-								
-								<div class="form-group">
-									<label for="entityAddress" class="col-sm-2 control-label">Adresse</label>
-									<div class="col-sm-10"><textarea rows="4" placeholder="Adresse" id="entityAddress" name="entityAddress" class="form-control" [(ngModel)]="entite.adresse"></textarea></div>
-								</div>
-								<div class="form-group">
-									<label for="entityZipCode" class="col-sm-2 control-label">Code postal</label>
-									<div class="col-sm-10"><input type="text" placeholder="Code postal" id="entityZipCode" name="entityZipCode" class="form-control" [(ngModel)]="entite.codePostal"/></div>
-								</div>
-								<div class="form-group">
-									<label for="entityCity" class="col-sm-2 control-label">Ville</label>
-									<div class="col-sm-10"><input placeholder="Ville" id="entityCity" name="entityCity" class="form-control" [(ngModel)]="entite.ville" /></div>
-								</div>
-								<div class="form-group">
-									<label for="entityCountry" class="col-sm-2 control-label">Pays</label>
-									<div class="col-sm-10"><select id="entityCountry" name="entityCountry" class="form-control" [(ngModel)]="entite.pays">
-										<option *ngFor="let country of countries" value="{{country.code}}">{{country.libelle}}</option>
-									</select></div>
-								</div>
-							</section>
-
-							<section class="formulaire">
-								<h4>Divers</h4>
-								<div class="form-group">
-									<label for="entityNotes" class="col-sm-2 control-label">Notes</label>
-									<div class="col-sm-10"><textarea rows="8" placeholder="Notes" id="entityNotes" name="entityNotes" class="form-control" [(ngModel)]="entite.note"></textarea></div>
-								</div>
-							</section>
+							</div>
+							
 						</div>
 						<div id="criteria" class="tab-pane" [class.active]="activePane=='criteria'">
 							<div class="modal modal-primary" id="confirmDeleteCriterionItemModal" *ngIf="selectedCriterionForDelete">
@@ -142,7 +161,7 @@ import 'rxjs/add/operator/share';
 						</div>
 						<div id="contacts" class="tab-pane" [class.active]="activePane=='contacts'">
 							<div class="row">
-								<div class="col-sm-6"><a href="#/persons/new" class="btn btn-app"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter</a>
+								<div class="col-sm-6"><a [routerLink]="['/persons','new']" class="btn btn-app"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter</a>
 								</div>
 								<div class="col-sm-6 form-inline">
 									<div class="pull-right form-group">
@@ -168,7 +187,7 @@ import 'rxjs/add/operator/share';
 								<td>{{person.numLicenceArcher}}</td>
 								<td>{{person.city}}</td>
 								<td>
-									<a [routerLink]="['/persons', person.id]"><i class="fa fa-pencil" title="Editer"></i></a>
+									<a [routerLink]="['/persons', person.id]" class="btn btn-link"><i class="fa fa-pencil" title="Editer"></i></a>
 								</td>
 							</tr>
 							</tbody>

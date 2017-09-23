@@ -16,6 +16,13 @@ a.disabled {
 	z-index: 1000;
 }
 
+.row.row-eq-height {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+  }
+
 .tab-content.main-pane {
 	height: calc(100vh - 220px);
 	overflow: auto;

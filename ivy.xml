@@ -30,7 +30,7 @@
             	<exclude module="bcprov-jdk14"/>
             	<exclude module="bctsp-jdk14"/>
             </dependency>
-          
+   
             <!-- dependances à supprimer -->
             <dependency org="org.ajdeveloppement" name="ajcommons-swingx-ext" rev="[1.0,)"/>
             <dependency org="org.tinyjee.jgraphx" name="jgraphx" rev="2.3.0.5" />            

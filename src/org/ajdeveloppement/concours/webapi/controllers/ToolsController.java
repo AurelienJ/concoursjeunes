@@ -91,7 +91,6 @@ package org.ajdeveloppement.concours.webapi.controllers;
 import java.sql.SQLException;
 
 import org.ajdeveloppement.concours.ApplicationCore;
-import org.ajdeveloppement.concours.webapi.annotations.Authorize;
 import org.ajdeveloppement.swingxext.error.ui.DisplayableErrorHelper;
 import org.ajdeveloppement.webserver.services.webapi.annotations.HttpService;
 import org.ajdeveloppement.webserver.services.webapi.annotations.WebApiController;
@@ -105,7 +104,6 @@ import org.h2.tools.Server;
 public class ToolsController {
 	
 	@HttpService(key="openDatabaseConsole")
-	@Authorize(value={})
 	public String openDatabaseConsole() {
 		Thread sqlConsole = new Thread() {
 			@Override

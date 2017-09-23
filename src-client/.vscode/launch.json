@@ -15,20 +15,10 @@
                 "runtimeExecutable": "C:\\Users\\a.jeoffray\\AppData\\Local\\Chromium\\Application\\chrome.exe"
             },
             "linux": {
-                "runtimeExecutable": "chromium-browser"
+                "runtimeExecutable": "/usr/bin/chromium-browser"
             },
             "url": "http://localhost:8080",
             "webRoot": "${workspaceRoot}"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "program": "${file}",
-            "runtimeExecutable": "chromium-browser",
-            "outFiles": [
-                "${workspaceRoot}/out/**/*.js"
-            ]
         }
     ]
 }

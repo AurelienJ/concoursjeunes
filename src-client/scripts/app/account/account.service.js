@@ -27,6 +27,7 @@ var AccountService = /** @class */ (function () {
         });
     };
     AccountService.prototype.register = function (account) {
+        this.account = this.http.post("api/register", account, { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
         return this.account;
     };
     AccountService.prototype.getAccount = function () {

@@ -17,18 +17,19 @@ import { Select2Directive } from './select2.directive';
 import { ICheckDirective } from "./icheck.directive";
 import { SlimScrollDirective } from './slimscroll.directive';
 import { EqualValidator } from "./equal-validator.directive";
+import { ControlSidebarDirective } from "./control-sidebar.directive";
 
 @NgModule({
     imports:        [ RouterModule, BrowserModule, HttpModule ],
     declarations:   [ MainComponent, TitlebarComponent,
         TableFilterPipe, UpperCasePipe,
-        Select2Directive, ICheckDirective, SlimScrollDirective,
+        Select2Directive, ICheckDirective, SlimScrollDirective, ControlSidebarDirective,
         EqualValidator ],
     bootstrap:      [],
     providers:      [ NavigatorService, DateService ],
     exports:        [ MainComponent, TitlebarComponent,
         TableFilterPipe, UpperCasePipe,
-        Select2Directive, ICheckDirective, SlimScrollDirective,
+        Select2Directive, ICheckDirective, SlimScrollDirective, ControlSidebarDirective,
         EqualValidator
      ]
 })

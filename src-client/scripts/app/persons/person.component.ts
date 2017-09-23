@@ -37,140 +37,185 @@ import 'rxjs/add/operator/share';
 					<ul class="nav nav-tabs">
 						<li [class.active]="!activePane || activePane=='identity'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='identity'">Identité</a></li>
 						<li *ngIf="accountMode" [class.active]="activePane=='account'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='account'">Compte <!--<span class="badge bg-red">{{personForm.controls["newPassword"]?.errors?.length + personForm.controls["confirmPassword"]?.errors?.length}}</span>--></a></li>
-						<li *ngIf="person.type == 'archer'" [class.active]="activePane=='category'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='category'">Categorie</a></li>
 						<li *ngIf="person.type == 'archer'" [class.active]="activePane=='activity'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='activity'">Activités</a></li>
 					</ul>
-					<div class="tab-content main-pane">
+					<div class="tab-content">
 						<div id="identity" class="tab-pane" [class.active]="!activePane || activePane=='identity'">
-							<section class="formulaire">
-								<div class="form-group" [ngClass]="{'has-error' : personEntityField.invalid}">
-									<label for="personEntity" class="col-sm-2 control-label">Associé à l'entité</label>
-									<div class="col-sm-10">
-										<p class="form-control-static">
-											<entite-selector
-												id="personEntity" name="personEntity" #personEntityField="ngModel"
-												[(ngModel)]="person.idEntity"
-												required></entite-selector>
-										</p>
-										<span class="help-block" *ngIf="personEntityField.errors?.required">
-											La personne doit être associé à une entité
-										</span>
-									</div>
-								</div>
-
-
-								<h4>Identité</h4>
-								
-								<div class="form-group">
-									<label for="personCivility" class="col-sm-2 control-label">Civilité</label>
-									<div class="col-sm-10">
-										<select id="personCivility" class="form-control" [(ngModel)]="person.idCivility" name="personCivility">
-											<option *ngFor="let civility of civilities" [value]="civility.id">{{civility.abreviation}}</option>
-										</select>
-									</div>
-								</div>
-
-								<div class="form-group" [ngClass]="{'has-error' : personNameField.invalid}">
-									<label for="personName" class="col-sm-2 control-label">Nom</label>
-									<div class="col-sm-10">
-										<input type="text"
-											id="personName" name="personName" #personNameField="ngModel"
-											[(ngModel)]="person.name"
-											required
-											placeholder="Nom" 
-											class="form-control"/>
-										<span class="help-block" *ngIf="personNameField.errors?.required">
-											Un nom est obligatoire
-										</span>
-									</div>
-								</div>
-
-								<div class="form-group" [ngClass]="{'has-error' : personFirstNameField.invalid}">
-									<label for="personFirstName" class="col-sm-2 control-label">Prenom</label>
-									<div class="col-sm-10">
-										<input type="text"
-											id="personFirstName" name="personFirstName" #personFirstNameField="ngModel"
-											[(ngModel)]="person.firstName"
-											required
-											placeholder="Prenom" 
-											class="form-control"/>
-										<span class="help-block" *ngIf="personFirstNameField.errors?.required">
-											Un prénom est obligatoire
-										</span>
-									</div>
-								</div>
-
-								<div class="form-group" *ngIf="person.type == 'archer'">
-									<label for="dateNaissance" class="col-sm-2 control-label">Date de naissance</label>
-									<div class="col-sm-10">
-										<div class="input-group date">
-											<div class="input-group-addon">
-												<i class="fa fa-calendar"></i>
+							<div class="row row-eq-height">
+								<div class="col-lg-12">
+									<div class="box box-primary">
+										<div class="box-header with-border">
+										</div>
+										<div class="box-body">
+											<div class="form-group" [ngClass]="{'has-error' : personEntityField.invalid}">
+												<label for="personEntity" class="col-sm-2 control-label">Associé à l'entité</label>
+												<div class="col-sm-10">
+													<p class="form-control-static">
+														<entite-selector
+															id="personEntity" name="personEntity" #personEntityField="ngModel"
+															[(ngModel)]="person.idEntity"
+															required></entite-selector>
+													</p>
+													<span class="help-block" *ngIf="personEntityField.errors?.required">
+														La personne doit être associé à une entité
+													</span>
+												</div>
 											</div>
-											<input bsDatepicker [bsConfig]="{ containerClass: 'theme-dark-blue', locale: 'fr'}" [(ngModel)]="person.dateNaissance" type="text" id="dateNaissance" name="dateNaissance" class="form-control" data-date-format="yyyy-mm-dd" lang="fr">
 										</div>
 									</div>
 								</div>
-
-								<div class="form-group" *ngIf="person.type == 'archer'">
-									<label for="age" class="col-sm-2 control-label">Age</label>
-									<div class="col-sm-10">
-										<p class="form-control-static">{{age}} ans</p>
-									</div>
-								</div>
-
-								<div class="form-group" *ngIf="person.type == 'archer'">
-									<label for="licence" class="col-sm-2 control-label">Licence</label>
-									<div class="col-sm-10"><input type="text" placeholder="Licence" id="licence" name="licence" class="form-control" [(ngModel)]="person.numLicenceArcher"/></div>
-								</div>
-
-								<div class="form-group" *ngIf="person.type == 'archer'">
-									<label for="certificat" class="col-sm-2 control-label">Certificat</label>
-									<div class="col-sm-10">
-										<div class="input-group date">
-											<div class="input-group-addon">
-												<i class="fa fa-calendar"></i>
+							</div>
+							<div class="row row-eq-height">
+								<div class="col-lg-6">
+									<div class="box box-primary">
+										<div class="box-header with-border">
+											<h4>Identité</h4>
+										</div>
+										<div class="box-body">
+								
+											<div class="form-group">
+												<label for="personCivility" class="col-sm-2 control-label">Civilité</label>
+												<div class="col-sm-10">
+													<select id="personCivility" class="form-control" [(ngModel)]="person.idCivility" name="personCivility">
+														<option *ngFor="let civility of civilities" [value]="civility.id">{{civility.abreviation}}</option>
+													</select>
+												</div>
 											</div>
-											<input bsDatepicker [bsConfig]="{ containerClass: 'theme-dark-blue', locale: 'fr', firstDayOfWeek: 1}" [(ngModel)]="person.certificat" type="text" id="certificat" name="certificat" class="form-control" data-date-format="yyyy-mm-dd" lang="fr">
+
+											<div class="form-group" [ngClass]="{'has-error' : personNameField.invalid}">
+												<label for="personName" class="col-sm-2 control-label">Nom</label>
+												<div class="col-sm-10">
+													<input type="text"
+														id="personName" name="personName" #personNameField="ngModel"
+														[(ngModel)]="person.name"
+														required
+														placeholder="Nom" 
+														class="form-control"/>
+													<span class="help-block" *ngIf="personNameField.errors?.required">
+														Un nom est obligatoire
+													</span>
+												</div>
+											</div>
+
+											<div class="form-group" [ngClass]="{'has-error' : personFirstNameField.invalid}">
+												<label for="personFirstName" class="col-sm-2 control-label">Prenom</label>
+												<div class="col-sm-10">
+													<input type="text"
+														id="personFirstName" name="personFirstName" #personFirstNameField="ngModel"
+														[(ngModel)]="person.firstName"
+														required
+														placeholder="Prenom" 
+														class="form-control"/>
+													<span class="help-block" *ngIf="personFirstNameField.errors?.required">
+														Un prénom est obligatoire
+													</span>
+												</div>
+											</div>
+
+											<div class="form-group" *ngIf="person.type == 'archer'">
+												<label for="dateNaissance" class="col-sm-2 control-label">Date de naissance</label>
+												<div class="col-sm-10">
+													<div class="input-group date">
+														<div class="input-group-addon">
+															<i class="fa fa-calendar"></i>
+														</div>
+														<input bsDatepicker [bsConfig]="{ containerClass: 'theme-dark-blue', locale: 'fr'}" [ngModel]="person.dateNaissance" (ngModelChange)="person.dateNaissance = $event; calculAge($event)" type="text" id="dateNaissance" name="dateNaissance" class="form-control" data-date-format="yyyy-mm-dd" lang="fr">
+													</div>
+												</div>
+											</div>
+
+											<div class="form-group" *ngIf="person.type == 'archer'">
+												<label for="age" class="col-sm-2 control-label">Age</label>
+												<div class="col-sm-10">
+													<p class="form-control-static">{{age}} ans</p>
+												</div>
+											</div>
+
+											<div class="form-group" *ngIf="person.type == 'archer'">
+												<label for="licence" class="col-sm-2 control-label">Licence</label>
+												<div class="col-sm-10"><input type="text" placeholder="Licence" id="licence" name="licence" class="form-control" [(ngModel)]="person.numLicenceArcher"/></div>
+											</div>
+
+											<div class="form-group" *ngIf="person.type == 'archer'">
+												<label for="certificat" class="col-sm-2 control-label">Certificat</label>
+												<div class="col-sm-10">
+													<div class="input-group date">
+														<div class="input-group-addon">
+															<i class="fa fa-calendar"></i>
+														</div>
+														<input bsDatepicker [bsConfig]="{ containerClass: 'theme-dark-blue', locale: 'fr', firstDayOfWeek: 1}" [(ngModel)]="person.certificat" type="text" id="certificat" name="certificat" class="form-control" data-date-format="yyyy-mm-dd" lang="fr">
+													</div>
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>
-							</section>
+								<div class="col-lg-6">
+									<div class="box box-info">
+										<div class="box-header with-border">
+											<h4>Coordonnées</h4>
+										</div>
+										<div class="box-body">
+									
+											<div class="form-group">
+												<label for="personAddress" class="col-sm-2 control-label">Adresse</label>
+												<div class="col-sm-10"><textarea rows="4" placeholder="Adresse" id="personAddress" name="personAddress" class="form-control" [(ngModel)]="person.address"></textarea></div>
+											</div>
 
-							<section class="formulaire">
-								<h4>Coordonnées</h4>
-								
-								<div class="form-group">
-									<label for="personAddress" class="col-sm-2 control-label">Adresse</label>
-									<div class="col-sm-10"><textarea rows="4" placeholder="Adresse" id="personAddress" name="personAddress" class="form-control" [(ngModel)]="person.address"></textarea></div>
-								</div>
+											<div class="form-group">
+												<label for="personZipCode" class="col-sm-2 control-label">Code postal</label>
+												<div class="col-sm-10"><input type="text" placeholder="Code postal" id="personZipCode" name="personZipCode" class="form-control" [(ngModel)]="person.zipCode"/></div>
+											</div>
 
-								<div class="form-group">
-									<label for="personZipCode" class="col-sm-2 control-label">Code postal</label>
-									<div class="col-sm-10"><input type="text" placeholder="Code postal" id="personZipCode" name="personZipCode" class="form-control" [(ngModel)]="person.zipCode"/></div>
-								</div>
+											<div class="form-group">
+												<label for="personCity" class="col-sm-2 control-label">Ville</label>
+												<div class="col-sm-10"><input placeholder="Ville" id="personCity" name="personCity" class="form-control" [(ngModel)]="person.city" /></div>
+											</div>
 
-								<div class="form-group">
-									<label for="personCity" class="col-sm-2 control-label">Ville</label>
-									<div class="col-sm-10"><input placeholder="Ville" id="personCity" name="personCity" class="form-control" [(ngModel)]="person.city" /></div>
+											<div class="form-group">
+												<label for="personCountry" class="col-sm-2 control-label">Pays</label>
+												<div class="col-sm-10"><select id="personCountry" name="personCountry" class="form-control" [(ngModel)]="person.countryCode">
+													<option *ngFor="let country of countries" [value]="country.code">{{country.libelle}}</option>
+												</select></div>
+											</div>
+										</div>
+									</div>
 								</div>
-
-								<div class="form-group">
-									<label for="personCountry" class="col-sm-2 control-label">Pays</label>
-									<div class="col-sm-10"><select id="personCountry" name="personCountry" class="form-control" [(ngModel)]="person.countryCode">
-										<option *ngFor="let country of countries" [value]="country.code">{{country.libelle}}</option>
-									</select></div>
+							</div>
+							<div class="row row-eq-height">
+								<div class="col-lg-6" *ngIf="person.type == 'archer'">
+									<div class="box box-default">
+										<div class="box-header with-border">
+											Catégorie
+										</div>
+										<div class="box-body">
+											<div *ngFor="let criterion of criteria" class="form-group">
+												<label for="criterion-elements-{{criterion.id}}" class="col-sm-2 control-label">{{criterion.libelle}}</label>
+													<div class="col-sm-10">
+													<select select2  [value]="getCriterionElement(criterion)" (valueChange)="setCriterionElement(criterion, $event)" name="criterion-elements-{{criterion.id}}" class="form-control" style="width: 200px;">
+														<option *ngFor="let element of criterion.criterionElements" value="{{element.id}}" [attr.selected]="getCriterionElement(criterion) == element.id ? 'selected' : null">{{element.libelle}}</option>
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
-							</section>
-
-							<section class="formulaire">
-								<h4>Divers</h4>
-								
-								<div class="form-group">
-									<label for="personNotes" class="col-sm-2 control-label">Notes</label>
-									<div class="col-sm-10"><textarea rows="8" placeholder="Notes" id="personNotes" name="personNotes" class="form-control" [(ngModel)]="person.note"></textarea></div>
+							</div>
+							<div class="row row-eq-height">
+								<div class="col-lg-12">
+									<div class="box box-default">
+										<div class="box-header with-border">
+											<h4>Divers</h4>
+										</div>
+										<div class="box-body">
+											<div class="form-group">
+												<label for="personNotes" class="col-sm-2 control-label">Notes</label>
+												<div class="col-sm-10"><textarea rows="8" placeholder="Notes" id="personNotes" name="personNotes" class="form-control" [(ngModel)]="person.note"></textarea></div>
+											</div>
+										</div>
+									</div>
 								</div>
-							</section>
+							</div>
 						</div>
 						<div id="account" class="tab-pane" [class.active]="activePane=='account'" *ngIf="accountMode">
 							<div class="form-group" [ngClass]="{'has-error' : loginField.invalid}">
@@ -233,16 +278,6 @@ import 'rxjs/add/operator/share';
 								</div>
 							</div>
 						</div>
-						<div id="category" class="tab-pane" [class.active]="activePane=='category'" *ngIf="person.type == 'archer'">
-							<div *ngFor="let criterion of criteria" class="form-group">
-							<label for="criterion-elements-{{criterion.id}}" class="col-sm-2 control-label">{{criterion.libelle}}</label>
-							<div class="col-sm-10">
-							<select select2  [value]="getCriterionElement(criterion)" (valueChange)="setCriterionElement(criterion, $event)" name="criterion-elements-{{criterion.id}}" class="form-control" style="width: 200px;">
-								<option *ngFor="let element of criterion.criterionElements" value="{{element.id}}" [attr.selected]="getCriterionElement(criterion) == element.id ? 'selected' : null">{{element.libelle}}</option>
-							</select>
-							</div>
-							</div>
-						</div>
 						<div id="activity" class="tab-pane" [class.active]="activePane=='activity'" *ngIf="person.type == 'archer'">
 							Pour les archers - activité de l'archer sur les compétitions
 						</div>
@@ -294,9 +329,10 @@ export class PersonComponent implements OnInit, DoCheck {
 
 	public error;
 
+	public accountMode : boolean = false;
+
     private idPerson : string;
 	private url : UrlSegment[];
-	private accountMode : boolean = false;
 
     private mustUpdateView : boolean = false;
 

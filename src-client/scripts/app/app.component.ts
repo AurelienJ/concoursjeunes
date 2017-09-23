@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 
 import * as moment from 'moment';
 
@@ -6,7 +6,7 @@ import * as moment from 'moment';
     selector: 'app',
     templateUrl: './app.html',
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
     constructor() {
 
     }
@@ -14,5 +14,10 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         //this.route.
         moment.locale('fr')
+    }
+
+    ngAfterViewInit() {
+        //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+        $.getScript("node_modules/admin-lte/dist/js/app.js");
     }
 }

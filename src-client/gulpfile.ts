@@ -83,7 +83,7 @@ gulp.task("dist", ["clean", "build"], () => {
         .pipe(gulp.dest(distDir + "/styles"));
 
     gulp.src("node_modules/ngx-bootstrap/datepicker/themes/bs/bs-datepicker-view.html")
-    .pipe(gulp.dest(distDir + ""));
+        .pipe(gulp.dest(distDir + ""));
 })
 
 gulp.task('distDebug', ["dist"], () => {
@@ -158,7 +158,29 @@ gulp.task('distProd', ["bundle","dist"], () => {
         .pipe(gulp.dest(distDir));
 });
 
-gulp.task('watch', function(){
+gulp.task('copyResources', () => {
+    gulp.src("fonts/**")
+        .pipe(gulp.dest(distDir + "/fonts"));
+
+    gulp.src("images/**")
+        .pipe(gulp.dest(distDir + "/images"));
+    gulp.src("images.large/**")
+        .pipe(gulp.dest(distDir + "/images.large"));
+    gulp.src("images.small/**")
+        .pipe(gulp.dest(distDir + "/images.small"));
+
+    gulp.src("styles/**")
+        .pipe(gulp.dest(distDir + "/styles"));
+
+    gulp.src("scripts/**/*.html")
+        .pipe(gulp.dest(distDir + "/scripts"));
+
+    gulp.src("index.html")
+        .pipe(preprocess())
+        .pipe(gulp.dest(distDir));
+});
+
+gulp.task('watch', () => {
   gulp.watch('scripts/**/*.ts', ['build']);
 });
 

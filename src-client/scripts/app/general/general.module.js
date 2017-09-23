@@ -20,6 +20,7 @@ var select2_directive_1 = require("./select2.directive");
 var icheck_directive_1 = require("./icheck.directive");
 var slimscroll_directive_1 = require("./slimscroll.directive");
 var equal_validator_directive_1 = require("./equal-validator.directive");
+var control_sidebar_directive_1 = require("./control-sidebar.directive");
 var GeneralModule = /** @class */ (function () {
     function GeneralModule() {
     }
@@ -28,13 +29,13 @@ var GeneralModule = /** @class */ (function () {
             imports: [router_1.RouterModule, platform_browser_1.BrowserModule, http_1.HttpModule],
             declarations: [main_component_1.MainComponent, titlebar_component_1.TitlebarComponent,
                 arraySearch_pipe_1.TableFilterPipe, uppercase_pipe_1.UpperCasePipe,
-                select2_directive_1.Select2Directive, icheck_directive_1.ICheckDirective, slimscroll_directive_1.SlimScrollDirective,
+                select2_directive_1.Select2Directive, icheck_directive_1.ICheckDirective, slimscroll_directive_1.SlimScrollDirective, control_sidebar_directive_1.ControlSidebarDirective,
                 equal_validator_directive_1.EqualValidator],
             bootstrap: [],
             providers: [navigator_service_1.NavigatorService, date_service_1.DateService],
             exports: [main_component_1.MainComponent, titlebar_component_1.TitlebarComponent,
                 arraySearch_pipe_1.TableFilterPipe, uppercase_pipe_1.UpperCasePipe,
-                select2_directive_1.Select2Directive, icheck_directive_1.ICheckDirective, slimscroll_directive_1.SlimScrollDirective,
+                select2_directive_1.Select2Directive, icheck_directive_1.ICheckDirective, slimscroll_directive_1.SlimScrollDirective, control_sidebar_directive_1.ControlSidebarDirective,
                 equal_validator_directive_1.EqualValidator
             ]
         })
