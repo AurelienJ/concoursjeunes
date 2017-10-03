@@ -14,7 +14,6 @@ var core_1 = require("@angular/core");
 var platform_browser_1 = require("@angular/platform-browser");
 var router_1 = require("@angular/router");
 var ngx_bootstrap_1 = require("ngx-bootstrap");
-var ng2_dnd_1 = require("ng2-dnd");
 var general_module_1 = require("./general/general.module");
 var references_module_1 = require("./references/references.module");
 var account_module_1 = require("./account/account.module");
@@ -99,7 +98,7 @@ var AppModule = /** @class */ (function () {
         core_1.NgModule({
             imports: [platform_browser_1.BrowserModule,
                 router_1.RouterModule.forRoot(app_routes_1.AppRoutes, { useHash: true }),
-                ngx_bootstrap_1.BsDatepickerModule.forRoot(), ng2_dnd_1.DndModule.forRoot(),
+                ngx_bootstrap_1.BsDatepickerModule.forRoot(), ngx_bootstrap_1.TooltipModule.forRoot(),
                 general_module_1.GeneralModule, references_module_1.ReferencesModule, account_module_1.AccountModule, parameters_module_1.ParametersModule, competitions_module_1.CompetitionModule, entites_module_1.EntitesModule, persons_module_1.PersonsModule, rules_module_1.RulesModule],
             declarations: [app_component_1.AppComponent],
             bootstrap: [app_component_1.AppComponent],

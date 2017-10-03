@@ -183,7 +183,7 @@ public class PersonsService {
 	 * @return
 	 */
 	public List<Contact> getContactsForEntite(UUID idEntite) {
-		return getContacts().where(T_Contact.ID_ENTITE.equalTo(idEntite)).asList();
+		return getContacts().where(T_Contact.ID_ENTITE.equalTo(idEntite)).orderBy(T_Contact.NAME).asList();
 		
 //		if(contacts != null) {
 //			return ModelViewAdapterHelper.asModelViewList(ContactModelView.class, contacts);

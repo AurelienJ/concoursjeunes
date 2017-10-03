@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnChanges, SimpleChanges, DoCheck } from '@an
 
 import { ICompetition } from './model/ICompetition';
 import { IConcurrent } from "./model/IConcurrent";
-import { ITarget } from "./model/ITarget";
+import { Target } from "./model/Target";
 
 @Component({
 	selector: 'competition-shootingline',
@@ -54,7 +54,7 @@ import { ITarget } from "./model/ITarget";
 
 					<div class="row" id="targets">
 						<div class="col-lg-6 col-md-12" >
-							<target *ngFor="let target of targets" [target]="target" [competitorToPositionning]="competitorToPositionning"></target>
+							<target *ngFor="let target of targets" [target]="target" [(competitorToPositionning)]="competitorToPositionning"></target>
 						</div>
 					</div>
 				</div>
@@ -65,11 +65,11 @@ import { ITarget } from "./model/ITarget";
 	styles: [
 		`:host #targets {
 			overflow: auto;
-			height: calc(100vh - 385px);
+			height: calc(100vh - 395px);
 		}
 		:host #competitors {
 			overflow: auto;
-			height: calc(100vh - 470px);
+			height: calc(100vh - 480px);
 			margin-bottom: 0px;
 		}    
 		`
@@ -84,7 +84,7 @@ export class CompetitionShootingLineComponent implements OnInit, OnChanges, DoCh
 
 	public concurrentExpanedState : Map<IConcurrent, boolean> = new Map<IConcurrent, boolean>();
 
-	public targets : ITarget[];
+	public targets : Target[];
 
 	public competitorToPositionning : IConcurrent;
 
@@ -129,11 +129,10 @@ export class CompetitionShootingLineComponent implements OnInit, OnChanges, DoCh
 	private generateShootingLine(competition: ICompetition) {
 		this.targets = [];
 		for(let i = 1; i <= competition.targetsNumber; i++) {
-			let target : ITarget = <ITarget>{
-				numero: i,
-				nbPositions: 4,
-				competitors: new Array(4),
-			};
+			let target : Target = new Target(competition.competitors);
+			target.numero = i;
+			target.nbPositions = 4,
+			
 			this.targets.push(target);
 		}
 	}

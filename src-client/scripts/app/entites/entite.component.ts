@@ -175,9 +175,9 @@ import 'rxjs/add/operator/share';
 							<table class="table table-bordered table-hover" [mfData]="persons | tableFilter : [search.value]" #mf="mfDataTable" [mfRowsOnPage]="10">
 							<thead>
 							<tr>
-								<th><mfDefaultSorter by="nom">Nom</mfDefaultSorter></th>
-								<th><mfDefaultSorter by="reference">Référence</mfDefaultSorter></th>
-								<th><mfDefaultSorter by="ville">Ville</mfDefaultSorter></th>
+								<th><mfDefaultSorter by="name">Nom</mfDefaultSorter></th>
+								<th><mfDefaultSorter by="numLicenceArcher">Référence</mfDefaultSorter></th>
+								<th><mfDefaultSorter by="city">Ville</mfDefaultSorter></th>
 								<th></th>
 							</tr>
 							</thead>

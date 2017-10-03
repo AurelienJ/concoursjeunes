@@ -10,7 +10,12 @@ import { IScore, TypeScoreEnum } from "./model/IScore";
 	selector: 'competitor',
 	template: `<div>
 	<div class="competitor-target">
-		<h4><button type="button" class="btn btn-link" (click)="selectTargetPosition()">{{competitor.target || '#'}}{{competitor.position | numToLetter}}</button></h4>
+		<h4>
+		<button type="button" class="btn btn-link" (click)="selectTargetPosition()"
+			tooltip="Cliquer sur la position sur laquelle placer l'archer"
+			placement="top" triggers="click:blur" container="body">
+			{{competitor.target || '#'}}{{competitor.position | numToLetter}}</button>
+		</h4>
 	</div>
 	<div class="competitor-general">
 		<div class="competitor-header">
@@ -68,14 +73,15 @@ import { IScore, TypeScoreEnum } from "./model/IScore";
 	styles: [
 		`
 		:host .competitor-target {
-			display: inline-block;
-			width: 25px;
-			vertical-align: top;
+			position: absolute;
+			top: 0px;
+			left: 0px;
 		}
 
 		:host .competitor-general {
 			display: inline-block;
 			width: calc(100% - 50px);
+			margin-left: 25px;
 		}
 
 		:host .competitor-collapse {

@@ -3,8 +3,7 @@ import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser'
 import { FormsModule } from '@angular/forms';
 
-import { BsDatepickerModule, ButtonsModule } from 'ngx-bootstrap';
-import { DndModule } from 'ng2-dnd';
+import { BsDatepickerModule, ButtonsModule, TooltipModule } from 'ngx-bootstrap';
 
 import { DataTableModule } from "../datatable/DataTableModule";
 import { GeneralModule } from '../general/general.module';
@@ -21,8 +20,9 @@ import { TargetComponent } from "./target.component";
 import { NumToLetterPipe } from "./numToLetter.pipe";
 
 @NgModule({
-    imports:        [ RouterModule, BrowserModule, FormsModule, BsDatepickerModule, DndModule, 
-        ButtonsModule, DataTableModule, GeneralModule ],
+    imports:        [ RouterModule, BrowserModule, FormsModule,
+        BsDatepickerModule, ButtonsModule, TooltipModule,
+        DataTableModule, GeneralModule ],
     declarations:   [ CompetitionsComponent, CompetitionComponent, CompetitionParametersComponent, CompetitionShootingLineComponent, CompetitorComponent, 
         TargetComponent,
         NumToLetterPipe],

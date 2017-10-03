@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 
-import { ITarget } from "./model/ITarget";
+import { Target } from "./model/Target";
 import { IConcurrent } from './model/IConcurrent';
 
 import * as _ from "lodash";
@@ -19,7 +19,8 @@ import * as _ from "lodash";
 		<ul class="list-group" id="targets-positions">
 			<li *ngFor="let competitor of target.competitors; index as i;" class="list-group-item">
 				<div class="target-position">
-				<button type="button" class="btn btn-link" (click)="affectCompetitorToPositionning(i)">{{i | numToLetter}}</button>
+				<a href="#" *ngIf="competitorToPositionning" type="button" (click)="affectCompetitorToPositionning(i, $event)">{{i | numToLetter}}</a>
+				<span *ngIf="!competitorToPositionning">{{i | numToLetter}}</span>
 				</div>
 				<div class="target-competitor" >
 					<div *ngIf="competitor">
@@ -52,10 +53,13 @@ import * as _ from "lodash";
 
 export class TargetComponent implements OnInit, OnDestroy {
 	@Input()
-	public target : ITarget;
+	public target : Target;
 
 	@Input()
 	public competitorToPositionning : IConcurrent;
+
+	@Output()
+	public competitorToPositionningChange : EventEmitter<IConcurrent> = new EventEmitter<IConcurrent>();
 
 	public get distances() {
 		return _.uniq(this.target.distances).map(d => d + "m").join(" / ");
@@ -72,9 +76,13 @@ export class TargetComponent implements OnInit, OnDestroy {
 	ngOnDestroy() {
 	}
 
-	public affectCompetitorToPositionning(i : number) : void {
-		this.target.competitors[i] = this.competitorToPositionning;
+	public affectCompetitorToPositionning(i : number, event : MouseEvent) : void {
 		this.competitorToPositionning.target = this.target.numero;
 		this.competitorToPositionning.position = i;
+
+		this.competitorToPositionning = null;
+		this.competitorToPositionningChange.emit(null);
+
+		event.preventDefault();
 	}
 }
