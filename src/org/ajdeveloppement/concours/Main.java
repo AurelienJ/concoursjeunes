@@ -101,6 +101,7 @@ import java.awt.SplashScreen;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -316,10 +317,18 @@ public class Main {
 		popup.add(miCloseArcCompetition);
 		
 		TrayIcon trayIcon = new TrayIcon(image, "ArcCompetition", popup);
+		trayIcon.displayMessage("Serveur ArcCompetition", "Votre application ArcCompetition est disponible dans votre navigateur à l'adresse http://localhost:" + webServerListenPort, MessageType.INFO);
 		
 		try {
 			systemTray.add(trayIcon);
 		} catch (AWTException e1) {
+			// TODO Bloc catch auto-généré
+			e1.printStackTrace();
+		}
+		
+		try {
+			browse(new URI("http://localhost:" + webServerListenPort));
+		} catch (URISyntaxException e1) {
 			// TODO Bloc catch auto-généré
 			e1.printStackTrace();
 		}
