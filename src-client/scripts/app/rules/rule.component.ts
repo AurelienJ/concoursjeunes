@@ -223,12 +223,12 @@ export class RuleComponent implements OnInit, DoCheck {
 	}
 
 	cancel() {
-		this.navigation.goBack(this.router, null, -1);
+		this.navigation.goBack(this.router, null, null, -1);
 	}
 
 	validate() {
 		this.rulesService.saveRule(this.rule)
-			.then(rule => this.navigation.goBack(this.router, null, -1))
+			.then(rule => this.navigation.goBack(this.router, null, null, -1))
 			.catch(reason => this.error = reason);
 	}
 }

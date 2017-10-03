@@ -5,7 +5,7 @@ import { InputData, DataEvent } from "../datatable/DataTable";
 import { NavigatorService } from '../general/navigator.service';
 import { CompetitionsService } from './competitions.service';
 
-import { ICompetitionDescription, ICompetition } from './Competition';
+import { ICompetitionDescription, ICompetition } from './model/ICompetition';
 
 @Component({
 	selector: 'competitions',

@@ -324,7 +324,7 @@ export class EntiteComponent implements OnInit, DoCheck {
 	}
 
 	cancel() {
-		this.navigatorService.goBack(this.router, null, -1);
+		this.navigatorService.goBack(this.router, null, null, -1);
 	}
 
 	validate() {
@@ -334,10 +334,10 @@ export class EntiteComponent implements OnInit, DoCheck {
 					.then(c => {
 						this.criteria = c;
 						
-						this.navigatorService.goBack(this.router, null, -1);
+						this.navigatorService.goBack(this.router, null, null, -1);
 					});
 			else
-				this.navigatorService.goBack(this.router, null, -1);
+				this.navigatorService.goBack(this.router, null, null, -1);
 		}).catch(reason => {
 			this.error = reason;
 		});

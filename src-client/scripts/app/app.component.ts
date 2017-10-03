@@ -18,6 +18,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-        $.getScript("node_modules/admin-lte/dist/js/app.js");
+        //$.getScript("node_modules/admin-lte/dist/js/adminlte.min.js");
     }
 }

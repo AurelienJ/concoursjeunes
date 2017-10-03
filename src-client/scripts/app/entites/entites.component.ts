@@ -290,6 +290,6 @@ export class EntitesComponent implements OnInit {
     }
 
     public select(entite : IEntite) {
-        this.navigatorService.goBack(this.router, entite, -1);
+        this.navigatorService.goBack(this.router, entite, "entity", -1);
     }
 }

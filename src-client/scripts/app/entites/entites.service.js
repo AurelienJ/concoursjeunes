@@ -17,6 +17,7 @@ var EntitesService = /** @class */ (function () {
     function EntitesService(http) {
         this.http = http;
         this.entites = new Map();
+        this.entitesNames = new Map();
         this.headers = new http_1.Headers();
         this.headers.append('Content-Type', 'application/json');
         this.headers.append('Accept', 'application/json');
@@ -91,7 +92,16 @@ var EntitesService = /** @class */ (function () {
         }
     };
     EntitesService.prototype.getEntityName = function (id) {
-        return this.http.get("api/entityname/" + id, { headers: this.headers }).toPromise().then(function (r) { return r.text(); });
+        var _this = this;
+        if (this.entitesNames[id])
+            return new Promise(function (resolve, reject) {
+                resolve(_this.entitesNames[id]);
+            });
+        return this.http.get("api/entityname/" + id, { headers: this.headers }).toPromise().then(function (r) {
+            var value = r.text();
+            _this.entitesNames.set(id, value);
+            return value;
+        });
     };
     EntitesService.prototype.saveEntite = function (entite) {
         var _this = this;

@@ -172,6 +172,6 @@ export class RulesComponent implements OnInit{
 	}
 
     public select(rule : Rule) {
-        this.navigatorService.goBack(this.router, rule, -1);
+        this.navigatorService.goBack(this.router, rule, 'rule', -1);
     }
 }

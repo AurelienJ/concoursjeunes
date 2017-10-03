@@ -27,6 +27,7 @@ export const AppRoutes : Route[] = [
         canActivate: [SecureAccessService],
         children: [
             { path: '*', redirectTo: 'dashboard'},
+            { path: 'dashboard', component: CompetitionsComponent },
             { path: 'entities', component: EntitesComponent },
             { path: 'federations', component: EntitesComponent },
             { path: 'clubs', component: EntitesComponent },
@@ -39,7 +40,7 @@ export const AppRoutes : Route[] = [
             { path: 'rules/:id', component: RuleComponent },
             { path: 'competitions', component: CompetitionsComponent },
             { path: 'competitions/:id', component: CompetitionComponent },
-            { path: 'dashboard', component: CompetitionsComponent }
+            { path: 'concurrents', component: PersonsComponent },
         ]
     },
     {

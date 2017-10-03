@@ -66,10 +66,11 @@ var NavigatorService = /** @class */ (function () {
         this.navigationStack.length = index + 1;
         this.onChange();
     };
-    NavigatorService.prototype.goBack = function (router, returnData, index) {
+    NavigatorService.prototype.goBack = function (router, returnData, returnDataType, index) {
         if (!index) {
             var previousView = this.getPreviousNavigationSnapshot();
             previousView.returnData = returnData;
+            previousView.returnDataType = returnDataType;
             this.pop();
             router.navigate(previousView.path, { queryParams: previousView.queryParams });
         }
@@ -80,6 +81,7 @@ var NavigatorService = /** @class */ (function () {
                 var indexView = this.navigationStack[index];
                 if (indexView) {
                     indexView.returnData = returnData;
+                    indexView.returnDataType = returnDataType;
                     this.navigationStack.length = index + 1;
                     this.onChange();
                     router.navigate(indexView.path, { queryParams: indexView.queryParams });

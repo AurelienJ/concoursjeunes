@@ -28,14 +28,18 @@ a.disabled {
 	overflow: auto;
 }
 
-.tab-content.main-pane > .tab-pane {
+/*.tab-content.main-pane > .tab-pane {
 	max-width: 1000px;
-}
+}*/
 
 .login-box, .register-box {
 	padding-top: 5%;
 	margin-top: 0;
 	margin-bottom: auto;
+}
+
+.login-page .wrapper, .register-page .wrapper {
+	background: #d2d6de;
 }
 
 .full-height-container {
@@ -109,8 +113,4 @@ a.disabled {
 	margin: 0;
 	text-align: center;
 	padding: 0 20px 20px 20px;
-}
-
-.main-sidebar {
-	
 }

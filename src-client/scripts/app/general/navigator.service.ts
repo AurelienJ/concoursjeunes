@@ -74,10 +74,11 @@ export class NavigatorService {
         this.onChange();
     }
 
-    public goBack(router : Router, returnData : any, index : number) {
+    public goBack(router : Router, returnData : any, returnDataType : string, index : number) {
         if(!index) {
             let previousView = this.getPreviousNavigationSnapshot();
             previousView.returnData = returnData;
+            previousView.returnDataType = returnDataType;
             this.pop();
 
             router.navigate(previousView.path, { queryParams: previousView.queryParams });
@@ -89,6 +90,7 @@ export class NavigatorService {
                 let indexView = this.navigationStack[index];
                 if(indexView) {
                     indexView.returnData = returnData;
+                    indexView.returnDataType = returnDataType;
                     this.navigationStack.length = index+1;
 
                     this.onChange();

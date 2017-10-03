@@ -20,7 +20,7 @@ var AppComponent = /** @class */ (function () {
     };
     AppComponent.prototype.ngAfterViewInit = function () {
         //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-        $.getScript("node_modules/admin-lte/dist/js/app.js");
+        //$.getScript("node_modules/admin-lte/dist/js/adminlte.min.js");
     };
     AppComponent = __decorate([
         core_1.Component({

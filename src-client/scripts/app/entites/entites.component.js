@@ -152,7 +152,7 @@ var EntitesComponent = /** @class */ (function () {
         this.entites.filter(this.displayTypes, this.childOf, this.entites.term);*/
     };
     EntitesComponent.prototype.select = function (entite) {
-        this.navigatorService.goBack(this.router, entite, -1);
+        this.navigatorService.goBack(this.router, entite, "entity", -1);
     };
     EntitesComponent = __decorate([
         core_1.Component({

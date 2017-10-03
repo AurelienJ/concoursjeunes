@@ -20,6 +20,7 @@ exports.AppRoutes = [
         canActivate: [secureaccess_service_1.SecureAccessService],
         children: [
             { path: '*', redirectTo: 'dashboard' },
+            { path: 'dashboard', component: competitions_component_1.CompetitionsComponent },
             { path: 'entities', component: entites_component_1.EntitesComponent },
             { path: 'federations', component: entites_component_1.EntitesComponent },
             { path: 'clubs', component: entites_component_1.EntitesComponent },
@@ -32,7 +33,7 @@ exports.AppRoutes = [
             { path: 'rules/:id', component: rule_component_1.RuleComponent },
             { path: 'competitions', component: competitions_component_1.CompetitionsComponent },
             { path: 'competitions/:id', component: competition_component_1.CompetitionComponent },
-            { path: 'dashboard', component: competitions_component_1.CompetitionsComponent }
+            { path: 'concurrents', component: persons_component_1.PersonsComponent },
         ]
     },
     {

@@ -2,6 +2,7 @@ import { UrlSegment } from '@angular/router';
 
 export class NavigationSnapshot {
 	public returnData : any;
+	public returnDataType : string;
 
 	public path : string[];
 

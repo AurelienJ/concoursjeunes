@@ -119,7 +119,7 @@ import 'rxjs/add/operator/share';
 														<div class="input-group-addon">
 															<i class="fa fa-calendar"></i>
 														</div>
-														<input bsDatepicker [bsConfig]="{ containerClass: 'theme-dark-blue', locale: 'fr'}" [ngModel]="person.dateNaissance" (ngModelChange)="person.dateNaissance = $event; calculAge($event)" type="text" id="dateNaissance" name="dateNaissance" class="form-control" data-date-format="yyyy-mm-dd" lang="fr">
+														<input bsDatepicker [bsConfig]="{ containerClass: 'theme-dark-blue', locale: 'fr'}" [ngModel]="person.dateNaissance" (ngModelChange)="person.dateNaissance = $event; age = calculAge($event)" type="text" id="dateNaissance" name="dateNaissance" class="form-control" data-date-format="yyyy-mm-dd" lang="fr">
 													</div>
 												</div>
 											</div>
@@ -540,19 +540,19 @@ export class PersonComponent implements OnInit, DoCheck {
 	}
 
 	public cancel() {
-        this.navigation.goBack(this.router, null, -1);
+        this.navigation.goBack(this.router, null, null, -1);
 	}
 	
     public validate(f) {
 		if(!this.accountMode) {
 			this.persons.savePerson(this.person).then(person => {
-				this.navigation.goBack(this.router, null, -1);
+				this.navigation.goBack(this.router, null, null, -1);
 			}).catch(reason => {
 				this.error = reason;
 			});
 		} else {
 			this.accountService.saveAccount(this.person).then(person => {
-				this.navigation.goBack(this.router, null, -1);
+				this.navigation.goBack(this.router, null, null, -1);
 			}).catch(reason => {
 				this.error = reason;
 			})

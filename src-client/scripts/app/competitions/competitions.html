@@ -19,24 +19,24 @@
                                 </div>
                             </div>
                         </div>
-						<table class="table table-bordered table-hover" [mfData]="competitions | tableFilter : [search.value]" #mf="mfDataTable" [mfRowsOnPage]="10">
+						<table class="table table-bordered table-hover table-valign-middle" [mfData]="competitions | tableFilter : [search.value]" #mf="mfDataTable" [mfRowsOnPage]="10">
                             <thead>
                             <tr>
+                                <th><mfDefaultSorter by="nom">Nom</mfDefaultSorter></th>
                                 <th><mfDefaultSorter by="date">Date</mfDefaultSorter></th>
                                 <th><mfDefaultSorter by="type">Type</mfDefaultSorter></th>
-								<th><mfDefaultSorter by="nom">Nom</mfDefaultSorter></th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr *ngFor="let competition of mf.data">
-								<td>{{competition.date | date : 'dd/MM/yyyy'}}</td>
+                                    <td><a [routerLink]="['/competitions', competition.id]">{{competition.name}}</a></td>
+								<td>Du {{competition.dates && competition.dates[0] | date:'dd/MM/yyyy'}} au {{competition.dates && competition.dates[1] | date:'dd/MM/yyyy'}}</td>
 								<td>{{competition.type}}</td>
-                                <td><a [routerLink]="['/competitions', competition.id]">{{competition.name}}</a></td>
                                 
                                 <td>
-                                    <a [routerLink]="['/competitions', competition.id]"><i class="fa fa-pencil" title="Editer"></i></a>
-                                    <a href="javascript:void(0)" *ngIf="forSelect" (click)="select(competition)"><i class="fa fa-cart-plus" aria-hidden="true" title="Selectionner"></i></a>
+                                    <a [routerLink]="['/competitions', competition.id]" class="btn btn-link"><i class="fa fa-pencil" title="Editer"></i></a>
+                                    <a href="javascript:void(0)" *ngIf="forSelect" (click)="select(competition)" class="btn btn-link"><i class="fa fa-cart-plus" aria-hidden="true" title="Selectionner"></i></a>
                                 </td>
                             </tr>
                             </tbody>

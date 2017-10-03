@@ -106,8 +106,8 @@ export class PersonServerSideInputDataFilterPipe implements PipeTransform {
                     <div class="box-body">
                         <div class="row">
                             <div class="col-sm-6">
-                                <a href="#/persons/new" class="btn btn-app"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter un contact</a>
-                                <a href="#/persons/newArcher" class="btn btn-app"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter un archer</a>
+                                <a [routerLink]="['/persons','new']" class="btn btn-app"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter un contact</a>
+                                <a [routerLink]="['/persons','newArcher']" class="btn btn-app"><i class="fa fa-plus-circle" aria-hidden="true"></i> Ajouter un archer</a>
                             </div>
                             <div class="col-sm-6 form-inline">
                                 <div class="pull-right form-group">
@@ -129,7 +129,10 @@ export class PersonServerSideInputDataFilterPipe implements PipeTransform {
                             </thead>
                             <tbody>
                             <tr *ngFor="let person of mf.data">
-                                <td><a [routerLink]="['/persons', person.id]">{{person.name}} {{person.firstName}}</a></td>
+                                <td>
+                                    <a *ngIf="!forSelect" [routerLink]="['/persons', person.id]">{{person.name}} {{person.firstName}}</a>
+                                    <a *ngIf="forSelect" href="javascript:void(0)" (click)="select(person)">{{person.name}} {{person.firstName}}</a>
+                                </td>
                                 <td>{{person.numLicenceArcher}}</td>
                                 <td>{{person.city}}</td>
                                 <td>
@@ -180,6 +183,6 @@ export class PersonsComponent implements OnInit {
 	}
 
     public select(person : IPerson) {
-        this.navigatorService.goBack(this.router, person, -1);
+        this.navigatorService.goBack(this.router, person, 'person', -1);
     }
 }

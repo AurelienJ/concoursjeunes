@@ -12,6 +12,7 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class EntitesService {
     private entites : Map<string, IEntite> = new Map<string, IEntite>();
+    private entitesNames : Map<string, string> = new Map<string, string>();
     private headers : Headers;
 
     private countries : Promise<ICountry[]>;
@@ -117,7 +118,16 @@ export class EntitesService {
     }
 
     public getEntityName(id : string) : Promise<string> {
-        return this.http.get("api/entityname/" + id, {headers: this.headers}).toPromise().then(r => r.text());
+        if(this.entitesNames[id])
+            return new Promise<string>((resolve, reject) => {
+                resolve(this.entitesNames[id]);
+            });
+        
+        return this.http.get("api/entityname/" + id, {headers: this.headers}).toPromise().then(r =>  {
+            let value = r.text();
+            this.entitesNames.set(id, value);
+            return value;
+        });
     }
 
     public saveEntite(entite : IEntite) : Promise<IEntite> {

@@ -94,7 +94,7 @@ var RulesComponent = /** @class */ (function () {
         this.rules = new RulesServerSideInputData(this.rulesService);
     };
     RulesComponent.prototype.select = function (rule) {
-        this.navigatorService.goBack(this.router, rule, -1);
+        this.navigatorService.goBack(this.router, rule, 'rule', -1);
     };
     RulesComponent = __decorate([
         core_1.Component({

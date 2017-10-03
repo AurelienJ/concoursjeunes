@@ -91,7 +91,7 @@ var EntiteComponent = /** @class */ (function () {
         }
     };
     EntiteComponent.prototype.cancel = function () {
-        this.navigatorService.goBack(this.router, null, -1);
+        this.navigatorService.goBack(this.router, null, null, -1);
     };
     EntiteComponent.prototype.validate = function () {
         var _this = this;
@@ -100,10 +100,10 @@ var EntiteComponent = /** @class */ (function () {
                 _this.entitesService.saveCriteria(_this.entite.id, _this.criteria)
                     .then(function (c) {
                     _this.criteria = c;
-                    _this.navigatorService.goBack(_this.router, null, -1);
+                    _this.navigatorService.goBack(_this.router, null, null, -1);
                 });
             else
-                _this.navigatorService.goBack(_this.router, null, -1);
+                _this.navigatorService.goBack(_this.router, null, null, -1);
         }).catch(function (reason) {
             _this.error = reason;
         });

@@ -89,12 +89,12 @@ var RuleComponent = /** @class */ (function () {
         }
     };
     RuleComponent.prototype.cancel = function () {
-        this.navigation.goBack(this.router, null, -1);
+        this.navigation.goBack(this.router, null, null, -1);
     };
     RuleComponent.prototype.validate = function () {
         var _this = this;
         this.rulesService.saveRule(this.rule)
-            .then(function (rule) { return _this.navigation.goBack(_this.router, null, -1); })
+            .then(function (rule) { return _this.navigation.goBack(_this.router, null, null, -1); })
             .catch(function (reason) { return _this.error = reason; });
     };
     RuleComponent = __decorate([

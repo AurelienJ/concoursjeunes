@@ -16,24 +16,32 @@
             <dependency org="org.ajdeveloppement" name="ajcommons-ext" rev="2.0.11"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-persistence" rev="2.0.11"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-persistence-sql" rev="2.0.11"/>
-            <dependency org="org.ajdeveloppement" name="ajcommons-webserver" rev="[0.3,)"/>
-            <dependency org="org.ajdeveloppement" name="ajcommons-webserver-viewbinder" rev="[0.0,)"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-webserver" rev="0.4.0-SNAPSHOT"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-webserver-webapi" rev="0.4.0-SNAPSHOT"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-webserver-files" rev="0.4.0-SNAPSHOT"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-webserver-logger" rev="0.4.0-SNAPSHOT"/> 
+            <dependency org="org.ajdeveloppement" name="ajcommons-webserver-viewbinder" rev="0.4.0-SNAPSHOT"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-swing-ext" rev="2.0.11"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-updater" rev="2.0.11"/>
-			<dependency org="org.mapstruct" name="mapstruct-jdk8" rev="1.2.0.CR1">
+			<dependency org="org.mapstruct" name="mapstruct-jdk8" rev="1.2.0.CR2">
 				<exclude module="mapstruct-common"/>
 			</dependency>
-			<dependency org="org.mapstruct" name="mapstruct-processor" rev="1.2.0.CR1"/>
+			<dependency org="org.mapstruct" name="mapstruct-processor" rev="1.2.0.CR2">
+				<exclude module="google-collections"/>
+			</dependency>
             <dependency org="com.h2database" name="h2" rev="1.4.196" conf="runtime->default" />
             <dependency org="com.lowagie" name="itext" rev="2.1.7">
             	<exclude module="bcmail-jdk14"/>
             	<exclude module="bcprov-jdk14"/>
             	<exclude module="bctsp-jdk14"/>
             </dependency>
-   
+            <dependency org="com.netflix.governator" name="governator" rev="1.17.4"/>
+            <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.9.1"/>
+            <dependency org="com.fasterxml.jackson.dataformat" name="jackson-dataformat-xml" rev="2.9.1"/>
+          
             <!-- dependances à supprimer -->
             <dependency org="org.ajdeveloppement" name="ajcommons-swingx-ext" rev="[1.0,)"/>
-            <dependency org="org.tinyjee.jgraphx" name="jgraphx" rev="2.3.0.5" />            
+            <!--<dependency org="org.tinyjee.jgraphx" name="jgraphx" rev="2.3.0.5" />-->            
             <dependency org="org.jdesktop" name="beansbinding" rev="1.2.1"/>
             <dependency org="org.swinglabs" name="swingx" rev="1.6.1"/>
         </dependencies>

@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser'
 import { RouterModule } from '@angular/router';
 
 import { BsDatepickerModule, defineLocale } from 'ngx-bootstrap';
+import { DndModule } from 'ng2-dnd';
 
 import { GeneralModule } from './general/general.module';
 import { ReferencesModule } from './references/references.module';
@@ -21,7 +22,7 @@ import { AppRoutes } from './app.routes';
 @NgModule({
     imports:        [ BrowserModule, 
         RouterModule.forRoot(AppRoutes, { useHash: true }),
-        BsDatepickerModule.forRoot(),
+        BsDatepickerModule.forRoot(), DndModule.forRoot(),
         GeneralModule, ReferencesModule, AccountModule, ParametersModule, CompetitionModule, EntitesModule, PersonsModule, RulesModule],
     declarations:   [ AppComponent ],
     bootstrap:      [ AppComponent],
