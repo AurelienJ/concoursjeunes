@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Represent a rules criterion
  */
@@ -9,6 +7,5 @@ var Criterion = /** @class */ (function () {
     }
     return Criterion;
 }());
-exports.Criterion = Criterion;
-
+export { Criterion };
 //# sourceMappingURL=Criterion.js.map

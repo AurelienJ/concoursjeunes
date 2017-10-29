@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,10 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var router_1 = require("@angular/router");
-var account_service_1 = require("./account.service");
+import { Injectable } from '@angular/core';
+import { Router } from "@angular/router";
+import { AccountService } from './account.service';
 var SecureAccessService = /** @class */ (function () {
     function SecureAccessService(router, accountService) {
         this.router = router;
@@ -29,11 +27,10 @@ var SecureAccessService = /** @class */ (function () {
         });
     };
     SecureAccessService = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [router_1.Router, account_service_1.AccountService])
+        Injectable(),
+        __metadata("design:paramtypes", [Router, AccountService])
     ], SecureAccessService);
     return SecureAccessService;
 }());
-exports.SecureAccessService = SecureAccessService;
-
+export { SecureAccessService };
 //# sourceMappingURL=secureaccess.service.js.map

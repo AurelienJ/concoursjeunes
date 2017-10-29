@@ -16,7 +16,7 @@ export class MainComponent implements OnInit {
 	constructor(private router : Router, private navigatorService : NavigatorService, private accountService : AccountService) { }
 
 	ngOnInit() {
-		this.accountService.getAccount().then(a => this.account = a);
+		this.accountService.getAccount().then(a => this.account = a).catch(reason => {});
 	}
 
 	public clearNavigationPaths() {

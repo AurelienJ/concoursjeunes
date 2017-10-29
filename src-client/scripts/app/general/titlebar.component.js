@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,10 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 ///<reference path="../_references.ts"/>
-var core_1 = require("@angular/core");
-var navigator_service_1 = require("./navigator.service");
+import { Component, Input } from '@angular/core';
+import { NavigatorService } from './navigator.service';
 var TitlebarComponent = /** @class */ (function () {
     function TitlebarComponent(navigatorService) {
         var _this = this;
@@ -23,18 +21,17 @@ var TitlebarComponent = /** @class */ (function () {
         this.navigatorService.clearAfter(index);
     };
     __decorate([
-        core_1.Input(),
+        Input(),
         __metadata("design:type", String)
     ], TitlebarComponent.prototype, "title", void 0);
     TitlebarComponent = __decorate([
-        core_1.Component({
+        Component({
             selector: 'titlebar',
             template: "<div class=\"content-header\">\n\t<h1>{{title}}</h1>\n\t<ol class=\"breadcrumb\">\n        <li><i class=\"fa fa-home\"></i></li>\n        <li *ngFor=\"let path of paths; let i = index\"><a [routerLink]=\"path.path\" [queryParams]=\"path.queryParams\" (click)=\"clearAfter(i)\">{{path.label}}</a></li>\n    </ol></div>"
         }),
-        __metadata("design:paramtypes", [navigator_service_1.NavigatorService])
+        __metadata("design:paramtypes", [NavigatorService])
     ], TitlebarComponent);
     return TitlebarComponent;
 }());
-exports.TitlebarComponent = TitlebarComponent;
-
+export { TitlebarComponent };
 //# sourceMappingURL=titlebar.component.js.map

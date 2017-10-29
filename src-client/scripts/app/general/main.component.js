@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,11 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var router_1 = require("@angular/router");
-var navigator_service_1 = require("./navigator.service");
-var account_service_1 = require("../account/account.service");
+import { Component } from '@angular/core';
+import { Router } from "@angular/router";
+import { NavigatorService } from "./navigator.service";
+import { AccountService } from "../account/account.service";
 var MainComponent = /** @class */ (function () {
     function MainComponent(router, navigatorService, accountService) {
         this.router = router;
@@ -21,7 +19,7 @@ var MainComponent = /** @class */ (function () {
     }
     MainComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.accountService.getAccount().then(function (a) { return _this.account = a; });
+        this.accountService.getAccount().then(function (a) { return _this.account = a; }).catch(function (reason) { });
     };
     MainComponent.prototype.clearNavigationPaths = function () {
         this.navigatorService.clear();
@@ -33,14 +31,13 @@ var MainComponent = /** @class */ (function () {
         });
     };
     MainComponent = __decorate([
-        core_1.Component({
+        Component({
             selector: 'main',
             templateUrl: './main.component.html'
         }),
-        __metadata("design:paramtypes", [router_1.Router, navigator_service_1.NavigatorService, account_service_1.AccountService])
+        __metadata("design:paramtypes", [Router, NavigatorService, AccountService])
     ], MainComponent);
     return MainComponent;
 }());
-exports.MainComponent = MainComponent;
-
+export { MainComponent };
 //# sourceMappingURL=main.component.js.map

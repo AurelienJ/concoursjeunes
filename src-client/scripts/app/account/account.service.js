@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,13 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var http_1 = require("@angular/http");
+import { Injectable } from '@angular/core';
+import { Headers, Http } from "@angular/http";
 var AccountService = /** @class */ (function () {
     function AccountService(http) {
         this.http = http;
-        this.headers = new http_1.Headers();
+        this.headers = new Headers();
         this.headers.append('Content-Type', 'application/json');
         this.headers.append('Accept', 'application/json');
         this.account = this.http.get("api/account", { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
@@ -24,14 +22,14 @@ var AccountService = /** @class */ (function () {
             if (a)
                 return true;
             return false;
-        });
+        }).catch(function (reason) { return false; });
     };
     AccountService.prototype.register = function (account) {
         this.account = this.http.post("api/register", account, { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
         return this.account;
     };
     AccountService.prototype.getAccount = function () {
-        this.account = this.http.get("api/account", { headers: this.headers }).toPromise().then(function (r) { return r.json(); });
+        //this.account = this.http.get("api/account", {headers: this.headers}).toPromise().then(r => r.json());
         return this.account;
     };
     AccountService.prototype.saveAccount = function (account) {
@@ -46,11 +44,10 @@ var AccountService = /** @class */ (function () {
         return this.http.get("api/logout", { headers: this.headers }).toPromise().then(function (r) { return r.text(); });
     };
     AccountService = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [http_1.Http])
+        Injectable(),
+        __metadata("design:paramtypes", [Http])
     ], AccountService);
     return AccountService;
 }());
-exports.AccountService = AccountService;
-
+export { AccountService };
 //# sourceMappingURL=account.service.js.map

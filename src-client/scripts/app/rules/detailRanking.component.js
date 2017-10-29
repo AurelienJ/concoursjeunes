@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,11 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var rules_service_1 = require("./rules.service");
-var entites_service_1 = require("../entites/entites.service");
-var _ = require("lodash");
+import { Component, Input } from '@angular/core';
+import { RulesService } from './rules.service';
+import { EntitesService } from '../entites/entites.service';
+import * as _ from 'lodash';
 var DetailRankingComponent = /** @class */ (function () {
     function DetailRankingComponent(rulesService, entitesService) {
         this.rulesService = rulesService;
@@ -75,19 +73,19 @@ var DetailRankingComponent = /** @class */ (function () {
         _.remove(this.rankingCriterion.discriminantCriterionSets, function (e) { return e == discriminantCriterionSet; });
     };
     __decorate([
-        core_1.Input(),
+        Input(),
         __metadata("design:type", Object)
     ], DetailRankingComponent.prototype, "rankingCriterion", void 0);
     __decorate([
-        core_1.Input(),
+        Input(),
         __metadata("design:type", Array)
     ], DetailRankingComponent.prototype, "distanceAndFacesSets", void 0);
     __decorate([
-        core_1.Input(),
+        Input(),
         __metadata("design:type", String)
     ], DetailRankingComponent.prototype, "idFederation", void 0);
     DetailRankingComponent = __decorate([
-        core_1.Component({
+        Component({
             selector: 'detail-ranking',
             template: "<div *ngIf=\"rankingCriterion\">\n        <div class=\"modal\" id=\"addDiscriminantCriteriaSet\" *ngIf=\"displayAddDiscriminantCriteriaSet\">\n            <div class=\"modal-dialog\">\n                <div class=\"modal-content\">\n                    <div class=\"modal-header\">\n                        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Fermer\" (click)=\"displayAddDiscriminantCriteriaSet=false\">\n                        <span aria-hidden=\"true\">\u00D7</span></button>\n                        <h4 class=\"modal-title\">S\u00E9l\u00E9ction d'un jeux de crit\u00E8res discriminant</h4>\n                    </div>\n                    <div class=\"modal-body\">\n                        <div *ngFor=\"let criterion of criteria\">\n                            <h4>{{criterion.libelle}}</h4>\n                            <div class=\"radio\" *ngFor=\"let criterionElement of criterion.criterionElements\">\n                                <label>\n                                    <input type=\"radio\" name=\"criterion-{{criterion.id}}\"\n                                        [value]=\"criterionElement\"\n                                        [ngModel]=\"selectedCriterionElements.get(criterion)\" (ngModelChange)=\"selectedCriterionElements.set(criterion, $event)\"/>\n                                    {{criterionElement.libelle}}\n                                </label>\n                            </div>\n                        </div>\n                    </div>\n                    <div class=\"modal-footer\">\n                        <button type=\"button\" class=\"btn btn-primary\" (click)=\"validateDiscriminantCriterionSet()\">Ajouter</button>\n                        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" (click)=\"displayAddDiscriminantCriteriaSet=false\">Fermer</button>\n                    </div>\n                    <!-- /.modal-content -->\n                </div>\n                <!-- /.modal-dialog -->\n            </div>\n        </div>\n\n        <h3>D\u00E9tail</h3>\n        <div class=\"form-group\">\n            <label for=\"libelleRankingCriterion\">Libelle</label>\n            <input placeholder=\"Libelle\" id=\"libelleRankingCriterion\" name=\"libelleRankingCriterion\" class=\"form-control\" [(ngModel)]=\"rankingCriterion.name\"/>\n        </div>\n        \n        <div class=\"form-group\">\n            <label for=\"distanceAndFacesSet\">Jeux de distances et blasons</label>\n            <div class=\"radio\" *ngFor=\"let distanceAndFacesSet of distanceAndFacesSets\">\n                <label>\n                    <input type=\"radio\" name=\"distanceAndFacesSet\"\n                        [value]=\"distanceAndFacesSet\"\n                        [(ngModel)]=\"rankingCriterion.distancesAndFacesSet\"/>\n                    {{distanceAndFacesSet.name}}\n                </label>\n            </div>\n        </div>\n        <div class=\"form-group\">\n            <label for=\"discriminantCriteria\">Crit\u00E8res discriminants <button class=\"btn btn-link btn-lg\" (click)=\"displayDiscriminantCriterionSet(null)\"><i class=\"fa fa-plus-circle\" aria-hidden=\"true\"></i> Ajouter</button></label>\n            <div class=\"form-control-static\">\n                \n                <ul class=\"list-group clearfix\">\n                    <li class=\"list-group-item\" *ngFor=\"let discriminantCriterionSet of rankingCriterion.discriminantCriterionSets\">\n                    <span class=\"button-align\">{{discriminantCriterionSet.name}}</span>\n                    <a href=\"javascript:void(0)\" class=\"pull-right btn btn-link\" (click)=\"deleteDiscriminantCriterionSet(discriminantCriterionSet)\"><i class=\"fa fa-trash\" title=\"Supprimer\"></i></a>\n                    </li>\n                </ul>\n            </div>\n        </div>\n    </div>",
             styles: [
@@ -95,10 +93,9 @@ var DetailRankingComponent = /** @class */ (function () {
                 ":host #addDiscriminantCriteriaSet {\n\t\t\tdisplay: block;\n\t\t}"
             ]
         }),
-        __metadata("design:paramtypes", [rules_service_1.RulesService, entites_service_1.EntitesService])
+        __metadata("design:paramtypes", [RulesService, EntitesService])
     ], DetailRankingComponent);
     return DetailRankingComponent;
 }());
-exports.DetailRankingComponent = DetailRankingComponent;
-
+export { DetailRankingComponent };
 //# sourceMappingURL=detailRanking.component.js.map

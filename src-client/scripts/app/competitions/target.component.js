@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,14 +7,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var Target_1 = require("./model/Target");
-var IConcurrent_1 = require("./model/IConcurrent");
-var _ = require("lodash");
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Target } from "./model/Target";
+import { IConcurrent } from './model/IConcurrent';
+import * as _ from "lodash";
 var TargetComponent = /** @class */ (function () {
     function TargetComponent() {
-        this.competitorToPositionningChange = new core_1.EventEmitter();
+        this.competitorToPositionningChange = new EventEmitter();
     }
     Object.defineProperty(TargetComponent.prototype, "distances", {
         get: function () {
@@ -36,19 +34,19 @@ var TargetComponent = /** @class */ (function () {
         event.preventDefault();
     };
     __decorate([
-        core_1.Input(),
-        __metadata("design:type", Target_1.Target)
+        Input(),
+        __metadata("design:type", Target)
     ], TargetComponent.prototype, "target", void 0);
     __decorate([
-        core_1.Input(),
-        __metadata("design:type", IConcurrent_1.IConcurrent)
+        Input(),
+        __metadata("design:type", IConcurrent)
     ], TargetComponent.prototype, "competitorToPositionning", void 0);
     __decorate([
-        core_1.Output(),
-        __metadata("design:type", core_1.EventEmitter)
+        Output(),
+        __metadata("design:type", EventEmitter)
     ], TargetComponent.prototype, "competitorToPositionningChange", void 0);
     TargetComponent = __decorate([
-        core_1.Component({
+        Component({
             selector: 'target',
             template: "<div class=\"box box-solid box-primary target\">\n\t<div class=\"box-header\">\n\t\t<h3 class=\"box-title\">Cible n\u00B0{{target.numero}}</h3>\n\t\t<div class=\"box-tools pull-right\">\n\t\t\t<span class=\"label label-success\">{{distances}}</span>\n\t\t  </div>\n\t</div>\n\t<div class=\"box-body\">\n\t\t<ul class=\"list-group\" id=\"targets-positions\">\n\t\t\t<li *ngFor=\"let competitor of target.competitors; index as i;\" class=\"list-group-item\">\n\t\t\t\t<div class=\"target-position\">\n\t\t\t\t<a href=\"#\" *ngIf=\"competitorToPositionning\" type=\"button\" (click)=\"affectCompetitorToPositionning(i, $event)\">{{i | numToLetter}}</a>\n\t\t\t\t<span *ngIf=\"!competitorToPositionning\">{{i | numToLetter}}</span>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"target-competitor\" >\n\t\t\t\t\t<div *ngIf=\"competitor\">\n\t\t\t\t\t\t<strong ><i aria-hidden=\"true\" class=\"fa fa-mars\" [ngClass]=\"{'fa-mars': competitor.archer.sexe == 0, 'fa-venus': competitor.archer.sexe == 1}\"></i> \n\t\t\t\t\t### {{competitor.archer.name}} {{competitor.archer.firstName}}</strong>\n\t\t\t\t\t<span class=\"badge\">SHCL</span></div>\n\t\t\t\t</div>\n\t\t\t</li>\n\t\t</ul>\n\t</div>\n</div>",
             styles: [
@@ -59,6 +57,5 @@ var TargetComponent = /** @class */ (function () {
     ], TargetComponent);
     return TargetComponent;
 }());
-exports.TargetComponent = TargetComponent;
-
+export { TargetComponent };
 //# sourceMappingURL=target.component.js.map

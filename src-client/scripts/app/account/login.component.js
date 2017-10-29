@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,10 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var router_1 = require("@angular/router");
-var account_service_1 = require("./account.service");
+import { Component } from '@angular/core';
+import { Router } from "@angular/router";
+import { AccountService } from "./account.service";
 var LoginComponent = /** @class */ (function () {
     function LoginComponent(router, accountService) {
         this.router = router;
@@ -39,14 +37,13 @@ var LoginComponent = /** @class */ (function () {
         });
     };
     LoginComponent = __decorate([
-        core_1.Component({
+        Component({
             selector: 'login',
             template: "<div class=\"login-page login-box\">\n\t<div class=\"login-logo\">\n\t  <a href=\"index.html\"><b>Arc</b>Competition</a>\n\t</div>\n\t<!-- /.login-logo -->\n\t<div class=\"login-box-body\">\n\t  \n\t  <p class=\"login-box-msg\"><img src=\"images/fnd.jpg\" style=\"width: 128px;\"/><br/>Authentification pour d\u00E9marrer une session</p>\n  \n\t  <form>\n\t\t<div class=\"form-group has-feedback\">\n\t\t  <input type=\"email\" class=\"form-control\" placeholder=\"Email\" name=\"email\" [(ngModel)]=\"account.login\" />\n\t\t  <span class=\"glyphicon glyphicon-envelope form-control-feedback\"></span>\n\t\t</div>\n\t\t<div class=\"form-group has-feedback\">\n\t\t  <input type=\"password\" class=\"form-control\" placeholder=\"Password\" name=\"password\" [(ngModel)]=\"account.password\"/>\n\t\t  <span class=\"glyphicon glyphicon-lock form-control-feedback\"></span>\n\t\t</div>\n\t\t<div class=\"row\">\n\t\t  <div class=\"col-xs-7\">\n\t\t\t<div class=\"checkbox icheck\">\n\t\t\t  <label>\n\t\t\t\t<input icheck type=\"checkbox\" [checked]=\"account.keepAuth\" (change)=\"account.keepAuth = $event\" name=\"keepAuth\" /> Se souvenir de moi\n\t\t\t  </label>\n\t\t\t</div>\n\t\t  </div>\n\t\t  <!-- /.col -->\n\t\t  <div class=\"col-xs-5\">\n\t\t\t<button type=\"submit\" class=\"btn btn-primary btn-block btn-flat\" (click)=\"auth()\">S'authentifier</button>\n\t\t  </div>\n\t\t  <!-- /.col -->\n\t\t</div>\n\t\t<div class=\"row\">\n\t\t\t<div class=\"col-xs-12 alert alert-danger\" *ngIf=\"loginError || passwordError\">{{loginError}} {{passwordError}}</div>\n\t\t</div>\n\t  </form>\n  \n\t  <!--<div class=\"social-auth-links text-center\">\n\t\t<p>- OU -</p>\n\t\t<a href=\"#\" class=\"btn btn-block btn-social btn-facebook btn-flat\"><i class=\"fa fa-facebook\"></i> S'authentifier avec\n\t\t  Facebook</a>\n\t\t<a href=\"#\" class=\"btn btn-block btn-social btn-google btn-flat\"><i class=\"fa fa-google-plus\"></i> S'authentifier avec\n\t\t  Google+</a>\n\t  </div>-->\n\t  <!-- /.social-auth-links -->\n  \n\t  <a href=\"#\">J'ai oublier mon mot de passe</a><br>\n\t  <a [routerLink]=\"['/register']\" class=\"text-center\">Cr\u00E9er mon compte</a>\n  \n\t</div>\n\t<!-- /.login-box-body -->\n  </div>"
         }),
-        __metadata("design:paramtypes", [router_1.Router, account_service_1.AccountService])
+        __metadata("design:paramtypes", [Router, AccountService])
     ], LoginComponent);
     return LoginComponent;
 }());
-exports.LoginComponent = LoginComponent;
-
+export { LoginComponent };
 //# sourceMappingURL=login.component.js.map

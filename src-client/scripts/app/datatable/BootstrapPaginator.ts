@@ -50,10 +50,10 @@ import * as _ from "lodash";
     `
 })
 export class BootstrapPaginator implements OnChanges {
-    @Input("rowsOnPageSet") rowsOnPageSet = [];
+    @Input("rowsOnPageSet") rowsOnPageSet : any[] = [];
     @Input("mfTable") mfTable: DataTable;
 
-    minRowsOnPage = 0;
+    minRowsOnPage : number = 0;
 
     ngOnChanges(changes: any): any {
         if (changes.rowsOnPageSet) {

@@ -5,7 +5,6 @@ const sourcemaps = require('gulp-sourcemaps');
 const tsProject = tsc.createProject("tsconfig.json");
 const tslint = require('gulp-tslint');
 const cache = require('gulp-cached');
-const Builder = require('systemjs-builder');
 const path = require("path");
 const preprocess = require('gulp-preprocess');
 //const fileinclude = require('gulp-file-include');
@@ -37,30 +36,6 @@ gulp.task("compile", () => {
         .pipe(gulp.dest(destinationDir + "/app"));
 });
 
-gulp.task('bundle', ["compile"], () => {
-    // optional constructor options
-    // sets the baseURL and loads the configuration file
-    var builder = new Builder(".", destinationDir + 'systemjs.config.js');
-
-    /*
-       the parameters of the below buildStatic() method are:
-           - your transcompiled application boot file (the one wich would contain the bootstrap(MyApp, [PROVIDERS]) function - in my case 'dist/app/boot.js'
-           - the output (file into which it would output the bundled code)
-           - options {}
-    */
-    return builder
-        .buildStatic(destinationDir + 'app/main.js', 
-            destinationDir + 'app/bundle.js',
-            { minify: true, sourceMaps: false })
-        .then(function() {
-            console.log('Build complete');
-        })
-        .catch(function(err) {
-            console.log('Build error');
-            console.log(err);
-        });
-});
-
 /**
  * Build the project.
  */
@@ -68,7 +43,7 @@ gulp.task("build", ['compile'], () => {
     console.log("Building the project ...")
 });
 
-gulp.task("dist", ["clean", "build"], () => {
+gulp.task("dist", [ "clean" ], () => {
     gulp.src("fonts/**")
         .pipe(gulp.dest(distDir + "/fonts"));
 
@@ -86,7 +61,7 @@ gulp.task("dist", ["clean", "build"], () => {
         .pipe(gulp.dest(distDir + ""));
 })
 
-gulp.task('distDebug', ["dist"], () => {
+gulp.task('distDebug', ["dist", "build"], () => {
     var modules = Object.keys(packageJson.dependencies);
     var moduleFiles = modules.map((module) => {
         return 'node_modules/' + module + '/**/*.*';
@@ -107,7 +82,7 @@ gulp.task('distDebug', ["dist"], () => {
         .pipe(gulp.dest(distDir));
 });
 
-gulp.task('distProd', ["bundle","dist"], () => {
+gulp.task('distProd', ["dist"], () => {
     gulp.src("scripts/app/bundle.js")
         .pipe(gulp.dest(distDir + "/scripts/app"));
     gulp.src("scripts/**/*.html")
@@ -123,6 +98,11 @@ gulp.task('distProd', ["bundle","dist"], () => {
         .pipe(gulp.dest(distDir + "/node_modules/admin-lte/dist/css"));
     gulp.src("node_modules/ngx-bootstrap/datepicker/bs-datepicker.css")
         .pipe(gulp.dest(distDir + "/node_modules/ngx-bootstrap/datepicker"));
+
+    gulp.src("node_modules/bootstrap/dist/fonts/**")
+        .pipe(gulp.dest(distDir + "/node_modules/bootstrap/dist/fonts"));
+    gulp.src("node_modules/font-awesome/fonts/**")
+        .pipe(gulp.dest(distDir + "/node_modules/font-awesome/fonts")); 
 
     gulp.src("node_modules/core-js/client/**")
         .pipe(gulp.dest(distDir + "/node_modules/core-js/client"));
@@ -143,10 +123,7 @@ gulp.task('distProd', ["bundle","dist"], () => {
     gulp.src("node_modules/date-input-polyfill/date-input-polyfill.dist.js")
         .pipe(gulp.dest(distDir + "/node_modules/date-input-polyfill"));
 
-    gulp.src("node_modules/font-awesome/fonts/**")
-        .pipe(gulp.dest(distDir + "/node_modules/font-awesome/fonts")); 
-
-        gulp.src("node_modules/admin-lte/plugins/iCheck/**")
+    gulp.src("node_modules/admin-lte/plugins/iCheck/**")
         .pipe(gulp.dest(distDir + "/node_modules/admin-lte/plugins/iCheck"));
 
     gulp.src("cgu.html")

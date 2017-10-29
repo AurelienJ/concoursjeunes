@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,10 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var forms_1 = require("@angular/forms");
-var entites_service_1 = require("./entites.service");
+import { Component, Input, ViewChild } from '@angular/core';
+import { NgModel, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { EntitesService } from "./entites.service";
 var EntiteSelectorComponent = /** @class */ (function () {
     function EntiteSelectorComponent(entitesService) {
         this.entitesService = entitesService;
@@ -39,28 +37,27 @@ var EntiteSelectorComponent = /** @class */ (function () {
         this.isDisabled = isDisabled;
     };
     __decorate([
-        core_1.Input(),
+        Input(),
         __metadata("design:type", Boolean)
     ], EntiteSelectorComponent.prototype, "onlyFederations", void 0);
     __decorate([
-        core_1.ViewChild(forms_1.NgModel),
-        __metadata("design:type", forms_1.NgModel)
+        ViewChild(NgModel),
+        __metadata("design:type", NgModel)
     ], EntiteSelectorComponent.prototype, "model", void 0);
     EntiteSelectorComponent = EntiteSelectorComponent_1 = __decorate([
-        core_1.Component({
+        Component({
             selector: 'entite-selector',
             template: "<span *ngIf=\"entite\" ><a [routerLink]=\"['/entities', entite.id]\">{{entite.nom}}</a> - </span>\n\t<a *ngIf=\"!isDisabled\" [routerLink]=\"[onlyFederations ? '/federations' : '/entities']\" [queryParams]=\"{forSelect : true}\" id=\"entity\">Choisir...</a>",
             providers: [{
-                    provide: forms_1.NG_VALUE_ACCESSOR,
+                    provide: NG_VALUE_ACCESSOR,
                     useExisting: EntiteSelectorComponent_1,
                     multi: true,
                 }]
         }),
-        __metadata("design:paramtypes", [entites_service_1.EntitesService])
+        __metadata("design:paramtypes", [EntitesService])
     ], EntiteSelectorComponent);
     return EntiteSelectorComponent;
     var EntiteSelectorComponent_1;
 }());
-exports.EntiteSelectorComponent = EntiteSelectorComponent;
-
+export { EntiteSelectorComponent };
 //# sourceMappingURL=entite-selector.component.js.map

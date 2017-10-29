@@ -21,7 +21,7 @@ export class SlimScrollDirective {
 	}
 
 	@HostListener('window:resize', ['$event'])
-	onResize(event) {
+	onResize(event : any) {
 		let that = this;
 		(<any>that.element).slimScroll({
             height: window.innerHeight - that.element.offset().top

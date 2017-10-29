@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,11 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var router_1 = require("@angular/router");
-var navigator_service_1 = require("../general/navigator.service");
-var competitions_service_1 = require("./competitions.service");
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NavigatorService } from '../general/navigator.service';
+import { CompetitionsService } from './competitions.service';
 var CompetitionsComponent = /** @class */ (function () {
     function CompetitionsComponent(router, route, navigatorService, competitionsService) {
         this.router = router;
@@ -31,17 +29,16 @@ var CompetitionsComponent = /** @class */ (function () {
     CompetitionsComponent.prototype.select = function (competition) {
     };
     CompetitionsComponent = __decorate([
-        core_1.Component({
+        Component({
             selector: 'competitions',
-            templateUrl: 'scripts/app/competitions/competitions.html'
+            templateUrl: './competitions.html'
         }),
-        __metadata("design:paramtypes", [router_1.Router,
-            router_1.ActivatedRoute,
-            navigator_service_1.NavigatorService,
-            competitions_service_1.CompetitionsService])
+        __metadata("design:paramtypes", [Router,
+            ActivatedRoute,
+            NavigatorService,
+            CompetitionsService])
     ], CompetitionsComponent);
     return CompetitionsComponent;
 }());
-exports.CompetitionsComponent = CompetitionsComponent;
-
+export { CompetitionsComponent };
 //# sourceMappingURL=competitions.component.js.map

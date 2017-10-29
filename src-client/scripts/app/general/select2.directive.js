@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,9 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var _ = require("lodash");
+import { Directive, ElementRef, Input, Output, Renderer, EventEmitter } from '@angular/core';
+import * as _ from "lodash";
 var Select2Directive = /** @class */ (function () {
     // @HostListener('select2:select')
     // private select(e: Event) {
@@ -23,9 +21,9 @@ var Select2Directive = /** @class */ (function () {
     // 	this.onUnselect.emit(e);
     // }
     function Select2Directive(el, renderer) {
-        this.onSelect = new core_1.EventEmitter();
-        this.onUnselect = new core_1.EventEmitter();
-        this.valueChange = new core_1.EventEmitter();
+        this.onSelect = new EventEmitter();
+        this.onUnselect = new EventEmitter();
+        this.valueChange = new EventEmitter();
         var that = this;
         this.element = jQuery(el.nativeElement);
         this.element.on('select2:select', function (e) {
@@ -71,36 +69,35 @@ var Select2Directive = /** @class */ (function () {
         });
     };
     __decorate([
-        core_1.Input(),
+        Input(),
         __metadata("design:type", String)
     ], Select2Directive.prototype, "placeHolder", void 0);
     __decorate([
-        core_1.Input(),
+        Input(),
         __metadata("design:type", Boolean),
         __metadata("design:paramtypes", [Boolean])
     ], Select2Directive.prototype, "disable", null);
     __decorate([
-        core_1.Input(),
+        Input(),
         __metadata("design:type", Object)
     ], Select2Directive.prototype, "value", void 0);
     __decorate([
-        core_1.Output(),
-        __metadata("design:type", core_1.EventEmitter)
+        Output(),
+        __metadata("design:type", EventEmitter)
     ], Select2Directive.prototype, "onSelect", void 0);
     __decorate([
-        core_1.Output(),
-        __metadata("design:type", core_1.EventEmitter)
+        Output(),
+        __metadata("design:type", EventEmitter)
     ], Select2Directive.prototype, "onUnselect", void 0);
     __decorate([
-        core_1.Output(),
-        __metadata("design:type", core_1.EventEmitter)
+        Output(),
+        __metadata("design:type", EventEmitter)
     ], Select2Directive.prototype, "valueChange", void 0);
     Select2Directive = __decorate([
-        core_1.Directive({ selector: '[select2]' }),
-        __metadata("design:paramtypes", [core_1.ElementRef, core_1.Renderer])
+        Directive({ selector: '[select2]' }),
+        __metadata("design:paramtypes", [ElementRef, Renderer])
     ], Select2Directive);
     return Select2Directive;
 }());
-exports.Select2Directive = Select2Directive;
-
+export { Select2Directive };
 //# sourceMappingURL=select2.directive.js.map

@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var Target = /** @class */ (function () {
     function Target(startCompetitors) {
         this.startCompetitors = startCompetitors;
@@ -33,6 +31,5 @@ var Target = /** @class */ (function () {
     });
     return Target;
 }());
-exports.Target = Target;
-
+export { Target };
 //# sourceMappingURL=Target.js.map

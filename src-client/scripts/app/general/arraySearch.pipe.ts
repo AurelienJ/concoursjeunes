@@ -9,7 +9,7 @@ export class TableFilterPipe implements PipeTransform {
         let filter : string= null;
         if (args[0])
             filter = args[0].toLocaleLowerCase();
-        return filter ? value.filter(item => {
+        return filter ? value.filter((item : any) => {
             for (var key in item) {
                 if (item.hasOwnProperty(key)) {
                     var element : any = item[key];

@@ -29,7 +29,7 @@ export interface InputData {
     /**
      * ordered source data
      */
-    orderBy(sortBy: string|string[], sortOrder: string[]);
+    orderBy(sortBy: string|string[], sortOrder: string[]) : void;
 
     /**
      * get part of data between start and end offset. Assume data index start at 0 number offset
@@ -209,7 +209,7 @@ export class DataTable implements OnChanges, DoCheck {
         if (changes["inputData"]) {
             this.inputData = changes["inputData"].currentValue || [];
             this.dataSource = this.getInputData();
-            this.dataSource.onDataChange.subscribe(event => {
+            this.dataSource.onDataChange.subscribe((event:any) => {
                 this.checkDataSize();
             })
             return this.checkDataSize();

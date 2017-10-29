@@ -76,10 +76,10 @@ export class EntiteServerSideInputData implements InputData {
     name: 'entiteServerSideInputDataFilter'
 })
 export class EntiteServerSideInputDataFilterPipe implements PipeTransform {
-    private tempo;
+    private tempo : any;
     transform(value: EntiteServerSideInputData, args: string[]): any {
 
-        let filter = null;
+        let filter : string = null;
         if (args[0])
             filter = args[0].toLocaleLowerCase();
         
@@ -277,9 +277,9 @@ export class EntitesComponent implements OnInit {
         });*/
     }
 
-    public onValueChanged(value) {
+    public onValueChanged(value : string[]) {
         if(!this.dataLoading) {
-            this.displayTypes = value.map(v => parseInt(v)); //.val().map(v => parseInt(v));
+            this.displayTypes = value.map((v : string) => parseInt(v)); //.val().map(v => parseInt(v));
             this.entites.filter(this.displayTypes, this.childOf, this.entites.term);
             }
     }

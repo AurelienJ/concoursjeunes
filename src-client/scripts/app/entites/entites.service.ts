@@ -157,7 +157,7 @@ export class EntitesService {
             })
             .catch(error => {
                 entite.entiteParent = entiteParent;
-                this.handleError(error);
+                return this.handleError(error);
             });
     }
 
@@ -165,7 +165,7 @@ export class EntitesService {
         return this.http.get("api/entities/" + idEntity + "/criteria").toPromise()
             .then(response => response.json())
             .catch(error => {
-                this.handleError(error);
+                return this.handleError(error);
             });
     }
 

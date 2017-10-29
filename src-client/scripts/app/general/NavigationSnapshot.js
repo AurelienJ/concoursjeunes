@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var NavigationSnapshot = /** @class */ (function () {
     function NavigationSnapshot(label, currentUrl, queryParams, stateData) {
         this.label = label;
@@ -30,6 +28,5 @@ var NavigationSnapshot = /** @class */ (function () {
     };
     return NavigationSnapshot;
 }());
-exports.NavigationSnapshot = NavigationSnapshot;
-
+export { NavigationSnapshot };
 //# sourceMappingURL=NavigationSnapshot.js.map

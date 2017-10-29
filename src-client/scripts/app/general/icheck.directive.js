@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,11 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
+import { Directive, ElementRef, EventEmitter, Output } from '@angular/core';
 var ICheckDirective = /** @class */ (function () {
     function ICheckDirective(el) {
-        this.change = new core_1.EventEmitter();
+        this.change = new EventEmitter();
         this.element = jQuery(el.nativeElement);
     }
     ICheckDirective.prototype.ngAfterViewInit = function () {
@@ -27,15 +25,14 @@ var ICheckDirective = /** @class */ (function () {
         });
     };
     __decorate([
-        core_1.Output(),
-        __metadata("design:type", core_1.EventEmitter)
+        Output(),
+        __metadata("design:type", EventEmitter)
     ], ICheckDirective.prototype, "change", void 0);
     ICheckDirective = __decorate([
-        core_1.Directive({ selector: '[icheck]' }),
-        __metadata("design:paramtypes", [core_1.ElementRef])
+        Directive({ selector: '[icheck]' }),
+        __metadata("design:paramtypes", [ElementRef])
     ], ICheckDirective);
     return ICheckDirective;
 }());
-exports.ICheckDirective = ICheckDirective;
-
+export { ICheckDirective };
 //# sourceMappingURL=icheck.directive.js.map

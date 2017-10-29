@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,17 +7,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var http_1 = require("@angular/http");
-var date_service_1 = require("../general/date.service");
-var rules_service_1 = require("../rules/rules.service");
+import { Injectable } from '@angular/core';
+import { Headers, Http } from '@angular/http';
+import { DateService } from "../general/date.service";
+import { RulesService } from '../rules/rules.service';
 var CompetitionsService = /** @class */ (function () {
     function CompetitionsService(http, dateService, rulesService) {
         this.http = http;
         this.dateService = dateService;
         this.rulesService = rulesService;
-        this.headers = new http_1.Headers();
+        this.headers = new Headers();
         this.headers.append('Content-Type', 'application/json');
         this.headers.append('Accept', 'application/json');
     }
@@ -44,11 +42,10 @@ var CompetitionsService = /** @class */ (function () {
         return this.http.post("api/competitions", competition, { headers: this.headers }).toPromise().then(function (r) { return _this.dateService.jsonWithDate(r.text()); });
     };
     CompetitionsService = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [http_1.Http, date_service_1.DateService, rules_service_1.RulesService])
+        Injectable(),
+        __metadata("design:paramtypes", [Http, DateService, RulesService])
     ], CompetitionsService);
     return CompetitionsService;
 }());
-exports.CompetitionsService = CompetitionsService;
-
+export { CompetitionsService };
 //# sourceMappingURL=competitions.service.js.map

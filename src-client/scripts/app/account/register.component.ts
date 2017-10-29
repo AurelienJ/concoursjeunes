@@ -92,14 +92,11 @@ export class RegisterComponent implements OnInit {
     constructor(private router : Router, private accountService : AccountService) { }
 
     ngOnInit(): void {
-		$('body').addClass(this.bodyClasses);
-	}
-	ngOnDestroy() { 
-		$('body').removeClass(this.bodyClasses);
+      $('body').addClass(this.bodyClasses);
     }
 
-    public test(ev) {
-        console.log(ev);
+    ngOnDestroy() { 
+		  $('body').removeClass(this.bodyClasses);
     }
     
     public register() {

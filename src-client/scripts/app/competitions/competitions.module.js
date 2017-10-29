@@ -1,44 +1,41 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var router_1 = require("@angular/router");
-var platform_browser_1 = require("@angular/platform-browser");
-var forms_1 = require("@angular/forms");
-var ngx_bootstrap_1 = require("ngx-bootstrap");
-var DataTableModule_1 = require("../datatable/DataTableModule");
-var general_module_1 = require("../general/general.module");
-var competitions_service_1 = require("./competitions.service");
-var competitions_component_1 = require("./competitions.component");
-var competition_component_1 = require("./competition.component");
-var competition_parameters_component_1 = require("./competition-parameters.component");
-var competition_shootingline_componenent_1 = require("./competition-shootingline.componenent");
-var competitor_component_1 = require("./competitor.component");
-var target_component_1 = require("./target.component");
-var numToLetter_pipe_1 = require("./numToLetter.pipe");
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { BsDatepickerModule, ButtonsModule, TooltipModule } from 'ngx-bootstrap';
+import { DataTableModule } from "../datatable/DataTableModule";
+import { GeneralModule } from '../general/general.module';
+import { CompetitionsService } from './competitions.service';
+import { CompetitionsComponent } from './competitions.component';
+import { CompetitionComponent } from "./competition.component";
+import { CompetitionParametersComponent } from "./competition-parameters.component";
+import { CompetitionShootingLineComponent } from "./competition-shootingline.componenent";
+import { CompetitorComponent } from "./competitor.component";
+import { TargetComponent } from "./target.component";
+import { NumToLetterPipe } from "./numToLetter.pipe";
 var CompetitionModule = /** @class */ (function () {
     function CompetitionModule() {
     }
     CompetitionModule = __decorate([
-        core_1.NgModule({
-            imports: [router_1.RouterModule, platform_browser_1.BrowserModule, forms_1.FormsModule,
-                ngx_bootstrap_1.BsDatepickerModule, ngx_bootstrap_1.ButtonsModule, ngx_bootstrap_1.TooltipModule,
-                DataTableModule_1.DataTableModule, general_module_1.GeneralModule],
-            declarations: [competitions_component_1.CompetitionsComponent, competition_component_1.CompetitionComponent, competition_parameters_component_1.CompetitionParametersComponent, competition_shootingline_componenent_1.CompetitionShootingLineComponent, competitor_component_1.CompetitorComponent,
-                target_component_1.TargetComponent,
-                numToLetter_pipe_1.NumToLetterPipe],
+        NgModule({
+            imports: [RouterModule, BrowserModule, FormsModule,
+                BsDatepickerModule, ButtonsModule, TooltipModule,
+                DataTableModule, GeneralModule],
+            declarations: [CompetitionsComponent, CompetitionComponent, CompetitionParametersComponent, CompetitionShootingLineComponent, CompetitorComponent,
+                TargetComponent,
+                NumToLetterPipe],
             bootstrap: [],
-            providers: [competitions_service_1.CompetitionsService],
-            exports: [competitions_component_1.CompetitionsComponent, competition_component_1.CompetitionComponent]
+            providers: [CompetitionsService],
+            exports: [CompetitionsComponent, CompetitionComponent]
         })
     ], CompetitionModule);
     return CompetitionModule;
 }());
-exports.CompetitionModule = CompetitionModule;
-
+export { CompetitionModule };
 //# sourceMappingURL=competitions.module.js.map

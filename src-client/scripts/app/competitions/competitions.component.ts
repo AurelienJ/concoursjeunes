@@ -9,10 +9,10 @@ import { ICompetitionDescription, ICompetition } from './model/ICompetition';
 
 @Component({
 	selector: 'competitions',
-	templateUrl: 'scripts/app/competitions/competitions.html'
+	templateUrl: './competitions.html'
 })
 export class CompetitionsComponent implements OnInit {
-	private competitions : ICompetitionDescription[];
+	public competitions : ICompetitionDescription[];
 	
 	/**
      * Affichage pour seléction

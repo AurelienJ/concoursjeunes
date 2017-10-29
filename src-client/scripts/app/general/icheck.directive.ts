@@ -20,7 +20,7 @@ export class ICheckDirective {
             increaseArea: '20%' // optional
 			});
 
-		this.element.on('ifToggled', function(event){
+		this.element.on('ifToggled', function(event : any){
 			that.change.emit(that.element[0].checked);
 		});
    }

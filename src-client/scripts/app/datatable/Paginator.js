@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,9 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var DataTable_1 = require("./DataTable");
+import { Component, Input, Optional } from "@angular/core";
+import { DataTable } from "./DataTable";
 var Paginator = /** @class */ (function () {
     function Paginator(injectMfTable) {
         var _this = this;
@@ -38,19 +36,18 @@ var Paginator = /** @class */ (function () {
         this.mfTable.setPage(this.activePage, rowsOnPage);
     };
     __decorate([
-        core_1.Input("mfTable"),
-        __metadata("design:type", DataTable_1.DataTable)
+        Input("mfTable"),
+        __metadata("design:type", DataTable)
     ], Paginator.prototype, "inputMfTable", void 0);
     Paginator = __decorate([
-        core_1.Component({
+        Component({
             selector: "mfPaginator",
             template: "<ng-content></ng-content>"
         }),
-        __param(0, core_1.Optional()),
-        __metadata("design:paramtypes", [DataTable_1.DataTable])
+        __param(0, Optional()),
+        __metadata("design:paramtypes", [DataTable])
     ], Paginator);
     return Paginator;
 }());
-exports.Paginator = Paginator;
-
+export { Paginator };
 //# sourceMappingURL=Paginator.js.map

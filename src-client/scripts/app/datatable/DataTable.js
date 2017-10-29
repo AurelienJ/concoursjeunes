@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,13 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var _ = require("lodash");
+import { Directive, Input, EventEmitter } from "@angular/core";
+import * as _ from 'lodash';
 var LocalInputData = /** @class */ (function () {
     function LocalInputData(data) {
         this.data = data;
-        this.onDataChange = new core_1.EventEmitter();
+        this.onDataChange = new EventEmitter();
     }
     LocalInputData.prototype.size = function () {
         var _this = this;
@@ -51,7 +49,7 @@ var LocalInputData = /** @class */ (function () {
     };
     return LocalInputData;
 }());
-exports.LocalInputData = LocalInputData;
+export { LocalInputData };
 var DataTable = /** @class */ (function () {
     function DataTable() {
         /**
@@ -69,9 +67,9 @@ var DataTable = /** @class */ (function () {
          */
         this.data = [];
         //public onDataChange = new EventEmitter<DataEvent>();
-        this.onDataReady = new core_1.EventEmitter();
-        this.onSortChange = new core_1.EventEmitter();
-        this.onPageChange = new core_1.EventEmitter();
+        this.onDataReady = new EventEmitter();
+        this.onSortChange = new EventEmitter();
+        this.onPageChange = new EventEmitter();
     }
     /**
      * Get sort creteria an order
@@ -191,25 +189,24 @@ var DataTable = /** @class */ (function () {
         return new Promise(function (resolve) { return resolve(_this.data); });
     };
     __decorate([
-        core_1.Input("mfData"),
+        Input("mfData"),
         __metadata("design:type", Object)
     ], DataTable.prototype, "inputData", void 0);
     __decorate([
-        core_1.Input("mfRowsOnPage"),
+        Input("mfRowsOnPage"),
         __metadata("design:type", Object)
     ], DataTable.prototype, "rowsOnPage", void 0);
     __decorate([
-        core_1.Input("mfActivePage"),
+        Input("mfActivePage"),
         __metadata("design:type", Object)
     ], DataTable.prototype, "activePage", void 0);
     DataTable = __decorate([
-        core_1.Directive({
+        Directive({
             selector: 'table[mfData]',
             exportAs: 'mfDataTable'
         })
     ], DataTable);
     return DataTable;
 }());
-exports.DataTable = DataTable;
-
+export { DataTable };
 //# sourceMappingURL=DataTable.js.map

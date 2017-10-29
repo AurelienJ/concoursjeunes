@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var Rule = /** @class */ (function () {
     function Rule() {
         this.nbSerie = 2;
@@ -16,6 +14,5 @@ var Rule = /** @class */ (function () {
     }
     return Rule;
 }());
-exports.Rule = Rule;
-
+export { Rule };
 //# sourceMappingURL=Rule.js.map

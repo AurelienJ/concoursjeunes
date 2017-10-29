@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,9 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var DataTable_1 = require("./DataTable");
+import { Component, Input } from "@angular/core";
+import { DataTable } from "./DataTable";
 var DefaultSorter = /** @class */ (function () {
     function DefaultSorter(mfTable) {
         this.mfTable = mfTable;
@@ -33,18 +31,17 @@ var DefaultSorter = /** @class */ (function () {
         }
     };
     __decorate([
-        core_1.Input("by"),
+        Input("by"),
         __metadata("design:type", String)
     ], DefaultSorter.prototype, "sortBy", void 0);
     DefaultSorter = __decorate([
-        core_1.Component({
+        Component({
             selector: "mfDefaultSorter",
             template: "\n        <a style=\"cursor: pointer\" (click)=\"sort()\" class=\"text-nowrap\">\n            <ng-content></ng-content>\n            <span *ngIf=\"isSortedByMeAsc\" class=\"glyphicon glyphicon-triangle-top\" aria-hidden=\"true\"></span>\n            <span *ngIf=\"isSortedByMeDesc\" class=\"glyphicon glyphicon-triangle-bottom\" aria-hidden=\"true\"></span>\n        </a>"
         }),
-        __metadata("design:paramtypes", [DataTable_1.DataTable])
+        __metadata("design:paramtypes", [DataTable])
     ], DefaultSorter);
     return DefaultSorter;
 }());
-exports.DefaultSorter = DefaultSorter;
-
+export { DefaultSorter };
 //# sourceMappingURL=DefaultSorter.js.map

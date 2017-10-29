@@ -32,7 +32,7 @@ import 'rxjs/add/operator/share';
 	<div class="content body">
         <div class="row">
             <div class="col-xs-12">
-				<form class="form-horizontal" #personForm="ngForm" (ngSubmit)="validate(personForm)">
+				<form class="form-horizontal" #personForm="ngForm" (ngSubmit)="validate()">
 				<div class="nav-tabs-custom">
 					<ul class="nav nav-tabs">
 						<li [class.active]="!activePane || activePane=='identity'"><a href="javascript:void(0)" data-toogle="tab" (click)="activePane='identity'">Identité</a></li>
@@ -327,7 +327,7 @@ export class PersonComponent implements OnInit, DoCheck {
 	public civilities : ICivility[] = [];
 	public criteria : Criterion[] = [];
 
-	public error;
+	public error : string;
 
 	public accountMode : boolean = false;
 
@@ -364,6 +364,8 @@ export class PersonComponent implements OnInit, DoCheck {
 					a.newPassword = "";
 					this.mustUpdateView = true;
 					this.accountMode = true;
+				}).catch(reason => {
+					this.router.navigate(["/login"]);
 				});
 			} else {
 				this.mustUpdateView = true;
@@ -543,17 +545,17 @@ export class PersonComponent implements OnInit, DoCheck {
         this.navigation.goBack(this.router, null, null, -1);
 	}
 	
-    public validate(f) {
+    public validate() {
 		if(!this.accountMode) {
 			this.persons.savePerson(this.person).then(person => {
 				this.navigation.goBack(this.router, null, null, -1);
-			}).catch(reason => {
+			}).catch((reason : any) => {
 				this.error = reason;
 			});
 		} else {
-			this.accountService.saveAccount(this.person).then(person => {
+			this.accountService.saveAccount(<IAccount>this.person).then((person : IAccount) => {
 				this.navigation.goBack(this.router, null, null, -1);
-			}).catch(reason => {
+			}).catch((reason : any) => {
 				this.error = reason;
 			})
 		}

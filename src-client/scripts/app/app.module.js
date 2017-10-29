@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,22 +7,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 ///<reference path="_references.ts"/>
-var core_1 = require("@angular/core");
-var platform_browser_1 = require("@angular/platform-browser");
-var router_1 = require("@angular/router");
-var ngx_bootstrap_1 = require("ngx-bootstrap");
-var general_module_1 = require("./general/general.module");
-var references_module_1 = require("./references/references.module");
-var account_module_1 = require("./account/account.module");
-var competitions_module_1 = require("./competitions/competitions.module");
-var entites_module_1 = require("./entites/entites.module");
-var persons_module_1 = require("./persons/persons.module");
-var rules_module_1 = require("./rules/rules.module");
-var parameters_module_1 = require("./parameters/parameters.module");
-var app_component_1 = require("./app.component");
-var app_routes_1 = require("./app.routes");
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
+import { BsDatepickerModule, defineLocale, TooltipModule } from 'ngx-bootstrap';
+import { GeneralModule } from './general/general.module';
+import { ReferencesModule } from './references/references.module';
+import { AccountModule } from "./account/account.module";
+import { CompetitionModule } from './competitions/competitions.module';
+import { EntitesModule } from './entites/entites.module';
+import { PersonsModule } from './persons/persons.module';
+import { RulesModule } from './rules/rules.module';
+import { ParametersModule } from './parameters/parameters.module';
+import { AppComponent } from './app.component';
+import { AppRoutes } from './app.routes';
 var AppModule = /** @class */ (function () {
     function AppModule() {
         var fr = {
@@ -92,22 +90,21 @@ var AppModule = /** @class */ (function () {
                 doy: 4 // The week that contains Jan 4th is the first week of the year.
             }
         };
-        ngx_bootstrap_1.defineLocale('fr', fr);
+        defineLocale('fr', fr);
     }
     AppModule = __decorate([
-        core_1.NgModule({
-            imports: [platform_browser_1.BrowserModule,
-                router_1.RouterModule.forRoot(app_routes_1.AppRoutes, { useHash: true }),
-                ngx_bootstrap_1.BsDatepickerModule.forRoot(), ngx_bootstrap_1.TooltipModule.forRoot(),
-                general_module_1.GeneralModule, references_module_1.ReferencesModule, account_module_1.AccountModule, parameters_module_1.ParametersModule, competitions_module_1.CompetitionModule, entites_module_1.EntitesModule, persons_module_1.PersonsModule, rules_module_1.RulesModule],
-            declarations: [app_component_1.AppComponent],
-            bootstrap: [app_component_1.AppComponent],
+        NgModule({
+            imports: [BrowserModule,
+                RouterModule.forRoot(AppRoutes, { useHash: true }),
+                BsDatepickerModule.forRoot(), TooltipModule.forRoot(),
+                GeneralModule, ReferencesModule, AccountModule, ParametersModule, CompetitionModule, EntitesModule, PersonsModule, RulesModule],
+            declarations: [AppComponent],
+            bootstrap: [AppComponent],
             providers: []
         }),
         __metadata("design:paramtypes", [])
     ], AppModule);
     return AppModule;
 }());
-exports.AppModule = AppModule;
-
+export { AppModule };
 //# sourceMappingURL=app.module.js.map

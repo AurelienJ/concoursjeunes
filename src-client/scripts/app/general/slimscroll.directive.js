@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,8 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
+import { Directive, ElementRef, Renderer, HostListener } from '@angular/core';
 var SlimScrollDirective = /** @class */ (function () {
     function SlimScrollDirective(el, renderer) {
         this.element = jQuery(el.nativeElement);
@@ -30,17 +28,16 @@ var SlimScrollDirective = /** @class */ (function () {
         });
     };
     __decorate([
-        core_1.HostListener('window:resize', ['$event']),
+        HostListener('window:resize', ['$event']),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object]),
         __metadata("design:returntype", void 0)
     ], SlimScrollDirective.prototype, "onResize", null);
     SlimScrollDirective = __decorate([
-        core_1.Directive({ selector: '[slimscroll]', exportAs: "slimscroll" }),
-        __metadata("design:paramtypes", [core_1.ElementRef, core_1.Renderer])
+        Directive({ selector: '[slimscroll]', exportAs: "slimscroll" }),
+        __metadata("design:paramtypes", [ElementRef, Renderer])
     ], SlimScrollDirective);
     return SlimScrollDirective;
 }());
-exports.SlimScrollDirective = SlimScrollDirective;
-
+export { SlimScrollDirective };
 //# sourceMappingURL=slimscroll.directive.js.map

@@ -74,10 +74,10 @@ export class PersonServerSideInputData implements InputData {
     name: 'personServerSideInputDataFilter'
 })
 export class PersonServerSideInputDataFilterPipe implements PipeTransform {
-    private tempo;
+    private tempo : any;
     transform(value: PersonServerSideInputData, args: string[]): any {
 
-        let filter = null;
+        let filter : string = null;
         if (args[0])
             filter = args[0].toLocaleLowerCase();
         
