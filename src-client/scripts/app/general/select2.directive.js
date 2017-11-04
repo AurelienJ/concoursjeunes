@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Directive, ElementRef, Input, Output, Renderer, EventEmitter } from '@angular/core';
-import * as _ from "lodash";
+import _ from "lodash";
 var Select2Directive = /** @class */ (function () {
     // @HostListener('select2:select')
     // private select(e: Event) {

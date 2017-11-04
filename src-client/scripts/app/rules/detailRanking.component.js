@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component, Input } from '@angular/core';
 import { RulesService } from './rules.service';
 import { EntitesService } from '../entites/entites.service';
-import * as _ from 'lodash';
+import _ from 'lodash';
 var DetailRankingComponent = /** @class */ (function () {
     function DetailRankingComponent(rulesService, entitesService) {
         this.rulesService = rulesService;

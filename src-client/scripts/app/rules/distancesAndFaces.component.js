@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import * as _ from 'lodash';
+import _ from 'lodash';
 var DistancesAndFacesComponent = /** @class */ (function () {
     function DistancesAndFacesComponent() {
         this.distancesAndFacesSetChange = new EventEmitter();

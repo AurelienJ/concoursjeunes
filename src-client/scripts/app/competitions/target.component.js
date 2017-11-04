@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Target } from "./model/Target";
 import { IConcurrent } from './model/IConcurrent';
-import * as _ from "lodash";
+import _ from "lodash";
 var TargetComponent = /** @class */ (function () {
     function TargetComponent() {
         this.competitorToPositionningChange = new EventEmitter();

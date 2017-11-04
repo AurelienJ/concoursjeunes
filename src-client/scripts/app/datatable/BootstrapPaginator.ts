@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges} from "@angular/core";
 import {DataTable} from "./DataTable";
-import * as _ from "lodash";
+import _ from "lodash";
 
 @Component({
     selector: "mfBootstrapPaginator",

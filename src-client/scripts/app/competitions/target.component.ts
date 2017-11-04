@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angu
 import { Target } from "./model/Target";
 import { IConcurrent } from './model/IConcurrent';
 
-import * as _ from "lodash";
+import _ from "lodash";
 
 
 @Component({

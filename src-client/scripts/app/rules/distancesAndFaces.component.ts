@@ -4,7 +4,7 @@ import { IDistanceAndFacesSet } from './model/IDistanceAndFacesSet';
 import { IDistanceAndFaces } from './model/IDistanceAndFaces';
 import { IFaceDistanceAndFaces } from './model/IFaceDistanceAndFaces';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 @Component({
 	selector: 'distances-faces',

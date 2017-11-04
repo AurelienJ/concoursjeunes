@@ -83,10 +83,10 @@ gulp.task('distDebug', ["dist", "build"], () => {
 });
 
 gulp.task('distProd', ["dist"], () => {
-    gulp.src("scripts/app/bundle.js")
+    gulp.src("scripts/bundle.js")
         .pipe(gulp.dest(distDir + "/scripts/app"));
-    gulp.src("scripts/**/*.html")
-        .pipe(gulp.dest(distDir + "/scripts"));
+    //gulp.src("scripts/**/*.html")
+    //    .pipe(gulp.dest(distDir + "/scripts"));
 
     gulp.src("node_modules/bootstrap/dist/css/**")
         .pipe(gulp.dest(distDir + "/node_modules/bootstrap/dist/css"));

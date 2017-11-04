@@ -6,7 +6,7 @@ import { IDistanceAndFaces } from './model/IDistanceAndFaces';
 import { IFaceDistanceAndFaces } from './model/IFaceDistanceAndFaces';
 import { IFace } from './model/IFace';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 @Component({
 	selector: 'detail-distances-faces',

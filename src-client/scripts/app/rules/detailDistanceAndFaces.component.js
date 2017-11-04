@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { RulesService } from './rules.service';
-import * as _ from 'lodash';
+import _ from 'lodash';
 var DetailDistancesAndFacesComponent = /** @class */ (function () {
     function DetailDistancesAndFacesComponent(rulesService) {
         var _this = this;

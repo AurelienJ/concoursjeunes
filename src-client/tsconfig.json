@@ -12,7 +12,8 @@
       "es2017",
       "dom"
     ],
-    "inlineSourceMap": true
+    "inlineSourceMap": true,
+    "allowSyntheticDefaultImports": true
   },
   "exclude": [
     "gulpfile.ts",

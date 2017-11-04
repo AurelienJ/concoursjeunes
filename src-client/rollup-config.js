@@ -14,7 +14,15 @@ export default {
     },
     plugins: [
         nodeResolve({jsnext : true, module: true}),
-        commonjs({include: 'node_modules/rxjs/**'}),
+        commonjs({
+            include: [
+                'node_modules/rxjs/**',
+                'node_modules/lodash/**',
+                'node_modules/moment/**' ],
+            namedExports: {
+                'node_modules/moment/src/moment.js': [ 'moment' ]
+              }
+        }),
         uglify()
     ]
 }
