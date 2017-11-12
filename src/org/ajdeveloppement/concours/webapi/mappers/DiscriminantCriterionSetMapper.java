@@ -95,8 +95,10 @@ import org.ajdeveloppement.concours.data.DiscriminantCriterionSet;
 import org.ajdeveloppement.concours.data.DiscriminantCriterionSetElement;
 import org.ajdeveloppement.concours.data.T_CriterionElement;
 import org.ajdeveloppement.concours.data.T_DiscriminantCriterionSet;
+import org.ajdeveloppement.concours.data.T_DiscriminantCriterionSetElement;
 import org.ajdeveloppement.concours.webapi.views.DiscriminantCriterionSetElementView;
 import org.ajdeveloppement.concours.webapi.views.DiscriminantCriterionSetView;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
@@ -131,6 +133,21 @@ public abstract class DiscriminantCriterionSetMapper {
 		return discriminantCriterionSet;
 	}
 	
+	@ObjectFactory
+	public DiscriminantCriterionSetElement getDiscriminantCriterionSetElement(DiscriminantCriterionSet parent, DiscriminantCriterionSetElementView view) {
+		DiscriminantCriterionSetElement discriminantCriterionSetElement = null;
+		
+		if(view.getIdCriterionElement() != null) 
+			discriminantCriterionSetElement = T_DiscriminantCriterionSetElement.getInstanceWithPrimaryKey(
+					parent.getIdDiscriminantCriterionSet(),
+					view.getIdCriterionElement());
+		
+		if(discriminantCriterionSetElement == null)
+			discriminantCriterionSetElement = new DiscriminantCriterionSetElement();
+		
+		return discriminantCriterionSetElement;
+	}
+	
 	@BeforeMapping
 	public void clearCollections(@MappingTarget DiscriminantCriterionSet model) {
 		model.getElements().clear();
@@ -138,12 +155,21 @@ public abstract class DiscriminantCriterionSetMapper {
 	
 	@Mapping(target = "idDiscriminantCriterionSet", source = "id")
 	@Mapping(target = "rankingCriterion", ignore = true)
+	@Mapping(target = "elements", ignore = true)
 	public abstract DiscriminantCriterionSet toDiscriminantCriterionSet(DiscriminantCriterionSetView view);
 	
+	@AfterMapping
+	public void mapCollections(DiscriminantCriterionSetView view, @MappingTarget DiscriminantCriterionSet discriminantCriterionSet) {
+		if ( view.getElements() != null ) {
+            for ( DiscriminantCriterionSetElementView element : view.getElements() ) {
+                discriminantCriterionSet.addElement( toDiscriminantCriterionSetElement( discriminantCriterionSet, element ) );
+            }
+        }
+	}
 	
-	@Mapping(target = "criterionElement", source = "idCriterionElement")
+	@Mapping(target = "criterionElement", source = "view.idCriterionElement")
 	@Mapping(target = "discriminantCriterionSet", ignore = true)
-	public abstract DiscriminantCriterionSetElement toDiscriminantCriterionSetElement(DiscriminantCriterionSetElementView view);
+	public abstract DiscriminantCriterionSetElement toDiscriminantCriterionSetElement(DiscriminantCriterionSet parent, DiscriminantCriterionSetElementView view);
 	
 	public CriterionElement asCriterionElement(UUID idCriterionElement) {
 		return T_CriterionElement.getInstanceWithPrimaryKey(idCriterionElement);
