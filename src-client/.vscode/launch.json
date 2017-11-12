@@ -17,7 +17,7 @@
             "linux": {
                 "runtimeExecutable": "/usr/bin/chromium-browser"
             },
-            "url": "http://localhost:8080",
+            "url": "http://localhost:4200",
             "webRoot": "${workspaceRoot}"
         }
     ]

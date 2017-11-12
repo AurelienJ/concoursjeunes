@@ -1,1 +1,0 @@
-//# sourceMappingURL=ICompetition.js.map
