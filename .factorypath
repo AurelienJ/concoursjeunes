@@ -1,5 +1,5 @@
 <factorypath>
     <factorypathentry kind="WKSPJAR" id="/ArcCompetition/lib/ajcommons-persistence-sql-2.0.11.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="WKSPJAR" id="/ArcCompetition/lib/ajcommons-webserver-webapi-0.4.0-SNAPSHOT.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="WKSPJAR" id="/ArcCompetition/lib/mapstruct-processor-1.2.0.CR2.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="WKSPJAR" id="/ArcCompetition/lib/mapstruct-processor-1.2.0.Final.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>

@@ -23,10 +23,10 @@
             <dependency org="org.ajdeveloppement" name="ajcommons-webserver-viewbinder" rev="0.4.0-SNAPSHOT"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-swing-ext" rev="2.0.11"/>
             <dependency org="org.ajdeveloppement" name="ajcommons-updater" rev="2.0.11"/>
-			<dependency org="org.mapstruct" name="mapstruct-jdk8" rev="1.2.0.CR2">
+			<dependency org="org.mapstruct" name="mapstruct-jdk8" rev="1.2.0.Final">
 				<exclude module="mapstruct-common"/>
 			</dependency>
-			<dependency org="org.mapstruct" name="mapstruct-processor" rev="1.2.0.CR2">
+			<dependency org="org.mapstruct" name="mapstruct-processor" rev="1.2.0.Final">
 				<exclude module="google-collections"/>
 			</dependency>
             <dependency org="com.h2database" name="h2" rev="1.4.196" conf="runtime->default" />

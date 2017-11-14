@@ -169,7 +169,11 @@ export class EntitesService {
     }
 
     public saveCriteria(idEntity : string, criteria : Criterion[]) {
-        criteria.forEach(c => c.idFederation = idEntity);
+        criteria.forEach(c => {
+            c.idFederation = idEntity;
+            let numordre = 1;
+            c.criterionElements.forEach(ce => ce.numordre = numordre++);
+        });
 
         return this.http.post("api/entities/" + idEntity + "/criteria", criteria, {headers: this.headers})
             .toPromise()

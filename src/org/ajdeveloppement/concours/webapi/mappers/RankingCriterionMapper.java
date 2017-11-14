@@ -134,6 +134,7 @@ public abstract class RankingCriterionMapper {
 	@Mapping(target = "discriminantCriterionSet", source = "discriminantCriterionSets")
 	@Mapping(target = "distanceAndFacesSet", source = "idDistancesAndFacesSet")
 	@Mapping(target = "rule", ignore = true)
+	@Mapping(target = "id", ignore = true)
 	public abstract RankingCriterion toRankingCriterion(RankingCriterionView view);
 	
 	@AfterMapping

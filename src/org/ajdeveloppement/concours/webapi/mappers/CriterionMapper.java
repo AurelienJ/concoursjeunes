@@ -172,6 +172,7 @@ public abstract class CriterionMapper {
 		return criterionElement;
 	}*/
 	
+	@ObjectFactory
 	public CriterionElement resolve(CriterionElementView criterionElementView, @TargetType Class<CriterionElement> type) {
 		CriterionElement criterionElement = null;
 		

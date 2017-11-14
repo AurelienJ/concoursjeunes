@@ -6,7 +6,7 @@ import { IDistanceAndFaces } from './model/IDistanceAndFaces';
 import { IFaceDistanceAndFaces } from './model/IFaceDistanceAndFaces';
 import { IFace } from './model/IFace';
 
-import _ from 'lodash';
+import  * as _ from 'lodash';
 
 @Component({
 	selector: 'detail-distances-faces',
@@ -25,7 +25,7 @@ import _ from 'lodash';
             <div class="form-group">
                 <label for="faces-{{distanceAndFace.serie}}">Blason(s)</label>
                 <select select2 multiple="multiple" [value]="getSeletedFace(distanceAndFace)" (valueChange)="onValueChanged(distanceAndFace, $event)" placeholder="Blasons" id="faces-{{distanceAndFace.serie}}" name="faces-{{distanceAndFace.serie}}" class="form-control"  style="width: 100%;">
-                    <option *ngFor="let face of faces" [value]="face.id" [attr.selected]="isSelectedFace(distanceAndFace, face) ? 'selected' : null">{{face.name}}</option>
+                    <!--<option *ngFor="let face of faces" [value]="face.id" [attr.selected]="isSelectedFace(distanceAndFace, face) ? 'selected' : null">{{face.name}}</option>-->
                 </select>
             </div>
             <div class="form-group" *ngIf="distanceAndFace.serie == 1">
@@ -41,13 +41,19 @@ export class DetailDistancesAndFacesComponent implements OnInit, OnChanges, DoCh
     @Output()
     public distanceAndFacesSetChange : EventEmitter<IDistanceAndFacesSet> = new EventEmitter<IDistanceAndFacesSet>();
 
-    public faces : IFace[];
-    public selectedFaces : Map<IDistanceAndFaces, string[]>;
+    public selectedFaces : Map<IDistanceAndFaces, any[]>;
 
     private loading : boolean = false;
+    private facesPromise : Promise<{
+        id: string;
+        text: string;
+        selected: boolean;
+        data: IFace;
+    }[]>;
 
     constructor(private rulesService : RulesService) {
-        this.rulesService.getFaces().then(f => this.faces = f);
+        this.facesPromise = this.rulesService.getFaces()
+            .then(fs => fs.map(f => { return { id: f.id, text: f.name, selected : false, data: f}}));
     }
 
     ngOnInit() {
@@ -58,11 +64,15 @@ export class DetailDistancesAndFacesComponent implements OnInit, OnChanges, DoCh
         for (let propName in changes) {
             if(propName == "distanceAndFacesSet") {
                 this.loading = true;
-
-                this.selectedFaces = new Map<IDistanceAndFaces, string[]>();
-                this.distanceAndFacesSet.distancesAndFaces.forEach(element => {
-                    this.selectedFaces.set(element, element.facesDistanceAndFaces.map(f => f.face));
+                this.facesPromise.then(faces => {
+                    this.selectedFaces = new Map<IDistanceAndFaces, any[]>();
+                    this.distanceAndFacesSet.distancesAndFaces.forEach(element => {
+                        this.selectedFaces.set(element, faces.map(f => {
+                            return { id: f.id, text: f.text, selected: this.isSelectedFace(element, f.data), data: f.data}
+                        }));
+                    });
                 });
+                
             }
         }
     }
@@ -78,27 +88,32 @@ export class DetailDistancesAndFacesComponent implements OnInit, OnChanges, DoCh
         return _.some(distanceAndFaces.facesDistanceAndFaces, (fdf : IFaceDistanceAndFaces) => fdf.face == face.id);
     }
 
-    public getSeletedFace(distanceAndFaces : IDistanceAndFaces) : string[] {
-        return this.selectedFaces.get(distanceAndFaces);
+    public getSeletedFace(distanceAndFaces : IDistanceAndFaces) : any[] {
+        if(this.selectedFaces)
+            return this.selectedFaces.get(distanceAndFaces);
+        return null;
     }
 
-    public onValueChanged(distanceAndFaces : IDistanceAndFaces, value : string[]) {
+    public onValueChanged(distanceAndFaces : IDistanceAndFaces, value : any[]) {
         if(this.loading)
             return;
 
         //retire tous ceux qui ne sont plus selectionné
-        _.remove(distanceAndFaces.facesDistanceAndFaces, f => !_.includes(value, f.face));
+        _.remove(distanceAndFaces.facesDistanceAndFaces, f => !_.includes(value.map(v => v.id), f.face));
 
         //ajoute ceux qui doivent être ajouté
-        _.filter(value, v => !_.some(distanceAndFaces.facesDistanceAndFaces, f => f.face == v)).forEach(v => {
+        _.filter(value, v => !_.some(distanceAndFaces.facesDistanceAndFaces, f => f.face == v.id)).forEach(v => {
             let faceDistanceAndFaces : IFaceDistanceAndFaces = <IFaceDistanceAndFaces>{
-                face: v,
+                face: v.id,
                 principal: false
             };
             distanceAndFaces.facesDistanceAndFaces.push(faceDistanceAndFaces);
         });
 
-        this.selectedFaces.set(distanceAndFaces, value);
+        let faces = this.selectedFaces.get(distanceAndFaces);
+        faces.forEach(f => f.selected = false);
+        faces.filter(f => _.includes(value.map(v => v.id), f.id)).forEach(f => f.selected = true);
+        //this.selectedFaces.set(distanceAndFaces, value);
     }
 
     public dupliquer(distanceAndFaces : IDistanceAndFaces) {
@@ -107,7 +122,8 @@ export class DetailDistancesAndFacesComponent implements OnInit, OnChanges, DoCh
             this.distanceAndFacesSet.distancesAndFaces[i].facesDistanceAndFaces = distanceAndFaces.facesDistanceAndFaces;
             this.distanceAndFacesSet.distancesAndFaces[i].defaultFace = distanceAndFaces.defaultFace;
 
-            this.selectedFaces.set( this.distanceAndFacesSet.distancesAndFaces[i], this.selectedFaces.get(distanceAndFaces));
+            this.selectedFaces.set( this.distanceAndFacesSet.distancesAndFaces[i], this.selectedFaces.get(distanceAndFaces).slice(0).map(f => {
+                return { id: f.id, text: f.text, selected: f.selected, data: f.data }}));
         }
     }
 }

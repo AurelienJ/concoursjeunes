@@ -94,7 +94,10 @@ import org.ajdeveloppement.concours.data.Rule;
 import org.ajdeveloppement.concours.data.RulesCategory;
 import org.ajdeveloppement.concours.data.T_Rule;
 import org.ajdeveloppement.concours.data.T_RulesCategory;
+import org.ajdeveloppement.concours.data.T_Tie;
+import org.ajdeveloppement.concours.data.Tie;
 import org.ajdeveloppement.concours.webapi.views.RuleView;
+import org.ajdeveloppement.concours.webapi.views.TieView;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
@@ -142,6 +145,19 @@ public abstract class RulesMapper {
 		return rule;
 	}
 	
+	@ObjectFactory
+	public Tie getTie(TieView tieView) {
+		Tie tie = null;
+		
+		if(tieView.getIdDepartage() != null)
+			tie = T_Tie.getInstanceWithPrimaryKey(tieView.getIdDepartage());
+		
+		if(tie == null)
+			tie = new Tie();
+		
+		return tie;
+	}
+	
 	@BeforeMapping
 	public void clearCollections(RuleView ruleView, @MappingTarget Rule rule) {
 		rule.getTies().clear();
@@ -156,10 +172,14 @@ public abstract class RulesMapper {
 	 * @return
 	 */
 	@Mapping(target = "idRule", ignore = true)
-	@Mapping(target = "ties", source = "tie")
+	@Mapping(target = "ties", source = "ties")
 	@Mapping(target = "entite", source = "idEntite")
 	@Mapping(target = "category", source = "idCategory")
 	public abstract Rule toRule(RuleView ruleView);
+	
+	@Mapping(target = "idDepartage", ignore = true)
+	@Mapping(target = "reglement", ignore = true)
+	public abstract Tie toTie(TieView tieView);
 	
 	public Rule toRule(UUID idRule) {
 		if(idRule != null)

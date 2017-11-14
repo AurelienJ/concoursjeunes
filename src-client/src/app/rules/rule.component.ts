@@ -14,6 +14,8 @@ import { IRulesCategory } from './model/IRulesCategory';
 import { IRankingCriterion } from './model/IRankingCriterion';
 import { IFace } from './model/IFace';
 import { IDistanceAndFacesSet } from './model/IDistanceAndFacesSet';
+import { ITie } from './model/ITie';
+import { element } from 'protractor';
 
 @Component({
 	selector: 'rule',
@@ -89,7 +91,14 @@ import { IDistanceAndFacesSet } from './model/IDistanceAndFacesSet';
 
 								<div class="form-group">
 									<label for="ruleDepartages" class="col-md-3 col-lg-2 control-label">Critères de départage</label>
-									<div class="col-md-9 col-lg-10"><input type="text" placeholder="Critères de départage" id="ruleDepartages" name="ruleDepartages" class="form-control" [attr.disabled]="rule.officialReglement ? 'disabled' : null" [(ngModel)]="rule.departages"/></div>
+									<div class="col-md-9 col-lg-10">
+										<select select2 id="ruleDepartages" name="ruleDepartages" class="form-control input-sm"
+												multiple="multiple" style="width: 100%;"
+												[placeHolder]="'Critères de départage'"
+												[createTag]="true"
+												[(value)]="ties">
+										</select>
+									</div>
 								</div>
 							</section>
 
@@ -138,6 +147,31 @@ export class RuleComponent implements OnInit, DoCheck {
 	private idRule : string;
 	public rule : Rule = new Rule();
 
+	private _ties : any[];
+	public get ties() : any[] {
+		if(!this._ties) {
+			let i : number = 0;
+			this._ties = (this.rule.ties || [])
+				.map(t => {
+					return {
+						id: i++,
+						text: t.fieldName,
+						selected: true,
+						data: t
+					}
+				});
+		}
+
+		return this._ties;
+	}
+
+	public set ties(value : any[]) {
+		this._ties = value;
+		let i = 1;
+		this.rule.ties = value.map(v => v.data || <ITie>{ fieldName: v.text });
+		this.rule.ties.forEach((t : ITie)  => t.numOrdre = i++);
+	}
+
 	public activePane : string;
 	public error : string;
 
@@ -184,6 +218,7 @@ export class RuleComponent implements OnInit, DoCheck {
 				if(this.idRule) {
 					this.rulesService.getRule(this.idRule).then(r => {
 						this.rule = r;
+						this._ties = null;
 
 						this.entiteService.getEntity(r.idEntite).then(e => {
 							r.libelleEntite = e.nom;
@@ -220,6 +255,11 @@ export class RuleComponent implements OnInit, DoCheck {
 		// invalid character, prevent input
 		event.preventDefault();
 		}
+	}
+
+	addTie(tiesName : string[]) {
+		this.rule.ties = [];
+		tiesName.forEach(t => this.rule.ties.push(<ITie>{ fieldName: t}));
 	}
 
 	cancel() {

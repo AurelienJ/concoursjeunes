@@ -4,7 +4,7 @@
   "license": "CECILL-2.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -45,6 +45,7 @@
     "@types/node": "~6.0.60",
 
     "@types/jquery": "^3.2.16",
+    "@types/select2": "^4.0.41",
 
     "codelyzer": "~3.2.0",
     "jasmine-core": "~2.6.2",

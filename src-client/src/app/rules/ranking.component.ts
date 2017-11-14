@@ -20,7 +20,7 @@ import _ from 'lodash';
                     <p>Confirmer la suppression du critère <strong>"{{selectedRankingCriterionForDelete.name}}"</strong>?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline" (click)="deleteRankingCriterion(selectedRankingCriterionForDelete, true)">Supprimer</button>
+                    <button type="button" class="btn btn-outline" (click)="deleteRankingCriterion(selectedRankingCriterionForDelete, $event, true)">Supprimer</button>
                     <button type="button" class="btn btn-outline" data-dismiss="modal" (click)="selectedRankingCriterionForDelete=null">Fermer</button>
                 </div>
                 </div>
@@ -38,14 +38,16 @@ import _ from 'lodash';
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <ul class="list-group" id="criteria-collection">
-                            <li class="list-group-item clearfix" *ngFor="let rankingCriterion of rankingCriteria">
-                                <a href="javascript:void(0)" class="button-align" (click)="selectedRankingCriterion = rankingCriterion">{{rankingCriterion.name || '&lt;Nouveau critère de classement&gt;'}}</a>
-                                <a href="javascript:void(0)" role="button" class="pull-right btn btn-link" (click)="deleteRankingCriterion(rankingCriterion)"><i class="fa fa-trash" title="Supprimer"></i></a>
-                                <a href="javascript:void(0)" role="button" class="pull-right btn btn-link" [class.disabled]="rankingCriterion.numordre <= 1" (click)="upRankingCriterion(rankingCriterion)"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
-                                <a href="javascript:void(0)" role="button" class="pull-right btn btn-link" [class.disabled]="rankingCriterion.numordre >= rankingCriteria.length" (click)="downRankingCriterion(rankingCriterion)"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
-                            </li>
-                        </ul>
+                        <div class="list-group" id="criteria-collection">
+                            <a *ngFor="let rankingCriterion of rankingCriteria" href="javascript:void(0)" class="list-group-item clearfix" 
+                                    [class.active]="selectedRankingCriterion == rankingCriterion"
+                                    (click)="selectedRankingCriterion = rankingCriterion">
+                                <span class="button-align">{{rankingCriterion.name || '&lt;Nouveau critère de classement&gt;'}}</span>
+                                <a href="javascript:void(0)" role="button" class="pull-right btn btn-link" (click)="deleteRankingCriterion(rankingCriterion, $event)"><i class="fa fa-trash" title="Supprimer"></i></a>
+                                <a href="javascript:void(0)" role="button" class="pull-right btn btn-link" [class.disabled]="rankingCriterion.numordre <= 1" (click)="upRankingCriterion(rankingCriterion, $event)"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
+                                <a href="javascript:void(0)" role="button" class="pull-right btn btn-link" [class.disabled]="rankingCriterion.numordre >= rankingCriteria.length" (click)="downRankingCriterion(rankingCriterion, $event)"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -59,7 +61,11 @@ import _ from 'lodash';
 		}`,
         `:host #confirmDeleteRankingCriterionItemModal {
 			display: block;
-		}`
+        }`,
+        `:host #criteria-collection {
+            max-height: calc(100vh - 400px);
+            overflow: auto;
+        }`
     ]
 })
 export class RankingComponent implements OnInit {
@@ -107,7 +113,10 @@ export class RankingComponent implements OnInit {
 		this.rankingCriteria.push(this.selectedRankingCriterion);
 	}
 
-	deleteRankingCriterion(rankingCriterion : IRankingCriterion, confirmation : boolean = false) {
+	deleteRankingCriterion(rankingCriterion : IRankingCriterion, $event : MouseEvent, confirmation : boolean = false) {
+        if($event)
+            $event.stopPropagation();
+            
 		if(!confirmation)
 			this.selectedRankingCriterionForDelete = rankingCriterion;
 		else {
@@ -116,7 +125,10 @@ export class RankingComponent implements OnInit {
 		}
 	}
 
-	upRankingCriterion(rankingCriterion : IRankingCriterion) {
+	upRankingCriterion(rankingCriterion : IRankingCriterion, $event : MouseEvent) {
+        if($event)
+            $event.stopPropagation();
+
 		if(rankingCriterion.ordre >= 1) {
 			//recupere l'element n-1
 			let previousCriterion = _.find(this.rankingCriteria, rc => rc.ordre == rankingCriterion.ordre - 1);
@@ -129,7 +141,10 @@ export class RankingComponent implements OnInit {
 		}
 	}
 
-	downRankingCriterion(rankingCriterion : IRankingCriterion) {
+	downRankingCriterion(rankingCriterion : IRankingCriterion, $event : MouseEvent) {
+        if($event)
+            $event.stopPropagation();
+
 		if(rankingCriterion.ordre < this.rankingCriteria.length-1) {
 			//recupere l'element n+1
             let nextElement = _.find(this.rankingCriteria, rc => rc.ordre == rankingCriterion.ordre + 1);

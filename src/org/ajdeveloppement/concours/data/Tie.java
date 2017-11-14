@@ -135,8 +135,8 @@ public class Tie implements SqlObjectPersistence {
 		
 	}
 	
-	/**
-	 * @return idDepartage
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.TieView#getIdDepartage()
 	 */
 	public UUID getIdDepartage() {
 		return idDepartage;
@@ -163,8 +163,8 @@ public class Tie implements SqlObjectPersistence {
 		this.reglement = reglement;
 	}
 
-	/**
-	 * @return fieldName
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.TieView#getFieldName()
 	 */
 	public String getFieldName() {
 		return fieldName;
@@ -177,8 +177,8 @@ public class Tie implements SqlObjectPersistence {
 		this.fieldName = fieldName;
 	}
 
-	/**
-	 * @return numOrdre
+	/* (non-Javadoc)
+	 * @see org.ajdeveloppement.concours.data.TieView#getNumOrdre()
 	 */
 	public int getNumOrdre() {
 		return numOrdre;

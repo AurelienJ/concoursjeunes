@@ -153,7 +153,7 @@ public abstract class DiscriminantCriterionSetMapper {
 		model.getElements().clear();
 	}
 	
-	@Mapping(target = "idDiscriminantCriterionSet", source = "id")
+	@Mapping(target = "idDiscriminantCriterionSet", ignore = true)
 	@Mapping(target = "rankingCriterion", ignore = true)
 	@Mapping(target = "elements", ignore = true)
 	public abstract DiscriminantCriterionSet toDiscriminantCriterionSet(DiscriminantCriterionSetView view);

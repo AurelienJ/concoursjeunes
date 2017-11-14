@@ -1,5 +1,6 @@
 import { IRankingCriterion } from './IRankingCriterion';
 import { IDistanceAndFacesSet } from './IDistanceAndFacesSet';
+import { ITie } from './ITie';
 
 export class Rule {
 	public id : string;
@@ -19,7 +20,7 @@ export class Rule {
 	public removable : boolean = true;
 	public libelleEntite : string;
 	public libelleCategorie : string;
-	public departages : string;
+	public ties : ITie[];
 	public rankingCriteria : IRankingCriterion[] = [];
 	public distancesAndFaces : IDistanceAndFacesSet[] = [];
 }

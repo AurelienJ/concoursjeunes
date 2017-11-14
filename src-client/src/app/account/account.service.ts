@@ -33,7 +33,6 @@ export class AccountService {
     }
 
     public getAccount() : Observable<IAccount> {
-        //this.account = this.http.get("api/account", {headers: this.headers}).toPromise().then(r => r.json());
         return this.account;
     }
 

@@ -58,17 +58,17 @@ import { ICriterionElement } from './ICriterionElement';
 })
 export class CriterionComponent implements OnInit {
 	@Input()
-	criterion : Criterion;
+	public criterion : Criterion;
 
-	selectedElement : ICriterionElement;
-	selectedElementForDelete : ICriterionElement;
+	public selectedElement : ICriterionElement;
+	public selectedElementForDelete : ICriterionElement;
 
 	constructor() {
 	}
 
 	ngOnInit() { }
 
-	addElement() {
+	public addElement() {
 		this.selectedElement = <ICriterionElement>{
 			code: 'N',
 			libelle: 'nouveau',
@@ -78,7 +78,7 @@ export class CriterionComponent implements OnInit {
 		/**/
 	}
 
-	saveSelectedElement() {
+	public saveSelectedElement() {
 		if(!this.criterion.criterionElements)
 			this.criterion.criterionElements = [];
 
@@ -87,24 +87,24 @@ export class CriterionComponent implements OnInit {
 		this.selectedElement = undefined;
 	}
 
-	cancelSelectedElement() {
+	public cancelSelectedElement() {
 		this.selectedElement = undefined;
 	}
 
-	cancelSelectedForDeleteElement() {
+	public cancelSelectedForDeleteElement() {
 		this.selectedElementForDelete = undefined;
 	}
 
-	deleteElement(element : ICriterionElement) {
+	public deleteElement(element : ICriterionElement) {
 		this.selectedElementForDelete = element;
 	}
 
-	deleteSelectedForDeleteElement() {
+	public deleteSelectedForDeleteElement() {
 		this.criterion.criterionElements.splice(this.selectedElementForDelete.numordre-1, 1);
 		this.selectedElementForDelete = undefined;
 	}
 
-	upElement(element : ICriterionElement) {
+	public upElement(element : ICriterionElement) {
 		if(element.numordre > 1) {
 			//recupere l'element n-1
 			let previousElement = this.criterion.criterionElements[element.numordre-2];
@@ -118,7 +118,7 @@ export class CriterionComponent implements OnInit {
 		}
 	}
 
-	downElement(element : ICriterionElement) {
+	public downElement(element : ICriterionElement) {
 		if(element.numordre < this.criterion.criterionElements.length) {
 			//recupere l'element n+1
 			let nextElement = this.criterion.criterionElements[element.numordre];

@@ -12,6 +12,10 @@ a.disabled {
     overflow-y: auto;
 }
 
+.active>.btn-link {
+	color: white;
+}
+
 .bs-datepicker {
 	z-index: 1000;
 }

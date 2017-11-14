@@ -276,11 +276,11 @@ export class EntitesComponent implements OnInit {
         });*/
     }
 
-    public onValueChanged(value : string[]) {
+    public onValueChanged(value : any[]) {
         if(!this.dataLoading) {
-            this.displayTypes = value.map((v : string) => parseInt(v)); //.val().map(v => parseInt(v));
+            this.displayTypes = value.map(v  => parseInt(v.id)); //.val().map(v => parseInt(v));
             this.entites.filter(this.displayTypes, this.childOf, this.entites.term);
-            }
+        }
     }
 
     public onChangeTypeFilter() {

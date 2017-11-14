@@ -2,12 +2,13 @@ import { Directive, ElementRef, Input, Output, HostListener, Renderer, EventEmit
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import _ from "lodash";
+import * as _ from "lodash";
 
 @Directive({ selector: '[select2]' })
 export class Select2Directive implements OnInit, OnChanges, AfterViewInit {
 
 	private element : any;
+	private isInit : boolean;
 
 	@Input()
 	public placeHolder : string;
@@ -18,7 +19,13 @@ export class Select2Directive implements OnInit, OnChanges, AfterViewInit {
 	};
 
 	@Input()
+	public createTag : boolean;
+
+	@Input()
 	public  value : any;
+
+	@Output()
+	private valueChange : EventEmitter<any> = new EventEmitter<any>();
 
 	@Output()
 	private onSelect : EventEmitter<Event> = new EventEmitter<Event>();
@@ -27,31 +34,20 @@ export class Select2Directive implements OnInit, OnChanges, AfterViewInit {
 	private onUnselect : EventEmitter<Event> = new EventEmitter<Event>();
 
 	@Output()
-	private valueChange : EventEmitter<any> = new EventEmitter<any>();
-	
-	// @HostListener('select2:select')
-	// private select(e: Event) {
-	// 	this.value.next(this.element.val());
-	// 	this.onSelect.emit(e);
-	// }
-
-	// @HostListener('select2:unselect')
-	// private unselect(e: Event) {
-	// 	this.value.next(this.element.val());
-	// 	this.onUnselect.emit(e);
-	// }
+	public onTagCreated : EventEmitter<string> = new EventEmitter<string>();
 
     constructor(el: ElementRef, renderer: Renderer) {
     	let that = this;
 
         this.element = jQuery(el.nativeElement);
 
-        this.element.on('select2:select', function (e: Event) {
-			that.valueChange.next(that.element.val());
+        this.element.on('select2:select', (e: Event) => {
+			let data = that.element.select2('data');
+			that.valueChange.next(data);
 			that.onSelect.emit(e);
         });
-        this.element.on('select2:unselect', function (e: Event) {
-			that.valueChange.next(that.element.val());
+        this.element.on('select2:unselect', (e: Event) => {
+			that.valueChange.next(that.element.select2('data'));
 			that.onUnselect.emit(e);
         });
     }
@@ -69,23 +65,29 @@ export class Select2Directive implements OnInit, OnChanges, AfterViewInit {
 			if(propName == 'value') {
 				let chng = changes[propName];
 				
-				if(!_.isEqual(chng.currentValue, chng.previousValue)) {
-					this.initSelect2();
-					
-					this.element.val(chng.currentValue);
-					this.element.trigger("change");
+				if(this.isInit) {
+					if(!_.isEqual(chng.currentValue, chng.previousValue)) {
+						this.element.select2('destroy');
+						this.element.html("");
+						this.initSelect2();
+
+						this.element.trigger("change");
+					}
 				}
 			}
 		}
 	}
 
 	private initSelect2() {
-		if(this.element.data('select2'))
-			this.element.select2("destroy");
+		let that = this;
 
 		this.element.select2({
 			placeholder: this.placeHolder,
-			allowClear: true
+			allowClear: true,
+			tags: this.createTag,
+			data : that.value
 		});
+
+		this.isInit = true;
 	}
 }
