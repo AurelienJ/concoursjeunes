@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core'
-import { BrowserModule } from '@angular/platform-browser'
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { BsDatepickerModule, defineLocale, TooltipModule } from 'ngx-bootstrap';
+import { BsDatepickerModule, defineLocale, TooltipModule, ModalModule, PopoverModule, TabsModule } from 'ngx-bootstrap';
 
 import { GeneralModule } from './general/general.module';
 import { ReferencesModule } from './references/references.module';
@@ -18,9 +18,10 @@ import { AppComponent } from './app.component';
 import { AppRoutes } from './app.routes';
 
 @NgModule({
-    imports:        [ BrowserModule, 
+    imports:        [ BrowserModule,
         RouterModule.forRoot(AppRoutes, { useHash: true }),
         BsDatepickerModule.forRoot(), TooltipModule.forRoot(),
+        ModalModule.forRoot(), PopoverModule.forRoot(), TabsModule.forRoot(),
         GeneralModule, ReferencesModule, AccountModule, ParametersModule, CompetitionModule, EntitesModule, PersonsModule, RulesModule],
     declarations:   [ AppComponent ],
     bootstrap:      [ AppComponent],
@@ -28,7 +29,7 @@ import { AppRoutes } from './app.routes';
 })
 export class AppModule {
     constructor() {
-        var fr = {
+        const fr = {
             abbr: 'fr',
             months: 'janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre'.split('_'),
             monthsShort: 'janv._févr._mars_avr._mai_juin_juil._août_sept._oct._nov._déc.'.split('_'),
@@ -69,7 +70,7 @@ export class AppModule {
                 yy: '%d ans'
             },
             dayOfMonthOrdinalParse: /\d{1,2}(er|)/,
-            ordinal: function (num : number, period : string) {
+            ordinal: function (num: number, period: string) {
                 switch (period) {
                     // TODO: Return 'e' when day of month > 1. Move this case inside
                     // block for masculine words below.

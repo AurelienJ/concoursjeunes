@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angu
 import { Target } from "./model/Target";
 import { IConcurrent } from './model/IConcurrent';
 
-import _ from "lodash";
+import * as _ from "lodash";
 
 
 @Component({
@@ -24,7 +24,7 @@ import _ from "lodash";
 				</div>
 				<div class="target-competitor" >
 					<div *ngIf="competitor">
-						<strong ><i aria-hidden="true" class="fa fa-mars" [ngClass]="{'fa-mars': competitor.archer.sexe == 0, 'fa-venus': competitor.archer.sexe == 1}"></i> 
+						<strong ><i aria-hidden="true" class="fa fa-mars" [ngClass]="{'fa-mars': competitor.archer.sexe == 0, 'fa-venus': competitor.archer.sexe == 1}"></i>
 					### {{competitor.archer.name}} {{competitor.archer.firstName}}</strong>
 					<span class="badge">SHCL</span></div>
 				</div>
@@ -40,11 +40,11 @@ import _ from "lodash";
 		:host .target-competitor {
 			display: inline-block;
 		}
-		
+
 		:host .target .box-body {
 			padding: 0px;
 		}
-		
+
 		:host .target .list-group {
 			margin-bottom: 0px;
 		}`
@@ -66,11 +66,11 @@ export class TargetComponent implements OnInit, OnDestroy {
 	}
 
 	constructor() {
-		
+
 	}
 
 	ngOnInit() {
-		
+
 	}
 
 	ngOnDestroy() {

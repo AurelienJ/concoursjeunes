@@ -1,14 +1,23 @@
-import { Component, Input, Output, EventEmitter, OnInit, DoCheck, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  DoCheck,
+  OnChanges,
+  SimpleChanges
+} from "@angular/core";
 
-import { IEntite } from '../entites/ientite';
-import { IRankingCriterion } from './model/IRankingCriterion';
-import { IDistanceAndFacesSet } from './model/IDistanceAndFacesSet';
+import { IEntite } from "../entites/ientite";
+import { IRankingCriterion } from "./model/IRankingCriterion";
+import { IDistanceAndFacesSet } from "./model/IDistanceAndFacesSet";
 
-import _ from 'lodash';
+import * as _ from "lodash";
 
 @Component({
-	selector: 'ranking',
-    template: `<div class="modal modal-primary" id="confirmDeleteRankingCriterionItemModal" *ngIf="selectedRankingCriterionForDelete">
+  selector: "ranking",
+  template: `<div class="modal modal-primary" id="confirmDeleteRankingCriterionItemModal" *ngIf="selectedRankingCriterionForDelete">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -39,7 +48,7 @@ import _ from 'lodash';
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="list-group" id="criteria-collection">
-                            <a *ngFor="let rankingCriterion of rankingCriteria" href="javascript:void(0)" class="list-group-item clearfix" 
+                            <a *ngFor="let rankingCriterion of rankingCriteria" href="javascript:void(0)" class="list-group-item clearfix"
                                     [class.active]="selectedRankingCriterion == rankingCriterion"
                                     (click)="selectedRankingCriterion = rankingCriterion">
                                 <span class="button-align">{{rankingCriterion.name || '&lt;Nouveau critère de classement&gt;'}}</span>
@@ -55,105 +64,120 @@ import _ from 'lodash';
                 <detail-ranking [rankingCriterion]="selectedRankingCriterion" [distanceAndFacesSets]="distancesAndFacesSet" [idFederation]="idFederation"></detail-ranking>
             </div>
         </div>`,
-    styles: [
-        `:host .button-separator {
+  styles: [
+    `:host .button-separator {
 			margin-right: 10px;
 		}`,
-        `:host #confirmDeleteRankingCriterionItemModal {
+    `:host #confirmDeleteRankingCriterionItemModal {
 			display: block;
         }`,
-        `:host #criteria-collection {
+    `:host #criteria-collection {
             max-height: calc(100vh - 400px);
             overflow: auto;
         }`
-    ]
+  ]
 })
-export class RankingComponent implements OnInit {
-    @Input()
-    public rankingCriteria : IRankingCriterion[];
+export class RankingComponent implements OnInit, OnChanges {
+  @Input() public rankingCriteria: IRankingCriterion[];
 
-    @Input()
-    public distancesAndFacesSet : IDistanceAndFacesSet[];
+  @Input() public distancesAndFacesSet: IDistanceAndFacesSet[];
 
-    @Input()
-    public idFederation : string;
+  @Input() public idFederation: string;
 
-    @Output()
-    public rankingCriteriaChange : EventEmitter<IRankingCriterion[]> = new EventEmitter<IRankingCriterion[]>();
+  @Output()
+  public rankingCriteriaChange: EventEmitter<IRankingCriterion[]> = new EventEmitter<IRankingCriterion[]>();
 
-    public selectedRankingCriterion : IRankingCriterion;
-    public selectedRankingCriterionForDelete : IRankingCriterion;
+  public selectedRankingCriterion: IRankingCriterion;
+  public selectedRankingCriterionForDelete: IRankingCriterion;
 
-    constructor() {
-        
+  constructor() {}
+
+  ngOnInit() {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    for (const propName in changes) {
+      if (propName == "rankingCriteria") {
+        const chng = changes[propName];
+
+        this.rankingCriteria = _.orderBy(
+          this.rankingCriteria,
+          ["ordre"],
+          ["asc"]
+        );
+        let ordre = 0;
+        this.rankingCriteria.forEach(rc => (rc.ordre = ordre++));
+
+        this.rankingCriteriaChange.emit(this.rankingCriteria);
+      }
     }
+  }
 
-    ngOnInit() {
+  addRankingCriterion() {
+    this.selectedRankingCriterion = <IRankingCriterion>{
+      ordre: this.rankingCriteria.length + 1
+    };
+    this.rankingCriteria.push(this.selectedRankingCriterion);
+  }
 
+  deleteRankingCriterion(
+    rankingCriterion: IRankingCriterion,
+    $event: MouseEvent,
+    confirmation: boolean = false
+  ) {
+    if ($event) $event.stopPropagation();
+
+    if (!confirmation)
+      this.selectedRankingCriterionForDelete = rankingCriterion;
+    else {
+      _.remove(this.rankingCriteria, rc => rc == rankingCriterion);
+      this.selectedRankingCriterionForDelete = undefined;
     }
+  }
 
-    ngOnChanges(changes : SimpleChanges) {
-		for (let propName in changes) {
-			if(propName == 'rankingCriteria') {
-				let chng = changes[propName];
-				
-                this.rankingCriteria = _.orderBy(this.rankingCriteria, ['ordre'], ['asc']);
-                let ordre : number = 0;
-                this.rankingCriteria.forEach(rc => rc.ordre = ordre++);
+  upRankingCriterion(rankingCriterion: IRankingCriterion, $event: MouseEvent) {
+    if ($event) $event.stopPropagation();
 
-                this.rankingCriteriaChange.emit(this.rankingCriteria);
-            }
-		}
+    if (rankingCriterion.ordre >= 1) {
+      // recupere l'element n-1
+      const previousCriterion = _.find(
+        this.rankingCriteria,
+        rc => rc.ordre == rankingCriterion.ordre - 1
+      );
+      previousCriterion.ordre = rankingCriterion.ordre;
+      rankingCriterion.ordre--;
+
+      this.rankingCriteria = _.orderBy(
+        this.rankingCriteria,
+        ["ordre"],
+        ["asc"]
+      );
+
+      this.rankingCriteriaChange.emit(this.rankingCriteria);
     }
+  }
 
-    addRankingCriterion() {
-		this.selectedRankingCriterion = <IRankingCriterion>{
-			ordre: this.rankingCriteria.length+1
-		};
-		this.rankingCriteria.push(this.selectedRankingCriterion);
-	}
+  downRankingCriterion(
+    rankingCriterion: IRankingCriterion,
+    $event: MouseEvent
+  ) {
+    if ($event) $event.stopPropagation();
 
-	deleteRankingCriterion(rankingCriterion : IRankingCriterion, $event : MouseEvent, confirmation : boolean = false) {
-        if($event)
-            $event.stopPropagation();
-            
-		if(!confirmation)
-			this.selectedRankingCriterionForDelete = rankingCriterion;
-		else {
-            _.remove(this.rankingCriteria, rc => rc == rankingCriterion);
-			this.selectedRankingCriterionForDelete = undefined;
-		}
-	}
+    if (rankingCriterion.ordre < this.rankingCriteria.length - 1) {
+      // recupere l'element n+1
+      const nextElement = _.find(
+        this.rankingCriteria,
+        rc => rc.ordre == rankingCriterion.ordre + 1
+      );
+      nextElement.ordre = rankingCriterion.ordre;
+      rankingCriterion.ordre++;
 
-	upRankingCriterion(rankingCriterion : IRankingCriterion, $event : MouseEvent) {
-        if($event)
-            $event.stopPropagation();
+      this.rankingCriteria = _.orderBy(
+        this.rankingCriteria,
+        ["ordre"],
+        ["asc"]
+      );
 
-		if(rankingCriterion.ordre >= 1) {
-			//recupere l'element n-1
-			let previousCriterion = _.find(this.rankingCriteria, rc => rc.ordre == rankingCriterion.ordre - 1);
-            previousCriterion.ordre = rankingCriterion.ordre;
-            rankingCriterion.ordre--;
-
-            this.rankingCriteria = _.orderBy(this.rankingCriteria, ['ordre'], ['asc']);
-
-            this.rankingCriteriaChange.emit(this.rankingCriteria);
-		}
-	}
-
-	downRankingCriterion(rankingCriterion : IRankingCriterion, $event : MouseEvent) {
-        if($event)
-            $event.stopPropagation();
-
-		if(rankingCriterion.ordre < this.rankingCriteria.length-1) {
-			//recupere l'element n+1
-            let nextElement = _.find(this.rankingCriteria, rc => rc.ordre == rankingCriterion.ordre + 1);
-            nextElement.ordre = rankingCriterion.ordre;
-            rankingCriterion.ordre++;
-            
-            this.rankingCriteria = _.orderBy(this.rankingCriteria, ['ordre'], ['asc']);
-
-            this.rankingCriteriaChange.emit(this.rankingCriteria);
-		}
-	}
+      this.rankingCriteriaChange.emit(this.rankingCriteria);
+    }
+  }
 }

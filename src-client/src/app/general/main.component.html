@@ -84,7 +84,7 @@
 			</div>
 		</form>
 
-		<ul class="sidebar-menu tree" data-widget="tree">
+		<ul class="sidebar-menu tree" data-widget="tree" slimscroll>
 			<li class="header">Gestion</li>
 			<li [routerLinkActive]="['active']"><a [routerLink]="['/dashboard']" (click)="clearNavigationPaths()"><i class="fa fa-dashboard"></i><span>Tableau de bord</span></a></li>
 			<li [routerLinkActive]="['active']"><a [routerLink]="['/competitions']" (click)="clearNavigationPaths()"><i class="fa fa-asterisk"></i><span>Compétitions</span></a></li>
@@ -101,7 +101,7 @@
 	</section>
 </aside>
 
-<div class="content-wrapper" slimscroll>
+<div class="content-wrapper">
 	<router-outlet></router-outlet>
 </div>
 

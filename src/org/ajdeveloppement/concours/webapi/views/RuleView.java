@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.ajdeveloppement.concours.data.Rule.TypeReglement;
-import org.ajdeveloppement.concours.data.Tie;
 import org.ajdeveloppement.concours.webapi.mappers.RulesMapper;
 import org.ajdeveloppement.webserver.viewbinder.annotations.CollectionType;
 import org.ajdeveloppement.webserver.viewbinder.annotations.Implementation;
@@ -103,8 +102,8 @@ public interface RuleView {
 	 * 
 	 * @return la liste des départage
 	 */
-	@CollectionType(Tie.class)
-	List<Tie> getTie();
+	@CollectionType(TieView.class)
+	List<TieView> getTies();
 
 	/**
 	 * Permet d'identifié le règlement comme officiel ou non.<br>

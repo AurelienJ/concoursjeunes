@@ -1,9 +1,9 @@
-import {Component, Input, OnChanges} from "@angular/core";
-import {DataTable} from "./DataTable";
-import _ from "lodash";
+import {Component, Input, OnChanges} from '@angular/core';
+import {DataTable} from './DataTable';
+import * as _ from 'lodash';
 
 @Component({
-    selector: "mfBootstrapPaginator",
+    selector: 'mfBootstrapPaginator',
     template: `
     <mfPaginator #p [mfTable]="mfTable">
         <ul class="pagination" *ngIf="p.dataLength > p.rowsOnPage">

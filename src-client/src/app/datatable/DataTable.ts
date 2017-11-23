@@ -1,10 +1,10 @@
-import {Directive, Input, EventEmitter, SimpleChange, OnChanges, DoCheck} from "@angular/core";
-import _ from 'lodash';
+import {Directive, Input, EventEmitter, SimpleChange, OnChanges, DoCheck} from '@angular/core';
+import * as _ from 'lodash';
 
 
 export interface SortEvent {
     sortBy: string|string[];
-    sortOrder: string
+    sortOrder: string;
 }
 
 export interface PageEvent {
@@ -33,7 +33,7 @@ export interface InputData {
 
     /**
      * get part of data between start and end offset. Assume data index start at 0 number offset
-     * 
+     *
      * @param {number} start - the start offset of data. must be null or >= 0 and < length. If null start at 0 offset
      * @param {number} end - the end offset of data. must be null or >= start and < length. If null end at length -1 offset
      * @return {any[]} The part of array between start and end offset
@@ -123,7 +123,7 @@ export class DataTable implements OnChanges, DoCheck {
 
     /**
      * Get sort creteria an order
-     * 
+     *
      * @return {SortEvent} The sort criteria
      */
     public getSort(): SortEvent {
@@ -132,7 +132,7 @@ export class DataTable implements OnChanges, DoCheck {
 
     /**
      * Define sort criteria and order
-     * 
+     *
      * @param {string|string[]} sortBy - property or list of property use to sort data
      * @param {string} sortOrder - Must be "asc" for ascending sort or "desc" for descending sort
      */
@@ -147,7 +147,7 @@ export class DataTable implements OnChanges, DoCheck {
 
     /**
      * Return active page data (current page number, nb rows on page, and page data)
-     * 
+     *
      * @return {PageEvent} - Page data
      */
     public getPage(): PageEvent {
@@ -156,7 +156,7 @@ export class DataTable implements OnChanges, DoCheck {
 
     /**
      * Define active page to display
-     * 
+     *
      * @param {number} activePage - the active page number
      * @param {number} rowsOnPage - number of rows display on this page
      */
@@ -223,7 +223,7 @@ export class DataTable implements OnChanges, DoCheck {
 
             this.mustRecalculateData = false;
         }
-        
+
         return promiseData;
     }
 
