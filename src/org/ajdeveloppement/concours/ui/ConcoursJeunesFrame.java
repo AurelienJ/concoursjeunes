@@ -428,6 +428,11 @@ public class ConcoursJeunesFrame extends JFrame implements ActionListener, Hyper
 				Collections.sort(fiches, new Comparator<MetaDataFicheConcours>() {
 					@Override
 					public int compare(MetaDataFicheConcours o1, MetaDataFicheConcours o2) {
+						if(o1.getDateConcours() == null)
+							o1.setDateConcours(new Date());
+						if(o2.getDateConcours() == null)
+							o2.setDateConcours(new Date());
+						
 						return o2.getDateConcours().compareTo(o1.getDateConcours());
 					}
 				});

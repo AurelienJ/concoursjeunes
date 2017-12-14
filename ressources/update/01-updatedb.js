@@ -61,6 +61,10 @@ if(dbVersion == 0) {
 		
 		updateReglements();
 	}
+	
+	if(dbVersion < 34) {
+		sql.executeUpdate("UPDATE FEDERATION SET NUMFEDERATION=(SELECT MAX(NUMFEDERATION)+1 FROM FEDERATION) WHERE NUMFEDERATION=0");
+	}
 }
 
 if(dbVersion != org.concoursjeunes.ApplicationCore.DB_RELEASE_REQUIRED) {

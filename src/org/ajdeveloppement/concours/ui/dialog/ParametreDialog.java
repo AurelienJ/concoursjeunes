@@ -98,6 +98,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.util.Collections;
+import java.util.Date;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -556,7 +557,11 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 			parametre.setIntituleConcours(jtfIntituleConcours.getText());
 			parametre.setLieuConcours(jtfLieuConcours.getText());
 			parametre.setDateDebutConcours(jtfDateDebutConcours.getDate());
+			if(parametre.getDateDebutConcours() == null)
+				parametre.setDateDebutConcours(new Date());
 			parametre.setDateFinConcours(jtfDateFinConcours.getDate());
+			if(parametre.getDateFinConcours() == null)
+				parametre.setDateFinConcours(new Date());
 			parametre.setNiveauChampionnat((CompetitionLevel)jcbNiveauChampionnat.getSelectedItem());
 			parametre.getJudges().clear();
 			for (Object arbitre : jlArbitres.getAllElements()) {

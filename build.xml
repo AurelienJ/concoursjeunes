@@ -143,7 +143,7 @@
 			<fileset dir="packager" >
 				<include name="*.txt" />
 			</fileset>
-			<fileset dir="packager/macosx/ConcoursJeunes.app/Contents/Resources/Java">
+			<fileset dir="packager/macosx/ConcoursJeunes.app/Contents/Java">
 				<include name="**" />
 			</fileset>
 		</copy>
