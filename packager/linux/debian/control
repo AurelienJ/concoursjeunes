@@ -7,7 +7,7 @@ Standards-Version: 3.8.4
 
 Package: concoursjeunes
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, sun-java6-jre | openjdk-6-jre (>= 6b18) | openjdk-7-jre
+Depends: ${shlibs:Depends}, ${misc:Depends}, sun-java6-jre | openjdk-6-jre (>= 6b18) | openjdk-7-jre | openjdk-8-jre
 Description: Logiciel de Gestion des Concours Jeunes de Tir à l'Arc
  .
  Auteur Aurélien Jeoffray
@@ -21,7 +21,7 @@ Description: Logiciel de Gestion des Concours Jeunes de Tir à l'Arc
  http://www.java.com.
  .
  ConcoursJeunes fonctionne sous toutes les plateformes
- compatibles jse 6.0 tel que MS Windows, GNU/Linux, Solaris.
+ compatibles jse 6.0 ou supérieur tel que MS Windows, GNU/Linux, Solaris.
  .
  ConcoursJeunes est distribué sous double licences Open Source
  CeCILL et GPL

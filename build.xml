@@ -413,6 +413,7 @@
 
 	<target name="makemacbundle">
 		<defaultexcludes remove="**/.DS_Store"/>
+		<mkdir dir="${projet.pack.dir}/macosx" />
 		
 		<bundleapp outputdirectory="${projet.pack.dir}/macosx"
 				            name="ConcoursJeunes"
