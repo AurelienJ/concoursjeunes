@@ -417,11 +417,14 @@ public class Reglement implements ObjectPersistence {
 		List<Criterion> criteria = new ArrayList<Criterion>();
 		
 		for(Criterion criterion : listCriteria) {
-			if(criterion.getCriterionElements() != null && criterion.getCriterionElements().size() > 0)
+			if(criterion.getCriterionElements() == null || criterion.getCriterionElements().size() == 0)
 				criteria.add(criterion);
 		}
 		
-		return criteria;
+		if(criteria.size() > 0)
+			listCriteria.removeAll(criteria);
+		
+		return listCriteria;
 	}
 
 	/**
