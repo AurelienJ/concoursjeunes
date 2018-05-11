@@ -53,13 +53,13 @@ import * as _ from "lodash";
 
 export class TargetComponent implements OnInit, OnDestroy {
 	@Input()
-	public target : Target;
+	public target: Target;
 
 	@Input()
-	public competitorToPositionning : IConcurrent;
+	public competitorToPositionning: IConcurrent;
 
 	@Output()
-	public competitorToPositionningChange : EventEmitter<IConcurrent> = new EventEmitter<IConcurrent>();
+	public competitorToPositionningChange: EventEmitter<IConcurrent> = new EventEmitter<IConcurrent>();
 
 	public get distances() {
 		return _.uniq(this.target.distances).map(d => d + "m").join(" / ");
@@ -76,7 +76,7 @@ export class TargetComponent implements OnInit, OnDestroy {
 	ngOnDestroy() {
 	}
 
-	public affectCompetitorToPositionning(i : number, event : MouseEvent) : void {
+	public affectCompetitorToPositionning(i: number, event: MouseEvent): void {
 		this.competitorToPositionning.target = this.target.numero;
 		this.competitorToPositionning.position = i;
 

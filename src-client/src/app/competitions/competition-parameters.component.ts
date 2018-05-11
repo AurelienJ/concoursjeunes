@@ -35,11 +35,10 @@ import { ICompetition } from './model/ICompetition';
 			<label class="col-sm-2 control-label">Date</label>
 			<div class="col-sm-10">
 			<p class="form-control-static">
-				<a href="javascript:void(0)" (click)="drp.toggle()">
+				<a href="javascript:void(0)" bsDaterangepicker #drp="bsDaterangepicker" [bsConfig]="{ containerClass: 'theme-dark-blue', locale: 'fr'}" [(bsValue)]="competition.dates" placement="bottom">
 				<span *ngIf="competition.dates">Du {{competition.dates && competition.dates[0] | date:'dd/MM/yyyy'}} au {{competition.dates && competition.dates[1] | date:'dd/MM/yyyy'}}</span>
 				<span *ngIf="!competition.dates">Séléctionner les dates de la compétition</span>
 				</a>
-				<bs-daterangepicker #drp [bsConfig]="{ containerClass: 'theme-dark-blue', locale: 'fr'}" [(bsValue)]="competition.dates" placement="bottom" style="display: block"></bs-daterangepicker>
 			</p>
 			</div>
 		</div>
