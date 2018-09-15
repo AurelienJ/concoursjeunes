@@ -119,6 +119,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.bind.JAXBException;
@@ -622,51 +623,55 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 		jbAnnuler.setEnabled(!workAppConfiguration.isFirstboot() && workConfiguration.getFederation() != null);
 	}
 
-	private void completeGeneralPanel(Configuration configuration) {
-		String[] libelleLangues = Configuration.getAvailableLanguages();
-
-		jtfNomClub.setText(configuration.getClub().getNom());
-		((AutoCompleteDocument) jtfAgrClub.getDocument()).setText(configuration.getClub().getAgrement());
-		//jtfIntConc.setText(configuration.getIntituleConcours());
-
-		jcbProfil.removeActionListener(this);
-		jcbProfil.removeAllItems();
-		for (String profile : ApplicationCore.userRessources.listAvailableConfigurations())
-			jcbProfil.addItem(profile);
-		jcbProfil.addItem("---"); //$NON-NLS-1$
-		jcbProfil.addItem(localisation.getResourceString("configuration.ecran.general.addprofile")); //$NON-NLS-1$
-
-		jcbProfil.setSelectedItem(configuration.getCurProfil());
-		jcbProfil.addActionListener(this);
+	private void completeGeneralPanel(final Configuration configuration) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				String[] libelleLangues = Configuration.getAvailableLanguages();
 		
-		if(configuration.getCurProfil().equals("defaut") /*|| !configuration.getCurProfil().equals(ConcoursJeunes.configuration.getCurProfil())*/) //$NON-NLS-1$
-			jbRenameProfile.setEnabled(false);
-		else
-			jbRenameProfile.setEnabled(true);
+				jtfNomClub.setText(configuration.getClub().getNom());
+				((AutoCompleteDocument) jtfAgrClub.getDocument()).setText(configuration.getClub().getAgrement());
+				//jtfIntConc.setText(configuration.getIntituleConcours());
 		
-		jcbFederation.removeAllItems();
-		for(Federation federation : FederationManager.getAvailableFederations())
-			jcbFederation.addItem(federation);
-		jcbFederation.setSelectedItem(configuration.getFederation());
-
-		jcbLangue.removeAllItems();
-		for (int i = 0; i < libelleLangues.length; i++) {
-			jcbLangue.addItem(libelleLangues[i]);
-		}
-		jcbLangue.setSelectedItem(new Locale(configuration.getLangue()).getDisplayLanguage(new Locale(configuration.getLangue())));
-		if (libelleLangues.length < 2) {
-			jcbLangue.setEnabled(false);
-		}
-
-		jcbPathPdf.removeAllItems();
-		for (String pdfpath : getPdfPath(configuration)) {
-			jcbPathPdf.addItem(pdfpath);
-		}
-
-		ImageIcon logo = new ImageIcon(configuration.getLogoPath());
-		logo = new ImageIcon(logo.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-		jbLogoPath.setIcon(logo);
-		//jbLogoPath.setText("<html><img src=\"file:" + configuration.getLogoPath() + "\" width=90 height=100></html>"); //$NON-NLS-1$ //$NON-NLS-2$
+				jcbProfil.removeActionListener(ConfigurationDialog.this);
+				jcbProfil.removeAllItems();
+				for (String profile : ApplicationCore.userRessources.listAvailableConfigurations())
+					jcbProfil.addItem(profile);
+				jcbProfil.addItem("---"); //$NON-NLS-1$
+				jcbProfil.addItem(localisation.getResourceString("configuration.ecran.general.addprofile")); //$NON-NLS-1$
+		
+				jcbProfil.setSelectedItem(configuration.getCurProfil());
+				jcbProfil.addActionListener(ConfigurationDialog.this);
+				
+				if(configuration.getCurProfil().equals("defaut") /*|| !configuration.getCurProfil().equals(ConcoursJeunes.configuration.getCurProfil())*/) //$NON-NLS-1$
+					jbRenameProfile.setEnabled(false);
+				else
+					jbRenameProfile.setEnabled(true);
+				
+				jcbFederation.removeAllItems();
+				for(Federation federation : FederationManager.getAvailableFederations())
+					jcbFederation.addItem(federation);
+				jcbFederation.setSelectedItem(configuration.getFederation());
+		
+				jcbLangue.removeAllItems();
+				for (int i = 0; i < libelleLangues.length; i++) {
+					jcbLangue.addItem(libelleLangues[i]);
+				}
+				jcbLangue.setSelectedItem(new Locale(configuration.getLangue()).getDisplayLanguage(new Locale(configuration.getLangue())));
+				if (libelleLangues.length < 2) {
+					jcbLangue.setEnabled(false);
+				}
+		
+				jcbPathPdf.removeAllItems();
+				for (String pdfpath : getPdfPath(configuration)) {
+					jcbPathPdf.addItem(pdfpath);
+				}
+		
+				ImageIcon logo = new ImageIcon(configuration.getLogoPath());
+				logo = new ImageIcon(logo.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+				jbLogoPath.setIcon(logo);
+			}
+		});
 	}
 
 	private void completeConcoursPanel(Configuration configuration) {
