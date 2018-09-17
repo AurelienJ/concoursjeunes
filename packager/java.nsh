@@ -1,19 +1,19 @@
 !define JRE_MAJOR "1"
 !define JRE_MINOR "8"
-!define JRE_URL "http://javadl.oracle.com/webapps/download/AutoDL?BundleId=227550_e758a0de34e24606bca991d704f6dcbf"
+!define JRE_URL "http://javadl.oracle.com/webapps/download/AutoDL?BundleId=234472_96a7b8442fe848ef90c96a2fad6ed6d1"
 
 Function GetJRE
-    IfFileExists "jre-8u151-windows-i586.exe" lbl_NoDownloadRequired lbl_DownloadRequired
+    IfFileExists "jre-8u181-windows-i586.exe" lbl_NoDownloadRequired lbl_DownloadRequired
 	
     lbl_NoDownloadRequired:
-      ExecWait jre-8u151-windows-i586.exe
+      ExecWait jre-8u181-windows-i586.exe
       GoTo done
 	
     lbl_DownloadRequired:
 	MessageBox MB_OK "$(^Name) uses Java ${JRE_MAJOR}.${JRE_MINOR}, it will now \
                          be downloaded and installed"
  
-	StrCpy $2 "$TEMPjre-8u151-windows-i586.exe"
+	StrCpy $2 "$TEMPjre-8u181-windows-i586.exe"
 	nsisdl::download /TIMEOUT=30000 ${JRE_URL} $2
 	Pop $R0 ;Get the return value
 	StrCmp $R0 "success" +3
