@@ -623,7 +623,7 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 			support.setStrictMode(true);
 			support.setLanguageVersion(Context.VERSION_1_6);
 			try {
-				support.getJarManager().addCurrentJreClassFileSource();
+				//support.getJarManager().addCurrentJreClassFileSource();
 				for(String lib : System.getProperty("java.class.path").split(System.getProperty("path.separator"))) { //$NON-NLS-1$ //$NON-NLS-2$
 					if(lib.endsWith(".jar")) { //$NON-NLS-1$
 						JarLibraryInfo jarlib = new JarLibraryInfo(lib);

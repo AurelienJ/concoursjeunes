@@ -167,8 +167,8 @@
 			encoding="UTF-8"
 			nowarn="on"
 			debug="true"
-			source="1.6"
-			target="1.6"
+			source="1.8"
+			target="1.8"
 			classpath="${compilclasspath}">
 		</javac>
 
@@ -233,6 +233,9 @@
 		<taskdef name="revisionscreator"
 			classname="org.ajdeveloppement.updater.ant.RevisionsCreator">
 			<classpath location="lib/ajcommons.jar"/>
+			<classpath location="lib/jaxb-core-2.3.0.1.jar"/>
+			<classpath location="lib/jaxb-api-2.3.0.jar"/>
+			<classpath location="lib/jaxb-impl-2.3.0.1.jar"/>
 		</taskdef>
 
 		<revisionscreator

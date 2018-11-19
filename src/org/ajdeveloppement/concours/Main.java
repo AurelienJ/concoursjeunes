@@ -277,7 +277,7 @@ public class Main {
 		updateStartProgressStatus(10, localisation.getResourceString("main.initnetworkmanager")); //$NON-NLS-1$
 		
 		System.setProperty("java.net.useSystemProxies","true"); //$NON-NLS-1$ //$NON-NLS-2$ 
-		System.setProperty("java.net.preferIPv6Addresses", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		//System.setProperty("java.net.preferIPv6Addresses", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		final ProxySelector systemProxySelector = ProxySelector.getDefault();
 		ProxySelector.setDefault(new ProxySelector() {

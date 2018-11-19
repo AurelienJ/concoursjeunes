@@ -621,7 +621,9 @@ public class ConcurrentList {
 					}
 				}
 				if(add) {
-					alDB.add(DistancesEtBlason.getDistancesEtBlasonForConcurrent(reglement, concurrent));
+					DistancesEtBlason concurrentDistanceAndTargetFace = DistancesEtBlason.getDistancesEtBlasonForConcurrent(reglement, concurrent);
+					if(concurrentDistanceAndTargetFace != null)
+						alDB.add(concurrentDistanceAndTargetFace);
 				}
 			}
 		}

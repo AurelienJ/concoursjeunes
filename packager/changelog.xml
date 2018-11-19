@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.8.0_161" class="java.beans.XMLDecoder">
+<java version="10.0.2" class="java.beans.XMLDecoder">
  <object class="java.util.ArrayList">
   <void method="add">
    <object class="org.ajdeveloppement.updater.Version">
@@ -1203,6 +1203,28 @@
     </void>
     <void property="version">
      <string>2.30.30</string>
+    </void>
+   </object>
+  </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Correction d&apos;un plantage avec java 9 et supérieur
+  * Correction d&apos;un problème de performance avec certains réglements.</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1542661548567</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.31</string>
     </void>
    </object>
   </void>

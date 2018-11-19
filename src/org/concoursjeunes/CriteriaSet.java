@@ -138,6 +138,8 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 	@XmlTransient
 	@SqlField(name="NUMCRITERIASET")
 	private int numCriteriaSet = 0;
+	
+	private String uid;
 
 	@XmlTransient
 	@SqlForeignKey(mappedTo="NUMREGLEMENT")
@@ -197,7 +199,14 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 //				reglement.addPropertyChangeListener(this);
 //		}
 		
-		this.reglement = reglement;
+		if(this.reglement != reglement) {
+			if(this.reglement != null)
+				this.reglement.removePropertyChangeListener(this);
+			this.reglement = reglement;
+			this.uid = null;
+			if(this.reglement != null)
+				reglement.addPropertyChangeListener(this);
+		}
 		
 		/*for(Entry<Criterion, CriterionElement> entry : criteria.entrySet()) {
 			entry.getKey().setReglement(reglement);
@@ -232,6 +241,7 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 	public void addCriterionElement(CriterionElement element) {
 		if(element != null) {
 			criteria.put(element.getCriterion(), element);
+			this.uid = null;
 		}
 	}
 
@@ -257,8 +267,12 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 				entry.getKey().setReglement(reglement);
 			entry.getValue().setCriterion(entry.getKey());
 		}
+		
+		this.uid = null;
 	}
 
+	@XmlTransient
+	private Map<Map<Criterion, Boolean>, CriteriaSet> filteredCriteriaSetsCache = new HashMap<>();
 	/**
 	 * Retourne le jeux de critère courant, filtré en fonction de la table de filtrage
 	 * fournit en paramètre
@@ -270,22 +284,32 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 		if(criteriaFilter == null)
 			return this;
 		
+		if(filteredCriteriaSetsCache.containsKey(criteriaFilter))
+			return filteredCriteriaSetsCache.get(criteriaFilter);
+		
 		CriteriaSet criteriaSet = new CriteriaSet();
 		criteriaSet.setReglement(reglement);
 		for(Criterion criterion : criteria.keySet()) {
 			if(criteriaFilter.containsKey(criterion) && criteriaFilter.get(criterion))
 				criteriaSet.addCriterionElement(criteria.get(criterion));
 		}
+		
+		filteredCriteriaSetsCache.put(criteriaFilter, criteriaSet);
+		
 		return criteriaSet;
 	}
 	
 	@SuppressWarnings("nls")
 	private String getUID() {
+		if(uid != null)
+			return uid;
+		
 		//garantie l'ordre des éléments
 		List<String> l = new ArrayList<String>();
 		for(Entry<Criterion, CriterionElement> entry : criteria.entrySet()) {
 			Criterion criterion = entry.getKey();
 			CriterionElement element = entry.getValue();
+			
 			String criterionCode = "";
 			String elementCode = "";
 			if(criterion != null)
@@ -305,7 +329,12 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 		int numReglement = 0;
 		if(reglement != null)
 			numReglement = reglement.getNumReglement();
-		return "R=" + numReglement + ",S=" + uid;
+		this.uid = "R=" + numReglement + ",S=" + uid;
+		//this.uid = uid;
+		
+		//System.out.println(this.uid);
+		
+		return this.uid;
 	}
 	
 	@Override
@@ -613,13 +642,8 @@ public class CriteriaSet implements ObjectPersistence, PropertyChangeListener {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		/*if(evt.getPropertyName().equals("name") && !evt.getNewValue().equals(evt.getOldValue())) { //$NON-NLS-1$
-			//On regenere la map
-			Map<Criterion, CriterionElement> tempCriteria = criteria;
-			criteria = new HashMap<Criterion, CriterionElement>();
-			for(Map.Entry<Criterion, CriterionElement> entry : tempCriteria.entrySet()) {
-				criteria.put(entry.getKey(), entry.getValue());
-			}
-		}*/
+		if(evt.getPropertyName().equals("numReglement")) { //$NON-NLS-1$
+			this.uid = null;
+		}
 	}
 }
