@@ -93,13 +93,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.jar.JarInputStream;
-import java.util.jar.JarOutputStream;
-import java.util.jar.Pack200;
-import java.util.jar.Pack200.Unpacker;
 import java.util.logging.Level;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 
 import javax.swing.JFileChooser;
@@ -158,9 +153,7 @@ public class RestorePlugin {
 				if(isZipFile(chooser.getSelectedFile()))
 					tempPath = extractJarContent(chooser.getSelectedFile());
 				else {
-					File unpackedJar = unpack(chooser.getSelectedFile());
-					tempPath = extractJarContent(unpackedJar);
-					unpackedJar.delete();
+					return;
 				}
 				//} catch(IOException e) {
 					
@@ -214,55 +207,7 @@ public class RestorePlugin {
 			}
 	    }
 	}
-	
-	/**
-	 * Convertie un fichier pack200 en fichier jar temporaire
-	 * 
-	 * @param packedFile le fichier pack200 à convertir
-	 * @return le fichier jar temporaire
-	 */
-	private File unpack(File packedFile) {
-		Unpacker unpack;
-		File tempJar = null;
-		InputStream is = null;
-		JarOutputStream jos = null;
-		
-		try {
-			unpack = Pack200.newUnpacker();
-			tempJar = File.createTempFile("profilecj_", ".jar"); //$NON-NLS-1$ //$NON-NLS-2$
-			jos = new JarOutputStream(new FileOutputStream(tempJar));
-			is = new FileInputStream(packedFile);
-			try {
-				if (is.markSupported()) {
-                    is.mark(2); //set marker for reset
-                }
-				is = new GZIPInputStream(is);
-			} catch(IOException ioe) {
-				if(is.markSupported())
-					is.reset(); 
-			}
-			
-			unpack.unpack(is, jos);
-		} catch (FileNotFoundException e) {
-			JXErrorPane.showDialog(parentframe, new ErrorInfo(profile.getLocalisation().getResourceString("erreur"), e.toString(), //$NON-NLS-1$
-					null, null, e, Level.SEVERE, null));
-			e.printStackTrace();
-		} catch (IOException e) {
-			JXErrorPane.showDialog(parentframe, new ErrorInfo(profile.getLocalisation().getResourceString("erreur"), e.toString(), //$NON-NLS-1$
-					null, null, e, Level.SEVERE, null));
-			e.printStackTrace();
-		} finally {
-			if(jos != null)
-				try { jos.close(); } catch(IOException e) {}
-			if(is != null)
-				try { is.close(); } catch(IOException e) {}
-			unpack = null;
-			jos = null;
-		}
 
-		return tempJar;
-	}
-	
 	/**
 	 * Extrait les fichiers du jar dans un répertoire temporaire
 	 * 

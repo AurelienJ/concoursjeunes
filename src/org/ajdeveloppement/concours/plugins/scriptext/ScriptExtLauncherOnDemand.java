@@ -168,6 +168,7 @@ public class ScriptExtLauncherOnDemand {
 			
 			List<ScriptExtention> onDemandScripts = ScriptExtLauncher.getOnDemandScripts();
 			int numScript = 0;
+			
 			for(final ScriptExtention script : onDemandScripts) {
 				final File scriptPath = new File(script.getMainPath());
 				

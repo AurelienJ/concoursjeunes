@@ -130,7 +130,6 @@ import org.concoursjeunes.ApplicationCore;
 public class FFTAImportThread extends Thread {
 
 	private JDialog parentframe;
-	private AjResourcesReader localisation;
 
 	private final AjResourcesReader pluginRessources = new AjResourcesReader("properties.FFTAImportPlugin"); //$NON-NLS-1$
 	private final AjResourcesReader pluginLocalisation = new AjResourcesReader("org.concoursjeunes.plugins.FFTAImport.FFTAImportPlugin_libelle", FFTAImportThread.class.getClassLoader()); //$NON-NLS-1$
@@ -144,7 +143,6 @@ public class FFTAImportThread extends Thread {
 	 */
 	public FFTAImportThread(AjResourcesReader localisation) {
 		this.setName("FFTAImportThread"); //$NON-NLS-1$
-		this.localisation = localisation;
 	}
 
 	public void addFFTAImportThreadListener(FFTAImportThreadListener listener) {

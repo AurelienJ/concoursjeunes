@@ -844,7 +844,7 @@ public class ScriptManagerDialog extends JFrame implements ActionListener,MouseL
 				else if (ReplaceDialog.ACTION_REPLACE_ALL.equals(command)) {
 					int count = SearchEngine.replaceAll(jepScript, context);
 					JOptionPane.showMessageDialog(null, count
-							+ " occurrences replaced.");
+							+ " occurrences replaced."); //$NON-NLS-1$
 				}
 			}
 		};

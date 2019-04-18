@@ -94,6 +94,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.security.KeyStoreException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -239,13 +240,21 @@ public class ApplicationCore {
 		setAppConfiguration(ConfigurationManager.loadAppConfiguration());
 		
 		try {
-			if(!userRessources.getAppKeyStoreFile().exists()) {
-				File defaultSecurity = new File(staticParameters.getResourceString("path.ressources"), "security");
-				for(File f : FileUtils.listAllFiles(defaultSecurity, ".*", false)) {
-					String relativePath = f.getPath().substring(defaultSecurity.getParent().length() + 1);
+			File defaultSecurity = new File(staticParameters.getResourceString("path.ressources"), "security");
+			for(File f : FileUtils.listAllFiles(defaultSecurity, ".*", false)) {
+				String relativePath = f.getPath().substring(defaultSecurity.getParent().length() + 1);
+				
+				if(!userRessources.getAppKeyStoreFile().exists()) {
 					FileUtils.copyFile(f, new File(userRessources.getUpdatePath(),relativePath));
+				} else if(f.getParentFile().getName().equals("certs") && f.getName().endsWith(".pem")) {
+					String alias = f.getName().substring(0, f.getName().lastIndexOf(".pem")); //$NON-NLS-1$ //$NON-NLS-2$
+					Certificate cert = userRessources.getAppKeyStore().getCertificate(alias);
+					
+					if(cert == null)
+						FileUtils.copyFile(f, new File(userRessources.getUpdatePath(),relativePath));
 				}
 			}
+			
 			SecurityImporter.importCerts(userRessources.getAppKeyStore(), new File(userRessources.getUpdatePath(), "security/certs")); //$NON-NLS-1$
 		} catch (CertificateException e) {
 			e.printStackTrace();
@@ -303,6 +312,11 @@ public class ApplicationCore {
 			ScriptEngine scriptEngine = null;
 			ScriptEngineManager se = new ScriptEngineManager();
 			scriptEngine = se.getEngineByExtension("js");   //$NON-NLS-1$
+//			scriptEngine = GraalJSScriptEngine.create(null, 
+//			        Context.newBuilder("js")
+//			        .allowHostAccess(HostAccess.ALL)
+//			        .allowHostClassLookup(s -> true)
+//			        .allowExperimentalOptions(true));
 			if(scriptEngine != null) {
 				scriptEngine.put("dbVersion", dbVersion); //$NON-NLS-1$
 				scriptEngine.put("sql", sqlManager);   //$NON-NLS-1$

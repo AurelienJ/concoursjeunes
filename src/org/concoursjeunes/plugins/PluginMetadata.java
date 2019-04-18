@@ -110,7 +110,6 @@ public class PluginMetadata {
 	private Class<?> pluginClass;
 
 	public PluginMetadata() {
-
 	}
 
 	/**

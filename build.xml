@@ -226,6 +226,7 @@
 				storetype="JCEKS"
 				storepass="${projet.keystorepassword}"
 				keypass="${projet.signkeyaliaspassword}"
+			
 				lazy="true" />
 	</target>
 

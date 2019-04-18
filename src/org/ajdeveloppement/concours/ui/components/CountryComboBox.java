@@ -104,13 +104,14 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
+import org.ajdeveloppement.concours.ui.components.CountryComboBox.Country;
 import org.concoursjeunes.ApplicationCore;
 
 /**
  * @author Aurélien JEOFFRAY
  *
  */
-public class CountryComboBox extends JComboBox {
+public class CountryComboBox extends JComboBox<Country> {
 
 	private List<Country> countries = new ArrayList<CountryComboBox.Country>();
 	/**
@@ -147,7 +148,7 @@ public class CountryComboBox extends JComboBox {
 			 * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
 			 */
 			@Override
-			public Component getListCellRendererComponent(JList list,
+			public Component getListCellRendererComponent(JList<?> list,
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				

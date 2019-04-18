@@ -120,7 +120,7 @@ public class CategoryContactTagEditorComponent extends TagComponent<CategoryCont
 	private JButton jbValider = new JButton("v"); //$NON-NLS-1$
 	@Localizable("defaulttageditorcomponent.cancel")
 	private JButton jbAnnuler = new JButton("c"); //$NON-NLS-1$
-	private JComboBox jcbNewTag = new JComboBox();
+	private JComboBox<String> jcbNewTag = new JComboBox<>();
 	
 	public CategoryContactTagEditorComponent() {
 		init();

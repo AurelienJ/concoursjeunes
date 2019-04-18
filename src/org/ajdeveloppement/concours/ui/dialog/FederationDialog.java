@@ -160,7 +160,7 @@ public class FederationDialog extends JDialog implements ActionListener {
 	private JTextField jtfFederatonName = new JTextField(40);
 	private CountryComboBox ccbCountryFederation = new CountryComboBox();
 	private JTextField jtfFederationNiveau = new JTextField(40);
-	private JComboBox jcbAvailableLocale = new JComboBox();
+	private JComboBox<Locale> jcbAvailableLocale = new JComboBox<>();
 	@Localizable("bouton.ajouter")
 	private JButton jbAddLocale = new JButton();
 	
@@ -215,7 +215,7 @@ public class FederationDialog extends JDialog implements ActionListener {
 			 * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
 			 */
 			@Override
-			public Component getListCellRendererComponent(JList list,
+			public Component getListCellRendererComponent(JList<?> list,
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				

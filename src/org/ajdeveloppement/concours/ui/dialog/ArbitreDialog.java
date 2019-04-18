@@ -409,9 +409,4 @@ public class ArbitreDialog extends JDialog implements AutoCompleteDocumentListen
 	@Override
 	public void focusLost(FocusEvent fe) {
 	}
-	
-	@Override
-	public void finalize() throws Throwable {
-		super.finalize();
-	}
 }

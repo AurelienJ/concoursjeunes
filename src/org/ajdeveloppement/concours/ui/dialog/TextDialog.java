@@ -161,15 +161,16 @@ public class TextDialog extends JDialog implements ActionListener {
 	
 	private void completePane() {
 		try {
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(textPath), "UTF-8")); //$NON-NLS-1$
-			StringBuilder stringBuilder = new StringBuilder();
-			String line;
-			while((line = bufferedReader.readLine()) != null) {
-				stringBuilder.append(line + "\n"); //$NON-NLS-1$
+			try(BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(textPath), "UTF-8"))) { //$NON-NLS-1$
+				StringBuilder stringBuilder = new StringBuilder();
+				String line;
+				while((line = bufferedReader.readLine()) != null) {
+					stringBuilder.append(line + "\n"); //$NON-NLS-1$
+				}
+				
+				jtpChangeLog.setText(stringBuilder.toString());
+				jtpChangeLog.setCaretPosition(0);
 			}
-			
-			jtpChangeLog.setText(stringBuilder.toString());
-			jtpChangeLog.setCaretPosition(0);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			jtpChangeLog.setText(e.getMessage());

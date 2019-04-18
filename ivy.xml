@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                              xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd"> 
+        <info organisation="org.ajdeveloppement" module="arccompetition" revision="1.0" status="integration"> 
+        </info>
+        <dependencies>
+            <dependency org="javax.xml.bind" name="jaxb-api" rev="2.3.0"/>
+            <dependency org="com.sun.xml.bind" name="jaxb-core" rev="2.3.0.1"/>
+            <dependency org="com.sun.xml.bind" name="jaxb-impl" rev="2.3.0.1"/>
+            <dependency org="javax.xml.ws" name="jaxws-api" rev="2.3.1"/>
+            <dependency org="com.lowagie" name="itext" rev="2.1.7"/>
+            <dependency org="org.swinglabs" name="swingx" rev="1.6.1"/>
+            <dependency org="org.jdesktop" name="beansbinding" rev="1.2.1"/>
+        </dependencies>
+</ivy-module> 

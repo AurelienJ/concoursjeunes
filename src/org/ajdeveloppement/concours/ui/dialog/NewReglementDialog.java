@@ -144,9 +144,9 @@ public class NewReglementDialog extends JDialog implements ActionListener {
 	@Localizable("newreglement.category")
 	private JLabel jlCategorie = new JLabel();
 	private JTextField jtfReglementName = new JTextField(20);
-	private JComboBox jcbFederation = new JComboBox();
-	private JComboBox jcbReference = new JComboBox();
-	private JComboBox jcbCategorie = new JComboBox();
+	private JComboBox<Object> jcbFederation = new JComboBox<>();
+	private JComboBox<Object> jcbReference = new JComboBox<>();
+	private JComboBox<String> jcbCategorie = new JComboBox<>();
 	
 	@Localizable("bouton.valider")
 	private JButton jbValider = new JButton();

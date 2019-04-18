@@ -105,7 +105,7 @@ import org.concoursjeunes.Concurrent;
  * @version 2.0
  *
  */
-public class ConcoursListeRenderer extends JLabel implements ListCellRenderer {
+public class ConcoursListeRenderer extends JLabel implements ListCellRenderer<Concurrent> {
 	private final ImageIcon archerIcon;
 	private final ImageIcon archerHandicapIcon;
 	private final ImageIcon archerRedIcon;
@@ -135,15 +135,15 @@ public class ConcoursListeRenderer extends JLabel implements ListCellRenderer {
 	 */
 	@Override
 	public Component getListCellRendererComponent(
-			JList list,
-			Object value,            // value to display
+			JList<? extends Concurrent> list,
+			Concurrent value,            // value to display
 			int index,               // cell index
 			boolean isSelected,      // is the cell selected
 			boolean cellHasFocus)    // the list and the cell have the focus
 	{
 		String s = value.toString();
 		setText(s);
-		Concurrent concurrent = (Concurrent) value;
+		Concurrent concurrent = value;
 		if(concurrent.isHandicape())
 			setIcon((concurrent.getCible() == 0) ? archerHandicapRedIcon : archerHandicapIcon);
 		else

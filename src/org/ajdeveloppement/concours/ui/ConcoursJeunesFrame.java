@@ -334,7 +334,6 @@ public class ConcoursJeunesFrame extends JFrame implements ActionListener, Hyper
 		List<PluginMetadata> plugins = pl.getPlugins(org.concoursjeunes.plugins.Plugin.Type.UI_STARTUP);
 
 		for (PluginMetadata pm : plugins) {
-
 			final Class<?> pluginClass = pm.getPluginClass();
 			try {
 				Constructor<?> c = pluginClass.getConstructor(JFrame.class, Profile.class);

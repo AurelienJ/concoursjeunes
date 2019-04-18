@@ -173,7 +173,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 	private JButton jbSelectReglement = new JButton();
 	@Localizable("parametre.detail_customize")
 	private JButton jbDetail = new JButton();
-	private JComboBox jcbNiveauChampionnat = new JComboBox();
+	private JComboBox<CompetitionLevel> jcbNiveauChampionnat = new JComboBox<>();
 	@Localizable("parametre.openclose")
 	private JCheckBox jcbCloseCompetition = new JCheckBox();
 	@Localizable("parametre.phasefinal")
@@ -181,7 +181,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 	@Localizable(value="parametre.options",textMethod="setTitle")
 	private TitledBorder optionsBorder = new TitledBorder(""); //$NON-NLS-1$
 	private JTextField jtfNombreCible = new JTextField(new NumberDocument(false, false), "", 3); //$NON-NLS-1$
-	private JComboBox jcbNombreTireurParCible = new JComboBox();
+	private JComboBox<RhytmeTir> jcbNombreTireurParCible = new JComboBox<>();
 	private JTextField jtfNombreDepart = new JTextField(new NumberDocument(false, false), "", 3); //$NON-NLS-1$
 	@Localizable(value="parametre.arbitresborder",textMethod="setTitle")
 	private TitledBorder arbitresBorder = new TitledBorder(""); //$NON-NLS-1$
@@ -290,7 +290,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 			 * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
 			 */
 			@Override
-			public Component getListCellRendererComponent(JList list,
+			public Component getListCellRendererComponent(JList<?> list,
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				if(value instanceof Judge) {

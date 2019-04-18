@@ -191,6 +191,7 @@ public class ShootingLineState {
 						g2.dispose();
 						
 						document.newPage();
+						
 						g2 = cb.createGraphicsShapes(pageWidth, pageHeight);
 						printLigneDeTir(g2, page++, multiserie ? i : -1, target.getNumCible());
 					}

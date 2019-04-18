@@ -111,7 +111,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 
 /**
- * Permet la compilation et l'affichage des éditions. Voir la documentation de 
+ * Permet la compilation et l'affichage des éditions. Voir la documentation de
  * conception des états de concours pour plus d'information.
  * 
  * @author Aurélien JEOFFRAY
@@ -121,12 +121,13 @@ public class StateProcessor {
 	private State state;
 	private Profile profile;
 	private FicheConcours ficheConcours;
-	
+
 	/**
-	 * Initialise un nouveau processeur d'état pour l'état et les informations fournit en paramètre
+	 * Initialise un nouveau processeur d'état pour l'état et les informations
+	 * fournit en paramètre
 	 * 
-	 * @param state l'état de l'édition à traiter
-	 * @param profile le profile associé
+	 * @param state         l'état de l'édition à traiter
+	 * @param profile       le profile associé
 	 * @param ficheConcours la fiche concours pour laquelle générer l'édition
 	 */
 	public StateProcessor(State state, Profile profile, FicheConcours ficheConcours) {
@@ -134,7 +135,7 @@ public class StateProcessor {
 		this.profile = profile;
 		this.ficheConcours = ficheConcours;
 	}
-	
+
 	/**
 	 * Retourne l'état associé au processeur
 	 * 
@@ -143,7 +144,7 @@ public class StateProcessor {
 	public State getState() {
 		return state;
 	}
-	
+
 	/**
 	 * Définit l'état associé au processeur
 	 * 
@@ -152,13 +153,13 @@ public class StateProcessor {
 	public void setState(State state) {
 		this.state = state;
 	}
-	
+
 	/**
 	 * Génère l'édition de l'état avec les options fournit en paramètre
 	 * 
 	 * @param depart le numéro du départ à éditer
-	 * @param serie le numéro de la série à éditer
-	 * @param save true si l'édition réalisé doit être sauvegardé
+	 * @param serie  le numéro de la série à éditer
+	 * @param save   true si l'édition réalisé doit être sauvegardé
 	 * @throws IOException
 	 * @throws ScriptException
 	 * @throws FileNotFoundException
@@ -168,42 +169,50 @@ public class StateProcessor {
 			throws IOException, ScriptException, FileNotFoundException, DocumentException {
 		Document document = new Document();
 		String filePath;
-		
-		if(!save) {
-			File tmpFile = File.createTempFile("cta", ApplicationCore.staticParameters.getResourceString("extention.pdf")); //$NON-NLS-1$ //$NON-NLS-2$
+
+		if (!save) {
+			File tmpFile = File.createTempFile("cta", //$NON-NLS-1$
+					ApplicationCore.staticParameters.getResourceString("extention.pdf")); //$NON-NLS-1$
 			filePath = tmpFile.getCanonicalPath();
 			tmpFile.deleteOnExit();
 		} else {
 			String concoursName = ficheConcours.getParametre().getSaveName();
 			concoursName = concoursName.substring(0, concoursName.length() - 5);
 			filePath = ApplicationCore.userRessources.getConcoursPathForProfile(profile).getPath() + File.separator
-					+ concoursName + File.separator + state.getLocalizedDisplayName()
-					+ " - " + DateFormat.getDateInstance().format(new Date()) + " " + new SimpleDateFormat("HH.mm.ss").format(new Date()) + ".pdf";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
+					+ concoursName + File.separator + state.getLocalizedDisplayName() + " - " //$NON-NLS-1$
+					+ DateFormat.getDateInstance().format(new Date()) + " " //$NON-NLS-1$
+					+ new SimpleDateFormat("HH.mm.ss").format(new Date()) + ".pdf"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
-		AjResourcesReader langReader = new AjResourcesReader("lang", new URLClassLoader(new URL[] { state.getStateURL() })); //$NON-NLS-1$
-		
+
+		AjResourcesReader langReader = new AjResourcesReader("lang", //$NON-NLS-1$
+				new URLClassLoader(new URL[] { state.getStateURL() }));
+
 		StateOptions options = new StateOptions(depart, serie, langReader, profile);
-		
+
 		boolean isprintable = state.printState(ficheConcours, document, options, new File(filePath));
-		
-		if(!isprintable) {
+
+		if (!isprintable) {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					JOptionPane.showMessageDialog(null, profile.getLocalisation().getResourceString("ficheconcours.print.nothing")); //$NON-NLS-1$
+					JOptionPane.showMessageDialog(null,
+							profile.getLocalisation().getResourceString("ficheconcours.print.nothing")); //$NON-NLS-1$
 				}
 			});
 		}
-		
-		document.close();
-		
+
+		try {
+			document.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		if (isprintable) {
-			if(Desktop.isDesktopSupported()) {
+			if (Desktop.isDesktopSupported()) {
 				Desktop.getDesktop().open(new File(filePath));
 			} else {
 				assert profile.getConfiguration() != null;
-				
+
 				String NAV = ApplicationCore.getAppConfiguration().getPdfReaderPath();
 
 				Runtime.getRuntime().exec(NAV + " " + new File(filePath).getAbsolutePath() + ""); //$NON-NLS-1$ //$NON-NLS-2$

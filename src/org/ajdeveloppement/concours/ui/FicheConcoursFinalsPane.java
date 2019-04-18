@@ -258,13 +258,13 @@ public class FicheConcoursFinalsPane extends JPanel implements ActionListener, M
 			
 			@Override
 			public void keyTyped(KeyEvent e) {
-				if(e.getModifiers() == KeyEvent.CTRL_MASK && e.getKeyChar() == '1')
+				if(e.getModifiersEx() == KeyEvent.CTRL_DOWN_MASK && e.getKeyChar() == '1')
 					graphComponent.zoomActual();
 				else if(e.getKeyChar() == '+' && graph.getView().getScale() < 5.0)
 					graphComponent.zoomIn();
 				else if(e.getKeyChar() == '-' && graph.getView().getScale() > 0.15)
 					graphComponent.zoomOut();
-				else if(e.getModifiers() == KeyEvent.CTRL_MASK && e.getKeyChar() == '') {
+				else if(e.getModifiersEx() == KeyEvent.CTRL_DOWN_MASK && e.getKeyChar() == '') {
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {

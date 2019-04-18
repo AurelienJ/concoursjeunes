@@ -243,7 +243,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 			return CriteriaSet.class;
 		}
 	};
-	private JComboBox jcbCriteriaSet = new JComboBox(); 
+	private JComboBox<Object> jcbCriteriaSet = new JComboBox<>(); 
 
 	private AJList<DistancesBlasonsSet> ajlDistancesBlasons = new AJList<DistancesBlasonsSet>();
 	private JScrollPane jspDistanceBlason = new JScrollPane(ajlDistancesBlasons);
@@ -327,7 +327,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 		
 		ajlDistancesBlasons.setCellRenderer(new DefaultListCellRenderer() {
 			@Override
-			public Component getListCellRendererComponent(JList list,
+			public Component getListCellRendererComponent(JList<?> list,
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				if(value instanceof DistancesBlasonsSet) {
@@ -521,7 +521,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 	    });
 		jcbCriteriaSet.setRenderer(new DefaultListCellRenderer() {
 			@Override
-			public Component getListCellRendererComponent(JList list,
+			public Component getListCellRendererComponent(JList<?> list,
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				if(value instanceof CriteriaSet)

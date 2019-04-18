@@ -141,14 +141,14 @@ public class CriterionDialog extends JDialog implements ActionListener, ChangeLi
 	private JLabel jlWinFFTACode = new JLabel();
 	private JTextField jtfCode = new JTextField(10);
 	private JTextField jtfLibelle = new JTextField(20);
-	private JComboBox jcbSortOrder = new JComboBox();
+	private JComboBox<LocalizableString> jcbSortOrder = new JComboBox<>();
 	@Localizable("criterion.placement")
 	private JCheckBox jcbPlacementCriterion = new JCheckBox();
 	@Localizable("criterion.classement")
 	private JCheckBox jcbClassementCriterion = new JCheckBox();
 	@Localizable("criterion.classementequipe")
 	private JCheckBox jcbClassementEquipeCriterion = new JCheckBox();
-	private JComboBox jcbWinFFTACode = new JComboBox();
+	private JComboBox<String> jcbWinFFTACode = new JComboBox<>();
 
 	@Localizable("criterion.ordretri.asc")
 	private final LocalizableString lsSortOrderAsc = new LocalizableString();
@@ -300,7 +300,7 @@ public class CriterionDialog extends JDialog implements ActionListener, ChangeLi
     	criterionBinding.addBinding(Bindings.createAutoBinding(UpdateStrategy.READ, criterion, BeanProperty.create("classementEquipe"), jcbClassementEquipeCriterion, BeanProperty.create("selected")));  //$NON-NLS-1$//$NON-NLS-2$
     	//criterionBinding.addBinding(Bindings.createAutoBinding(UpdateStrategy.READ, criterion, BeanProperty.create("reglement.officialReglement"), jcbWinFFTACode, BeanProperty.create("enabled")));  //$NON-NLS-1$//$NON-NLS-2$
     	criterionBinding.addBinding(Bindings.createAutoBinding(UpdateStrategy.READ, criterion, BeanProperty.create("champsTableArchers"), jcbWinFFTACode, BeanProperty.create("selectedItem"))); //$NON-NLS-1$ //$NON-NLS-2$
-    	Binding<Criterion, Integer, JComboBox, Integer> sortBinding = Bindings.<Criterion, Integer, JComboBox, Integer>createAutoBinding(UpdateStrategy.READ, criterion, BeanProperty.<Criterion, Integer>create("sortOrder"), jcbSortOrder, BeanProperty.<JComboBox, Integer>create("selectedIndex"));  //$NON-NLS-1$//$NON-NLS-2$
+    	Binding<Criterion, Integer, JComboBox<LocalizableString>, Integer> sortBinding = Bindings.createAutoBinding(UpdateStrategy.READ, criterion, BeanProperty.create("sortOrder"), jcbSortOrder, BeanProperty.create("selectedIndex"));  //$NON-NLS-1$//$NON-NLS-2$
     	sortBinding.setConverter(new Converter<Integer, Integer>() {
 
 			@Override

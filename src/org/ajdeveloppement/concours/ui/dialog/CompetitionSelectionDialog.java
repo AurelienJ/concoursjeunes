@@ -165,7 +165,7 @@ public class CompetitionSelectionDialog extends JDialog implements ActionListene
 		jlCompetitions.setCellRenderer(new DefaultListCellRenderer() {
 			private DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
 			@Override
-			public Component getListCellRendererComponent(JList list,
+			public Component getListCellRendererComponent(JList<?> list,
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				if(value instanceof MetaDataFicheConcours) {

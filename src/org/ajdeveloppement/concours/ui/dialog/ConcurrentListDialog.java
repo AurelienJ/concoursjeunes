@@ -692,12 +692,6 @@ public class ConcurrentListDialog extends JDialog implements ActionListener, Mou
 			//ConcurrentManager.
 			return rows.get(rowIndex);
 		}
-		
-		@Override
-		public void finalize() throws Throwable {
-			System.out.println("ConcurrentListDialog.TableModel detruit"); //$NON-NLS-1$
-			super.finalize();
-		}
 	}
 	
 	private class ArchersTableLoader extends SwingWorker<List<Concurrent>, Concurrent> {
@@ -750,10 +744,5 @@ public class ConcurrentListDialog extends JDialog implements ActionListener, Mou
 			setProgress(100);
 			super.done();
 		}
-	}
-	
-	@Override
-	public void finalize() throws Throwable {
-		super.finalize();
 	}
 }

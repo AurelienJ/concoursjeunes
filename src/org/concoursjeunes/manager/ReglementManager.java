@@ -198,7 +198,7 @@ public class ReglementManager {
 	
 		availableReglements.remove(reglement);
 		if(getReglementsForCategory(reglement.getCategory()).size() == 0)
-			categorie.remove(new Integer(reglement.getCategory()));
+			categorie.remove(reglement.getCategory());
 		if(getReglementsForFederation(reglement.getFederation()).size() == 0)
 			removeFederation(reglement.getFederation());
 		reglement = null;

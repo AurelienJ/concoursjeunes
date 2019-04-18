@@ -447,7 +447,7 @@ public class Main {
 				
 				assert cla != null : "le loader devrait toujours retourner une class";  //$NON-NLS-1$
 				
-				Object plugin = cla.newInstance();
+				Object plugin = cla.getDeclaredConstructor().newInstance();
 				for (Method m : cla.getMethods()) {
 					if (m.isAnnotationPresent(PluginEntry.class)) {
 						m.invoke(plugin, (Object[]) null);
@@ -466,6 +466,12 @@ public class Main {
 			} catch (InvocationTargetException e1) {
 				DisplayableErrorHelper.displayException(e1);
 				e1.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				DisplayableErrorHelper.displayException(e);
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				DisplayableErrorHelper.displayException(e);
+				e.printStackTrace();
 			}
 		}
 	}

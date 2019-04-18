@@ -242,7 +242,7 @@ public class ConcoursJeunesUpdate extends Thread implements AjUpdaterListener, M
 		switch (event.getStatus()) {
 		case UPDATE_AVAILABLE:
 			
-			if (SystemTray.isSupported() && !org.ajdeveloppement.apps.ApplicationContext.getContext().getOSName().toLowerCase().startsWith("linux") && tray == null) {
+			if (SystemTray.isSupported() && !org.ajdeveloppement.apps.ApplicationContext.getContext().getOSName().toLowerCase().startsWith("linux") && tray == null) { //$NON-NLS-1$
 				tray = SystemTray.getSystemTray();
 				// load an image
 				Dimension dimension = tray.getTrayIconSize();
@@ -319,7 +319,7 @@ public class ConcoursJeunesUpdate extends Thread implements AjUpdaterListener, M
 					if(OS.isMacOSX()) {
 						//Sous Mac OS X, l'elevation de privilege est effectué en java
 						//à l'aide d'une librairie jni
-						command[0] = "./" + command[0];
+						command[0] = "./" + command[0]; //$NON-NLS-1$
 						process = PrivilegedRuntime.getRuntime().exec(command);
 					} else {
 						//sur les systèmes Windows et Linux, invoque le programme "concoursjeunes-applyupdate"

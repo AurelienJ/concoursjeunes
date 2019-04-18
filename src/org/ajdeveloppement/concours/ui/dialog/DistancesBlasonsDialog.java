@@ -143,13 +143,13 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 	private TitledBorder tbBlasons = new TitledBorder(""); //$NON-NLS-1$
 	@Localizable("distancesblasons.defaultblason")
 	private JLabel jlBlason = new JLabel();
-	private JComboBox jcbBlason = new JComboBox();
+	private JComboBox<Blason> jcbBlason = new JComboBox<>();
 	@Localizable(textMethod="setTitle",value="distancesblasons.blasonsalt")
 	private TitledBorder tbBlasonsAlt = new TitledBorder(""); //$NON-NLS-1$
 	@Localizable("distancesblasons.addblasonsalt")
 	private JLabel jlBlasonsAlt = new JLabel();
 	private JPanel jpBlasonsAlt = new JPanel();
-	private List<JComboBox> lcbBlasonsAlt = new ArrayList<JComboBox>();
+	private List<JComboBox<Blason>> lcbBlasonsAlt = new ArrayList<>();
 	@Localizable("distancesblasons.add")
 	private JButton jbAddBlasonAlt = new JButton();
 	
@@ -320,7 +320,7 @@ public class DistancesBlasonsDialog extends JDialog implements ActionListener {
 	private void addBlasonAlterantif(DistancesEtBlason db) {
 		final JPanel jpanel = new JPanel();
 		
-		final JComboBox jcbBlasons = new JComboBox();
+		final JComboBox<Blason> jcbBlasons = new JComboBox<>();
 		JButton jbDeleteBlasonAlt = new JButton();
 		jbDeleteBlasonAlt.setIcon(ApplicationCore.userRessources.getImageIcon("file.icon.removeelement")); //$NON-NLS-1$
 		jbDeleteBlasonAlt.setMargin(new Insets(1, 0, 1, 0));

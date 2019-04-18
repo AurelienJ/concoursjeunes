@@ -709,7 +709,7 @@ public class FicheConcoursDepartPane extends JPanel
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == treeTarget) {
-			if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
+			if (e.getModifiersEx() == InputEvent.BUTTON3_DOWN_MASK) {
 				Point coord = e.getPoint();
 
 				TreePath destinationPath = treeTarget.getPathForLocation(coord.x, coord.y);
@@ -744,14 +744,15 @@ public class FicheConcoursDepartPane extends JPanel
 		} else {
 			if (e.getClickCount() == 2) {
 				if(ajxlConcurrent.getSelectedIndex() >-1)
-					ficheConcoursPane.openConcurrentDialog((Concurrent) lstModelConcurrent.getElementAt(ajxlConcurrent.convertIndexToModel(ajxlConcurrent.getSelectedIndex())), getSortedConcurrentInList());
-			} else if (e.getModifiers() == InputEvent.BUTTON3_MASK) { //
+					ficheConcoursPane.openConcurrentDialog(
+							lstModelConcurrent.getElementAt(ajxlConcurrent.convertIndexToModel(ajxlConcurrent.getSelectedIndex())), getSortedConcurrentInList());
+			} else if (e.getModifiersEx() == InputEvent.BUTTON3_DOWN_MASK) { //
 				int elemIndex = ajxlConcurrent.locationToIndex(e.getPoint());
 				//elemIndex = ajxlConcurrent.convertIndexToModel(elemIndex);
 				if(elemIndex > -1) {
 					ajxlConcurrent.setSelectedIndex(elemIndex);
 	
-					Concurrent tmpConcurrent = (Concurrent) lstModelConcurrent.getElementAt(ajxlConcurrent.convertIndexToModel(ajxlConcurrent.getSelectedIndex()));
+					Concurrent tmpConcurrent = lstModelConcurrent.getElementAt(ajxlConcurrent.convertIndexToModel(ajxlConcurrent.getSelectedIndex()));
 	
 					if(tmpConcurrent != null) {
 						if (tmpConcurrent.getCible() > 0) {
@@ -941,7 +942,7 @@ public class FicheConcoursDepartPane extends JPanel
 
 		if (ajxlConcurrent.getSelectedValue() instanceof Concurrent) {
 			
-			Concurrent tmpConcurrent = (Concurrent) lstModelConcurrent.getElementAt(ajxlConcurrent.convertIndexToModel(ajxlConcurrent.getSelectedIndex()));
+			Concurrent tmpConcurrent = lstModelConcurrent.getElementAt(ajxlConcurrent.convertIndexToModel(ajxlConcurrent.getSelectedIndex()));
 
 			selectConcurrentInTree(tmpConcurrent);
 		}
@@ -1013,7 +1014,7 @@ public class FicheConcoursDepartPane extends JPanel
 	public void keyTyped(KeyEvent e) {
 	}
 	
-	private class ConcurrentListModel extends AbstractListModel implements PropertyChangeListener {
+	private class ConcurrentListModel extends AbstractListModel<Concurrent> implements PropertyChangeListener {
 		
 		private List<Concurrent> concurrents = new ArrayList<Concurrent>();
 		
@@ -1066,7 +1067,7 @@ public class FicheConcoursDepartPane extends JPanel
 		}
 
 		@Override
-		public Object getElementAt(int index) {
+		public Concurrent getElementAt(int index) {
 			return concurrents.get(index);
 		}
 
