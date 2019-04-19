@@ -438,7 +438,7 @@ public class State implements Comparable<State> {
 		
 		stateScript.printState(ficheConcours, new URL(((isZipped) ? "jar:" : "") + getStateURL().toString() + ((isZipped) ? "!" : "") + "/" + template), document, writer, options);
 		
-		//writer.flush();
+		writer.flush();
 		//writer.close();
 
 		return true;

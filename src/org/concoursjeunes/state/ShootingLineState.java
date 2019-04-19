@@ -163,7 +163,7 @@ public class ShootingLineState {
 			document.open();
 			
 			cb = writer.getDirectContent();
-			Graphics2D g2 = cb.createGraphics(pageWidth, pageHeight);
+			
 			
 			boolean multiserie = false;
 			for(Target target : pasDeTir.getTargets()) {
@@ -182,6 +182,7 @@ public class ShootingLineState {
 				}
 			}
 
+			Graphics2D g2 = cb.createGraphics(pageWidth, pageHeight);
 			// Ligne de Tir
 			printLigneDeTir(g2, page++, multiserie ? 0 : -1, 1);
 			
@@ -189,7 +190,7 @@ public class ShootingLineState {
 				for(Target target : pasDeTir.getTargets()) {
 					if(target.getNumCible() > 1 && (target.getNumCible() - 1) % 10 == 0) {
 						g2.dispose();
-						
+
 						document.newPage();
 						
 						g2 = cb.createGraphicsShapes(pageWidth, pageHeight);
@@ -199,6 +200,15 @@ public class ShootingLineState {
 					if(target.getDistancesEtBlason().size() > 0) {
 						paintTarget(g2, target, i);
 					}
+				}
+				
+				if(multiserie && i < pasDeTir.getFicheConcours().getParametre().getReglement().getNbSerie() -1) {
+					g2.dispose();
+
+					document.newPage();
+					
+					g2 = cb.createGraphicsShapes(pageWidth, pageHeight);
+					printLigneDeTir(g2, page++, i+1, 1);
 				}
 			}
 			
@@ -216,7 +226,7 @@ public class ShootingLineState {
 	private void printLigneDeTir(Graphics2D g2, int page, int serie, int firsttarget) {
 		String strSerie = localisation.getResourceString("shootingline.allseries"); //$NON-NLS-1$
 		if(serie != -1)
-			strSerie = localisation.getResourceString("shootingline.serie", serie); //$NON-NLS-1$
+			strSerie = localisation.getResourceString("shootingline.serie", serie+1); //$NON-NLS-1$
 		String strPasDeTir = localisation.getResourceString("shootingline.footer", (pasDeTir.getDepart() + 1), strSerie, page, firsttarget, firsttarget + 9); //$NON-NLS-1$
 		double pasDeTirPos = 20;
 		int sizeStrPasDeTir = g2.getFontMetrics().stringWidth(strPasDeTir);
