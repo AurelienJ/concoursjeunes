@@ -1238,7 +1238,9 @@
     </void>
     <void property="changeInfos">
      <string>  * Mise à jour des certificats
-  * Amelioration du support java 11</string>
+  * Amelioration du support java 11
+  * Correction d'un plantage à l'édition du pas de tir si un tri-spot 60cm est présent
+  * Correction d'une impression incorrect du pas de tir si distances différentes entre les différentes séries</string>
     </void>
     <void property="dateVersion">
      <object class="java.util.Date">
