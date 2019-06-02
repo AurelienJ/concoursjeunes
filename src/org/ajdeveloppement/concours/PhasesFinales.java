@@ -335,8 +335,10 @@ public class PhasesFinales implements PropertyChangeListener,FicheConcoursListen
 					concurrents.add(duel.getWinner());
 					concurrents.add(duel.getLooser());
 				} else {
-					concurrents.add(duel.getConcurrent1());
-					concurrents.add(duel.getConcurrent2());
+					if(duel.getConcurrent1() != null)
+						concurrents.add(duel.getConcurrent1());
+					if(duel.getConcurrent2() != null)
+						concurrents.add(duel.getConcurrent2());
 				}
 				
 				if(duels.size() == 2) {
@@ -346,8 +348,10 @@ public class PhasesFinales implements PropertyChangeListener,FicheConcoursListen
 						concurrents.add(duel.getWinner());
 						concurrents.add(duel.getLooser());
 					} else {
-						concurrents.add(duel.getConcurrent1());
-						concurrents.add(duel.getConcurrent2());
+						if(duel.getConcurrent1() != null)
+							concurrents.add(duel.getConcurrent1());
+						if(duel.getConcurrent2() != null)
+							concurrents.add(duel.getConcurrent2());
 					}
 				}
 			} else if(duels.size() > 2 || concurrents.size() == 0 ) {
@@ -356,8 +360,10 @@ public class PhasesFinales implements PropertyChangeListener,FicheConcoursListen
 					if(duel.getLooser() != null)
 						perdants.add(duel.getLooser());
 					else if(i < nbTotalPhases-1){
-						perdants.add(duel.getConcurrent1());
-						perdants.add(duel.getConcurrent2());
+						if(duel.getConcurrent1() != null)
+							perdants.add(duel.getConcurrent1());
+						if(duel.getConcurrent2() != null)
+							perdants.add(duel.getConcurrent2());
 					}
 				}
 				if(perdants.size() > 0) {
@@ -365,7 +371,9 @@ public class PhasesFinales implements PropertyChangeListener,FicheConcoursListen
 					Collections.sort(perdants, new Comparator<Concurrent>() {
 						@Override
 						public int compare(Concurrent o1, Concurrent o2) {
-							return o1.compareScorePhaseFinalWith(o2, phase) * -1;
+							if(o2 != null)
+								return o1.compareScorePhaseFinalWith(o2, phase) * -1;
+							return 0;
 						}
 					});
 					concurrents.addAll(perdants);
