@@ -642,7 +642,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 			if(jlResultList.getSelectedValue() != null) {
 				if (JOptionPane.showConfirmDialog(this, profile.getLocalisation().getResourceString("entite.confirmation.suppression.contact"), //$NON-NLS-1$
 						profile.getLocalisation().getResourceString("entite.confirmation.suppression.contact.titre"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) { //$NON-NLS-1$
-					Contact selectedContact = (Contact)jlResultList.getSelectedValue();
+					Contact selectedContact = jlResultList.getSelectedValue();
 					try {
 						selectedContact.delete();
 					} catch (ObjectPersistenceException e) {
@@ -658,7 +658,7 @@ public class EntiteDialog extends JDialog implements ActionListener, ListSelecti
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		if(contactPanel != null) {
-			contactPanel.setContact((Contact)jlResultList.getSelectedValue());
+			contactPanel.setContact(jlResultList.getSelectedValue());
 			//this.getGlassPane().setVisible(true);
 		}
 	}

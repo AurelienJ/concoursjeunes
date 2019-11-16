@@ -99,6 +99,7 @@ import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -178,6 +179,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 	private JCheckBox jcbCloseCompetition = new JCheckBox();
 	@Localizable("parametre.phasefinal")
 	private JCheckBox jcbEnablePhaseFinal = new JCheckBox();
+	private JComboBox<PhaseFinal> jcbNombresPhaseMax = new JComboBox<>();
 	@Localizable(value="parametre.options",textMethod="setTitle")
 	private TitledBorder optionsBorder = new TitledBorder(""); //$NON-NLS-1$
 	private JTextField jtfNombreCible = new JTextField(new NumberDocument(false, false), "", 3); //$NON-NLS-1$
@@ -205,6 +207,8 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 	private JLabel jlReglement = new JLabel();
 	@Localizable("parametre.niveauchampionnat")
 	private JLabel jlNiveauChampionnat = new JLabel();
+	@Localizable("parametre.nombrephasemax")
+	private JLabel jlNombresPhaseMax = new JLabel();
 	@Localizable("parametre.nombrecible")
 	private JLabel jlNombreCible = new JLabel();
 	@Localizable("parametre.nombretireurparcible")
@@ -388,6 +392,12 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 		c.gridy++;
 		gridbagComposer.addComponentIntoGrid(jcbEnablePhaseFinal, c);
 		
+		c.gridy++;
+		c.gridwidth = 1;
+		c.gridx = GridBagConstraints.RELATIVE;
+		gridbagComposer.addComponentIntoGrid(jlNombresPhaseMax, c);
+		gridbagComposer.addComponentIntoGrid(jcbNombresPhaseMax, c);
+		
 		gridbagComposer.setParentPanel(jpOptions);
 		c.gridy = 1;
 		c.gridwidth = 1;
@@ -480,6 +490,11 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 		jcbNiveauChampionnat.setSelectedItem(parametre.getNiveauChampionnat());
 		jcbCloseCompetition.setSelected(!parametre.isOpen());
 		jcbEnablePhaseFinal.setSelected(parametre.isDuel());
+		jcbNombresPhaseMax.removeAllItems();
+		for(int i = 0; i < 6; i++)
+			jcbNombresPhaseMax.addItem(new PhaseFinal(ficheConcours.getProfile().getLocalisation().getResourceString("duel.phase."+i), i+1)); //$NON-NLS-1$
+		jcbNombresPhaseMax.setSelectedItem(new PhaseFinal(null, parametre.getNombrePhaseMax()));
+		
 		jtfNombreCible.setText("" + parametre.getNbCible()); //$NON-NLS-1$
 		
 		if(tempReglement.getReglementType() == TypeReglement.NATURE) {
@@ -563,6 +578,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 			if(parametre.getDateFinConcours() == null)
 				parametre.setDateFinConcours(new Date());
 			parametre.setNiveauChampionnat((CompetitionLevel)jcbNiveauChampionnat.getSelectedItem());
+			parametre.setNombrePhaseMax(((PhaseFinal)jcbNombresPhaseMax.getSelectedItem()).getIndexPhase());
 			parametre.getJudges().clear();
 			for (Object arbitre : jlArbitres.getAllElements()) {
 				parametre.getJudges().add((Judge)arbitre);
@@ -596,7 +612,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 			if(jlArbitres.getSelectedIndex() > -1)
 				jlArbitres.remove(jlArbitres.getSelectedIndex());
 		} else if(ae.getSource() == jbEditerArbitre) {
-			Judge selectedJudge = (Judge)jlArbitres.getSelectedValue();
+			Judge selectedJudge = jlArbitres.getSelectedValue();
 			ArbitreDialog ad = new ArbitreDialog(parentframe, profile);
 			boolean mustberesponsable = true; 
 			for(Object o : jlArbitres.getAllElements())
@@ -698,6 +714,67 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 				return false;
 			return true;
 		}
+		
+	}
+	
+	private static class PhaseFinal {
+		private String libelle;
+		private int indexPhase;
+		
+		/**
+		 * @param libelle
+		 * @param indexPhase
+		 */
+		public PhaseFinal(String libelle, int indexPhase) {
+			this.libelle = libelle;
+			this.indexPhase = indexPhase;
+		}
+		
+		/**
+		 * @return libelle
+		 */
+		public String getLibelle() {
+			return libelle;
+		}
+		
+		/**
+		 * @return indexPhase
+		 */
+		public int getIndexPhase() {
+			return indexPhase;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode() {
+			return Objects.hash(getIndexPhase());
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			PhaseFinal other = (PhaseFinal) obj;
+			return getIndexPhase() == other.getIndexPhase();
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return getLibelle();
+		}
+
 		
 	}
 }

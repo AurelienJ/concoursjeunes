@@ -119,6 +119,7 @@ public class Parametre extends DefaultParameters {
 	private Date dateFinConcours	= new Date();
 	private boolean open			= true;
 	private boolean duel			= false;
+	private int nombrePhaseMax		= 6;
 	@XmlElementWrapper(name="arbitres",required=false)
 	@XmlElement(name="arbitre")
 	private List<String> arbitres;
@@ -336,6 +337,24 @@ public class Parametre extends DefaultParameters {
 		this.duel = duel;
 		
 		pcs.firePropertyChange("duel", oldValue, duel); //$NON-NLS-1$
+	}
+
+	/**
+	 * @return nombrePhaseMax
+	 */
+	public int getNombrePhaseMax() {
+		return nombrePhaseMax;
+	}
+
+	/**
+	 * @param nombrePhaseMax nombrePhaseMax à définir
+	 */
+	public void setNombrePhaseMax(int nombrePhaseMax) {
+		int oldValue = this.nombrePhaseMax;
+		
+		this.nombrePhaseMax = nombrePhaseMax;
+		
+		pcs.firePropertyChange("nombrePhaseMax", oldValue, nombrePhaseMax); //$NON-NLS-1$
 	}
 
 	/**

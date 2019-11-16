@@ -103,7 +103,7 @@ import org.concoursjeunes.ApplicationCore;
  * @author Aurélien JEOFFRAY
  *
  */
-public class ZipCodeCitySuggestModel extends AbstractSuggestModel {
+public class ZipCodeCitySuggestModel extends AbstractSuggestModel<String> {
 
 	public enum SuggestType {
 		ZIP_CODE,
@@ -196,7 +196,7 @@ public class ZipCodeCitySuggestModel extends AbstractSuggestModel {
 	 * @see javax.swing.ListModel#getElementAt(int)
 	 */
 	@Override
-	public Object getElementAt(int index) {
+	public String getElementAt(int index) {
 		return  suggestList.get(index);
 	}
 

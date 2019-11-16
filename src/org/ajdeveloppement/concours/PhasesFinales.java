@@ -226,6 +226,9 @@ public class PhasesFinales implements PropertyChangeListener,FicheConcoursListen
 			}
 		}
 		
+		if(nbPhase > ficheConcours.getParametre().getNombrePhaseMax())
+			nbPhase = ficheConcours.getParametre().getNombrePhaseMax();
+		
 		return nbPhase;
 	}
 	

@@ -1003,7 +1003,7 @@ public class ReglementDialog extends JDialog implements ActionListener, MouseLis
 	 */
 	private void editDistancesBlasons() {
 		DistancesBlasonsDialog dbDialog = new DistancesBlasonsDialog(this, localisation);
-		dbDialog.showDistancesBlasonsDialog(((DistancesBlasonsSet)ajlDistancesBlasons.getSelectedValue()).get());
+		dbDialog.showDistancesBlasonsDialog(ajlDistancesBlasons.getSelectedValue().get());
 	}
 	
 	/**

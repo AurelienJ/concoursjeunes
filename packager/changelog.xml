@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.8.0_212" class="java.beans.XMLDecoder">
+<java version="1.8.0_232" class="java.beans.XMLDecoder">
  <object class="java.util.ArrayList">
   <void method="add">
    <object class="org.ajdeveloppement.updater.Version">
@@ -1261,7 +1261,7 @@
      <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
-     <string>  * Correction NullPointerExceptions à l&apos;édition du classement des duels en cas de présence d'ex-aequo</string>
+     <string>  * Correction NullPointerExceptions à l&apos;édition du classement des duels en cas de présence d&apos;ex-aequo</string>
     </void>
     <void property="dateVersion">
      <object class="java.util.Date">
@@ -1270,6 +1270,28 @@
     </void>
     <void property="version">
      <string>2.30.33</string>
+    </void>
+   </object>
+  </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Correction d&apos;un problème de prise en compte des blasons alternatifs dans le calcul de la place disponible
+  * Ajout d&apos;une nouvelle option permettant de limiter le nombre de phases finale dans les duels</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1573905750701</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.34</string>
     </void>
    </object>
   </void>

@@ -633,7 +633,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 	/**
 	 * remplit les champs de la boite de dialogue avec le modèle sous jacent
 	 */
-	private void completePanel() {
+	private void completePanel(Concurrent concurrent) {
 		boolean isinit = concurrent.getInscription() != Concurrent.UNINIT && !unlock;
 
 		jlDescription.setBackground(new Color(255, 255, 225));
@@ -683,6 +683,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 			jtfClub.setText(entiteConcurrent.getVille());
 			jtfAgrement.setText(entiteConcurrent.getAgrement());
 		}
+		
 		if (concurrent.getCriteriaSet() != null) {
 			disableSyncCriteriaSet = true;
 			for (Criterion key : ficheConcours.getParametre().getReglement().getListCriteria()) {
@@ -859,11 +860,11 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					completePanel();
+					completePanel(concurrent);
 				}
 			});
 		} else {
-			completePanel();
+			completePanel(concurrent);
 		}
 	}
 
@@ -1161,7 +1162,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					completePanel();
+					completePanel(concurrent);
 				}
 			});
 		}
@@ -1183,7 +1184,7 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				completePanel();
+				completePanel(concurrent);
 			}
 		});
 	}
@@ -1203,6 +1204,12 @@ public class ConcurrentDialog extends JDialog implements ActionListener, FocusLi
 			
 			// fixe le jeux de critères définissant le concurrent
 			tempConcurrent.setCriteriaSet(readCriteriaSet());
+			
+			if(jcbBlason.getSelectedIndex() > 0)
+				tempConcurrent.setAlternativeTargetFace((Blason)jcbBlason.getSelectedItem());
+			else
+				tempConcurrent.setAlternativeTargetFace(null);
+			
 			//vérifie la validité du jeux
 			if(!verifyCriteriaSet()) {
 				JOptionPane.showMessageDialog(this, 

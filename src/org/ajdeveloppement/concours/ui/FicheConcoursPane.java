@@ -869,7 +869,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 			
 		} else if(source == jbOpenDocument) {
 			if(!ajlDocuments.isSelectionEmpty())
-				openPdf((File)ajlDocuments.getSelectedValue());
+				openPdf(ajlDocuments.getSelectedValue());
 		} else if(source == jbDeleteDocument) {
 			if (JOptionPane.showConfirmDialog(this, parentframe.profile.getLocalisation().getResourceString("state.confirmation.suppression"), //$NON-NLS-1$
 					parentframe.profile.getLocalisation().getResourceString("state.confirmation.suppression.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {//$NON-NLS-1$
@@ -1000,7 +1000,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == ajlDocuments && e.getClickCount() == 2) {
 			if(!ajlDocuments.isSelectionEmpty()) {
-				File openFile = (File)ajlDocuments.getSelectedValue();
+				File openFile = ajlDocuments.getSelectedValue();
 				openPdf(openFile);
 			}
 		}
