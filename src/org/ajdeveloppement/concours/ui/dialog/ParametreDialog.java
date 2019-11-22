@@ -492,7 +492,7 @@ public class ParametreDialog extends JDialog implements ActionListener, ListSele
 		jcbEnablePhaseFinal.setSelected(parametre.isDuel());
 		jcbNombresPhaseMax.removeAllItems();
 		for(int i = 0; i < 6; i++)
-			jcbNombresPhaseMax.addItem(new PhaseFinal(ficheConcours.getProfile().getLocalisation().getResourceString("duel.phase."+i), i+1)); //$NON-NLS-1$
+			jcbNombresPhaseMax.addItem(new PhaseFinal(localisation.getResourceString("duel.phase."+i), i+1)); //$NON-NLS-1$
 		jcbNombresPhaseMax.setSelectedItem(new PhaseFinal(null, parametre.getNombrePhaseMax()));
 		
 		jtfNombreCible.setText("" + parametre.getNbCible()); //$NON-NLS-1$
