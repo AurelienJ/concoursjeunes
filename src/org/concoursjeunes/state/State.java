@@ -95,13 +95,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -112,6 +110,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.ajdeveloppement.commons.AjResourcesReader;
 import org.concoursjeunes.ApplicationCore;
 import org.concoursjeunes.FicheConcours;
 
@@ -204,15 +203,17 @@ public class State implements Comparable<State> {
 				+ File.separator + "states" + File.separator + name + ((isZipped) ? ".zip" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		try {
-			ResourceBundle rb = ResourceBundle.getBundle(
-					"lang", //$NON-NLS-1$
-					Locale.getDefault(),
-					new URLClassLoader(new URL[] {new File(statePath).toURI().toURL() })); 
+			AjResourcesReader ajResourcesReader = new AjResourcesReader("lang", new URLClassLoader(new URL[] {new File(statePath).toURI().toURL() }), Locale.getDefault());
+			
+//			ResourceBundle rb = ResourceBundle.getBundle(
+//					"lang", //$NON-NLS-1$
+//					Locale.getDefault(),
+//					new URLClassLoader(new URL[] {new File(statePath).toURI().toURL() })); 
 			try {
-				actionName = rb.getString(displayName);
-				actionName = new String(actionName.getBytes("ISO-8859-1"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				actionName = ajResourcesReader.getResourceString(displayName); //rb.getString(displayName);
+				//actionName = new String(actionName.getBytes("ISO-8859-1"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
+			//} catch (UnsupportedEncodingException e) {
+			//	e.printStackTrace();
 			} catch (MissingResourceException e) {
 				actionName = displayName;
 			}

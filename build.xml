@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="ConcoursJeunes" default="auto-pack" basedir="./">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="ConcoursJeunes" default="auto-pack" basedir="./">
 	<description>
 		Generation de ConcoursJeunes
 	</description>
@@ -45,6 +45,11 @@
 	<import file="plugins/build-PhoenixPlugin.xml"/>
 	<import file="plugins/build-BackupRestorePlugin.xml"/>
 	<import file="plugins/build-ScriptExt.xml"/>
+	
+	<target name="resolve" description="--> retrieve dependencies with ivy">
+	    <ivy:retrieve />
+	</target>
+
 
 	<!--genere la documentation technique-->
 	<target name="dev_doc" description="genere la documentation développeur">
@@ -235,7 +240,7 @@
 			classname="org.ajdeveloppement.updater.ant.RevisionsCreator">
 			<classpath location="lib/ajcommons.jar"/>
 			<classpath location="lib/jaxb-core-2.3.0.1.jar"/>
-			<classpath location="lib/jaxb-api-2.3.0.jar"/>
+			<classpath location="lib/jaxb-api-2.3.1.jar"/>
 			<classpath location="lib/jaxb-impl-2.3.0.1.jar"/>
 		</taskdef>
 
@@ -504,6 +509,9 @@
 				<include name="**/**"/>
 			</fileset>
 		</copy>
+		
+		<gunzip src="${projet.pack.dir}/windows/openjdk-9.0.4_windows-x64_bin.tar.gz"/>
+		<untar src="${projet.pack.dir}/windows/openjdk-9.0.4_windows-x64_bin.tar" dest="${projet.pack.dir}/windows/"/>
 		
 		<nsis script="packager/setup.nsi" verbosity="4">
 			<define name="VERSION" value="${version.numero}"/>

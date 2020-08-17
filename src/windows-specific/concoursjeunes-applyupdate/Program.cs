@@ -11,19 +11,14 @@ namespace AJDeveloppement.ArcCompetition
 {
 	//[assembly: RegistryPermissionAttribute(SecurityAction.RequestMinimum, ViewAndModify = "HKEY_CURRENT_USER")]
 	class Program {
-		static void Main(string[] args) {
-			if (args.Length == 2) {
-				RegistryKey HKLM = Registry.LocalMachine;
-                RegistryKey javaReg = HKLM.OpenSubKey(@"SOFTWARE\JavaSoft\Java Runtime Environment");
-
-                if (javaReg == null)
-                    javaReg = HKLM.OpenSubKey(@"SOFTWARE\Wow6432Node\JavaSoft\Java Runtime Environment");
-
-                if (javaReg != null)
+		static void Main(string[] args)
+		{
+			if (args.Length == 2)
+			{
+				string javaPath = GetJVMPath();
+				
+                if (!string.IsNullOrEmpty(javaPath))
                 {
-                    object version = javaReg.GetValue(@"CurrentVersion");
-                    object javaPath = javaReg.OpenSubKey((string)version).GetValue("JavaHome");
-
 					ProcessStartInfo startInfo = new ProcessStartInfo(javaPath + @"\bin\javaw.exe");
 					startInfo.Arguments = Properties.Settings.Default.VMArgs 
                             + " -cp " + Properties.Settings.Default.ClassPath
@@ -45,6 +40,37 @@ namespace AJDeveloppement.ArcCompetition
 				
 				//Process.
 			}
+		}
+
+		/// <summary>
+		/// Get the directory of jvm.
+		/// Use by default value of jvmPath properties and use desktop default jvm if jvmPath if empty by
+		/// reading registry java environment
+		/// </summary>
+		/// <returns>The path to jvm</returns>
+		private static string GetJVMPath()
+		{
+			string javaPath = null;
+
+			if (!string.IsNullOrEmpty(Properties.Settings.Default.jvmPath))
+				javaPath = Properties.Settings.Default.jvmPath;
+
+			if (string.IsNullOrEmpty(javaPath?.Trim()) || !Directory.Exists(javaPath))
+			{
+				RegistryKey HKLM = Registry.LocalMachine;
+				RegistryKey javaReg = HKLM.OpenSubKey(@"SOFTWARE\JavaSoft\Java Runtime Environment");
+
+				if (javaReg == null)
+					javaReg = HKLM.OpenSubKey(@"SOFTWARE\Wow6432Node\JavaSoft\Java Runtime Environment");
+
+				if (javaReg != null)
+				{
+					object version = javaReg.GetValue(@"CurrentVersion");
+					javaPath = javaReg.OpenSubKey((string)version).GetValue("JavaHome") as string;
+				}
+			}
+
+			return javaPath;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.8.0_232" class="java.beans.XMLDecoder">
+<java version="9.0.4" class="java.beans.XMLDecoder">
  <object class="java.util.ArrayList">
   <void method="add">
    <object class="org.ajdeveloppement.updater.Version">
@@ -1313,6 +1313,28 @@
     </void>
     <void property="version">
      <string>2.30.35</string>
+    </void>
+   </object>
+  </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Correction d&apos;un problème d&apos;encodage des caractères avec java &gt;= 9 sur les états
+  * Embarquement de openjdk 9 dans le setup windows</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1597680177314</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.36</string>
     </void>
    </object>
   </void>

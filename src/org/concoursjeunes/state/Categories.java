@@ -89,7 +89,6 @@
 package org.concoursjeunes.state;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -97,10 +96,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.ajdeveloppement.commons.AjResourcesReader;
 import org.concoursjeunes.ApplicationCore;
 
 /**
@@ -193,15 +192,18 @@ public class Categories {
 					+ File.separator + "states"; //$NON-NLS-1$
 			
 			try {
-				ResourceBundle rb = ResourceBundle.getBundle(
-						"categories", //$NON-NLS-1$
-						Locale.getDefault(),
-						new URLClassLoader(new URL[] {new File(statePath).toURI().toURL() }));
+				AjResourcesReader ajResourcesReader = new AjResourcesReader("categories",  //$NON-NLS-1$
+						new URLClassLoader(new URL[] {new File(statePath).toURI().toURL() }), Locale.getDefault());
+				
+//				ResourceBundle rb = ResourceBundle.getBundle(
+//						"categories", //$NON-NLS-1$
+//						Locale.getDefault(),
+//						new URLClassLoader(new URL[] {new File(statePath).toURI().toURL() }));
 				try {
-					localizedLibelle = rb.getString(libelle);
-					localizedLibelle = new String(localizedLibelle.getBytes("ISO-8859-1"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
+					localizedLibelle = ajResourcesReader.getResourceString(libelle); //rb.getString(libelle);
+//					localizedLibelle = new String(localizedLibelle.getBytes("ISO-8859-1"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
+//				} catch (UnsupportedEncodingException e) {
+//					e.printStackTrace();
 				} catch (MissingResourceException e) {
 					localizedLibelle = libelle;
 				}
