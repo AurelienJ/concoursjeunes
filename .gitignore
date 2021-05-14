@@ -1,0 +1,19 @@
+#exclude builds results
+bin
+pack
+
+#exclude external dependencies
+lib/ajcommons*.jar
+
+#exlude secrets
+packager/*.jks
+packager/*.key
+security.properties
+.secrets
+secrets
+
+#exclude version source file
+src/org/concoursjeunes/AppInfos.java
+
+#exclude big files
+packager/windows/openjdk-9.0.4_windows-x64_bin.tar.gz
