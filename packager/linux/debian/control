@@ -1,13 +1,13 @@
 Source: concoursjeunes
 Section: contrib
 Priority: optional
-Maintainer: Aurelien JEOFFRAY <aurelien.jeoffray@gmail.com>
+Maintainer: Aurelien JEOFFRAY <aurelien.jeoffray@ajdeveloppement.org>
 Build-Depends: debhelper (>= 7.0.50~)
 Standards-Version: 3.8.4
 
 Package: concoursjeunes
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, sun-java6-jre | openjdk-6-jre (>= 6b18) | openjdk-7-jre | openjdk-8-jre
+Depends: ${shlibs:Depends}, ${misc:Depends}, openjdk-8-jre
 Description: Logiciel de Gestion des Concours Jeunes de Tir à l'Arc
  .
  Auteur Aurélien Jeoffray

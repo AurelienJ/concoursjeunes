@@ -25,7 +25,7 @@ jobs:
       run: |
         sudo mkdir -p /usr/share/man/man1
         sudo apt-get update
-        sudo apt-get -y install ant
+        sudo apt-get -y install ant fakeroot rpm nsis genisoimage dpkg-dev debhelper build-essential
 
     - name: Get Secrets
       env:
@@ -33,7 +33,6 @@ jobs:
         SIGN_PROJECT_PROPERTIES: ${{secrets.SIGN_PROJECT_PROPERTIES}}
         FFTA_AES_KEY: ${{secrets.FFTA_AES_KEY}}
       run: |
-        echo "$FFTA_AES_KEY"
         echo "$SIGN_PROJECT_PROPERTIES" | base64 --decode > packager/security.properties
         echo "$SIGN_KEYSTORE" | base64 --decode > packager/signingkeys.jks
         echo "$FFTA_AES_KEY" > packager/ffta.key

@@ -1,5 +1,5 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Contact: Aurelien JEOFFRAY <aurelien.jeoffray@gmail.com>
+Upstream-Contact: Aurelien JEOFFRAY <aurelien.jeoffray@ajdeveloppement.org>
 Source: https://arccompetition.ajdeveloppement.org/svn/
 
 Files: *
@@ -25,7 +25,7 @@ License: CeCILL-2 or GPL-2
  The authors of the CeCILL (for Ce[a] C[nrs] I[nria] L[ogiciel] L[ibre])
  license are:
  .
- Commissariat à l'Energie Atomique - CEA, a public scientific, technical
+ Commissariat ï¿½ l'Energie Atomique - CEA, a public scientific, technical
  and industrial research establishment, having its principal place of
  business at 25 rue Leblanc, immeuble Le Ponant D, 75015 Paris, France.
  .
@@ -333,7 +333,7 @@ License: CeCILL-2 or GPL-2
  .
  The Licensee undertakes not to directly or indirectly infringe the
  intellectual property rights of the Holder and/or Contributors on the
- Software and to take, where applicable, vis-à-vis its staff, any and all
+ Software and to take, where applicable, vis-ï¿½-vis its staff, any and all
  measures required to ensure respect of said intellectual property rights
  of the Holder and/or Contributors.
  .
