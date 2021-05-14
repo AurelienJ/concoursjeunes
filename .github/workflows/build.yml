@@ -23,9 +23,9 @@ jobs:
 
     - name: Install packages
       run: |
-        mkdir -p /usr/share/man/man1
-        apt-get update
-        apt-get -y install ant
+        sudo mkdir -p /usr/share/man/man1
+        sudo apt-get update
+        sudo apt-get -y install ant
 
     - name: Get Secrets
       env:
