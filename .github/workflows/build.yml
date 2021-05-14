@@ -42,4 +42,15 @@ jobs:
     
     - name: Build
       run: ant -f build.xml all-system dev_doc
+
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: setup artifacts
+        path: |
+          pack/linux/*.tar.gz
+          pack/linux/rpm/RPMS/*.rpm
+          pack/linux/deb/*.deb
+          pack/macosx/*.dmg.gz
+          pack/windows/setup*.exe
       
