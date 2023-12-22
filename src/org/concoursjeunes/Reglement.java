@@ -974,8 +974,9 @@ public class Reglement implements ObjectPersistence {
 			if(session != null)
 				session.addThreatyObject(this);
 			
-			if(creation)
-				setNumReglement(numReglement); //force le recalcule des hashCode des surclassements
+			if(creation) {
+				fireSetNumReglement();
+			}
 	
 			try {
 				saveTie();
@@ -1120,6 +1121,16 @@ public class Reglement implements ObjectPersistence {
 		} catch (SQLException e) {
 			throw new ObjectPersistenceException(e);
 		}
+	}
+
+	/**
+	 * A la création en base force la notification d'affectation de l'id du règlement
+	 */
+	private void fireSetNumReglement() {
+		pcs.firePropertyChange("numReglement", 0, this.numReglement); //$NON-NLS-1$
+		
+		//force le recalcul du hashCode des Entry
+		surclassement = new HashMap<CriteriaSet, CriteriaSet>(surclassement);
 	}
 
 	/**

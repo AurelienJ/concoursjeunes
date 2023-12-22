@@ -1338,5 +1338,26 @@
     </void>
    </object>
   </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Correction d&apos;un problème affectant les distances des cibles sur les réglements fournit par défaut</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1664010459681</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.37</string>
+    </void>
+   </object>
+  </void>
  </object>
 </java>
