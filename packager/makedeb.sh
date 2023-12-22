@@ -18,7 +18,7 @@ rm concoursjeunes_$VERSION.orig.tar.gz
 #copie le debian
 mkdir debian
 #cp ../../../../packager/linux/debian/compat debian/
-echo 7 > debian/compat
+echo 9 > debian/compat
 cp ../../../../packager/linux/debian/control debian/
 cp ../../../../packager/linux/debian/copyright debian/
 cp ../../../../packager/linux/debian/dirs debian/
