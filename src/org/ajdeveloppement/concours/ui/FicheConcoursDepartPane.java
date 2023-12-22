@@ -942,9 +942,10 @@ public class FicheConcoursDepartPane extends JPanel
 
 		if (ajxlConcurrent.getSelectedValue() instanceof Concurrent) {
 			
-			Concurrent tmpConcurrent = lstModelConcurrent.getElementAt(ajxlConcurrent.convertIndexToModel(ajxlConcurrent.getSelectedIndex()));
-
-			selectConcurrentInTree(tmpConcurrent);
+			Concurrent tmpConcurrent = lstModelConcurrent.getElementAt(
+				ajxlConcurrent.convertIndexToModel(ajxlConcurrent.getSelectedIndex()));
+			if(tmpConcurrent != null)
+				selectConcurrentInTree(tmpConcurrent);
 		}
 	}
 
@@ -1068,7 +1069,9 @@ public class FicheConcoursDepartPane extends JPanel
 
 		@Override
 		public Concurrent getElementAt(int index) {
-			return concurrents.get(index);
+			if(index < concurrents.size())
+				return concurrents.get(index);
+			return null;
 		}
 
 		@Override

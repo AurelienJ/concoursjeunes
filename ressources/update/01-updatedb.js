@@ -66,6 +66,7 @@ if(dbVersion == 0) {
 		sql.executeUpdate("UPDATE FEDERATION SET NUMFEDERATION=(SELECT MAX(NUMFEDERATION)+1 FROM FEDERATION) WHERE NUMFEDERATION=0");
 	}
 	if(dbVersion < 35) {
+		sql.executeUpdate("delete from criteriaset where numcriteriaset in (select cs1.numcriteriaset  from criteriaset cs1 inner join criteriaset  cs2 on cs2.Idcriteriaset=REPLACE(cs1.IDCRITERIASET, 'R=0,',CONCAT('R=',cs1.NUMREGLEMENT,',')) where cs1.Idcriteriaset like 'R=0,%')");
 		sql.executeUpdate("UPDATE CRITERIASET SET IDCRITERIASET=REPLACE(IDCRITERIASET, 'R=0,',CONCAT('R=',NUMREGLEMENT,','))");
 	}
 }

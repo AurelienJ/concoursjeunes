@@ -1359,5 +1359,27 @@
     </void>
    </object>
   </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Correction d&apos;un problème de mise à jour des règlements dans certains cas en raison de doublon de clés
+  * Correction d&apos;une erreur à la selection d&apos;un archer sur le pas de tir dans de rares cas</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1680458588738</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.38</string>
+    </void>
+   </object>
+  </void>
  </object>
 </java>
