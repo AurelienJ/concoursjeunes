@@ -1,12 +1,17 @@
 USE_CONSOLEHELPER=$(shell if [ -x /usr/bin/consolehelper ] ; then echo "yes" ; fi)
 USE_GKSU=$(shell if [ -x /usr/bin/gksu ] ; then echo "yes" ; fi)
 USE_KDESU=$(shell if [ -x /usr/bin/kdesu ] ; then echo "yes" ; fi)
+ifndef GROUP_CREATION
+	GROUP_CREATION="yes"
+endif
 
 all:
 
 install:
-	groupadd -f concoursjeunes
-	
+	ifeq ($(GROUP_CREATION), yes)
+		groupadd -f concoursjeunes
+	endif
+
 	mkdir -p "$(DESTDIR)/usr/lib/ConcoursJeunes"
 	mkdir -p "$(DESTDIR)/var/lib/ConcoursJeunes"
 	mkdir -p "$(DESTDIR)/usr/bin/"
@@ -23,7 +28,9 @@ install:
 	cp -r var/lib/ConcoursJeunes/. "$(DESTDIR)/var/lib/ConcoursJeunes/"
 	chmod +s "$(DESTDIR)/var/lib/ConcoursJeunes"
 	chmod -R a+Xrw "$(DESTDIR)/var/lib/ConcoursJeunes"
-	chown -R root:concoursjeunes "$(DESTDIR)/var/lib/ConcoursJeunes"
+	ifeq ($(GROUP_CREATION), yes)
+		chown -R root:concoursjeunes "$(DESTDIR)/var/lib/ConcoursJeunes"
+	endif
 	install -m700 usr/sbin/concoursjeunes-applyupdate "$(DESTDIR)/usr/sbin/concoursjeunes-applyupdate"
 
 	
