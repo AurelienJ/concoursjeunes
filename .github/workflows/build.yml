@@ -49,7 +49,7 @@ jobs:
         name: setup artifacts
         path: |
           pack/linux/*.tar.gz
-          pack/linux/rpm/RPMS/*.rpm
+          pack/linux/rpm/RPMS/noarch/*.rpm
           pack/linux/deb/*.deb
           pack/macosx/*.dmg.gz
           pack/windows/setup*.exe
