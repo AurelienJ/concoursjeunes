@@ -287,6 +287,10 @@ public class InstallPluginDialog extends JDialog implements ActionListener, Care
 		if(ApplicationCore.getAppConfiguration().isUseProxy()) {
 			ApplicationCore.getAppConfiguration().getProxy().activateProxyConfiguration();
 		}
+
+		jlCategorie.add(localisation.getResourceString("installplugindialog.category.all")); //$NON-NLS-1$
+		jlCategorie.add(localisation.getResourceString("installplugindialog.category.manual")); //$NON-NLS-1$
+		jlCategorie.setSelectedIndex(0);
 		
 		boolean disable = false;
 		File tmJar = null;
@@ -316,12 +320,10 @@ public class InstallPluginDialog extends JDialog implements ActionListener, Care
 					pdtm.addPluginDescription(pluginDescription);
 				}
 				
-				jlCategorie.add(localisation.getResourceString("installplugindialog.category.all")); //$NON-NLS-1$
-				jlCategorie.add(localisation.getResourceString("installplugindialog.category.manual")); //$NON-NLS-1$
 				for(String category : apm.getCategories().values()) {
 					jlCategorie.add(category);
 				}
-				jlCategorie.setSelectedIndex(0);
+				
 			} else
 				disable = true;
 		} catch(WebServiceException e1) {
@@ -374,18 +376,18 @@ public class InstallPluginDialog extends JDialog implements ActionListener, Care
 				tmJar.delete();
 		}
 		
-		if(disable) {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					GlassPanePanel panel = new GlassPanePanel();
+		// if(disable) {
+		// 	SwingUtilities.invokeLater(new Runnable() {
+		// 		@Override
+		// 		public void run() {
+		// 			GlassPanePanel panel = new GlassPanePanel();
 					
-					panel.setMessage(localisation.getResourceString("installplugindialog.temporary.disable")); //$NON-NLS-1$
-					setGlassPane(panel);
-					panel.setVisible(true);
-				}
-			});
-		}
+		// 			panel.setMessage(localisation.getResourceString("installplugindialog.temporary.disable")); //$NON-NLS-1$
+		// 			setGlassPane(panel);
+		// 			panel.setVisible(true);
+		// 		}
+		// 	});
+		// }
 	}
 	
 	/**
