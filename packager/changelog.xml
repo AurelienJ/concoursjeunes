@@ -7,7 +7,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Amélioration générale de l&apos;ergonomie
@@ -40,7 +40,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction de bugs
@@ -65,7 +65,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction de bugs
@@ -87,7 +87,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Passage en version finale
@@ -110,7 +110,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction Bug 56: Impossible d&apos;insérer 2 archers de même nom de famille sans numéro de licence</string>
@@ -131,7 +131,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction Bug 57: Dans certains cas très particulier, il devient impossible d&apos;imprimer le classement et le concours devient inutilisable au redémarrage.</string>
@@ -152,7 +152,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction corruption fichier compétition avec un règlement mal paramétré</string>
@@ -173,7 +173,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction problème de localisation incomplete</string>
@@ -194,7 +194,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction d&apos;un problème empéchant l&apos;ouverture de certains concours initialisé dans une version antérieur
@@ -217,7 +217,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction d&apos;un problème empéchant l&apos;édition d&apos;un nouveau règlement basé sur un règlement officiel</string>
@@ -238,7 +238,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Suppression limitation du nombre de départ</string>
@@ -259,7 +259,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction d&apos;un problème empéchant dans certaines configurations le placement automatique des concurrents
@@ -281,7 +281,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction d&apos;un souci d&apos;affichage du club si celui-ci n&apos;est pas présent en base</string>
@@ -302,7 +302,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Ajout validation certificat SSL StartCom</string>
@@ -323,7 +323,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Amélioration de la gestion des entites
@@ -348,7 +348,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * FInalisation gestion des phases finales</string>
@@ -369,7 +369,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Corrections de bug
@@ -393,7 +393,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Corrections de bug
@@ -416,7 +416,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Corrections de bug
@@ -438,7 +438,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Corrections NullReferenceException à l&apos;ajout d&apos;un archer après réouverture d&apos;une fiche concours</string>
@@ -459,7 +459,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Corrections NullReferenceException au changement de version entre 2.20 et 2.30</string>
@@ -480,7 +480,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Amelioration des performances</string>
@@ -501,7 +501,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction plantage sur les équipes après rechargement d&apos;une compétition</string>
@@ -522,7 +522,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction libellé
@@ -544,7 +544,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction libellé
@@ -566,7 +566,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Amélioration des permormances - Suppression d&apos;une fuite mémoire
@@ -588,7 +588,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction bug #63 - Problème d&apos;affichage des phases finales dans certains cas
@@ -610,7 +610,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction bug #65 - correction de fautes de grammaire
@@ -633,7 +633,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Ajout contrôle possibilité création répertoire utilisateur et affichage message d&apos;erreur dans le cas contraire
@@ -655,7 +655,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Possible erreur java.lang.NullPointerException après mise à jour
@@ -677,7 +677,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction d&apos;un problème permettant de créer une compétition sans aucune cible
@@ -699,7 +699,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction d&apos;un problème NullReferenceException en cas de surcharge d&apos;un pas de tir</string>
@@ -720,7 +720,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction package Mac OS X pour Lion</string>
@@ -741,7 +741,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Ajout blason 60 réduit</string>
@@ -762,7 +762,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction problème import ResultArc si des archers étranger ont été saisi dans celui-ci
@@ -785,7 +785,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction NullReferenceException à l&apos;affichage de la liste des concurrents si aucune Fédération n&apos;a été paramétré sur le profil
@@ -807,7 +807,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction script création base - erreur import de certain réglements</string>
@@ -828,7 +828,7 @@
      <string>concoursjeunes</string>
     </void>
     <void property="author">
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string>
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
     </void>
     <void property="changeInfos">
      <string>  * Correction de problèmes si aucune fédération n&apos;est saisi au premier démarrage de l&apos;application: On force désormais le choix d&apos;une fédération </string>

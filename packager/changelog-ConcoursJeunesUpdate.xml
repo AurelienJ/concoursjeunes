@@ -7,7 +7,7 @@
      <string>ConcoursJeunesUpdate</string> 
     </void> 
     <void property="author"> 
-     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@gmail.com&gt;</string> 
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string> 
     </void> 
     <void property="changeInfos"> 
      <string>  * Ajout support des dépôts signé
