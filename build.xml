@@ -14,19 +14,14 @@
 	  </classpath>
 	</taskdef>
 	
-	<taskdef name="bundleapp"
-		             classname="com.oracle.appbundler.AppBundlerTask"   
-		             classpath="lib/appbundler-1.0.0.jar" />
-	
 	<condition property="isWindows">
 		<os family="Windows" />
 	</condition>
+
 	<condition property="isLinux">
 		<os family="unix" name="Linux" />
 	</condition>
-	<condition property="isMacOS">
-		<os family="mac" />
-	</condition>
+
 	<available file="/usr/bin/dpkg-buildpackage" property="dpkgAvailable"/>
 	<available file="/usr/bin/rpmbuild" property="rpmAvailable"/>
 	<condition property="nsisAvailable">
@@ -148,9 +143,6 @@
 			<fileset dir="packager" >
 				<include name="*.txt" />
 			</fileset>
-			<fileset dir="packager/macosx/ConcoursJeunes.app/Contents/Java">
-				<include name="**" />
-			</fileset>
 		</copy>
 
 		<replace 
@@ -220,19 +212,6 @@
 				<include name="org/concoursjeunes/plugins/*.*" />
 			</fileset>
 		</jar>
-		<jar jarfile="${projet.pack.dir}/ConcoursJeunes-webservices.jar">
-			<fileset dir="${projet.pack.dir}/bin">
-				<include name="org/concoursjeunes/webservices/**" />
-			</fileset>
-		</jar>
-		<signjar
-				jar="${projet.pack.dir}/ConcoursJeunes-webservices.jar"
-				alias="${projet.signkeyalias}" keystore="${projet.keystorepath}"
-				storetype="JCEKS"
-				storepass="${projet.keystorepassword}"
-				keypass="${projet.signkeyaliaspassword}"
-			
-				lazy="true" />
 	</target>
 
 	<target name="revisions" description="revisions">
@@ -241,7 +220,7 @@
 			<classpath location="lib/ajcommons.jar"/>
 			<classpath location="lib/jaxb-core-2.3.0.1.jar"/>
 			<classpath location="lib/jaxb-api-2.3.1.jar"/>
-			<classpath location="lib/jaxb-impl-2.3.0.1.jar"/>
+			<classpath location="lib/jaxb-impl-2.3.9.jar"/>
 		</taskdef>
 
 		<revisionscreator
@@ -267,13 +246,6 @@
 				<exclude name="*-filelist.txt"/>
 				<exclude name="lib/js*"/>
 			</fileset>
-			<system name="macosx">
-				<fileset dir="${projet.pack.dir}">
-					<include name="lib/js*"/>
-					<include name="concoursjeunes-applyupdate"/>
-					<include name="libAuthKit.jnilib"/>
-				</fileset>
-			</system>
 			<keysandcerts dir="${projet.pack.dir}/ressources/security/">
 				<include name="certs/**" />
 			</keysandcerts>
@@ -419,83 +391,6 @@
 			<env key="RELEASE" value="${version.release}"/>
 		</exec>
 	</target>
-
-	<target name="makemacbundle">
-		<defaultexcludes remove="**/.DS_Store"/>
-		<mkdir dir="${projet.pack.dir}/macosx" />
-		
-		<bundleapp outputdirectory="${projet.pack.dir}/macosx"
-				            name="ConcoursJeunes"
-				            displayname="ConcoursJeunes"
-				            identifier="org.ajdeveloppement.concours"
-				            mainclassname="org.ajdeveloppement.concours.Main"
-							icon="packager/macosx/ConcoursJeunes.app/Contents/Java/ressources/iconCJ.icns"
-							jvmrequired="1.8"
-			      			jrepreferred="true"
-							workingdirectory="$APP_ROOT/Contents/Java"
-							signature="ACGS"
-							>
-							<classpath file="${projet.pack.dir}/ConcoursJeunes.jar" />
-							<option value="-Dapple.laf.useScreenMenuBar=true"/>
-							<option value="-splash:$APP_ROOT/Contents/Java/ressources/Logo.png"/>
-				        </bundleapp>
-		
-		<copy todir="${projet.pack.dir}/macosx/" >
-			<fileset dir="packager/macosx" >
-				<include name="**/**"/>
-			</fileset>
-		</copy>
-		
-		<defaultexcludes default="true"/>
-		
-		<copy todir="${projet.pack.dir}/macosx/${version.name}.app/Contents/Java" >
-			<fileset dir="pack" >
-				<include name="config/**"/>
-				<include name="lang/**"/>
-				<include name="lib/**"/>
-			</fileset>
-		</copy>
-		
-		<copy todir="${projet.pack.dir}/macosx/${version.name}.app/Contents/Java" >
-			<fileset dir="pack" >
-				<include name="ressources/**"/>
-				<include name="documentation/**"/>
-				<!--<include name="ConcoursJeunes.jar"/>-->
-				<include name="*.txt"/>
-			</fileset>
-		</copy>
-		
-		<!--
-		<chmod file="${projet.pack.dir}/macosx/${version.name}.app/Contents/MacOS/JavaApplicationStub" perm="a+x"></chmod>
-		<chmod file="${projet.pack.dir}/macosx/${version.name}.app/Contents/Resources/Java/concoursjeunes-applyupdate" perm="a+x"></chmod>
-		-->
-		<for param="plugin">
-		    <dirset dir="${projet.pack.dir}/plugins/">
-		    	<include name="*"/>
-		    	<exclude name="FFTAImport"/>
-		    	<exclude name="ResultArcImport"/>
-		    	<exclude name="ScriptExt"/>
-		    </dirset>
-			<sequential>
-				<copy todir="${projet.pack.dir}/macosx/${version.name}.app/Contents/Java" >
-					<fileset dir="@{plugin}" >
-						<include name="**/**"/>
-						
-						<exclude name="revision.xml.gz"/>
-					</fileset>
-				</copy>
-			</sequential>
-		</for>
-		
-		<exec executable="packager/makedmg.sh" os="Linux">
-			<env key="APPNAME" value="${version.name}"/>
-			<env key="VERSION" value="${version.numero}"/>
-		</exec>
-		
-		
-		
-		<gzip zipfile="${projet.pack.dir}/macosx/${version.name}-${version.numero}.dmg.gz" src="${projet.pack.dir}/macosx/${version.name}-${version.numero}.dmg"/>
-	</target>
 	
 	<target name="makensissetup" if="nsisAvailable">
 		<taskdef name="nsis" classname="net.sf.nsisant.Task">
@@ -531,7 +426,6 @@
 		<antcall target="revisions" />
 		<antcall target="windows" />
 		<antcall target="linux" />
-		<antcall target="MacOSX" />	
 	</target>
 	
 
@@ -544,9 +438,7 @@
 		<antcall target="makerpm" />
 		<antcall target="makedeb" />
 	</target>
-	<target name="MacOSX" description="Pack Mac OS X" if="isMacOS">
-		<antcall target="makemacbundle" />
-	</target>
+	
 	<!-- La target all-system ne peut fonctionner que sur un linux de type debian, ubuntu car c'est le seul à disposer à la fois des
 	outils de construction deb, rpm et nsis. Les sytstème windows ne supporte que nsis, les red-hat like que rpm -->
 	<target name="all-system" description="Compilation Multi-systeme">
@@ -562,7 +454,6 @@
 		<antcall target="makelinuxtargz" />
 		<antcall target="makerpm" />
 		<antcall target="makedeb" />
-		<antcall target="makemacbundle" />
 	</target>
 	
 	<target name="deploy" description="deploi les fichier sur le serveur de mise à jour">
