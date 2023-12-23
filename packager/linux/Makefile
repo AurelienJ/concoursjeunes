@@ -8,9 +8,9 @@ endif
 all:
 
 install:
-	ifeq ($(GROUP_CREATION), yes)
-		groupadd -f concoursjeunes
-	endif
+ifeq ($(GROUP_CREATION), yes)
+	groupadd -f concoursjeunes
+endif
 
 	mkdir -p "$(DESTDIR)/usr/lib/ConcoursJeunes"
 	mkdir -p "$(DESTDIR)/var/lib/ConcoursJeunes"
@@ -28,9 +28,9 @@ install:
 	cp -r var/lib/ConcoursJeunes/. "$(DESTDIR)/var/lib/ConcoursJeunes/"
 	chmod +s "$(DESTDIR)/var/lib/ConcoursJeunes"
 	chmod -R a+Xrw "$(DESTDIR)/var/lib/ConcoursJeunes"
-	ifeq ($(GROUP_CREATION), yes)
-		chown -R root:concoursjeunes "$(DESTDIR)/var/lib/ConcoursJeunes"
-	endif
+ifeq ($(GROUP_CREATION), yes)
+	chown -R root:concoursjeunes "$(DESTDIR)/var/lib/ConcoursJeunes"
+endif
 	install -m700 usr/sbin/concoursjeunes-applyupdate "$(DESTDIR)/usr/sbin/concoursjeunes-applyupdate"
 
 	
@@ -38,7 +38,7 @@ ifeq ($(USE_CONSOLEHELPER), yes)
 	install -m644 etc/pam.d/concoursjeunes-applyupdate "$(DESTDIR)/etc/pam.d/concoursjeunes-applyupdate"
 	install -m644 etc/security/console.apps/concoursjeunes-applyupdate "$(DESTDIR)/etc/security/console.apps/concoursjeunes-applyupdate"
 	
-	ln -s consolehelper "$(DESTDIR)/usr/bin/concoursjeunes-applyupdate"
+	ln -sf consolehelper "$(DESTDIR)/usr/bin/concoursjeunes-applyupdate"
 else ifeq ($(USE_GKSU), yes)
 	echo "gksu /usr/sbin/concoursjeunes-applyupdate \$$1 \$$2" > "$(DESTDIR)/usr/bin/concoursjeunes-applyupdate"
 	chmod 755 "$(DESTDIR)/usr/bin/concoursjeunes-applyupdate"
