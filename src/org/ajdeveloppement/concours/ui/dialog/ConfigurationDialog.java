@@ -197,7 +197,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 	@Localizable("configuration.ecran.general.logo")
 	private JLabel jlLogoPath = new JLabel();
 	private JComboBox jcbFederation = new JComboBox();
-	private JTextField jtfNomClub = new JTextField(20);
+	private JTextField jtfNomClub = new JTextField(30);
 	private JTextField jtfAgrClub = new JTextField(new NumberDocument(false, false), "", 7); //$NON-NLS-1$
 	@Localizable(value="configuration.ecran.general.choiceclub",tooltip="configuration.ecran.general.browseclub")
 	private JButton jbParcourir = new JButton();
