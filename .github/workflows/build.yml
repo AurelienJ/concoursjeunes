@@ -12,11 +12,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - if: ${{ env.ACT }}
+      name: Hack container for local development
+      run: |
+          curl -SLO https://deb.nodesource.com/nsolid_setup_deb.sh
+          chmod 500 nsolid_setup_deb.sh
+          ./nsolid_setup_deb.sh 20
+          apt-get install nodejs -y
+
     - uses: actions/checkout@v2
-    - name: Set up JDK 8
+    - name: Set up JDK 17
       uses: actions/setup-java@v2
       with:
-        java-version: '8'
+        java-version: '17'
         distribution: 'adopt'
       env:
         RUNNER_TEMP: /tmp

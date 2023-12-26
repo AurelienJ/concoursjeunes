@@ -3,6 +3,14 @@
                               xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd"> 
         <info organisation="org.ajdeveloppement" module="arccompetition" revision="1.0" status="integration"> 
         </info>
+        <configurations>
+		    <conf name="runtime" description="Modules needed for running the application"/>
+		    <conf name="windows32" extends="runtime" description="Windows 32bits dependencies"/>
+		    <conf name="windows64" extends="runtime" description="Windows 64bits dependencies"/>
+		    <conf name="macosx" extends="runtime" description="Mac OX X 64bits dependencies"/>
+		    <conf name="linux" extends="runtime" description="Linux 64bits dependencies"/>
+		    <conf name="all" extends="windows32,windows64,macosx,linux" description="All platform dependencies"/>
+		</configurations>
         <dependencies>
             <dependency org="javax.xml.bind" name="jaxb-api" rev="2.3.1"/>
             <dependency org="com.sun.xml.bind" name="jaxb-core" rev="2.3.0.1"/>
@@ -11,5 +19,6 @@
             <dependency org="com.lowagie" name="itext" rev="2.1.7"/>
             <dependency org="org.swinglabs" name="swingx" rev="1.6.1"/>
             <dependency org="org.jdesktop" name="beansbinding" rev="1.2.1"/>
+            <dependency org="org.openjdk.nashorn" name="nashorn-core" rev="15.4"/>
         </dependencies>
 </ivy-module> 

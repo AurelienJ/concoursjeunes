@@ -33,6 +33,30 @@
 	
 	<property file="packager/version.properties" />
 	<property file="packager/security.properties" />
+		
+	<path id="classpath">
+		<pathelement location="config/" />
+		<pathelement location="lang/" />
+		<pathelement location="plugins/" />
+		<fileset dir="${basedir}/">
+			<include name="plugins/*.jar" />
+			<include name="${projet.lib.dir}/*.jar" />
+			<exclude name="${projet.lib.dir}/*sources.jar"/>
+			<exclude name="${projet.lib.dir}/*javadoc.jar"/>
+			<exclude name="${projet.lib.dir}/debug.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- constructs the external libraries classpath name -->
+	<pathconvert property="classpath.name" pathsep=" ">
+		<path refid="classpath" />
+		<mapper>
+			<globmapper from="${basedir}/${projet.lib.dir}/*.jar" to="${projet.lib.dir}/*.jar" />
+			<globmapper from="${basedir}/config" to="config/" />
+			<globmapper from="${basedir}/lang" to="lang/" />
+			<globmapper from="${basedir}/plugins" to="plugins/" />
+		</mapper>
+	</pathconvert>
 
 	<import file="plugins/build-ConcoursJeunesUpdate.xml"/>
 	<import file="plugins/build-ResultArcImport.xml"/>
@@ -41,6 +65,13 @@
 	<import file="plugins/build-BackupRestorePlugin.xml"/>
 	<import file="plugins/build-ScriptExt.xml"/>
 	
+	<!-- install ivy -->
+	<target name="ivy" description="Install ivy">
+		<mkdir dir="${user.home}/.ant/lib" />
+		<get dest="${user.home}/.ant/lib/ivy.jar" src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/2.5.2/ivy-2.5.2.jar" />
+	</target>
+	
+	<!-- resolve ivy dependencies -->
 	<target name="resolve" description="--> retrieve dependencies with ivy">
 	    <ivy:retrieve />
 	</target>
@@ -56,7 +87,8 @@
 			additionalparam=" -encoding utf8 -docencoding utf8 -charset utf8"
 			sourcepath="src"
 			destdir="docs"
-			classpath="${compilclasspath}">
+			classpathref="classpath">
+			
 			<link href="http://java.sun.com/javase/6/docs/api/" />
 			<link href="http://www.ajdeveloppement.org/docs/"/>
 			<!--<packageset dir="src" defaultexcludes="yes">
@@ -154,19 +186,26 @@
 		</replace>
 
 	</target>
+	
+	<pathconvert property="classpathProp" refid="classpath"/>
 
 	<target name="compile" depends="pack_stage1">
 
 		<mkdir dir="${projet.pack.dir}/bin" />
+		
+		<echo message="basedir : ${basedir} " />
+		<echo message="classpath : ${classpathProp} " />
+		<echo message="classpath.name : ${classpath.name} " />
 
 		<javac srcdir="${projet.pack.dir}/src/" destdir="${projet.pack.dir}/bin"
 			optimize="on"
 			encoding="UTF-8"
 			nowarn="on"
 			debug="true"
-			source="1.8"
-			target="1.8"
-			classpath="${compilclasspath}">
+			source="17"
+			target="17"
+			classpathref="classpath"
+			includeantruntime="false">
 		</javac>
 
 		<copy todir="${projet.pack.dir}/bin">
@@ -180,10 +219,10 @@
 	</target>
 
 	<target name="jar" depends="compile">
-
+		
 		<manifest file="${projet.pack.dir}/MANIFEST.MF" mode="update">
 		    <attribute name="Main-Class" value="org.ajdeveloppement.concours.Main"/>
-			<attribute name="Class-Path" value="${classpath}"/>
+			<attribute name="Class-Path" value="lib/ConcoursJeunes-core.jar ${classpath.name}"/>
 			<attribute name="SplashScreen-Image" value="Logo.png" />
         </manifest>
 		<jar jarfile="${projet.pack.dir}/ConcoursJeunes.jar"
@@ -216,12 +255,8 @@
 
 	<target name="revisions" description="revisions">
 		<taskdef name="revisionscreator"
-			classname="org.ajdeveloppement.updater.ant.RevisionsCreator">
-			<classpath location="lib/ajcommons.jar"/>
-			<classpath location="lib/jaxb-core-2.3.0.1.jar"/>
-			<classpath location="lib/jaxb-api-2.3.1.jar"/>
-			<classpath location="lib/jaxb-impl-2.3.9.jar"/>
-			<classpath location="lib/javax.activation-api-1.2.0.jar"/>
+			classname="org.ajdeveloppement.updater.ant.RevisionsCreator"
+			classpathref="classpath">
 		</taskdef>
 
 		<revisionscreator
@@ -406,8 +441,8 @@
 			</fileset>
 		</copy>
 		
-		<gunzip src="${projet.pack.dir}/windows/openjdk-9.0.4_windows-x64_bin.tar.gz"/>
-		<untar src="${projet.pack.dir}/windows/openjdk-9.0.4_windows-x64_bin.tar" dest="${projet.pack.dir}/windows/"/>
+		<get dest="packager/windows/openjdk-17+35_windows-x64_bin.zip" src="hhttps://download.java.net/openjdk/jdk17/ri/openjdk-17+35_windows-x64_bin.zip"/>
+		<unzip src="${projet.pack.dir}/windows/openjdk-17+35_windows-x64_bin.zip" dest="${projet.pack.dir}/windows/" />
 		
 		<nsis script="packager/setup.nsi" verbosity="4">
 			<define name="VERSION" value="${version.numero}"/>

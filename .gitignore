@@ -4,6 +4,7 @@ pack
 
 #exclude external dependencies
 lib/ajcommons*.jar
+lib/*.jar
 
 #exlude secrets
 packager/*.jks
