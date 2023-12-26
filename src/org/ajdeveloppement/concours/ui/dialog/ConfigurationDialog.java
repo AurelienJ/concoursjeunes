@@ -325,8 +325,8 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 		getContentPane().add(tabbedpane, BorderLayout.CENTER);
 		getRootPane().setDefaultButton(this.jbValider);
 
-		pack();
-		setLocationRelativeTo(null);
+		//pack();
+		//setLocationRelativeTo(null);
 	}
 
 	/**
@@ -807,6 +807,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener, Auto
 
 		completePanel();
 		pack();
+		setLocationRelativeTo(null);
 		setVisible(true);
 
 		return workConfiguration;

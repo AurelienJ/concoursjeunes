@@ -17,4 +17,4 @@ secrets
 src/org/concoursjeunes/AppInfos.java
 
 #exclude big files
-packager/windows/openjdk-9.0.4_windows-x64_bin.tar.gz
+packager/windows/openjdk-*

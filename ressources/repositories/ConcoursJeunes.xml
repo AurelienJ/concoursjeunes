@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<repository name="_ConcoursJeunes" moduleVersion="2.30.38">
+	<url>http://update.concoursjeunes.org/2.3b/</url>
+	<mirror>0</mirror>
+	<canDisable>true</canDisable>
+	<mustBeSigned>true</mustBeSigned>
+</repository>
