@@ -111,8 +111,8 @@ Section "Base" SEC0000
     File windows\concoursjeunes-applyupdate.exe.config
     File windows\concoursjeunes-startup.exe
     File windows\concoursjeunes-startup.exe.config
-    SetOutPath $INSTDIR\jdk-9.0.4
-    File /r windows\jdk-9.0.4\*
+    SetOutPath $INSTDIR\jdk-17
+    File /r windows\jdk-17\*
     WriteRegStr HKLM "${REGKEY}\Components" Base 1
     
     Call DetectDotNet
