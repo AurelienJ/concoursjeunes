@@ -103,12 +103,8 @@ Section "Base" SEC0000
     File /r documentation\*
     SetOutPath $INSTDIR
     File ConcoursJeunes.jar
-    File /r plugins\ConcoursJeunesUpdate\*
     File /r plugins\PhoenixPlugin\*
     File /r plugins\BackupRestorePlugin\*
-    File *.txt
-    File windows\concoursjeunes-applyupdate.exe
-    File windows\concoursjeunes-applyupdate.exe.config
     File windows\concoursjeunes-startup.exe
     File windows\concoursjeunes-startup.exe.config
     SetOutPath $INSTDIR\jdk-17

@@ -36,7 +36,6 @@ groupadd -f concoursjeunes
 
 %__cp -a . "${RPM_BUILD_ROOT-/}"
 
-ln -s consolehelper "$RPM_BUILD_ROOT%{_bindir}/concoursjeunes-applyupdate"
 rm -rf "$RPM_BUILD_ROOT/Makefile"
 
 %clean
@@ -53,10 +52,6 @@ rm -rf "$RPM_BUILD_ROOT/Makefile"
 /usr/lib/ConcoursJeunes/ressources/*
 /usr/lib/ConcoursJeunes/ConcoursJeunes.jar
 %attr(755, -, root) %{_bindir}/ConcoursJeunes
-%attr(755, -, root) %{_bindir}/concoursjeunes-applyupdate
-%attr(700, root, root) /usr/sbin/concoursjeunes-applyupdate
-%attr(644, root, root) %{_sysconfdir}/pam.d/concoursjeunes-applyupdate
-%attr(644, root, root) %{_sysconfdir}/security/console.apps/concoursjeunes-applyupdate
 %{_datadir}/pixmaps/ConcoursJeunes.xpm
 %{_datadir}/applications/ConcoursJeunes.desktop
 %attr(2777, root, concoursjeunes) /var/lib/ConcoursJeunes/

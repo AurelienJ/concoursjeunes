@@ -1,6 +1,3 @@
-USE_CONSOLEHELPER=$(shell if [ -x /usr/bin/consolehelper ] ; then echo "yes" ; fi)
-USE_GKSU=$(shell if [ -x /usr/bin/gksu ] ; then echo "yes" ; fi)
-USE_KDESU=$(shell if [ -x /usr/bin/kdesu ] ; then echo "yes" ; fi)
 ifndef GROUP_CREATION
 	GROUP_CREATION="yes"
 endif
@@ -31,25 +28,8 @@ endif
 ifeq ($(GROUP_CREATION), yes)
 	chown -R root:concoursjeunes "$(DESTDIR)/var/lib/ConcoursJeunes"
 endif
-	install -m700 usr/sbin/concoursjeunes-applyupdate "$(DESTDIR)/usr/sbin/concoursjeunes-applyupdate"
-
-	
-ifeq ($(USE_CONSOLEHELPER), yes)
-	install -m644 etc/pam.d/concoursjeunes-applyupdate "$(DESTDIR)/etc/pam.d/concoursjeunes-applyupdate"
-	install -m644 etc/security/console.apps/concoursjeunes-applyupdate "$(DESTDIR)/etc/security/console.apps/concoursjeunes-applyupdate"
-	
-	ln -sf consolehelper "$(DESTDIR)/usr/bin/concoursjeunes-applyupdate"
-else ifeq ($(USE_GKSU), yes)
-	echo "gksu /usr/sbin/concoursjeunes-applyupdate \$$1 \$$2" > "$(DESTDIR)/usr/bin/concoursjeunes-applyupdate"
-	chmod 755 "$(DESTDIR)/usr/bin/concoursjeunes-applyupdate"
-else ifeq ($(USE_KDESU), yes)
-	echo "kdesu /usr/sbin/concoursjeunes-applyupdate \$$1 \$$2" > "$(DESTDIR)/usr/bin/concoursjeunes-applyupdate"
-	chmod 755 "$(DESTDIR)/usr/bin/concoursjeunes-applyupdate"
-endif
 
 clean:
-
-
 
 remove:
 	rm -rf "$(DESTDIR)/usr/lib/ConcoursJeunes"
@@ -58,8 +38,4 @@ remove:
 	rm -f "$(DESTDIR)/usr/bin/concoursjeunes-applyupdate"
 	rm -f "$(DESTDIR)/usr/share/pixmaps/ConcoursJeunes.xpm"
 	rm -f "$(DESTDIR)/usr/share/applications/ConcoursJeunes.desktop"
-ifeq ($(USE_CONSOLEHELPER), yes)
-	rm -f "$(DESTDIR)/etc/pam.d/concoursjeunes-applyupdate"
-	rm -f "$(DESTDIR)/etc/security/console.apps/concoursjeunes-applyupdate"
-endif
 
