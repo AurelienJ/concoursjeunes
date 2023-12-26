@@ -213,7 +213,9 @@ public class DisablePluginDialog extends JDialog implements ActionListener {
 		}
 		if(disablePlugin != null) {
 			for(String name : disablePlugin) {
-				jcbStatePlugins.get(name).setSelected(false);
+				var jcbPlugin = jcbStatePlugins.get(name);
+				if(jcbPlugin != null)
+					jcbPlugin.setSelected(false);
 			}
 		}
 	}
