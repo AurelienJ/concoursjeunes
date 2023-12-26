@@ -264,9 +264,9 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 	public FicheConcoursPane(ConcoursJeunesFrame parentframe, FicheConcours ficheConcours) {
 		this.parentframe = parentframe;
 		this.ficheConcours = ficheConcours;
-		this.localisation = parentframe.profile.getLocalisation();
+		this.localisation = parentframe.getSelectedProfile().getLocalisation();
 		
-		paramDialog = new ParametreDialog(parentframe, parentframe.profile, ficheConcours);
+		paramDialog = new ParametreDialog(parentframe, parentframe.getSelectedProfile(), ficheConcours);
 		
 		if(!ficheConcours.getParametre().isReglementLock()) {
 			paramDialog.showParametreDialog(ficheConcours.getParametre());
@@ -274,7 +274,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 		
 		init();
 		completeListDocuments();
-		concDialog = new ConcurrentDialog(parentframe, parentframe.profile, ficheConcours);
+		concDialog = new ConcurrentDialog(parentframe, parentframe.getSelectedProfile(), ficheConcours);
 	}
 
 	/**
@@ -477,7 +477,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 				}
 			}
 		} catch (ScriptException e) {
-			JXErrorPane.showDialog(parentframe, new ErrorInfo(parentframe.profile.getLocalisation().getResourceString("erreur"), e.toString(), //$NON-NLS-1$
+			JXErrorPane.showDialog(parentframe, new ErrorInfo(parentframe.getSelectedProfile().getLocalisation().getResourceString("erreur"), e.toString(), //$NON-NLS-1$
 					null, null, e, Level.SEVERE, null));
 			e.printStackTrace();
 		}
@@ -500,7 +500,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 		jpInformations.setOpaque(true);
 		
 		JPanel jpOptions = new JPanel();
-		jpOptions.setBorder(new TitledBorder(parentframe.profile.getLocalisation().getResourceString("state.options"))); //$NON-NLS-1$
+		jpOptions.setBorder(new TitledBorder(parentframe.getSelectedProfile().getLocalisation().getResourceString("state.options"))); //$NON-NLS-1$
 		
 		GridbagComposer composer = new GridbagComposer();
 		GridBagConstraints c = new GridBagConstraints();
@@ -555,7 +555,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 		docActions.add(jbDeleteDocument);
 		
 		JPanel jpDocuments = new JPanel();
-		jpDocuments.setBorder(new TitledBorder(parentframe.profile.getLocalisation().getResourceString("state.generareddoc"))); //$NON-NLS-1$
+		jpDocuments.setBorder(new TitledBorder(parentframe.getSelectedProfile().getLocalisation().getResourceString("state.generareddoc"))); //$NON-NLS-1$
 		jpDocuments.setLayout(new BorderLayout());
 		jpDocuments.add(docActions, BorderLayout.NORTH);
 		jpDocuments.add(new JScrollPane(ajlDocuments), BorderLayout.CENTER);
@@ -600,7 +600,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 		String concoursDirectory = concoursFileName.substring(0, concoursFileName.length() - 5);
 		
 		File docsPathFile = new File(
-				ApplicationCore.userRessources.getConcoursPathForProfile(parentframe.profile), 
+				ApplicationCore.userRessources.getConcoursPathForProfile(parentframe.getSelectedProfile()), 
 				concoursDirectory);
 		if(docsPathFile.exists()) {
 			final File[] files = docsPathFile.listFiles();
@@ -622,11 +622,11 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 	 *
 	 */
 	private void affectLabels() {
-		Localizator.localize(this, parentframe.profile.getLocalisation());
+		Localizator.localize(this, parentframe.getSelectedProfile().getLocalisation());
 		
 		jcbSeries.removeAllItems();
 		for(int i = 1; i <= ficheConcours.getParametre().getReglement().getNbSerie(); i++)
-			jcbSeries.addItem(parentframe.profile.getLocalisation().getResourceString("state.numserie", i)); //$NON-NLS-1$
+			jcbSeries.addItem(parentframe.getSelectedProfile().getLocalisation().getResourceString("state.numserie", i)); //$NON-NLS-1$
 	}
 
 	/**
@@ -679,7 +679,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 		List<Concurrent> concurrents = ficheConcours.getConcurrentList().list(index, ficheConcours.getCurrentDepart());
 		if(concurrents.size() == 0)
 			return;
-		ResultatDialog resultat = new ResultatDialog(parentframe, localisation, parentframe.profile,
+		ResultatDialog resultat = new ResultatDialog(parentframe, localisation, parentframe.getSelectedProfile(),
 				ficheConcours.getParametre(), concurrents);
 
 		//si annulation ne pas continuer
@@ -735,7 +735,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 	private void printState() {
 		if(currentState != null) {
 			try {
-				StateProcessor sp = new StateProcessor(currentState, parentframe.profile, ficheConcours);
+				StateProcessor sp = new StateProcessor(currentState, parentframe.getSelectedProfile(), ficheConcours);
 				sp.process(jcbDeparts.getSelectedIndex(), jcbSeries.getSelectedIndex(), jcbSave.isSelected());
 				completeListDocuments();
 				SwingUtilities.invokeLater(new Runnable() {
@@ -773,7 +773,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 			if(Desktop.isDesktopSupported()) {
 				Desktop.getDesktop().open(file);
 			} else {
-				assert parentframe.profile.getConfiguration() != null;
+				assert parentframe.getSelectedProfile().getConfiguration() != null;
 				
 				String NAV = ApplicationCore.getAppConfiguration().getPdfReaderPath();
 
@@ -844,7 +844,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 				openResultatDialog();
 				jepClassIndiv.setText(ficheConcours.getClassement());
 			} else {
-				JOptionPane.showMessageDialog(this, parentframe.profile.getLocalisation().getResourceString("ficheconcours.target.empty")); //$NON-NLS-1$
+				JOptionPane.showMessageDialog(this, parentframe.getSelectedProfile().getLocalisation().getResourceString("ficheconcours.target.empty")); //$NON-NLS-1$
 			}
 		} else if(source instanceof JCheckBox) {
 			for(Criterion criterion : ficheConcours.getParametre().getReglement().getListCriteria()) {
@@ -857,7 +857,7 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 			cl.show(fichesDepart, "depart." + ficheConcours.getCurrentDepart()); //$NON-NLS-1$
 		} else if(source == jbPrint) {
 			jxbPrint.setBusy(true);
-			jxbPrint.setText(parentframe.profile.getLocalisation().getResourceString("state.generate")); //$NON-NLS-1$
+			jxbPrint.setText(parentframe.getSelectedProfile().getLocalisation().getResourceString("state.generate")); //$NON-NLS-1$
 			Thread t = new Thread() {
 				@Override
 				public void run() {
@@ -871,8 +871,8 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 			if(!ajlDocuments.isSelectionEmpty())
 				openPdf(ajlDocuments.getSelectedValue());
 		} else if(source == jbDeleteDocument) {
-			if (JOptionPane.showConfirmDialog(this, parentframe.profile.getLocalisation().getResourceString("state.confirmation.suppression"), //$NON-NLS-1$
-					parentframe.profile.getLocalisation().getResourceString("state.confirmation.suppression.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {//$NON-NLS-1$
+			if (JOptionPane.showConfirmDialog(this, parentframe.getSelectedProfile().getLocalisation().getResourceString("state.confirmation.suppression"), //$NON-NLS-1$
+					parentframe.getSelectedProfile().getLocalisation().getResourceString("state.confirmation.suppression.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {//$NON-NLS-1$
 				List<File> files = ajlDocuments.getSelectedValuesList();
 				for(Object f : files) {
 					((File)f).delete();
@@ -909,8 +909,8 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 				for(Concurrent concurrent : listConcurrents) {
 					if(concurrent.getCible() == 0) {
 						JOptionPane.showMessageDialog(this,
-								parentframe.profile.getLocalisation().getResourceString("erreur.nocible"), //$NON-NLS-1$ 
-								parentframe.profile.getLocalisation().getResourceString("erreur.nocible.titre"),JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
+								parentframe.getSelectedProfile().getLocalisation().getResourceString("erreur.nocible"), //$NON-NLS-1$ 
+								parentframe.getSelectedProfile().getLocalisation().getResourceString("erreur.nocible.titre"),JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
 						break;
 					}
 				}
@@ -937,8 +937,8 @@ public class FicheConcoursPane extends JPanel implements ActionListener, ChangeL
 			for(Concurrent concurrent : listConcurrents) {
 				if(concurrent.getCible() == 0) {
 					JOptionPane.showMessageDialog(this,
-							parentframe.profile.getLocalisation().getResourceString("erreur.nocible"), //$NON-NLS-1$ 
-							parentframe.profile.getLocalisation().getResourceString("erreur.nocible.titre"),JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
+							parentframe.getSelectedProfile().getLocalisation().getResourceString("erreur.nocible"), //$NON-NLS-1$ 
+							parentframe.getSelectedProfile().getLocalisation().getResourceString("erreur.nocible.titre"),JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
 					break;
 				}
 			}

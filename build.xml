@@ -38,7 +38,6 @@
 	<property file="packager/version.properties" />
 	<property file="packager/security.properties" />
 		
-	<import file="plugins/build-ConcoursJeunesUpdate.xml"/>
 	<import file="plugins/build-ResultArcImport.xml"/>
 	<import file="plugins/build-FFTAImport.xml"/>
 	<import file="plugins/build-PhoenixPlugin.xml"/>
@@ -465,7 +464,6 @@
 	<target name="auto-pack"
 		description="Pack en fonction du système">
 		<antcall target="jar" />
-		<antcall target="pack-ConcoursJeunesUpdate" />
 		<antcall target="pack-PhoenixPlugin" />
 		<antcall target="pack-BackupRestorePlugin" />
 		<antcall target="pack-FFTAImport" />
@@ -490,7 +488,6 @@
 	outils de construction deb, rpm et nsis. Les sytstème windows ne supporte que nsis, les red-hat like que rpm -->
 	<target name="all-system" description="Compilation Multi-systeme">
 		<antcall target="jar" />
-		<antcall target="pack-ConcoursJeunesUpdate" />
 		<antcall target="pack-PhoenixPlugin" />
 		<antcall target="pack-ResultArcImport" />
 		<antcall target="pack-FFTAImport" />

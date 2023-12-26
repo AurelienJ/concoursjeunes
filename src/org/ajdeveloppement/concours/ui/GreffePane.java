@@ -197,7 +197,7 @@ public class GreffePane extends JPanel implements
 			//charge le gestionnaire d'etat
 			stateManager = new StateManager();
 		} catch (ScriptException e) {
-			JXErrorPane.showDialog(ficheConcoursPane.getParentframe(), new ErrorInfo(ficheConcoursPane.getParentframe().profile.getLocalisation().getResourceString("erreur"), e.toString(), //$NON-NLS-1$
+			JXErrorPane.showDialog(ficheConcoursPane.getParentframe(), new ErrorInfo(ficheConcoursPane.getParentframe().getSelectedProfile().getLocalisation().getResourceString("erreur"), e.toString(), //$NON-NLS-1$
 					null, null, e, Level.SEVERE, null));
 		}
 		

@@ -178,9 +178,11 @@ public class ConcoursJeunesFrame extends JFrame implements ActionListener, Hyper
 	
 	private FicheConcoursPane selectedFicheConcoursPane = null;
 
-	public Profile profile;
+	private Profile profile;
 
 	private final AJTemplate ajtHome = new AJTemplate();
+	
+	private String extendedActionsContent;
 
 	/**
 	 * Construction de l'interface graphique
@@ -409,7 +411,7 @@ public class ConcoursJeunesFrame extends JFrame implements ActionListener, Hyper
 	 * Affiche une boite de dialogue avec la liste des concours existant pour le profil propose de créer une nouvelle fiche, d'ouvrir une fiche existante, de supprimer une fiche
 	 * 
 	 */
-	private void displayHome() {
+	public void displayHome() {
 		if (jepHome != null) {
 			ajtHome.reset();
 			ajtHome.parse("LOGO_CLUB_URI", profile.getConfiguration().getLogoPath().replaceAll("\\\\", "\\\\\\\\")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -459,6 +461,10 @@ public class ConcoursJeunesFrame extends JFrame implements ActionListener, Hyper
 				ajtHome.parseBloc("listconcours", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				ajtHome.parseBloc("extendedlist", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
+			
+			if(extendedActionsContent != null && !extendedActionsContent.isEmpty()) {
+				ajtHome.parseBloc("extendedactions", extendedActionsContent);
+			}
 
 			Runnable homeUpdateThread = new Runnable() {
 				@Override
@@ -474,6 +480,8 @@ public class ConcoursJeunesFrame extends JFrame implements ActionListener, Hyper
 			}
 		}
 	}
+	
+	
 	
 	private void openFicheConcours(final MetaDataFicheConcours metaDataFicheConcours) {
 		if(metaDataFicheConcours.getFilenameConcours().endsWith(".cta")) { //$NON-NLS-1$
@@ -596,12 +604,28 @@ public class ConcoursJeunesFrame extends JFrame implements ActionListener, Hyper
 		}
 		System.exit(0);
 	}
+	
 	/**
+	 * Return the current active user profile
+	 * 
+	 * @return
+	 */
+	public Profile getSelectedProfile() {
+		return profile;
+	}
+	
+	/**
+	 * Return the active contest
+	 * 
 	 * @return selectedFicheConcoursPane
 	 */
-	public FicheConcoursPane getSelectedFicheConcoursPane() {
+ 	public FicheConcoursPane getSelectedFicheConcoursPane() {
 		return selectedFicheConcoursPane;
 	}
+
+ 	public void setExtendedActionsContent(String content) {
+ 		extendedActionsContent = content;
+ 	}
 
 	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -897,7 +921,7 @@ public class ConcoursJeunesFrame extends JFrame implements ActionListener, Hyper
 						DisplayableErrorHelper.displayException(e1);
 						e1.printStackTrace();
 					}
-				} else if(e.getURL().getProtocol().equals("http")) { //$NON-NLS-1$
+				} else if(e.getURL().getProtocol().equals("http") || e.getURL().getProtocol().equals("https")) { //$NON-NLS-1$
 					try {
 						if(Desktop.isDesktopSupported()) {
 							Desktop.getDesktop().browse(e.getURL().toURI());
