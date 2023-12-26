@@ -14,6 +14,10 @@
 	  </classpath>
 	</taskdef>
 	
+	<property name="ivy.home" value="${user.home}/.ant"/>
+	<property name="ivy.jar.dir" value="${ivy.home}/lib"/>
+	
+	
 	<condition property="isWindows">
 		<os family="Windows" />
 	</condition>
@@ -73,6 +77,13 @@
 	
 	<!-- resolve ivy dependencies -->
 	<target name="resolve" description="--> retrieve dependencies with ivy">
+		<path id="ivy.lib.path">
+	        <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+
+	    </path>
+		<taskdef resource="org/apache/ivy/ant/antlib.xml"
+		                 uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+	
 	    <ivy:retrieve />
 	</target>
 
