@@ -441,7 +441,7 @@
 			</fileset>
 		</copy>
 		
-		<get dest="packager/windows/openjdk-17+35_windows-x64_bin.zip" src="hhttps://download.java.net/openjdk/jdk17/ri/openjdk-17+35_windows-x64_bin.zip"/>
+		<get dest="packager/windows/openjdk-17+35_windows-x64_bin.zip" src="https://download.java.net/openjdk/jdk17/ri/openjdk-17+35_windows-x64_bin.zip"/>
 		<unzip src="${projet.pack.dir}/windows/openjdk-17+35_windows-x64_bin.zip" dest="${projet.pack.dir}/windows/" />
 		
 		<nsis script="packager/setup.nsi" verbosity="4">
