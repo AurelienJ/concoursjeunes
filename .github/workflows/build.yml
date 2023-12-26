@@ -49,7 +49,7 @@ jobs:
       run: ant -f projectBuilder.xml buildgenaratedressources
     
     - name: Build
-      run: ant -f build.xml resolve all-system dev_doc
+      run: ant -f build.xml ivy resolve all-system dev_doc
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
