@@ -38,30 +38,6 @@
 	<property file="packager/version.properties" />
 	<property file="packager/security.properties" />
 		
-	<path id="classpath">
-		<pathelement location="config/" />
-		<pathelement location="lang/" />
-		<pathelement location="plugins/" />
-		<fileset dir="${basedir}/">
-			<include name="plugins/*.jar" />
-			<include name="${projet.lib.dir}/*.jar" />
-			<exclude name="${projet.lib.dir}/*sources.jar"/>
-			<exclude name="${projet.lib.dir}/*javadoc.jar"/>
-			<exclude name="${projet.lib.dir}/debug.jar"/>
-		</fileset>
-	</path>
-	
-	<!-- constructs the external libraries classpath name -->
-	<pathconvert property="classpath.name" pathsep=" ">
-		<path refid="classpath" />
-		<mapper>
-			<globmapper from="${basedir}/${projet.lib.dir}/*.jar" to="${projet.lib.dir}/*.jar" />
-			<globmapper from="${basedir}/config" to="config/" />
-			<globmapper from="${basedir}/lang" to="lang/" />
-			<globmapper from="${basedir}/plugins" to="plugins/" />
-		</mapper>
-	</pathconvert>
-
 	<import file="plugins/build-ConcoursJeunesUpdate.xml"/>
 	<import file="plugins/build-ResultArcImport.xml"/>
 	<import file="plugins/build-FFTAImport.xml"/>
@@ -85,11 +61,35 @@
 		                 uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
 	
 	    <ivy:retrieve />
+		
+		<path id="classpath">
+			<pathelement location="config/" />
+			<pathelement location="lang/" />
+			<pathelement location="plugins/" />
+			<fileset dir="${basedir}/">
+				<include name="plugins/*.jar" />
+				<include name="${projet.lib.dir}/*.jar" />
+				<exclude name="${projet.lib.dir}/*sources.jar"/>
+				<exclude name="${projet.lib.dir}/*javadoc.jar"/>
+				<exclude name="${projet.lib.dir}/debug.jar"/>
+			</fileset>
+		</path>
+		
+		<!-- constructs the external libraries classpath name -->
+		<pathconvert property="classpath.name" pathsep=" ">
+			<path refid="classpath" />
+			<mapper>
+				<globmapper from="${basedir}/${projet.lib.dir}/*.jar" to="${projet.lib.dir}/*.jar" />
+				<globmapper from="${basedir}/config" to="config/" />
+				<globmapper from="${basedir}/lang" to="lang/" />
+				<globmapper from="${basedir}/plugins" to="plugins/" />
+			</mapper>
+		</pathconvert>
 	</target>
 
 
 	<!--genere la documentation technique-->
-	<target name="dev_doc" description="genere la documentation développeur">
+	<target name="dev_doc" depends="resolve" description="genere la documentation développeur">
 		<echo message="Construction de la documentation developpeur..."/>
 		<!--création du répertoire de documentation-->
 		<mkdir dir="docs" />
@@ -197,12 +197,12 @@
 		</replace>
 
 	</target>
-	
-	<pathconvert property="classpathProp" refid="classpath"/>
 
-	<target name="compile" depends="pack_stage1">
+	<target name="compile" depends="pack_stage1, resolve">
 
 		<mkdir dir="${projet.pack.dir}/bin" />
+		
+		<pathconvert property="classpathProp" refid="classpath"/>
 		
 		<echo message="basedir : ${basedir} " />
 		<echo message="classpath : ${classpathProp} " />
@@ -264,7 +264,7 @@
 		</jar>
 	</target>
 
-	<target name="revisions" description="revisions">
+	<target name="revisions" depends="resolve" description="revisions">
 		<taskdef name="revisionscreator"
 			classname="org.ajdeveloppement.updater.ant.RevisionsCreator"
 			classpathref="classpath">
