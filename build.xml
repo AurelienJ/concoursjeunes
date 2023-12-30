@@ -153,6 +153,9 @@
 				<exclude name="ressources/repositories/**"/>
 				<exclude name="ressources/sql/importResultArc.sql"/>
 				<exclude name="ressources/templates/scriptext/**"/>
+				<exclude name="${projet.lib.dir}/*sources.jar"/>
+				<exclude name="${projet.lib.dir}/*javadoc.jar"/>
+				<exclude name="${projet.lib.dir}/debug.jar"/>
 			</fileset>
 		</copy>
 		
@@ -238,10 +241,10 @@
 		</taskdef>
 
 		<revisionscreator
-				revisionpath="${projet.pack.dir}/revision.xml.gz"
+				revisionpath="${basedir}/${projet.pack.dir}/revision.xml.gz"
 				reposname="ConcoursJeunes"
-				changelogXML="packager/changelog.xml"
-				changelogTXT="${projet.pack.dir}/changelog.txt"
+				changelogXML="${basedir}/packager/changelog.xml"
+				changelogTXT="${basedir}/${projet.pack.dir}/changelog.txt"
 			>
 			<fileset dir="${projet.pack.dir}">
 				<include name="config/**"/>
