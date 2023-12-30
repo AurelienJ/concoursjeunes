@@ -24,6 +24,6 @@
             
             <dependency org="org.swinglabs" name="swingx" rev="1.6.1"/>
             
-            <dependency org="org.ajdeveloppement" name="ajcommons-swingx-ext" rev="2.0.16"/>
+            <dependency org="org.ajdeveloppement" name="ajcommons-swingx-ext" rev="2.0.17"/>
         </dependencies>
 </ivy-module> 
