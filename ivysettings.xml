@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <ivysettings>
 	<settings defaultResolver="default"/>
+	<property name="github.username" value="" override="false" />
+	<property name="github.password" value="" override="false" />
+	
     <property name="m2-pattern" value="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]" override="false" />
     <property name="ivy-pattern" value="${user.home}/.ivy2/local/[organisation]/[module]/[revision]/[type]s/[module].[ext]" override="false" />
+    <credentials host="maven.pkg.github.com" realm="GitHub Package Registry" username="${github.username}" passwd="${github.password}" />
     <resolvers>
         <chain name="default">
             <filesystem name="local-maven2" m2compatible="true" >
@@ -15,7 +19,7 @@
 		        <artifact pattern="${ivy-pattern}" />
 		    </filesystem>
 		    
-            <ibiblio name="ajdev" root="https://repos.ajdeveloppement.org/ivy/" pattern="[organisation]/[module]/[revision]/[type]s/[module].[ext]"/>
+            <!--<ibiblio name="ajdev" root="https://repos.ajdeveloppement.org/ivy/" pattern="[organisation]/[module]/[revision]/[type]s/[module].[ext]"/>-->
             <ibiblio name="ajdev-github" m2compatible="true" root="https://maven.pkg.github.com/AurelienJ/ajcommons/"/>
             <ibiblio name="swt-repo" m2compatible="true" root="http://maven-eclipse.github.io/maven/" />
             <ibiblio name="maven2" m2compatible="true"/>
