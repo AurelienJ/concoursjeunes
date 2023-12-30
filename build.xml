@@ -70,6 +70,7 @@
 				<exclude name="${projet.lib.dir}/*sources.jar"/>
 				<exclude name="${projet.lib.dir}/*javadoc.jar"/>
 				<exclude name="${projet.lib.dir}/debug.jar"/>
+				<exclude name="${projet.lib.dir}/ajcommons-core*.jar"/>
 			</fileset>
 		</path>
 		
@@ -235,6 +236,7 @@
 	</target>
 
 	<target name="revisions" depends="resolve" description="revisions">
+		
 		<taskdef name="revisionscreator"
 			classname="org.ajdeveloppement.updater.ant.RevisionsCreator"
 			classpathref="classpath">
