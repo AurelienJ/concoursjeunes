@@ -8,7 +8,6 @@
 		<target name ="buildgenaratedressources" description="Construit la class AppInfos" >
 			<copy file="packager/AppInfos.java.tpl" tofile="src/org/concoursjeunes/AppInfos.java" overwrite="true" />
 			<get dest="lib/ajcommons.jar" src="https://jenkins.ajdeveloppement.org/job/AjCommons%201.1%20Release/lastSuccessfulBuild/artifact/ajcommons.jar"/>
-			<get dest="lib/ajcommons-ext.jar" src="https://jenkins.ajdeveloppement.org/job/AjCommons%201.1%20Release/lastSuccessfulBuild/artifact/ajcommons-ext.jar"/>
 			
 			<replace 
 			    file="src/org/concoursjeunes/AppInfos.java"
