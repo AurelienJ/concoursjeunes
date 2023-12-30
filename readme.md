@@ -28,7 +28,7 @@ Download setup-ConcoursJeunes-[last release version].exe in release and execute 
 
   ``sudo make install``
 
-## Developers environment
+# Developers environment
 
 
 1. Clone current repository
