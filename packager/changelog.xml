@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="9.0.4" class="java.beans.XMLDecoder">
+<java version="17.0.9" class="java.beans.XMLDecoder">
  <object class="java.util.ArrayList">
   <void method="add">
    <object class="org.ajdeveloppement.updater.Version">
@@ -1378,6 +1378,29 @@
     </void>
     <void property="version">
      <string>2.30.38</string>
+    </void>
+   </object>
+  </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * Mise à jour version java supporté vers java 17. Java 8 n&apos;est plus supporté.
+  * Suppression de l&apos;ancien système de mise à jour. Il est désormais nécessaire de récupérer manuellement les nouvelles version sur github
+  * suppression des plugins obsolète</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1703931818754</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.39</string>
     </void>
    </object>
   </void>
