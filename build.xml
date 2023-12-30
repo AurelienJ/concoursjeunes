@@ -237,6 +237,34 @@
 		</copy>
 	</target>
 
+	<target name="revisions" depends="resolve" description="revisions">
+		<taskdef name="revisionscreator"
+			classname="org.ajdeveloppement.updater.ant.RevisionsCreator"
+			classpathref="classpath">
+		</taskdef>
+
+		<revisionscreator
+				revisionpath="${projet.pack.dir}/revision.xml.gz"
+				reposname="ConcoursJeunes"
+				changelogXML="packager/changelog.xml"
+				changelogTXT="${projet.pack.dir}/changelog.txt"
+			>
+			<fileset dir="${projet.pack.dir}">
+				<include name="config/**"/>
+				<include name="lang/**"/>
+				<include name="lib/**"/>
+				<include name="ressources/**"/>
+				<include name="documentation/**"/>
+				<include name="ConcoursJeunes.jar"/>
+				<include name="*.txt"/>
+				<include name="*.pack"/>
+
+				<exclude name="*-filelist.txt"/>
+				<exclude name="lib/js*"/>
+			</fileset>
+		</revisionscreator>
+	</target>
+
 	<target name="jar" depends="compile">
 		
 		<manifest file="${projet.pack.dir}/MANIFEST.MF" mode="update">
@@ -438,6 +466,7 @@
 		<antcall target="pack-BackupRestorePlugin" />
 		<antcall target="pack-ScriptExt" />
 		<antcall target="pack-GithubUpdate" />
+		<antcall target="revisions" />
 		<antcall target="windows" />
 		<antcall target="linux" />
 	</target>
@@ -462,6 +491,7 @@
 		<antcall target="pack-BackupRestorePlugin" />
 		<antcall target="pack-ScriptExt" />
 		<antcall target="pack-GithubUpdate" />
+		<antcall target="revisions" />
 		<antcall target="makensissetup" />
 		<antcall target="makelinuxtargz" />
 		<antcall target="makerpm" />
