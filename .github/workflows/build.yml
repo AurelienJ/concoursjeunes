@@ -2,9 +2,17 @@ name: ConcoursJeunes CI build
 
 on:
   push:
+<<<<<<< Upstream, based on branch 'main' of https://github.com/AurelienJ/concoursjeunes.git
     branches: [ main ]
+=======
+    branches: [ releases/2.3 ]
+>>>>>>> 77d11d9 Update github actions for releases branches
   pull_request:
+<<<<<<< Upstream, based on branch 'main' of https://github.com/AurelienJ/concoursjeunes.git
     branches: [ main ]
+=======
+    branches: [ releases/2.3 ]
+>>>>>>> 77d11d9 Update github actions for releases branches
 
 jobs:
   build:
