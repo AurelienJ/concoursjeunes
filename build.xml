@@ -156,12 +156,6 @@
 			</fileset>
 		</copy>
 		
-		<copy todir="${projet.pack.dir}" >
-			<fileset dir="." >
-				<include name="ressources/repositories/ConcoursJeunes.xml"/>
-			</fileset>
-		</copy>
-
 		<!--Copie et commpression des états -->
 		<copy todir="${projet.pack.dir}" >
 			<fileset dir="." >

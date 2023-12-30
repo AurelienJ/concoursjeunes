@@ -9,7 +9,7 @@
 			<copy file="packager/AppInfos.java.tpl" tofile="src/org/concoursjeunes/AppInfos.java" overwrite="true" />
 			<get dest="lib/ajcommons.jar" src="https://jenkins.ajdeveloppement.org/job/AjCommons%201.1%20Release/lastSuccessfulBuild/artifact/ajcommons.jar"/>
 			<get dest="lib/ajcommons-ext.jar" src="https://jenkins.ajdeveloppement.org/job/AjCommons%201.1%20Release/lastSuccessfulBuild/artifact/ajcommons-ext.jar"/>
-			<get dest="lib/ajcommons-swingx-ext.jar" src="https://jenkins.ajdeveloppement.org/job/AjCommons%20SwingX%20Ext%201.1%20Release/lastSuccessfulBuild/artifact/1.1/ajcommons-swingx-ext.jar"/>
+			
 			<replace 
 			    file="src/org/concoursjeunes/AppInfos.java"
 				propertyFile="packager/version.properties"
@@ -35,19 +35,6 @@
 				token="{versionDate}" 
 				value="${version.date}"
 				encoding="UTF-8" /> 
-			
-			<copy todir="ressources/repositories/" overwrite="true">
-				<fileset dir="packager/repositories-template/"/>
-			</copy>
-			<replace 
-				    dir="ressources/repositories/"
-					propertyFile="packager/version.properties"
-					encoding="UTF-8" >
-				<replacefilter 
-				    token="{versionNumero}" 
-				    property="version.numero" />
-				<include name="*.xml"/>
-			</replace>
 		</target>
 		
 		<target name ="none" description="Do nothing. Used in eclipse workflow to avoid loop donwload resources" >

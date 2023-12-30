@@ -12,6 +12,7 @@
 		    <conf name="all" extends="windows32,windows64,macosx,linux" description="All platform dependencies"/>
 		</configurations>
         <dependencies>
+        	<dependency org="org.glassfish" name="javax.json" rev="1.1.4" />
             <dependency org="javax.xml.bind" name="jaxb-api" rev="2.3.1"/>
             <dependency org="com.sun.xml.bind" name="jaxb-core" rev="2.3.0.1"/>
             <dependency org="com.sun.xml.bind" name="jaxb-impl" rev="2.3.9"/>
@@ -20,6 +21,9 @@
             <dependency org="org.swinglabs" name="swingx" rev="1.6.1"/>
             <dependency org="org.jdesktop" name="beansbinding" rev="1.2.1"/>
             <dependency org="org.openjdk.nashorn" name="nashorn-core" rev="15.4"/>
-            <dependency org="org.glassfish" name="javax.json" rev="1.1.4"/>
+            
+            <dependency org="org.swinglabs" name="swingx" rev="1.6.1"/>
+            
+            <dependency org="org.ajdeveloppement" name="ajcommons-swingx-ext" rev="2.0.15"/>
         </dependencies>
 </ivy-module> 
