@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<repository name="BackupRestorePlugin" moduleVersion="1.10.01">
-	<url>https://update.concoursjeunes.org/2.3b/plugins/BackupRestorePlugin</url>
-	<mirror>0</mirror>
-	<canDisable>true</canDisable>
-	<mustBeSigned>true</mustBeSigned>
-</repository>

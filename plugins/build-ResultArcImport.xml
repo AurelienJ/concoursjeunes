@@ -13,32 +13,7 @@
 				<include name="ressources/sql/importResultArc.sql"/>
 				<include name="ExportWinFFTA.exe" />
 				<include name="*.DLL" />
-				<include name="ressources/repositories/ResultArcImport.xml"/>
 			</fileset>
 		</copy>
-		
-		<taskdef name="revisionscreator" classname="org.ajdeveloppement.updater.ant.RevisionsCreator">
-			<classpath location="lib/ajcommons.jar"/>
-			<classpath location="lib/jaxb-core-2.3.0.1.jar"/>
-			<classpath location="lib/jaxb-api-2.3.1.jar"/>
-			<classpath location="lib/jaxb-impl-2.3.9.jar"/>
-			<classpath location="lib/javax.activation-api-1.2.0.jar"/>
-		</taskdef>
-
-		<revisionscreator 
-				revisionpath="${projet.pack.dir}/plugins/ResultArcImport/revision.xml.gz"
-				reposname="ResultArcImport"
-				keystorepath="${projet.keystorepath}"
-				keystorepassword="${projet.keystorepassword}"
-				signkeysalias="${projet.signkeyalias}"
-				signkeysaliaspassword="${projet.signkeyaliaspassword}">
-			<system name="windows">
-				<fileset dir="${projet.pack.dir}/plugins/ResultArcImport/">
-					<include name="**/**"/>
-					
-					<exclude name="*-filelist.txt"/>
-				</fileset>
-			</system>
-		</revisionscreator>
 	</target>
 </project>

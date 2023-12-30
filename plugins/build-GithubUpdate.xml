@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="GithubUpdate" basedir="../">
+	<target name="pack-GithubUpdate">
+		<mkdir dir="${projet.pack.dir}/plugins/githubupdate/plugins" />
+		<jar jarfile="${projet.pack.dir}/plugins/githubupdate/plugins/githubupdate.jar"
+			basedir="${projet.pack.dir}/bin"
+			includes="org/ajdeveloppement/concours/plugins/githubupdate/**">
+		</jar>
+		<copy todir="${projet.pack.dir}/plugins/ScriptExt" >
+			<fileset dir="." >
+				<include name="plugins/properties/GithubUpdatePlugin.properties" />
+			</fileset>
+		</copy>
+	</target>
+</project>

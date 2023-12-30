@@ -10,32 +10,7 @@
 			<fileset dir="." >
 				<include name="plugins/properties/BackupPlugin.properties" />
 				<include name="plugins/properties/RestorePlugin.properties" />
-				<include name="ressources/repositories/BackupRestorePlugin.xml"/>
 			</fileset>
 		</copy>
-		
-		<taskdef name="revisionscreator" classname="org.ajdeveloppement.updater.ant.RevisionsCreator">
-			<classpath location="lib/ajcommons.jar"/>
-			<classpath location="lib/jaxb-core-2.3.0.1.jar"/>
-			<classpath location="lib/jaxb-api-2.3.1.jar"/>
-			<classpath location="lib/jaxb-impl-2.3.9.jar"/>
-			<classpath location="lib/javax.activation-api-1.2.0.jar"/>
-		</taskdef>
-
-		<revisionscreator 
-				revisionpath="${projet.pack.dir}/plugins/BackupRestorePlugin/revision.xml.gz"
-				reposname="BackupRestorePlugin"
-				changelogXML="packager/changelog-BackupRestorePlugin.xml"
-				changelogTXT="${projet.pack.dir}/changelog-BackupRestorePlugin.txt"
-				keystorepath="${projet.keystorepath}"
-				keystorepassword="${projet.keystorepassword}"
-				signkeysalias="${projet.signkeyalias}"
-				signkeysaliaspassword="${projet.signkeyaliaspassword}">
-			<fileset dir="${projet.pack.dir}/plugins/BackupRestorePlugin">
-				<include name="**/**"/>
-				
-				<exclude name="*-filelist.txt"/>
-			</fileset>
-		</revisionscreator>
 	</target>
 </project>

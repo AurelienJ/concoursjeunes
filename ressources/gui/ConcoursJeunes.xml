@@ -38,7 +38,6 @@
 				<label>menubar.tools</label>
 				<menuitems>
 					<menuitem>menubar.tools.disableplugins</menuitem>
-					<menuitem>menubar.tools.installplugins</menuitem>
 					<separator />
 					<menuitem>menubar.tools.configuration</menuitem>
 				</menuitems>

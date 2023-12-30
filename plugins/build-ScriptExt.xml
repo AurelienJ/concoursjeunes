@@ -15,37 +15,8 @@
 				<include name="plugins/autocomplete.jar"/>
 				<include name="plugins/language_support.jar"/>
 				<include name="plugins/js.jar"/>
-				<include name="ressources/repositories/ScriptExt.xml"/>
 				<include name="ressources/templates/scriptext/**"/>
 			</fileset>
 		</copy>
-		
-		<taskdef name="revisionscreator" classname="org.ajdeveloppement.updater.ant.RevisionsCreator">
-			<classpath location="lib/ajcommons.jar"/>
-			<classpath location="lib/jaxb-core-2.3.0.1.jar"/>
-			<classpath location="lib/jaxb-api-2.3.1.jar"/>
-			<classpath location="lib/jaxb-impl-2.3.9.jar"/>
-			<classpath location="lib/javax.activation-api-1.2.0.jar"/>
-		</taskdef>
-
-		<revisionscreator 
-				revisionpath="${projet.pack.dir}/plugins/ScriptExt/revision.xml.gz"
-				reposname="ScriptExt"
-				keystorepath="${projet.keystorepath}"
-				keystorepassword="${projet.keystorepassword}"
-				signkeysalias="${projet.signkeyalias}"
-				signkeysaliaspassword="${projet.signkeyaliaspassword}">
-			<fileset dir="${projet.pack.dir}/plugins/ScriptExt">
-				<include name="**/**"/>
-				
-				<exclude name="*-filelist.txt"/>
-			</fileset>
-			<system name="macosx">
-				<fileset dir="${projet.pack.dir}/plugins/ScriptExt">
-					<!-- Inutile car inclus dans le classpath de base -->
-					<exclude name="plugins/js.jar"/>
-				</fileset>
-			</system>
-		</revisionscreator>
 	</target>
 </project>

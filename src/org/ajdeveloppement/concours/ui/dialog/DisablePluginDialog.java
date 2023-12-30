@@ -148,7 +148,7 @@ public class DisablePluginDialog extends JDialog implements ActionListener {
 		this.localisation = localisation;
 		
 		PluginLoader pl = new PluginLoader();
-		plugins = pl.getPlugins(org.concoursjeunes.plugins.Plugin.Type.STARTUP);
+		plugins = pl.getPlugins(org.concoursjeunes.plugins.Plugin.Type.ALL);
 		
 		init();
 		affectLabels();

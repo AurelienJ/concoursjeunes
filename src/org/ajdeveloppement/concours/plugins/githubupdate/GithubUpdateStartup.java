@@ -117,7 +117,7 @@ public class GithubUpdateStartup {
 	private ConcoursJeunesFrame concoursJeunesFrame;
 	
 	private final AjResourcesReader pluginRessources = new AjResourcesReader("properties.GithubUpdatePlugin"); //$NON-NLS-1$
-	private AjResourcesReader pluginLocalisation = new AjResourcesReader("org.ajdeveloppement.concours.plugins.githubupdate.GithubUpdateStartup_libelle", GithubUpdateStartup.class.getClassLoader()); //$NON-NLS-1$
+	private AjResourcesReader pluginLocalisation = new AjResourcesReader("org.ajdeveloppement.concours.plugins.githubupdate.GithubUpdatePlugin_libelle", GithubUpdateStartup.class.getClassLoader()); //$NON-NLS-1$
 	
 	public GithubUpdateStartup(JFrame appFrame, Profile profile) {
 		concoursJeunesFrame = (ConcoursJeunesFrame)appFrame;

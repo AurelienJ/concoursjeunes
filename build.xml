@@ -36,13 +36,12 @@
 	</condition>
 	
 	<property file="packager/version.properties" />
-	<property file="packager/security.properties" />
 		
 	<import file="plugins/build-ResultArcImport.xml"/>
-	<import file="plugins/build-FFTAImport.xml"/>
 	<import file="plugins/build-PhoenixPlugin.xml"/>
 	<import file="plugins/build-BackupRestorePlugin.xml"/>
 	<import file="plugins/build-ScriptExt.xml"/>
+	<import file="plugins/build-GithubUpdate.xml"/>
 	
 	<!-- install ivy -->
 	<target name="ivy" description="Install ivy">
@@ -75,15 +74,32 @@
 		</path>
 		
 		<!-- constructs the external libraries classpath name -->
+		<pathconvert property="nixBaseDir">
+			<path location="${basedir}"></path>
+			<filtermapper>
+		        <replacestring from="\" to="/" />
+		    </filtermapper>
+		</pathconvert>
 		<pathconvert property="classpath.name" pathsep=" ">
 			<path refid="classpath" />
-			<mapper>
-				<globmapper from="${basedir}/${projet.lib.dir}/*.jar" to="${projet.lib.dir}/*.jar" />
-				<globmapper from="${basedir}/config" to="config/" />
-				<globmapper from="${basedir}/lang" to="lang/" />
-				<globmapper from="${basedir}/plugins" to="plugins/" />
-			</mapper>
+			<chainedmapper>
+				<filtermapper>
+			        <replacestring from="\" to="/" />
+			    </filtermapper>
+				<mapper>
+					<globmapper from="${nixBaseDir}/${projet.lib.dir}/*.jar" to="${projet.lib.dir}/*.jar" />
+					<globmapper from="${nixBaseDir}/config" to="config/" />
+					<globmapper from="${nixBaseDir}/lang" to="lang/" />
+					<globmapper from="${nixBaseDir}/plugins" to="plugins/" />
+				</mapper>
+			</chainedmapper>
 		</pathconvert>
+		
+		<pathconvert property="classpathProp" refid="classpath"/>
+				
+		<echo message="basedir : ${nixBaseDir} " />
+		<echo message="classpath : ${classpathProp} " />
+		<echo message="classpath.name : ${classpath.name} " />
 	</target>
 
 
@@ -136,7 +152,6 @@
 				<exclude name="ressources/states/**"/>
 				<exclude name="ressources/repositories/**"/>
 				<exclude name="ressources/sql/importResultArc.sql"/>
-				<exclude name="config/ffta.properties" />
 				<exclude name="ressources/templates/scriptext/**"/>
 			</fileset>
 		</copy>
@@ -200,12 +215,6 @@
 	<target name="compile" depends="pack_stage1, resolve">
 
 		<mkdir dir="${projet.pack.dir}/bin" />
-		
-		<pathconvert property="classpathProp" refid="classpath"/>
-		
-		<echo message="basedir : ${basedir} " />
-		<echo message="classpath : ${classpathProp} " />
-		<echo message="classpath.name : ${classpath.name} " />
 
 		<javac srcdir="${projet.pack.dir}/src/" destdir="${projet.pack.dir}/bin"
 			optimize="on"
@@ -262,41 +271,6 @@
 			</fileset>
 		</jar>
 	</target>
-
-	<target name="revisions" depends="resolve" description="revisions">
-		<taskdef name="revisionscreator"
-			classname="org.ajdeveloppement.updater.ant.RevisionsCreator"
-			classpathref="classpath">
-		</taskdef>
-
-		<revisionscreator
-				revisionpath="${projet.pack.dir}/revision.xml.gz"
-				reposname="ConcoursJeunes"
-				changelogXML="packager/changelog.xml"
-				changelogTXT="${projet.pack.dir}/changelog.txt"
-				keystorepath="${projet.keystorepath}"
-				keystorepassword="${projet.keystorepassword}"
-				signkeysalias="${projet.signkeyalias}"
-				signkeysaliaspassword="${projet.signkeyaliaspassword}"
-			>
-			<fileset dir="${projet.pack.dir}">
-				<include name="config/**"/>
-				<include name="lang/**"/>
-				<include name="lib/**"/>
-				<include name="ressources/**"/>
-				<include name="documentation/**"/>
-				<include name="ConcoursJeunes.jar"/>
-				<include name="*.txt"/>
-				<include name="*.pack"/>
-	
-				<exclude name="*-filelist.txt"/>
-				<exclude name="lib/js*"/>
-			</fileset>
-			<keysandcerts dir="${projet.pack.dir}/ressources/security/">
-				<include name="certs/**" />
-			</keysandcerts>
-		</revisionscreator>
-	</target>
 	
 	<target name="makelinuxtargz">
 		<mkdir dir="${projet.pack.dir}/linux/tar" />
@@ -318,16 +292,12 @@
 		<for param="plugin">
 		    <dirset dir="${projet.pack.dir}/plugins/">
 		    	<include name="*"/>
-		    	<exclude name="FFTAImport"/>
 		    	<exclude name="ResultArcImport"/>
-		    	<exclude name="ScriptExt"/>
 		    </dirset>
 			<sequential>
 				<copy todir="${projet.pack.dir}/linux/tar/usr/lib/ConcoursJeunes" >
 					<fileset dir="@{plugin}" >
 						<include name="**/**"/>
-						
-						<exclude name="revision.xml.gz"/>
 					</fileset>
 				</copy>
 			</sequential>
@@ -466,9 +436,8 @@
 		<antcall target="jar" />
 		<antcall target="pack-PhoenixPlugin" />
 		<antcall target="pack-BackupRestorePlugin" />
-		<antcall target="pack-FFTAImport" />
 		<antcall target="pack-ScriptExt" />
-		<antcall target="revisions" />
+		<antcall target="pack-GithubUpdate" />
 		<antcall target="windows" />
 		<antcall target="linux" />
 	</target>
@@ -490,30 +459,13 @@
 		<antcall target="jar" />
 		<antcall target="pack-PhoenixPlugin" />
 		<antcall target="pack-ResultArcImport" />
-		<antcall target="pack-FFTAImport" />
 		<antcall target="pack-BackupRestorePlugin" />
 		<antcall target="pack-ScriptExt" />
-		<antcall target="revisions" />
+		<antcall target="pack-GithubUpdate" />
 		<antcall target="makensissetup" />
 		<antcall target="makelinuxtargz" />
 		<antcall target="makerpm" />
 		<antcall target="makedeb" />
-	</target>
-	
-	<target name="deploy" description="deploi les fichier sur le serveur de mise à jour">
-		<copy todir="../ConcoursJeunes.org/update/" >
-			<fileset dir="pack" >
-				<include name="config/**"/>
-				<include name="lang/**"/>
-				<include name="lib/**"/>
-				<include name="plugins/**"/>
-				<include name="documentation/**"/>
-				<include name="ressources/**"/>
-				<include name="ConcoursJeunes.jar"/>
-				<include name="revision.xml.gz"/>
-				<include name="*.txt"/>
-			</fileset>
-		</copy>
 	</target>
 
 </project>
