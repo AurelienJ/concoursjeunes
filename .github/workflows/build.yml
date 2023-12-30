@@ -2,9 +2,9 @@ name: ConcoursJeunes CI build
 
 on:
   push:
-    branches: [ 2.3 ]
+    branches: [ releases/2.3 ]
   pull_request:
-    branches: [ 2.3 ]
+    branches: [ releases/2.3 ]
 
 jobs:
   build:
@@ -34,16 +34,6 @@ jobs:
         sudo mkdir -p /usr/share/man/man1
         sudo apt-get update
         sudo apt-get -y install ant ivy fakeroot rpm nsis genisoimage dpkg-dev debhelper build-essential
-
-    - name: Get Secrets
-      env:
-        SIGN_KEYSTORE: ${{secrets.SIGN_KEYSTORE}}
-        SIGN_PROJECT_PROPERTIES: ${{secrets.SIGN_PROJECT_PROPERTIES}}
-        FFTA_AES_KEY: ${{secrets.FFTA_AES_KEY}}
-      run: |
-        echo "$SIGN_PROJECT_PROPERTIES" | base64 --decode > packager/security.properties
-        echo "$SIGN_KEYSTORE" | base64 --decode > packager/signingkeys.jks
-        echo "$FFTA_AES_KEY" > packager/ffta.key
 
     - name: Download resources
       run: ant -f projectBuilder.xml buildgenaratedressources
