@@ -21,6 +21,7 @@
             <dependency org="org.swinglabs" name="swingx" rev="1.6.1"/>
             <dependency org="org.jdesktop" name="beansbinding" rev="1.2.1"/>
             <dependency org="org.openjdk.nashorn" name="nashorn-core" rev="15.4"/>
+            <dependency org="com.h2database" name="h2" rev="1.4.200"/>
             
             <dependency org="org.swinglabs" name="swingx" rev="1.6.1"/>
             
