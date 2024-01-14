@@ -1404,5 +1404,27 @@
     </void>
    </object>
   </void>
+  <void method="add">
+   <object class="org.ajdeveloppement.updater.Version">
+    <void property="appname">
+     <string>concoursjeunes</string>
+    </void>
+    <void property="author">
+     <string>Aurélien JEOFFRAY &lt;aurelien.jeoffray@ajdeveloppement.org&gt;</string>
+    </void>
+    <void property="changeInfos">
+     <string>  * La Soumission des bugs se fait désormais sur github
+  * Mise à jour des dépendances</string>
+    </void>
+    <void property="dateVersion">
+     <object class="java.util.Date">
+      <long>1705231767580</long>
+     </object>
+    </void>
+    <void property="version">
+     <string>2.30.40</string>
+    </void>
+   </object>
+  </void>
  </object>
 </java>
